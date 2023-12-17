@@ -26,7 +26,7 @@
 	programming style below totally abhorrent.  Abhorrent to
 	both the mind and the senses. So please excuse the crap
 	below given the circumstances. It is only due to the presence
-	of f*cked up operating system environments (like that found
+	of f*cked up operating system environments (like those found
 	routinely on GNU-Linux based systems) that requires me to
 	write programs like this in the first place.
 
