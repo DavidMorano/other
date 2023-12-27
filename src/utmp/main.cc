@@ -47,8 +47,9 @@ using std::min ;
 
 /* local typedefs */
 
-typedef const int	cint ;
-typedef const char	cchar ;
+typedef const int		cint ;
+typedef const char		cchar ;
+typedef const char *const	*mainv ;
 
 
 /* forward references */
@@ -79,7 +80,7 @@ constexpr int		tlen = TIMEBUFLEN ;
 
 /* exported subroutines */
 
-int  main(int,const char *const *,const char *const *) {
+int main(int,mainv,mainv) {
 	struct tm	ts ;
 	struct utmpx	*up ;
 	int		ex = EXIT_FAILURE ;

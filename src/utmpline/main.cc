@@ -55,6 +55,10 @@
 using std::cout ;
 using std::string_view ;
 
+typedef const int		cint ;
+typedef const char		cchar ;
+typedef const char *const	*mainv ;
+
 static int findsid() noexcept ;
 static int findline() noexcept ;
 
@@ -66,7 +70,7 @@ static bool isourtype(struct utmpx *up) noexcept {
 	return f ;
 }
 
-int  main(int,const char *const *,const char *const *) {
+int main(int,mainv,mainv) {
 	int		ex ;
 	if ((ex = findsid()) != EXIT_SUCCESS) {
 	    ex = findline() ;
