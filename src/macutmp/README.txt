@@ -1,5 +1,18 @@
-UTMPLINE
+UTMP
 
+Names:
+utmp
+utmpid
+utmpname
+utmpline
+utmphost
+logid
+logname
+logline
+loghost
+logged
+
+Description:
 This program prints out the UTMP "line" field for the UTMP entry
 that the process session might be registerd with.  If the process
 is part of a logged-in session, then it should (normally) have an
@@ -38,4 +51,18 @@ Arguments:
 Returns:
 -	the UTMP "line" field that the process session might be registered with
 	or nothing otherwise (no registration)
+
+Implementation-notes:
+Of course this one program provides the function of the three programs:
+utmp
+utmpid
+utmpname
+utmpline
+utmphost
+logid
+logname
+logline
+loghost
+logged
+
 
