@@ -16,10 +16,24 @@
 
 /*******************************************************************************
 
+	Name:
+	main (conterm)
+
+	Description:
 	This program tries to open the controlling terminal of the
 	current process (if there is one).  If successful, we set
 	our program-exit status and print out the session ID from
 	the controlling terminal.
+
+	Synopsis:
+	$ conterm
+
+	Arguments:
+	-		none
+
+	Returns:
+	EXIT_SUCCESS	process is connnecte to a controlling terminal
+	EXIT_FAILURE	process is *not* connnecte to a controlling terminal
 
 *******************************************************************************/
 
@@ -59,12 +73,10 @@
 
 /* namespaces */
 
-using namespace		std ;
 
 /* typedefs */
 
-typedef const char	cchar ;
-typedef struct stat	statblock ;
+typedef const char *const *mainv ;
 
 
 /* forward references */
@@ -79,13 +91,13 @@ constexpr const char	termdev[] = TERMDEV ;
 
 /* exported subroutines */
 
-int main(int argc,cchar **argv,cchar **) noexcept {
-	int	ex = 1 ;
+int main(int,mainv,mainv) noexcept {
+	int	ex = EXIT_FAILURE ;
 	int	rs ;
 	if ((rs = open(termdev,O_RDONLY,0)) >= 0) {
 	    const int	fd = rs ;
 	    if ((rs = uc_tcgetsid(fd)) >= 0) {
-		ex = 0 ;
+		ex = EXIT_SUCCESS ;
 	    } /* end if (uc_tcgetsid) */
 	    close(fd) ;
 	} /* end if (open) */
