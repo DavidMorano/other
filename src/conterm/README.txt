@@ -1,6 +1,7 @@
 CONTERM
 
-Print out the session ID of the controlling terminal (if there is one).
+Determine if the current process is connneced to a controlling terminal 
+and return appropriate exit-status.
 
 Synopsis:
 $ conterm
