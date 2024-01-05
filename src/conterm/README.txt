@@ -1,6 +1,6 @@
 CONTERM
 
-Determine if the current process is connneced to a controlling terminal 
+Determine if the current process is connected to a controlling terminal 
 and return appropriate exit-status.
 
 Synopsis:

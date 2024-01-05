@@ -32,8 +32,8 @@
 	-		none
 
 	Returns:
-	EXIT_SUCCESS	process is connnecte to a controlling terminal
-	EXIT_FAILURE	process is *not* connnecte to a controlling terminal
+	EXIT_SUCCESS	process is connected to a controlling terminal
+	EXIT_FAILURE	process is *not* connected to a controlling terminal
 
 *******************************************************************************/
 
