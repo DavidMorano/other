@@ -32,4 +32,12 @@ o2
 .gitattributes
 .gitnotes
 
+.kshrc
+.profile
+.bbnewsrc
+.fullname
+.msgrc
+.swd
+.news_time
+
 
