@@ -5,6 +5,10 @@ T= makewhatis
 ALL= $(T).x
 
 
+# extra flags here (usually to turn OFF warnings
+CCFLAGSEXTRA= -Wno-format-truncation
+
+
 BINDIR= $(REPOROOT)/bin
 INCDIR= $(REPOROOT)/include
 LIBDIR= $(REPOROOT)/lib
@@ -38,15 +42,15 @@ DEFS=
 
 LDRPATH= $(EXTRA)/lib
 
-LIBDIRS= -L$(LIBDIR)
+LIBDIRS= -L$(LIBDIR) -L/usr/lib
 
-LIBS=
+LIBS= -lz
 
 
 # flag setting
 CPPFLAGS= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
 CFLAGS= $(MAKECFLAGS)
-CCFLAGS= $(MAKECCFLAGS)
+CCFLAGS= $(MAKECCFLAGS) $(CCFLAGSEXTRA)
 ARFLAGS= $(MAKEARFLAGS)
 LDFLAGS= $(MAKELDFLAGS)
 
@@ -78,7 +82,7 @@ all:			$(ALL)
 
 
 $(T).x:			$(OBJ_MAKEWHATIS)
-	$(LD) $(LDFLAGS) -o $@ $(OBJ_MAKEWHATIS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJ_MAKEWHATIS) $(LIBDIRS) $(LIBS)
 
 $(T).o:			$(OBJ_MAKEWHATIS)
 	$(LD) $(LDFLAGS) -r -o $@ $(OBJ_MAKEWHATIS)

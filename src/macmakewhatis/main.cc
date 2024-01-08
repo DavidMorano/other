@@ -30,6 +30,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/* revision history:
+
+	+ 2024-01-08, David A.D. Morano
+	Updated (converted to C++ from C. And also fixed a number
+	of type mismatches and one of which turned out to be a bad
+	error (bug).  I fixed the bug (you have find it in the code
+	below). There was one suspcicious code section that I left
+	alone, but it might be checked by someone who knows what it
+	is supposed to do.  It is marked in the code below as 'TODO'.
+
+*****/
+
+/* Copyright © 2017 David A­D­ Morano.  All rights reserved. */
+
+/*******************************************************************************
+
+	This is an implementation of the famous |MAKEWHATIS| facility.
+	Although a number of implementations are (or were) written in
+	SHELL language (POSIX® compliant generally), this version is
+	written in C/C++.  It was originally written in C-lang, but
+	was converted to C++ by David Morano.
+
+	For how to use this program, see the various MAN pages on it
+	and some other documentation on-line.
+
+*******************************************************************************/
+
 #include <sys/cdefs.h>
 __FBSDID("$FreeBSD: src/usr.bin/makewhatis/makewhatis.c,v 1.9 2002/09/04 23:29:04 dwmalone Exp $");
 
@@ -43,15 +70,16 @@ __FBSDID("$FreeBSD: src/usr.bin/makewhatis/makewhatis.c,v 1.9 2002/09/04 23:29:0
 #define SLIST_HEAD_INITIALIZER(head) { nullptr }
 #endif
 
-#include <ctype.h>
-#include <dirent.h>
-#include <err.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stringlist.h>
 #include <unistd.h>
+#include <dirent.h>
+#include <fcntl.h>
+#include <err.h>
+#include <climits>			/* for |UCHAR_MAX| */
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cctype>
+#include <stringlist.h>
 #include <zlib.h>
 
 
@@ -79,8 +107,9 @@ using std::nullptr_t ;
 /* local typedefs */
 
 typedef char *edited_copy(char *from,char *to,int length) noex ;
-typedef constxchar	cchar ;
-typedef constxvoid	cvoid ;
+typedef const int	cint ;
+typedef const char	cchar ;
+typedef const void	cvoid ;
 typedef const char *const *mainv ;
 
 
@@ -131,7 +160,7 @@ static char blank[] = 		"";
 static int append;			/* -a flag: append to existing whatis */
 static int verbose;			/* -v flag: be verbose with warnings */
 static int indent = 24;			/* -i option: description indentation */
-static cchar *whatis_name="whatis";/* -n option: the name */
+static cchar *whatis_name="whatis";	/* -n option: the name */
 static char *common_output;		/* -o option: the single output file */
 static char *locale;			/* user's locale if -L is used */
 static char *lang_locale;		/* short form of locale */
@@ -154,6 +183,13 @@ static StringList *whatis_lines;	/* collected output lines */
 
 static char tmp_file[MAXPATHLEN];	/* path of temporary file, if any */
 static char tmp_rel_file[MAXPATHLEN];
+
+/* fix-up for (f*cked-up) BROKEN |getopt(3c)| -- DAM */
+static int getoptv(int argc,mainv argv,cchar *optstr) noexcept {
+	char *const *argfuck = (char *const *) argv ;
+	return getopt(argc,argfuck,optstr) ;
+}
+/* end subroutine (getoptv) */
 
 /* A set of possible names for the NAME man page section */
 static cchar *name_section_titles[] = {
@@ -307,7 +343,7 @@ static void sbuf_append_edited(SBUF *sbuf,char *text,
  */
 static void sbuf_strip(SBUF *sbuf, cchar *set) noex {
 	nullptr_t	np{} ;
-	while (sbuf->end > sbuf->content && strchr(set,sbuf->end[-1]) != mp) {
+	while (sbuf->end > sbuf->content && strchr(set,sbuf->end[-1]) != np) {
 		sbuf->end-- ;
 	}
 }
@@ -351,7 +387,7 @@ static void trap_signal(int sig __unused) noex {
 /*
  * Attempts to open an output file.  Returns nullptr if unsuccessful.
  */
-static FILE *open_output(char *name, int dir_fd, char *rel_name) noex {
+static FILE *open_output(char *name, int dir_fd,cchar *rel_name) noex {
 	FILE *output;
 	int output_fd;
 	struct stat statbuf;
@@ -425,8 +461,7 @@ static int linesort(cvoid *a, cvoid *b) noex {
 /*
  * Writes the unique sorted lines to the output file.
  */
-static void 
-finish_output(FILE *output,char *name,int dir_fd,char *rel_name) noex {
+static void finish_output(FILE *output,char *,int dir_fd,cchar *rel_name) noex {
 	const size_t	esz = sizeof(char *) ;
 	size_t i;
 	char *prev = nullptr;
@@ -556,7 +591,8 @@ static int name_section_line(char *line, cchar *section_start) noexcept {
 static char * de_nroff_copy(char *from, char *to, int fromlen) noexcept {
 	char *from_end = &from[fromlen];
 	while (from < from_end) {
-		switch (*from) {
+	    cint	ch = int(*from & UCHAR_MAX) ;
+		switch (ch) {
 		case '\\':
 			switch (*++from) {
 			case '(':
@@ -578,11 +614,12 @@ static char * de_nroff_copy(char *from, char *to, int fromlen) noexcept {
 				if (*++from == '(') {
 					from += 3;
 				} else if (*from == '[') {
-				   while (*++from != ']' && 
-						from < from_end);
+				  /* TODO: is this correct? or dangerous? */
+				  while (*++from != ']' && from < from_end) ;
+				  from++;
+				} else {
 					from++;
-				} else
-					from++;
+				}
 				continue;
 			case '&':
 				from++;
@@ -591,7 +628,7 @@ static char * de_nroff_copy(char *from, char *to, int fromlen) noexcept {
 			break;
 		} /* end switch */
 		*to++ = *from++;
-	}
+	} /* end while */
 	return to;
 }
 /* end subroutine (de_nroff_copy) */
@@ -742,7 +779,7 @@ enum { STATE_UNKNOWN, STATE_MANSTYLE, STATE_MDOCNAME, STATE_MDOCDESC };
  * to whatis_lines.
  */
 static void process_page(PAGE_INFO *page, char *section_dir) noexcept {
-	gzFile *in;
+	gzFile		in{} ;		/* <- fixed f*ck-up bug! */
 	char buffer[4096];
 	char *line;
 	StringList *names;
@@ -950,8 +987,8 @@ static void process_mandir(char *dir_name) noexcept {
 	int dir_fd;
 	DIR *dir;
 	FILE *fp = nullptr;
-	struct dirent *entry;
-	struct stat st;
+	DIRENT	*entry;
+	/* struct stat st; */			/* <- was not used! */
 
 	if (already_visited(dir_name))
 		return;
@@ -1031,7 +1068,7 @@ int main(int argc,mainv argv,mainv) noexcept {
 	int opt;
 	FILE *fp = nullptr;
 
-	while ((opt = getopt(argc, argv, "ai:n:o:vL")) != -1) {
+	while ((opt = getoptv(argc,argv,"ai:n:o:vL")) != -1) {
 		switch (opt) {
 		case 'a':
 			append++;
@@ -1055,12 +1092,15 @@ int main(int argc,mainv argv,mainv) noexcept {
 			if (locale == nullptr)
 				locale = getenv("LANG");
 			if (locale != nullptr) {
-				char *sep = strchr(locale, '_');
-				if (sep != nullptr && isupper(sep[1]) &&
+			    char *sep = strchr(locale, '_');
+			    if (sep != nullptr && isupper(sep[1]) &&
 				    isupper(sep[2])) {
-					asprintf(&lang_locale, "%.*s%s", sep - locale, locale, &sep[3]);
-				}
-			}
+				cint	fl = int(sep - locale) ;
+				cchar *fmt = "%.*s%s" ;
+				asprintf(&lang_locale,fmt,
+					fl, locale, &sep[3]);
+			    } /* end if */
+			} /* end if */
 			break;
 		default:
 			fprintf(stderr, "usage: %s [-a] [-i indent] [-n name] [-o output_file] [-v] [-L] [directories...]\n", argv[0]);
