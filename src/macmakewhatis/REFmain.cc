@@ -40,7 +40,7 @@ __FBSDID("$FreeBSD: src/usr.bin/makewhatis/makewhatis.c,v 1.9 2002/09/04 23:29:0
 
 /* Workaround for missing #define in sys/queue.h (3806865) */
 #ifndef SLIST_HEAD_INITIALIZER
-#define SLIST_HEAD_INITIALIZER(head) { nullptr }
+#define SLIST_HEAD_INITIALIZER(head) { NULL }
 #endif
 
 #include <ctype.h>
@@ -54,37 +54,10 @@ __FBSDID("$FreeBSD: src/usr.bin/makewhatis/makewhatis.c,v 1.9 2002/09/04 23:29:0
 #include <unistd.h>
 #include <zlib.h>
 
-
-/* local defines */
-
-#define	noex			noexcept
-
 #define DEFAULT_MANPATH		"/usr/share/man"
 #define LINE_ALLOC		4096
 
-
-#define	PAGE_INFO		struct page_info
-#define	SBUF			struct sbuf
-
-#ifndef	DIRENT
-#define	DIRENT			struct dirent
-#endif
-
-
-/* local namespaces */
-
-using std::nullptr_t ;
-
-
-/* local typedefs */
-
-typedef char *edited_copy(char *from,char *to,int length) noex ;
-typedef constxchar	cchar ;
-typedef constxvoid	cvoid ;
-typedef const char *const *mainv ;
-
-
-/* local structures */
+static char blank[] = 		"";
 
 /*
  * Information collected about each man page in a section.
@@ -126,17 +99,17 @@ struct sbuf {
 #define sbuf_length(sbuf)		\
 	((sbuf)->end - (sbuf)->content)
 
-static char blank[] = 		"";
+typedef char *edited_copy(char *from, char *to, int length);
 
 static int append;			/* -a flag: append to existing whatis */
 static int verbose;			/* -v flag: be verbose with warnings */
 static int indent = 24;			/* -i option: description indentation */
-static cchar *whatis_name="whatis";/* -n option: the name */
+static const char *whatis_name="whatis";/* -n option: the name */
 static char *common_output;		/* -o option: the single output file */
 static char *locale;			/* user's locale if -L is used */
 static char *lang_locale;		/* short form of locale */
 #ifndef __APPLE__
-static cchar *machine;
+static const char *machine;
 #endif /* !__APPLE__ */
 
 static int exit_code;			/* exit code to use when finished */
@@ -148,22 +121,17 @@ static SLIST_HEAD(, visited_dir) visited_dirs =
  * When finished, it is reformatted into whatis_final and then appended
  * to whatis_lines.
  */
-static SBUF	*whatis_proto;
-static SBUF	*whatis_final;
+static struct sbuf *whatis_proto;
+static struct sbuf *whatis_final;
 static StringList *whatis_lines;	/* collected output lines */
 
 static char tmp_file[MAXPATHLEN];	/* path of temporary file, if any */
 static char tmp_rel_file[MAXPATHLEN];
 
 /* A set of possible names for the NAME man page section */
-static cchar *name_section_titles[] = {
-	"NAME", 
-	"Name", 
-	"NAMN", 
-	"BEZEICHNUNG", 
-	"\xcc\xbe\xbe\xce",
-	"\xee\xe1\xfa\xf7\xe1\xee\xe9\xe5", 
-	nullptr
+static const char *name_section_titles[] = {
+	"NAME", "Name", "NAMN", "BEZEICHNUNG", "\xcc\xbe\xbe\xce",
+	"\xee\xe1\xfa\xf7\xe1\xee\xe9\xe5", NULL
 };
 
 /* A subset of the mdoc(7) commands to ignore */
@@ -172,7 +140,9 @@ static char mdoc_commands[] = "ArDvErEvFlLiNmPa";
 /*
  * Frees a struct page_info and its content.
  */
-static void free_page_info(PAGE_INFO *info) noex {
+static void
+free_page_info(struct page_info *info)
+{
 	free(info->filename);
 	free(info->name);
 	free(info->suffix);
@@ -182,22 +152,23 @@ static void free_page_info(PAGE_INFO *info) noex {
 /*
  * Allocates and fills in a new struct page_info given the
  * name of the man section directory and the dirent of the file.
- * If the file is not a man page, returns nullptr.
+ * If the file is not a man page, returns NULL.
  */
-static PAGE_INFO *new_page_info(char *dir,DIRENT *dirent) noex {
-	PAGE_INFO	*info;
+static struct page_info *
+new_page_info(char *dir, struct dirent *dirent)
+{
+	struct page_info *info;
 	int basename_length;
 	char *suffix;
 	struct stat st;
 
-	info = (PAGE_INFO *) malloc(sizeof(PAGE_INFO)) ;
-	if (info == nullptr)
+	info = (struct page_info *) malloc(sizeof(struct page_info));
+	if (info == NULL)
 		err(1, "malloc");
 	basename_length = strlen(dirent->d_name);
 	suffix = &dirent->d_name[basename_length];
 	asprintf(&info->filename, "%s/%s", dir, dirent->d_name);
-	if ((info->gzipped = basename_length >= 4 && 
-		strcmp(&dirent->d_name[basename_length - 3],".gz") == 0)) {
+	if ((info->gzipped = basename_length >= 4 && strcmp(&dirent->d_name[basename_length - 3], ".gz") == 0)) {
 		suffix -= 3;
 		*suffix = '\0';
 	}
@@ -206,43 +177,45 @@ static PAGE_INFO *new_page_info(char *dir,DIRENT *dirent) noex {
 			if (*suffix == '.')
 				break;
 			if (verbose)
-				warnx("%s: invalid man page name", 
-				info->filename);
+				warnx("%s: invalid man page name", info->filename);
 			free(info->filename);
 			free(info);
-			return nullptr;
+			return NULL;
 		}
-	} /* end for */
+	}
 	*suffix++ = '\0';
 	info->name = strdup(dirent->d_name);
 	info->suffix = strdup(suffix);
 	if (stat(info->filename, &st) < 0) {
 		warn("%s", info->filename);
 		free_page_info(info);
-		return nullptr;
+		return NULL;
 	}
 	if (!S_ISREG(st.st_mode)) {
 		if (verbose && !S_ISDIR(st.st_mode))
 			warnx("%s: not a regular file", info->filename);
 		free_page_info(info);
-		return nullptr;
+		return NULL;
 	}
 	info->inode = st.st_ino;
 	return info;
 }
-/* end subroutine (new_page_info) */
 
 /*
  * Reset an sbuf's length to 0.
  */
-static void sbuf_clear(SBUF *sbuf) noex {
+static void
+sbuf_clear(struct sbuf *sbuf)
+{
 	sbuf->end = sbuf->content;
 }
 
 /*
  * Allocate a new sbuf.
  */
-static struct sbuf * new_sbuf(void) noex {
+static struct sbuf *
+new_sbuf(void)
+{
 	struct sbuf *sbuf = (struct sbuf *) malloc(sizeof(struct sbuf));
 	sbuf->content = (char *) malloc(LINE_ALLOC);
 	sbuf->last = sbuf->content + LINE_ALLOC - 1;
@@ -253,7 +226,9 @@ static struct sbuf * new_sbuf(void) noex {
 /*
  * Ensure that there is enough room in the sbuf for nchars more characters.
  */
-static void sbuf_need(SBUF *sbuf, int nchars) noex {
+static void
+sbuf_need(struct sbuf *sbuf, int nchars)
+{
 	char *new_content;
 	size_t size, cntsize;
 
@@ -275,7 +250,9 @@ static void sbuf_need(SBUF *sbuf, int nchars) noex {
 /*
  * Appends a string of a given length to the sbuf.
  */
-static void sbuf_append(SBUF *sbuf, cchar *text, int length) noex {
+static void
+sbuf_append(struct sbuf *sbuf, const char *text, int length)
+{
 	if (length > 0) {
 		sbuf_need(sbuf, length);
 		memcpy(sbuf->end, text, length);
@@ -286,15 +263,18 @@ static void sbuf_append(SBUF *sbuf, cchar *text, int length) noex {
 /*
  * Appends a null-terminated string to the sbuf.
  */
-static void sbuf_append_str(SBUF *sbuf, char *text) noex {
+static void
+sbuf_append_str(struct sbuf *sbuf, char *text)
+{
 	sbuf_append(sbuf, text, strlen(text));
 }
 
 /*
  * Appends an edited null-terminated string to the sbuf.
  */
-static void sbuf_append_edited(SBUF *sbuf,char *text,
-		edited_copy copy) noex {
+static void
+sbuf_append_edited(struct sbuf *sbuf, char *text, edited_copy copy)
+{
 	int length = strlen(text);
 	if (length > 0) {
 		sbuf_need(sbuf, length);
@@ -305,17 +285,19 @@ static void sbuf_append_edited(SBUF *sbuf,char *text,
 /*
  * Strips any of a set of chars from the end of the sbuf.
  */
-static void sbuf_strip(SBUF *sbuf, cchar *set) noex {
-	nullptr_t	np{} ;
-	while (sbuf->end > sbuf->content && strchr(set,sbuf->end[-1]) != mp) {
-		sbuf->end-- ;
-	}
+static void
+sbuf_strip(struct sbuf *sbuf, const char *set)
+{
+	while (sbuf->end > sbuf->content && strchr(set, sbuf->end[-1]) != NULL)
+		sbuf->end--;
 }
 
 /*
  * Returns the null-terminated string built by the sbuf.
  */
-static char * sbuf_content(SBUF *sbuf) noex {
+static char *
+sbuf_content(struct sbuf *sbuf)
+{
 	*sbuf->end = '\0';
 	return sbuf->content;
 }
@@ -324,13 +306,14 @@ static char * sbuf_content(SBUF *sbuf) noex {
  * Returns true if no man page exists in the directory with
  * any of the names in the StringList.
  */
-static int no_page_exists(char *dir,StringList *names,char *suffix) noex {
+static int
+no_page_exists(char *dir, StringList *names, char *suffix)
+{
 	char path[MAXPATHLEN];
 	size_t i;
 
 	for (i = 0; i < names->sl_cur; i++) {
-		snprintf(path, sizeof path, 
-			"%s/%s.%s.gz", dir, names->sl_str[i], suffix);
+		snprintf(path, sizeof path, "%s/%s.%s.gz", dir, names->sl_str[i], suffix);
 		if (access(path, F_OK) < 0) {
 			path[strlen(path) - 3] = '\0';
 			if (access(path, F_OK) < 0)
@@ -340,18 +323,21 @@ static int no_page_exists(char *dir,StringList *names,char *suffix) noex {
 	}
 	return 1;
 }
-/* end subroutine (no_page_exists) */
 
-static void trap_signal(int sig __unused) noex {
+static void
+trap_signal(int sig __unused)
+{
 	if (tmp_file[0] != '\0')
 		unlink(tmp_file);
 	exit(1);
 }
 
 /*
- * Attempts to open an output file.  Returns nullptr if unsuccessful.
+ * Attempts to open an output file.  Returns NULL if unsuccessful.
  */
-static FILE *open_output(char *name, int dir_fd, char *rel_name) noex {
+static FILE *
+open_output(char *name, int dir_fd, char *rel_name)
+{
 	FILE *output;
 	int output_fd;
 	struct stat statbuf;
@@ -364,21 +350,21 @@ static FILE *open_output(char *name, int dir_fd, char *rel_name) noex {
 		if (output_fd == -1) {
 			warn("%s", name);
 			exit_code = 1;
-			return nullptr;
+			return NULL;
 		}
 		output = fdopen(output_fd, "r");
-		if (output == nullptr) {
+		if (output == NULL) {
 			warn("%s", name);
 			exit_code = 1;
-			return nullptr;
+			return NULL;
 		}
-		while (fgets(line, sizeof line, output) != nullptr) {
+		while (fgets(line, sizeof line, output) != NULL) {
 			line[strlen(line) - 1] = '\0';
 			sl_add(whatis_lines, strdup(line));
 		}
 		fclose(output);
 	}
-	if (common_output == nullptr) {
+	if (common_output == NULL) {
 		snprintf(tmp_file, sizeof tmp_file, "%s.tmp", name);
 		snprintf(tmp_rel_file, sizeof tmp_rel_file, "%s.tmp", rel_name);
 		name = tmp_file;
@@ -389,49 +375,49 @@ static FILE *open_output(char *name, int dir_fd, char *rel_name) noex {
 	 * into a random location.
 	 * See rdar://problem/55280616
 	 */
-	const int of = (O_WRONLY | O_NOFOLLOW | O_CREAT | O_TRUNC) ;
-	output_fd = openat(dir_fd, rel_name,of, 0644);
+	output_fd = openat(dir_fd, rel_name, O_WRONLY | O_NOFOLLOW | O_CREAT | O_TRUNC, 0644);
 	if (output_fd == -1) {
 		warn("%s", name);
 		exit_code = 1;
-		return nullptr;
+		return NULL;
 	}
 	if (fstat(output_fd, &statbuf) == -1) {
 		warn("%s: unable to stat", name);
 		close(output_fd);
 		exit_code = 1;
-		return nullptr;
+		return NULL;
 	}
 	if (statbuf.st_nlink > 1) {
 		warnx("%s: is a hardlink", name);
 		close(output_fd);
 		exit_code = 1;
-		return nullptr;
+		return NULL;
 	}
 	output = fdopen(output_fd, "w");
-	if (output == nullptr) {
+	if (output == NULL) {
 		warn("%s", name);
 		exit_code = 1;
-		return nullptr;
+		return NULL;
 	}
 	return output;
 }
-/* end subroutine (open_output) */
 
-static int linesort(cvoid *a, cvoid *b) noex {
-	return strcmp((*(cchar * const *)a), (*(cchar * const *)b));
+static int
+linesort(const void *a, const void *b)
+{
+	return strcmp((*(const char * const *)a), (*(const char * const *)b));
 }
 
 /*
  * Writes the unique sorted lines to the output file.
  */
-static void 
-finish_output(FILE *output,char *name,int dir_fd,char *rel_name) noex {
-	const size_t	esz = sizeof(char *) ;
+static void
+finish_output(FILE *output, char *name, int dir_fd, char *rel_name)
+{
 	size_t i;
-	char *prev = nullptr;
+	char *prev = NULL;
 
-	qsort(whatis_lines->sl_str, whatis_lines->sl_cur,esz,linesort);
+	qsort(whatis_lines->sl_str, whatis_lines->sl_cur, sizeof(char *), linesort);
 	for (i = 0; i < whatis_lines->sl_cur; i++) {
 		char *line = whatis_lines->sl_str[i];
 		if (i > 0 && strcmp(line, prev) == 0)
@@ -442,21 +428,24 @@ finish_output(FILE *output,char *name,int dir_fd,char *rel_name) noex {
 	}
 	fclose(output);
 	sl_free(whatis_lines, 1);
-	if (common_output == nullptr) {
+	if (common_output == NULL) {
 		renameat(dir_fd, tmp_rel_file, dir_fd, rel_name);
 		unlinkat(dir_fd, tmp_rel_file, 0);
 	}
 }
-/* end subroutine (finish_output) */
 
-static FILE * open_whatis(char *mandir, int mandir_fd) noexcept {
+static FILE *
+open_whatis(char *mandir, int mandir_fd)
+{
 	char filename[MAXPATHLEN];
 
 	snprintf(filename, sizeof filename, "%s/%s", mandir, whatis_name);
 	return open_output(filename, mandir_fd, whatis_name);
 }
 
-static void finish_whatis(FILE *output, char *mandir, int mandir_fd) noexcept {
+static void
+finish_whatis(FILE *output, char *mandir, int mandir_fd)
+{
 	char filename[MAXPATHLEN];
 
 	snprintf(filename, sizeof filename, "%s/%s", mandir, whatis_name);
@@ -466,7 +455,9 @@ static void finish_whatis(FILE *output, char *mandir, int mandir_fd) noexcept {
 /*
  * Tests to see if the given directory has already been visited.
  */
-static int already_visited(char *dir) noexcept {
+static int
+already_visited(char *dir)
+{
 	struct stat st;
 	struct visited_dir *visit;
 
@@ -493,9 +484,12 @@ static int already_visited(char *dir) noexcept {
  * Removes trailing spaces from a string, returning a pointer to just
  * beyond the new last character.
  */
-static char * trim_rhs(char *str) noex {
+static char *
+trim_rhs(char *str)
+{
 	char *rhs = &str[strlen(str)];
-	while (--rhs > str && isspace(*rhs)) ;
+	while (--rhs > str && isspace(*rhs))
+		;
 	*++rhs = '\0';
 	return rhs;
 }
@@ -503,7 +497,9 @@ static char * trim_rhs(char *str) noex {
 /*
  * Returns a pointer to the next non-space character in the string.
  */
-static char * skip_spaces(char *s) noex {
+static char *
+skip_spaces(char *s)
+{
 	while (*s != '\0' && isspace(*s))
 		s++;
 	return s;
@@ -512,7 +508,9 @@ static char * skip_spaces(char *s) noex {
 /*
  * Returns whether the string contains only digits.
  */
-static int only_digits(char *line) noexcept {
+static int
+only_digits(char *line)
+{
 	if (!isdigit(*line++))
 		return 0;
 	while (isdigit(*line))
@@ -527,9 +525,11 @@ static int only_digits(char *line) noexcept {
  *	etc.
  * assuming that section_start is ".Sh".
  */
-static int name_section_line(char *line, cchar *section_start) noexcept {
+static int
+name_section_line(char *line, const char *section_start)
+{
 	char *rhs;
-	cchar **title;
+	const char **title;
 
 	if (strncmp(line, section_start, 3) != 0)
 		return 0;
@@ -540,7 +540,7 @@ static int name_section_line(char *line, cchar *section_start) noexcept {
 		if (*--rhs == '"')
 			*rhs = '\0';
 	}
-	for (title = name_section_titles; *title != nullptr; title++)
+	for (title = name_section_titles; *title != NULL; title++)
 		if (strcmp(*title, line) == 0)
 			return 1;
 	return 0;
@@ -553,7 +553,9 @@ static int name_section_line(char *line, cchar *section_start) noexcept {
  *	\fF, \f(fo, \f[font]
  *	\*s, \*(st, \*[stringvar]
  */
-static char * de_nroff_copy(char *from, char *to, int fromlen) noexcept {
+static char *
+de_nroff_copy(char *from, char *to, int fromlen)
+{
 	char *from_end = &from[fromlen];
 	while (from < from_end) {
 		switch (*from) {
@@ -561,7 +563,7 @@ static char * de_nroff_copy(char *from, char *to, int fromlen) noexcept {
 			switch (*++from) {
 			case '(':
 				if (strncmp(&from[1], "em", 2) == 0 ||
-					strncmp(&from[1], "mi", 2) == 0) {
+						strncmp(&from[1], "mi", 2) == 0) {
 					from += 3;
 					continue;
 				}
@@ -569,17 +571,15 @@ static char * de_nroff_copy(char *from, char *to, int fromlen) noexcept {
 			case 's':
 				if (*++from == '-')
 					from++;
-				while (isdigit(*from)) {
+				while (isdigit(*from))
 					from++;
-				}
 				continue;
 			case 'f':
 			case '*':
-				if (*++from == '(') {
+				if (*++from == '(')
 					from += 3;
-				} else if (*from == '[') {
-				   while (*++from != ']' && 
-						from < from_end);
+				else if (*from == '[') {
+					while (*++from != ']' && from < from_end);
 					from++;
 				} else
 					from++;
@@ -589,24 +589,27 @@ static char * de_nroff_copy(char *from, char *to, int fromlen) noexcept {
 				continue;
 			}
 			break;
-		} /* end switch */
+		}
 		*to++ = *from++;
 	}
 	return to;
 }
-/* end subroutine (de_nroff_copy) */
 
 /*
  * Appends a string with the nroff formatting removed.
  */
-static void add_nroff(char *text) noexcept {
+static void
+add_nroff(char *text)
+{
 	sbuf_append_edited(whatis_proto, text, de_nroff_copy);
 }
 
 /*
  * Appends "name(suffix), " to whatis_final.
  */
-static void add_whatis_name(char *name, char *suffix) noexcept {
+static void
+add_whatis_name(char *name, char *suffix)
+{
 	if (*name != '\0') {
 		sbuf_append_str(whatis_final, name);
 		sbuf_append(whatis_final, "(", 1);
@@ -619,34 +622,34 @@ static void add_whatis_name(char *name, char *suffix) noexcept {
  * Processes an old-style man(7) line.  This ignores commands with only
  * a single number argument.
  */
-static void process_man_line(char *line) noexcept {
+static void
+process_man_line(char *line)
+{
 	if (*line == '.') {
 		while (isalpha(*++line))
 			;
 		line = skip_spaces(line);
 		if (only_digits(line))
 			return;
-	} else {
+	} else
 		line = skip_spaces(line);
-	}
-
 #ifdef __APPLE__
 	/* 4454557 */
 	if (*line == '"')
 		++line;
 #endif /* __APPLE__ */
-
 	if (*line != '\0') {
 		add_nroff(line);
 		sbuf_append(whatis_proto, " ", 1);
 	}
 }
-/* end subroutine (process_man_line) */
 
 /*
  * Processes a new-style mdoc(7) line.
  */
-static void process_mdoc_line(char *line) noexcept {
+static void
+process_mdoc_line(char *line)
+{
 	int xref;
 	int arg = 0;
 	char *line_end = &line[strlen(line)];
@@ -667,29 +670,27 @@ static void process_mdoc_line(char *line) noexcept {
 			next = ++line;
 			for (;;) {
 				next = strchr(next, '"');
-				if (next == nullptr)
+				if (next == NULL)
 					break;
 				memmove(next, next + 1, strlen(next));
 				line_end--;
 				if (*next != '"')
 					break;
 				next++;
-			} /* end for */
-		} else {
+			}
+		} else
 			next = strpbrk(line, " \t");
-		}
-		if (next != nullptr) {
+		if (next != NULL)
 			*next++ = '\0';
-		} else {
+		else
 			next = line_end;
-		}
 		if (isupper(*line) && islower(line[1]) && line[2] == '\0') {
 			if (strcmp(line, "Ns") == 0) {
 				arg = 0;
 				line = next;
 				continue;
 			}
-			if (strstr(mdoc_commands, line) != nullptr) {
+			if (strstr(mdoc_commands, line) != NULL) {
 				line = next;
 				continue;
 			}
@@ -701,39 +702,37 @@ static void process_mdoc_line(char *line) noexcept {
 				sbuf_append(whatis_proto, ")", 1);
 				xref = 0;
 				line = blank;
-			} else {
+			} else
 				sbuf_append(whatis_proto, " ", 1);
-			}
 		}
 		add_nroff(line);
 		arg++;
 		line = next;
-	} /* end while */
-	if (sbuf_length(whatis_proto) > orig_length) {
-		sbuf_append(whatis_proto, " ", 1);
 	}
+	if (sbuf_length(whatis_proto) > orig_length)
+		sbuf_append(whatis_proto, " ", 1);
 }
 
 /*
  * Collects a list of comma-separated names from the text.
  */
-static void collect_names(StringList *names, char *text) noexcept {
+static void
+collect_names(StringList *names, char *text)
+{
 	char *arg;
 
 	for (;;) {
 		arg = text;
 		text = strchr(text, ',');
-		if (text != nullptr) {
+		if (text != NULL)
 			*text++ = '\0';
-		}
 		sl_add(names, arg);
-		if (text == nullptr) return;
-		if (*text == ' ') {
+		if (text == NULL)
+			return;
+		if (*text == ' ')
 			text++;
-		}
-	} /* end for */
+	}
 }
-/* end subroutine (collect_names) */
 
 enum { STATE_UNKNOWN, STATE_MANSTYLE, STATE_MDOCNAME, STATE_MDOCDESC };
 
@@ -741,7 +740,9 @@ enum { STATE_UNKNOWN, STATE_MANSTYLE, STATE_MDOCNAME, STATE_MDOCDESC };
  * Processes a man page source into a single whatis line and adds it
  * to whatis_lines.
  */
-static void process_page(PAGE_INFO *page, char *section_dir) noexcept {
+static void
+process_page(struct page_info *page, char *section_dir)
+{
 	gzFile *in;
 	char buffer[4096];
 	char *line;
@@ -751,14 +752,14 @@ static void process_page(PAGE_INFO *page, char *section_dir) noexcept {
 	size_t i;
 
 	sbuf_clear(whatis_proto);
-	if ((in = gzopen(page->filename, "r")) == nullptr) {
+	if ((in = gzopen(page->filename, "r")) == NULL) {
 		warn("%s", page->filename);
 		exit_code = 1;
 		return;
 	}
-	while (gzgets(in, buffer, sizeof buffer) != nullptr) {
+	while (gzgets(in, buffer, sizeof buffer) != NULL) {
 		line = buffer;
-		if (strncmp(line, ".\\\"", 3) == 0) /* ignore comments */
+		if (strncmp(line, ".\\\"", 3) == 0)		/* ignore comments */
 			continue;
 		switch (state) {
 		/*
@@ -774,8 +775,7 @@ static void process_page(PAGE_INFO *page, char *section_dir) noexcept {
 		 * Inside an old-style .SH NAME section.
 		 */
 		case STATE_MANSTYLE:
-			if ((strncmp(line, ".SH", 3) == 0) || 
-				(strncmp(line, ".SS", 3) == 0))
+			if ((strncmp(line, ".SH", 3) == 0) || (strncmp(line, ".SS", 3) == 0))
 				break;
 			trim_rhs(line);
 			if (strcmp(line, ".") == 0)
@@ -801,7 +801,6 @@ static void process_page(PAGE_INFO *page, char *section_dir) noexcept {
 				state = STATE_MDOCDESC;
 			}
 			/* fall through */
-			/* FALLTHROUGH */
 		/*
 		 * Inside a new-style .Sh NAME section (after the .Nm-s).
 		 */
@@ -815,7 +814,7 @@ static void process_page(PAGE_INFO *page, char *section_dir) noexcept {
 			continue;
 		}
 		break;
-	} /* end if */
+	}
 	gzclose(in);
 	sbuf_strip(whatis_proto, " \t.-");
 	line = sbuf_content(whatis_proto);
@@ -824,13 +823,11 @@ static void process_page(PAGE_INFO *page, char *section_dir) noexcept {
 	 * the proper indentation or the section appended to each name.
 	 */
 	descr = strstr(line, " - ");
-	if (descr == nullptr) {
+	if (descr == NULL) {
 		descr = strchr(line, ' ');
-		if (descr == nullptr) {
+		if (descr == NULL) {
 			if (verbose)
-				fprintf(stderr,
-			"	ignoring junk description \"%s\"\n", 
-				line);
+				fprintf(stderr, "	ignoring junk description \"%s\"\n", line);
 			return;
 		}
 		*descr++ = '\0';
@@ -841,17 +838,15 @@ static void process_page(PAGE_INFO *page, char *section_dir) noexcept {
 	names = sl_init();
 	collect_names(names, line);
 	sbuf_clear(whatis_final);
-	if (!sl_find(names, page->name) && 
-		no_page_exists(section_dir, names, page->suffix)) {
+	if (!sl_find(names, page->name) && no_page_exists(section_dir, names, page->suffix)) {
 		/*
 		 * Add the page name since that's the only thing that
 		 * man(1) will find.
 		 */
 		add_whatis_name(page->name, page->suffix);
 	}
-	for (i = 0; i < names->sl_cur; i++) {
+	for (i = 0; i < names->sl_cur; i++)
 		add_whatis_name(names->sl_str[i], page->suffix);
-	} /* end for */
 	sl_free(names, 0);
 	sbuf_retract(whatis_final, 2);		/* remove last ", " */
 	while (sbuf_length(whatis_final) < indent)
@@ -860,14 +855,15 @@ static void process_page(PAGE_INFO *page, char *section_dir) noexcept {
 	sbuf_append_str(whatis_final, skip_spaces(descr));
 	sl_add(whatis_lines, strdup(sbuf_content(whatis_final)));
 }
-/* end subroutine (process_page) */
 
 /*
  * Sorts pages first by inode number, then by name.
  */
-static int pagesort(cvoid *a, cvoid *b) noex {
-	const PAGE_INFO	*p1 = *(PAGE_INFO * const *) a;
-	const PAGE_INFO *p2 = *(PAGE_INFO * const *) b;
+static int
+pagesort(const void *a, const void *b)
+{
+	const struct page_info *p1 = *(struct page_info * const *) a;
+	const struct page_info *p2 = *(struct page_info * const *) b;
 	if (p1->inode == p2->inode)
 		return strcmp(p1->name, p2->name);
 	return p1->inode - p2->inode;
@@ -876,10 +872,12 @@ static int pagesort(cvoid *a, cvoid *b) noex {
 /*
  * Processes a single man section.
  */
-static void process_section(char *section_dir) noex {
-	DIRENT		**entries;
+static void
+process_section(char *section_dir)
+{
+	struct dirent **entries;
 	int nentries;
-	PAGE_INFO	**pages;
+	struct page_info **pages;
 	int npages = 0;
 	int i;
 	ino_t prev_inode = 0;
@@ -890,7 +888,7 @@ static void process_section(char *section_dir) noex {
 	/*
 	 * scan the man section directory for pages
 	 */
-	nentries = scandir(section_dir, &entries, nullptr, alphasort);
+	nentries = scandir(section_dir, &entries, NULL, alphasort);
 	if (nentries < 0) {
 		warn("%s", section_dir);
 		exit_code = 1;
@@ -899,20 +897,20 @@ static void process_section(char *section_dir) noex {
 	/*
 	 * collect information about man pages
 	 */
-	pages = (PAGE_INFO **) calloc(nentries, sizeof(PAGE_INFO *));
+	pages = (struct page_info **) calloc(nentries, sizeof(struct page_info *));
 	for (i = 0; i < nentries; i++) {
-		PAGE_INFO	*info = new_page_info(section_dir, entries[i]);
-		if (info != nullptr)
+		struct page_info *info = new_page_info(section_dir, entries[i]);
+		if (info != NULL)
 			pages[npages++] = info;
 		free(entries[i]);
 	}
 	free(entries);
-	qsort(pages, npages, sizeof(PAGE_INFO *), pagesort);
+	qsort(pages, npages, sizeof(struct page_info *), pagesort);
 	/*
 	 * process each unique page
 	 */
 	for (i = 0; i < npages; i++) {
-		PAGE_INFO	*page = pages[i];
+		struct page_info *page = pages[i];
 		if (page->inode != prev_inode) {
 			prev_inode = page->inode;
 			if (verbose)
@@ -924,12 +922,13 @@ static void process_section(char *section_dir) noex {
 	}
 	free(pages);
 }
-/* end subroutine (process_section) */
 
 /*
  * Returns whether the directory entry is a man page section.
  */
-static int select_sections(DIRENT *entry) noexcept {
+static int
+select_sections(struct dirent *entry)
+{
 	char *p = &entry->d_name[3];
 
 	if (strncmp(entry->d_name, "man", 3) != 0)
@@ -940,16 +939,17 @@ static int select_sections(DIRENT *entry) noexcept {
 	}
 	return 1;
 }
-/* end subroutine (select_sections) */
 
 /*
  * Processes a single top-level man directory by finding all the
  * sub-directories named man* and processing each one in turn.
  */
-static void process_mandir(char *dir_name) noexcept {
+static void
+process_mandir(char *dir_name)
+{
 	int dir_fd;
 	DIR *dir;
-	FILE *fp = nullptr;
+	FILE *fp = NULL;
 	struct dirent *entry;
 	struct stat st;
 
@@ -965,56 +965,54 @@ static void process_mandir(char *dir_name) noexcept {
 		return;
 	}
 	dir = fdopendir(dir_fd);
-	if (dir == nullptr) {
+	if (dir == NULL) {
 		warn("%s", dir_name);
 		close(dir_fd);
 		exit_code = 1;
 		return;
 	}
-	if (common_output == nullptr && 
-			(fp = open_whatis(dir_name, dir_fd)) == nullptr) {
+	if (common_output == NULL && (fp = open_whatis(dir_name, dir_fd)) == NULL) {
 		closedir(dir);
 		return;
 	}
-	while ((entry = readdir(dir)) != nullptr) {
+	while ((entry = readdir(dir)) != NULL) {
 		char section_dir[MAXPATHLEN];
 		if (select_sections(entry) == 0)
 			continue;
-		snprintf(section_dir, sizeof section_dir, 
-			"%s/%s", dir_name, entry->d_name);
+		snprintf(section_dir, sizeof section_dir, "%s/%s", dir_name, entry->d_name);
 		process_section(section_dir);
 #ifndef __APPLE__
-		snprintf(section_dir, sizeof section_dir, 
-			"%s/%s/%s", dir_name,
+		snprintf(section_dir, sizeof section_dir, "%s/%s/%s", dir_name,
 		    entry->d_name, machine);
 		if (stat(section_dir, &st) == 0 && S_ISDIR(st.st_mode))
 			process_section(section_dir);
 #endif /* !__APPLE__ */
-	} /* end while */
-	if (common_output == nullptr)
+	}
+	if (common_output == NULL)
 		finish_whatis(fp, dir_name, dir_fd);
 	closedir(dir);
 }
-/* end subroutine (process_mandir) */
 
 /*
  * Processes one argument, which may be a colon-separated list of
  * directories.
  */
-static void process_argument(cchar *arg) noexcept {
+static void
+process_argument(const char *arg)
+{
 	char *dir;
 	char *mandir;
 	char *parg;
 
 	parg = strdup(arg);
-	if (parg == nullptr)
+	if (parg == NULL)
 		err(1, "out of memory");
-	while ((dir = strsep(&parg, ":")) != nullptr) {
-		if (locale != nullptr) {
+	while ((dir = strsep(&parg, ":")) != NULL) {
+		if (locale != NULL) {
 			asprintf(&mandir, "%s/%s", dir, locale);
 			process_mandir(mandir);
 			free(mandir);
-			if (lang_locale != nullptr) {
+			if (lang_locale != NULL) {
 				asprintf(&mandir, "%s/%s", dir, lang_locale);
 				process_mandir(mandir);
 				free(mandir);
@@ -1022,14 +1020,16 @@ static void process_argument(cchar *arg) noexcept {
 		} else {
 			process_mandir(dir);
 		}
-	} /* end while */
+	}
 	free(parg);
 }
-/* end subroutine (process_argument) */
 
-int main(int argc,mainv argv,mainv) noexcept {
+
+int
+main(int argc, char **argv)
+{
 	int opt;
-	FILE *fp = nullptr;
+	FILE *fp = NULL;
 
 	while ((opt = getopt(argc, argv, "ai:n:o:vL")) != -1) {
 		switch (opt) {
@@ -1050,13 +1050,13 @@ int main(int argc,mainv argv,mainv) noexcept {
 			break;
 		case 'L':
 			locale = getenv("LC_ALL");
-			if (locale == nullptr)
+			if (locale == NULL)
 				locale = getenv("LC_CTYPE");
-			if (locale == nullptr)
+			if (locale == NULL)
 				locale = getenv("LANG");
-			if (locale != nullptr) {
+			if (locale != NULL) {
 				char *sep = strchr(locale, '_');
-				if (sep != nullptr && isupper(sep[1]) &&
+				if (sep != NULL && isupper(sep[1]) &&
 				    isupper(sep[2])) {
 					asprintf(&lang_locale, "%.*s%s", sep - locale, locale, &sep[3]);
 				}
@@ -1077,27 +1077,24 @@ int main(int argc,mainv argv,mainv) noexcept {
 	whatis_final = new_sbuf();
 
 #ifndef __APPLE__
-	if ((machine = getenv("MACHINE")) == nullptr)
+	if ((machine = getenv("MACHINE")) == NULL)
 		machine = MACHINE;
 #endif /* !__APPLE__ */
 
-	if (common_output != nullptr && (fp = open_output(common_output, AT_FDCWD, common_output)) == nullptr)
+	if (common_output != NULL && (fp = open_output(common_output, AT_FDCWD, common_output)) == NULL)
 		err(1, "%s", common_output);
 	if (optind == argc) {
-		cchar *manpath = getenv("MANPATH");
-		if (manpath == nullptr)
+		const char *manpath = getenv("MANPATH");
+		if (manpath == NULL)
 			manpath = DEFAULT_MANPATH;
 		process_argument(manpath);
 	} else {
 		while (optind < argc)
 			process_argument(argv[optind++]);
 	}
-	if (common_output != nullptr) {
+	if (common_output != NULL)
 		finish_output(fp, common_output, AT_FDCWD, common_output);
-	}
-
-	return exit_code ;
+	exit(exit_code);
 }
-/* end subroutine (main) */
 
 
