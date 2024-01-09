@@ -1,7 +1,6 @@
 /* main (makewhatis) */
 /* lang=C++20 */
 
-#define	CF_TURNOFFREFUSAL	1	/* turn OFF refusal to follow links */
 
 /*-
  * Copyright (c) 2002 John Rochester
@@ -93,12 +92,7 @@ __FBSDID("$FreeBSD: src/usr.bin/makewhatis/makewhatis.c,v 1.9 2002/09/04 23:29:0
 
 
 #define	PAGE_INFO		struct page_info
-#define	VISITED_DIR		struct visited_dir
 #define	SBUF			struct sbuf
-
-#ifndef	STAT
-#define	STAT			struct stat
-#endif
 
 #ifndef	DIRENT
 #define	DIRENT			struct dirent
@@ -135,7 +129,7 @@ struct page_info {
 /*
  * An entry kept for each visited directory.
  */
-VISITED_DIR {
+struct visited_dir {
 	dev_t		device;
 	ino_t		inode;
 	SLIST_ENTRY(visited_dir)	next;
@@ -161,14 +155,10 @@ struct sbuf {
 #define sbuf_length(sbuf)		\
 	((sbuf)->end - (sbuf)->content)
 
-
-/* local variables */
-
 static char blank[] = 		"";
 
 static int append;			/* -a flag: append to existing whatis */
 static int verbose;			/* -v flag: be verbose with warnings */
-static char optquiet ;			/* -Q flag: quiet about errors */
 static int indent = 24;			/* -i option: description indentation */
 static cchar *whatis_name="whatis";	/* -n option: the name */
 static char *common_output;		/* -o option: the single output file */
@@ -180,7 +170,7 @@ static cchar *machine;
 
 static int exit_code;			/* exit code to use when finished */
 static SLIST_HEAD(, visited_dir) visited_dirs =
-    SLIST_HEAD_INITIALIZER(visited_dirs) ;
+    SLIST_HEAD_INITIALIZER(visited_dirs);
 
 /*
  * While the whatis line is being formed, it is stored in whatis_proto.
@@ -193,9 +183,6 @@ static StringList *whatis_lines;	/* collected output lines */
 
 static char tmp_file[MAXPATHLEN];	/* path of temporary file, if any */
 static char tmp_rel_file[MAXPATHLEN];
-
-
-/* local subroutines */
 
 /* fix-up for (f*cked-up) BROKEN |getopt(3c)| -- DAM */
 static int getoptv(int argc,mainv argv,cchar *optstr) noexcept {
@@ -237,7 +224,7 @@ static PAGE_INFO *new_page_info(char *dir,DIRENT *dirent) noex {
 	PAGE_INFO	*info;
 	int basename_length;
 	char *suffix;
-	STAT		st;
+	struct stat st;
 
 	info = (PAGE_INFO *) malloc(sizeof(PAGE_INFO)) ;
 	if (info == nullptr)
@@ -271,9 +258,8 @@ static PAGE_INFO *new_page_info(char *dir,DIRENT *dirent) noex {
 		return nullptr;
 	}
 	if (!S_ISREG(st.st_mode)) {
-		if (verbose && !S_ISDIR(st.st_mode)) {
+		if (verbose && !S_ISDIR(st.st_mode))
 			warnx("%s: not a regular file", info->filename);
-		}
 		free_page_info(info);
 		return nullptr;
 	}
@@ -319,9 +305,8 @@ static void sbuf_need(SBUF *sbuf, int nchars) noex {
 		sbuf->content = new_content;
 		sbuf->end = new_content + cntsize;
 		sbuf->last = new_content + size - 1;
-	} /* end while */
+	}
 }
-/* end subroutine (sbuf_need) */
 
 /*
  * Appends a string of a given length to the sbuf.
@@ -388,7 +373,7 @@ static int no_page_exists(char *dir,StringList *names,char *suffix) noex {
 				continue;
 		}
 		return 0;
-	} /* end for */
+	}
 	return 1;
 }
 /* end subroutine (no_page_exists) */
@@ -405,20 +390,21 @@ static void trap_signal(int sig __unused) noex {
 static FILE *open_output(char *name, int dir_fd,cchar *rel_name) noex {
 	FILE *output;
 	int output_fd;
-	STAT	statbuf;
+	struct stat statbuf;
 
 	whatis_lines = sl_init();
 	if (append) {
 		char line[LINE_ALLOC];
+
 		output_fd = openat(dir_fd, rel_name, O_RDONLY);
 		if (output_fd == -1) {
-			if (!optquiet) warn("%s", name);
+			warn("%s", name);
 			exit_code = 1;
 			return nullptr;
 		}
 		output = fdopen(output_fd, "r");
 		if (output == nullptr) {
-			if (!optquiet) warn("%s", name);
+			warn("%s", name);
 			exit_code = 1;
 			return nullptr;
 		}
@@ -427,23 +413,19 @@ static FILE *open_output(char *name, int dir_fd,cchar *rel_name) noex {
 			sl_add(whatis_lines, strdup(line));
 		}
 		fclose(output);
-	} /* end if */
+	}
 	if (common_output == nullptr) {
-		snprintf(tmp_file,sizeof tmp_file,"%s.tmp",name);
-		snprintf(tmp_rel_file,sizeof tmp_rel_file,"%s.tmp",rel_name) ;
+		snprintf(tmp_file, sizeof tmp_file, "%s.tmp", name);
+		snprintf(tmp_rel_file, sizeof tmp_rel_file, "%s.tmp", rel_name);
 		name = tmp_file;
 		rel_name = tmp_rel_file;
 	}
 	/* Bail out if the file is actually a symlink or has another link.
-	 * This script can run as root and we do not want to risk writing
+	 * This script can run as root and we don't want to risk writing
 	 * into a random location.
 	 * See rdar://problem/55280616
 	 */
-#if	CF_TURNOFFREFUSAL
-	const int of = (O_WRONLY | O_CREAT | O_TRUNC) ;
-#else
 	const int of = (O_WRONLY | O_NOFOLLOW | O_CREAT | O_TRUNC) ;
-#endif
 	output_fd = openat(dir_fd, rel_name,of, 0644);
 	if (output_fd == -1) {
 		warn("%s", name);
@@ -456,17 +438,15 @@ static FILE *open_output(char *name, int dir_fd,cchar *rel_name) noex {
 		exit_code = 1;
 		return nullptr;
 	}
-#if	CF_TURNOFFREFUSAL
 	if (statbuf.st_nlink > 1) {
 		warnx("%s: is a hardlink", name);
 		close(output_fd);
 		exit_code = 1;
 		return nullptr;
 	}
-#endif /* CF_TURNOFFREFUSAL */
 	output = fdopen(output_fd, "w");
 	if (output == nullptr) {
-		if (!optquiet) warn("%s", name);
+		warn("%s", name);
 		exit_code = 1;
 		return nullptr;
 	}
@@ -494,7 +474,7 @@ static void finish_output(FILE *output,char *,int dir_fd,cchar *rel_name) noex {
 		prev = line;
 		fputs(line, output);
 		putc('\n', output);
-	} /* end for */
+	}
 	fclose(output);
 	sl_free(whatis_lines, 1);
 	if (common_output == nullptr) {
@@ -522,28 +502,27 @@ static void finish_whatis(FILE *output, char *mandir, int mandir_fd) noexcept {
  * Tests to see if the given directory has already been visited.
  */
 static int already_visited(char *dir) noexcept {
-	STAT		st;
-	VISITED_DIR *visit;
+	struct stat st;
+	struct visited_dir *visit;
 
 	if (stat(dir, &st) < 0) {
-		if (!optquiet) warn("%s", dir);
+		warn("%s", dir);
 		exit_code = 1;
 		return 1;
 	}
 	SLIST_FOREACH(visit, &visited_dirs, next) {
 		if (visit->inode == st.st_ino &&
 		    visit->device == st.st_dev) {
-			if (!optquiet) warnx("already visited %s",dir) ;
+			warnx("already visited %s", dir);
 			return 1;
 		}
-	} /* end for-each */
-	visit = (VISITED_DIR *) malloc(sizeof(VISITED_DIR));
+	}
+	visit = (struct visited_dir *) malloc(sizeof(struct visited_dir));
 	visit->device = st.st_dev;
 	visit->inode = st.st_ino;
 	SLIST_INSERT_HEAD(&visited_dirs, visit, next);
 	return 0;
 }
-/* end subroutine (already_visited) */
 
 /*
  * Removes trailing spaces from a string, returning a pointer to just
@@ -560,9 +539,8 @@ static char * trim_rhs(char *str) noex {
  * Returns a pointer to the next non-space character in the string.
  */
 static char * skip_spaces(char *s) noex {
-	while (*s != '\0' && isspace(*s)) {
+	while (*s != '\0' && isspace(*s))
 		s++;
-	}
 	return s;
 }
 
@@ -572,10 +550,9 @@ static char * skip_spaces(char *s) noex {
 static int only_digits(char *line) noexcept {
 	if (!isdigit(*line++))
 		return 0;
-	while (isdigit(*line)) {
+	while (isdigit(*line))
 		line++;
-	}
-	return (*line == '\0') ;
+	return *line == '\0';
 }
 
 /*
@@ -603,7 +580,6 @@ static int name_section_line(char *line, cchar *section_start) noexcept {
 			return 1;
 	return 0;
 }
-/* end subroutine (name_section_line) */
 
 /*
  * Copies characters while removing the most common nroff/troff
@@ -774,7 +750,6 @@ static void process_mdoc_line(char *line) noexcept {
 		sbuf_append(whatis_proto, " ", 1);
 	}
 }
-/* end subroutine (process_mdoc_line) */
 
 /*
  * Collects a list of comma-separated names from the text.
@@ -877,7 +852,7 @@ static void process_page(PAGE_INFO *page, char *section_dir) noexcept {
 			continue;
 		}
 		break;
-	} /* end while */
+	} /* end if */
 	gzclose(in);
 	sbuf_strip(whatis_proto, " \t.-");
 	line = sbuf_content(whatis_proto);
@@ -916,9 +891,8 @@ static void process_page(PAGE_INFO *page, char *section_dir) noexcept {
 	} /* end for */
 	sl_free(names, 0);
 	sbuf_retract(whatis_final, 2);		/* remove last ", " */
-	while (sbuf_length(whatis_final) < indent) {
+	while (sbuf_length(whatis_final) < indent)
 		sbuf_append(whatis_final, " ", 1);
-	}
 	sbuf_append(whatis_final, " - ", 3);
 	sbuf_append_str(whatis_final, skip_spaces(descr));
 	sl_add(whatis_lines, strdup(sbuf_content(whatis_final)));
@@ -968,7 +942,7 @@ static void process_section(char *section_dir) noex {
 		if (info != nullptr)
 			pages[npages++] = info;
 		free(entries[i]);
-	} /* end for */
+	}
 	free(entries);
 	qsort(pages, npages, sizeof(PAGE_INFO *), pagesort);
 	/*
@@ -978,19 +952,13 @@ static void process_section(char *section_dir) noex {
 		PAGE_INFO	*page = pages[i];
 		if (page->inode != prev_inode) {
 			prev_inode = page->inode;
-			if (verbose) {
-				fprintf(stderr, 
-				"	reading %s\n", 
-					page->filename);
-			}
+			if (verbose)
+				fprintf(stderr, "	reading %s\n", page->filename);
 			process_page(page, section_dir);
-		} else if (verbose) {
-			fprintf(stderr, 
-			"	skipping %s, duplicate\n", 
-					page->filename);
-		}
+		} else if (verbose)
+			fprintf(stderr, "	skipping %s, duplicate\n", page->filename);
 		free_page_info(page);
-	} /* end for */
+	}
 	free(pages);
 }
 /* end subroutine (process_section) */
@@ -1016,8 +984,10 @@ static int select_sections(DIRENT *entry) noexcept {
  * sub-directories named man* and processing each one in turn.
  */
 static void process_mandir(char *dir_name) noexcept {
-	nullptr_t	np{} ;
 	int dir_fd;
+	DIR *dir;
+	FILE *fp = nullptr;
+	DIRENT	*entry;
 	/* struct stat st; */			/* <- was not used! */
 
 	if (already_visited(dir_name))
@@ -1025,18 +995,22 @@ static void process_mandir(char *dir_name) noexcept {
 	if (verbose)
 		fprintf(stderr, "man directory %s\n", dir_name);
 
-	if ((dir_fd = open(dir_name,O_RDONLY)) >= 0) {
-		STAT	sb ;
-	    if (fstat(dir_fd,&sb) >= 0) {
-		if (S_ISDIR(sb.st_mode)) {
-	DIR *dir;
-	FILE *fp = nullptr;
-	if ((dir = fdopendir(dir_fd)) != nullptr) {
-	DIRENT	*entry;
+	dir_fd = open(dir_name, O_RDONLY | O_DIRECTORY | O_NOFOLLOW);
+	if (dir_fd == -1) {
+		warn("%s", dir_name);
+		exit_code = 1;
+		return;
+	}
+	dir = fdopendir(dir_fd);
+	if (dir == nullptr) {
+		warn("%s", dir_name);
+		close(dir_fd);
+		exit_code = 1;
+		return;
+	}
 	if (common_output == nullptr && 
-			(fp = open_whatis(dir_name, dir_fd)) == np) {
+			(fp = open_whatis(dir_name, dir_fd)) == nullptr) {
 		closedir(dir);
-		close(dir_fd) ;
 		return;
 	}
 	while ((entry = readdir(dir)) != nullptr) {
@@ -1054,22 +1028,9 @@ static void process_mandir(char *dir_name) noexcept {
 			process_section(section_dir);
 #endif /* !__APPLE__ */
 	} /* end while */
-	if (common_output == nullptr) {
+	if (common_output == nullptr)
 		finish_whatis(fp, dir_name, dir_fd);
-	}
 	closedir(dir);
-	} else {
-		if (!optquiet) warn("%s", dir_name);
-		exit_code = 1;
-	}
-		} /* end if (had directory) */
-	    } /* end if (stat) */
-	    close(dir_fd);
-	} else {
-		if (!optquiet) warn("%s", dir_name);
-		exit_code = 1;
-	}
-	return ;
 }
 /* end subroutine (process_mandir) */
 
@@ -1107,7 +1068,7 @@ int main(int argc,mainv argv,mainv) noexcept {
 	int opt;
 	FILE *fp = nullptr;
 
-	while ((opt = getoptv(argc,argv,"ai:n:o:vLQ")) != -1) {
+	while ((opt = getoptv(argc,argv,"ai:n:o:vL")) != -1) {
 		switch (opt) {
 		case 'a':
 			append++;
@@ -1141,13 +1102,8 @@ int main(int argc,mainv argv,mainv) noexcept {
 			    } /* end if */
 			} /* end if */
 			break;
-		case 'Q':
-		    optquiet = true ;
-		    break ;
 		default:
-			fprintf(stderr, 
-			"usage: %s [-a] [-i indent] [-n name] [-o output_file] [-v] [-L] [directories...]\n", 
-			argv[0]);
+			fprintf(stderr, "usage: %s [-a] [-i indent] [-n name] [-o output_file] [-v] [-L] [directories...]\n", argv[0]);
 			exit(1);
 		}
 	}
