@@ -6,6 +6,11 @@ RF_DEBUG=false
 
 PN=${0##*/}
 KEY=
+FGREP_OPTS=
+
+if [[ ${PN} == "whatis" ]] ; then
+  FGREP_OPTS="-w"
+fi
 
 function debprint {
   if ${RF_DEBUG} && [[ -n "${*}" ]] ; then
@@ -23,12 +28,13 @@ function findone {
         debprint mandir=${D}
         WI=${D}/whatis
         if [[ -r ${WI} ]] ; then
-          fgrep -w ${KEY} ${WI}
+          fgrep ${FGREP_OPTS} ${KEY} ${WI}
         fi
       fi
     done
   fi
 }
+
 
 if haveprogram pathenum ; then
   for K in "${@}" ; do
