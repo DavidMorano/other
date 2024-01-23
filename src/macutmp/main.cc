@@ -148,6 +148,9 @@ constexpr int		lhost = 27 ;
 constexpr int		tlen = TIMEBUFLEN ;
 
 
+/* exported variables */
+
+
 /* exported subroutines */
 
 int main(int argc,mainv argv,mainv) {
@@ -252,7 +255,7 @@ static int utmp() noexcept {
 		localtime_r(&t,&ts) ;
 		strftime(tbuf,tlen,tmt,&ts) ;
 	        printf(fmt,ibuf,ubuf,lbuf,tbuf,sid,hbuf) ;
-	   }
+	   } /* end if (type match) */
 	} /* end while */
 	return (rs >= 0) ? c : rs ;
 }
