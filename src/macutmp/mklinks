@@ -5,7 +5,9 @@ CMDS=" utmp boottime "
 CMDS+=" utmpid utmpname utmpline utmphost"
 CMDS+=" logid logname logline loghost"
 CMDS+=" logged"
+
 LOCPROG=macutmp.x
+TDIRS=" /usr/local /opt/local "
 
 function linkdir {
   typeset TDIR=${1}
@@ -15,7 +17,7 @@ function linkdir {
 }
 
 if [[ -x "${LOCPROG}" ]] ; then
-  for D in /usr/local /opt/local ; do
+  for D in ${TDIRS} ; do
     if [[ -d "${D}" ]] ; then
       linkdir $D
     else
