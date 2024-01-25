@@ -1,6 +1,6 @@
-# MAKEFILES (utmp)
+# MAKEFILES (macutmp)
 
-T= utmp
+T= macutmp
 
 ALL= $(T).x
 
