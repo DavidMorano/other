@@ -16,6 +16,7 @@
 
 	Names:
 	utmp
+	boottime
 	utmpid
 	utmpname
 	utmpline
@@ -79,6 +80,10 @@
 #define	DEVPREFIX	"/dev/"
 #endif
 
+#ifndef	eol
+#define	eol		'\n'
+#endif
+
 
 /* local namespaces */
 
@@ -97,6 +102,7 @@ typedef const char *const	*mainv ;
 
 static int getpm(int,mainv,mainv) noexcept ;
 static int utmp() noexcept ;
+static int boottime() noexcept ;
 static int findsid(int) noexcept ;
 static int findline(int) noexcept ;
 static int printval(int,struct utmpx *) noexcept ;
@@ -124,6 +130,7 @@ enum progmodes {
 	progmode_logline,
 	progmode_loghost,
 	progmode_logged,
+	progmode_boottime,
 	progmode_iverlast
 } ;
 
@@ -138,6 +145,7 @@ constexpr const char *const	prognames[] = {
 	"logline",
 	"loghost",
 	"logged",
+	"boottime",
 	nullptr
 } ;
 
@@ -163,6 +171,9 @@ int main(int argc,mainv argv,mainv) {
 	    switch (pm) {
 	    case progmode_utmp:
 		rs = utmp() ;
+		break ;
+	    case progmode_boottime:
+		rs = boottime() ;
 		break ;
 	    case progmode_logid:
 		if (!fpm++) pm = progmode_utmpid ;
@@ -260,6 +271,24 @@ static int utmp() noexcept {
 	return (rs >= 0) ? c : rs ;
 }
 /* end subroutine (utmp) */
+
+static int boottime() noexcept {
+	struct tm	ts ;
+	struct utmpx	*up ;
+	int		rs = SR_OK ;
+	cchar		*tmt = "%Y%m%d-%H%M%S" ;
+	char		tbuf[tlen+1] ;
+	while ((up = getutxent()) != nullptr) {
+	   if (up->ut_type == BOOT_TIME) {
+		const time_t	t = time_t(up->ut_tv.tv_sec) ;
+		localtime_r(&t,&ts) ;
+		strftime(tbuf,tlen,tmt,&ts) ;
+	        cout << tbuf << eol ;
+	   } /* end if (type match) */
+	} /* end while */
+	return rs ;
+}
+/* end subroutine (boottime) */
 
 static int findsid(int pm) noexcept {
 	const int	sid = getsid(0) ;	/* get our SID */

@@ -17,7 +17,7 @@ PROG="print -u2 -- ${PN}: no-program"
 if ${RF_OK} ; then
 OPTS=
 case ${PN} in
-cpp*)
+gcpp*)
   PROG=gcpp13
   OPTS="${INCDIRS}"
   ;;
