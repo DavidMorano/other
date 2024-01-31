@@ -17,6 +17,7 @@
 	Names:
 	utmp
 	boottime
+	nusers
 	utmpid
 	utmpname
 	utmpline
@@ -101,7 +102,7 @@ typedef const char *const	*mainv ;
 /* forward references */
 
 static int getpm(int,mainv,mainv) noexcept ;
-static int utmp() noexcept ;
+static int utmp(bool) noexcept ;
 static int boottime() noexcept ;
 static int findsid(int) noexcept ;
 static int findline(int) noexcept ;
@@ -121,6 +122,8 @@ static bool isourtype(struct utmpx *up) noexcept {
 
 enum progmodes {
 	progmode_utmp,
+	progmode_nusers,
+	progmode_boottime,
 	progmode_utmpid,
 	progmode_utmpname,
 	progmode_utmpline,
@@ -130,12 +133,13 @@ enum progmodes {
 	progmode_logline,
 	progmode_loghost,
 	progmode_logged,
-	progmode_boottime,
 	progmode_iverlast
 } ;
 
 constexpr const char *const	prognames[] = {
 	"utmp",
+	"nusers",
+	"boottime",
 	"utmpid",
 	"utmpname",
 	"utmpline",
@@ -145,7 +149,6 @@ constexpr const char *const	prognames[] = {
 	"logline",
 	"loghost",
 	"logged",
-	"boottime",
 	nullptr
 } ;
 
@@ -170,7 +173,11 @@ int main(int argc,mainv argv,mainv) {
 	    int		fpm = 0 ;
 	    switch (pm) {
 	    case progmode_utmp:
-		rs = utmp() ;
+		rs = utmp(true) ;
+		break ;
+	    case progmode_nusers:
+		rs = utmp(false) ;
+		cout << rs << eol ;
 		break ;
 	    case progmode_boottime:
 		rs = boottime() ;
@@ -240,7 +247,7 @@ static int getpm(int argc,mainv argv,mainv names) noexcept {
 }
 /* end subroutine (getpm) */
 
-static int utmp() noexcept {
+static int utmp(bool fprint) noexcept {
 	struct tm	ts ;
 	struct utmpx	*up ;
 	int		rs = SR_OK ;
@@ -254,18 +261,20 @@ static int utmp() noexcept {
 	char		hbuf[lhost+1] ;
 	while ((up = getutxent()) != nullptr) {
 	   if (isourtype(up)) {
-		const time_t	t = time_t(up->ut_tv.tv_sec) ;
-		cint		sid = up->ut_pid ;
-		cchar		*lp = up->ut_line ;
 		c += 1 ;
-		strncpy(ibuf,up->ut_id,lid) ;
-		strncpy(ubuf,up->ut_user,luser) ;
-		while (*lp == ' ') lp += 1 ;
-		strncpy(lbuf,lp,lline) ;
-		strncpy(hbuf,up->ut_host,lhost) ;
-		localtime_r(&t,&ts) ;
-		strftime(tbuf,tlen,tmt,&ts) ;
-	        printf(fmt,ibuf,ubuf,lbuf,tbuf,sid,hbuf) ;
+		if (fprint) {
+		    const time_t	t = time_t(up->ut_tv.tv_sec) ;
+		    cint		sid = up->ut_pid ;
+		    cchar		*lp = up->ut_line ;
+		    strncpy(ibuf,up->ut_id,lid) ;
+		    strncpy(ubuf,up->ut_user,luser) ;
+		    while (*lp == ' ') lp += 1 ;
+		    strncpy(lbuf,lp,lline) ;
+		    strncpy(hbuf,up->ut_host,lhost) ;
+		    localtime_r(&t,&ts) ;
+		    strftime(tbuf,tlen,tmt,&ts) ;
+	            printf(fmt,ibuf,ubuf,lbuf,tbuf,sid,hbuf) ;
+		} /* end if (fprint) */
 	   } /* end if (type match) */
 	} /* end while */
 	return (rs >= 0) ? c : rs ;
