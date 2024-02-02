@@ -1,7 +1,7 @@
 #!/usr/extra/bin/ksh
 # MKLINKS
 
-CMDS=" utmp boottime "
+CMDS=" utmp boottime nusers"
 CMDS+=" utmpid utmpname utmpline utmphost"
 CMDS+=" logid logname logline loghost"
 CMDS+=" logged"

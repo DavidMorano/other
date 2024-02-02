@@ -2,6 +2,7 @@
 /* lang=C++23 */
 
 /* the COMPOSE fixer program */
+/* version %I% last-modified %G% */
 
 
 /* revision history:
@@ -20,8 +21,6 @@
 *******************************************************************************/
 
 #include	<envstandards.h>
-#include	<sys/types.h>
-#include	<sys/stat.h>
 #include	<unistd.h>
 #include	<iostream>
 #include	<string>		/* yes: C++ "string" obect */
@@ -32,11 +31,12 @@
 #include	<localmisc.h>
 
 
-/* namespaces */
+/* local namespaces */
 
 using namespace		std ;
 
-/* typedefs */
+
+/* local typedefs */
 
 
 /* local structures */
@@ -154,6 +154,10 @@ static constexpr cchar	*lines[] = {
 	R"xx(~	_~ _)xx",
 	nullptr
 } ;
+
+
+/* exported variables */
+
 
 /* exported subroutines */
 
