@@ -1,4 +1,4 @@
-/* main (utmp) */
+/* main (macutmp) */
 /* lang=C++20 */
 
 /* print out the UTMP entry 'line' field if terminal session is registered */
@@ -219,10 +219,9 @@ static int getpm(int argc,mainv argv,mainv names) noexcept {
 	    cchar	*argz = argv[0] ;
 	    if (argz[0]) {
 		int	al = strlen(argz) ;
-		int	si ;
 		cchar	*ap = argz ;
 		while ((al > 1) && (ap[al-1] == '/')) al -= 1 ;
-		if ((si = sirchr(ap,al,'/')) >= 0) {
+		if (int si ; (si = sirchr(ap,al,'/')) >= 0) {
 		    ap += (si+1) ;
 		    al -= (si+1) ;
 		}
@@ -345,7 +344,8 @@ static int printval(int pm,struct utmpx *up) noexcept {
 	cint		olen = HOSTLEN ;
 	int		rs = SR_OK ;
 	int		fl, ml ;
-	char		obuf[HOSTLEN+1] = {} ;
+	char		obuf[HOSTLEN+1] ;
+	obuf[0] = '\0' ;
 	switch (pm) {
 	case progmode_utmpid:
 	    fl = int(sizeof(up->ut_id)) ;
