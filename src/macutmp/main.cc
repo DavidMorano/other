@@ -373,7 +373,7 @@ static int printval(int pm,struct utmpx *up) noexcept {
 	    rs = SR_BADFMT ;
 	    break ;
 	} /* end switch */
-	if ((rs >= 0) && obuf[0] && (pm != progmode_logged)) {
+	if ((rs >= 0) && (pm != progmode_logged)) {
 	    cout << obuf << '\n' ;
 	}
 	return rs ;
