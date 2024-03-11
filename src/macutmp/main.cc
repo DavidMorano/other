@@ -345,7 +345,8 @@ static int findline(int pm) noexcept {
 static int printval(int pm,struct utmpx *up) noexcept {
 	cint		olen = HOSTLEN ;
 	int		rs = SR_OK ;
-	int		fl, ml ;
+	int		fl = 0 ;
+	int		ml = 0 ;
 	char		obuf[HOSTLEN+1] ;
 	obuf[0] = '\0' ;
 	switch (pm) {
@@ -372,10 +373,10 @@ static int printval(int pm,struct utmpx *up) noexcept {
 	case progmode_logged:
 	    break ;
 	default:
-	    rs = SR_BADFMT ;
+	    rs = SR_BUGCHECK ;
 	    break ;
 	} /* end switch */
-	if ((rs >= 0) && (pm != progmode_logged)) {
+	if ((rs >= 0) && fl && (pm != progmode_logged)) {
 	    cout << obuf << '\n' ;
 	}
 	return rs ;
