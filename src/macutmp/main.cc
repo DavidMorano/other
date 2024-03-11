@@ -117,6 +117,8 @@ static bool isourtype(struct utmpx *up) noexcept {
 	return f ;
 }
 
+static char	*strtcpy(char *,cchar *,int) noex ;
+
 
 /* local variables */
 
@@ -260,11 +262,11 @@ static int utmp(bool fprint) noexcept {
 	char		hbuf[lhost+1] ;
 	while ((up = getutxent()) != nullptr) {
 	   if (isourtype(up)) {
+		const time_t	t = time_t(up->ut_tv.tv_sec) ;
 		c += 1 ;
 		if (fprint) {
-		    const time_t	t = time_t(up->ut_tv.tv_sec) ;
-		    cint		sid = up->ut_pid ;
-		    cchar		*lp = up->ut_line ;
+		    cint	sid = up->ut_pid ;
+		    cchar	*lp = up->ut_line ;
 		    strncpy(ibuf,up->ut_id,lid) ;
 		    strncpy(ubuf,up->ut_user,luser) ;
 		    while (*lp == ' ') lp += 1 ;
@@ -350,22 +352,22 @@ static int printval(int pm,struct utmpx *up) noexcept {
 	case progmode_utmpid:
 	    fl = int(sizeof(up->ut_id)) ;
 	    ml = min(olen,fl) ;
-	    strncpy(obuf,up->ut_id,ml) ;
+	    strtcpy(obuf,up->ut_id,ml) ;
 	    break ;
 	case progmode_utmpname:
 	    fl = int(sizeof(up->ut_user)) ;
 	    ml = min(olen,fl) ;
-	    strncpy(obuf,up->ut_user,ml) ;
+	    strtcpy(obuf,up->ut_user,ml) ;
 	    break ;
 	case progmode_utmpline:
 	    fl = int(sizeof(up->ut_line)) ;
 	    ml = min(olen,fl) ;
-	    strncpy(obuf,up->ut_line,ml) ;
+	    strtcpy(obuf,up->ut_line,ml) ;
 	    break ;
 	case progmode_utmphost:
 	    fl = int(sizeof(up->ut_host)) ;
 	    ml = min(olen,fl) ;
-	    strncpy(obuf,up->ut_host,ml) ;
+	    strtcpy(obuf,up->ut_host,ml) ;
 	    break ;
 	case progmode_logged:
 	    break ;
@@ -389,5 +391,12 @@ static int sirchr(cchar *sp,int sl,int sch) noexcept {
 	return i ;
 }
 /* end subroutine (sirchr) */
+
+static char *strtcpy(char *dp,cchar *sp,int dl) noex {
+	dp = strncpy(dp,sp,dl) + dl ;
+	*dp = '\0' ;
+	return dp ;
+}
+/* end subroutine (strtcpy) */
 
 
