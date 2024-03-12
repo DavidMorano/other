@@ -1,4 +1,4 @@
-/* main */
+/* main SUPPORT */
 /* lang=C++23 */
 
 /* the COMPOSE fixer program */
@@ -31,7 +31,7 @@
 #include	<localmisc.h>
 
 
-/* local namespaces */
+/* imported namespaces */
 
 using namespace		std ;
 
