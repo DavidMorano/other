@@ -1,4 +1,4 @@
-/* main (macutmp) */
+/* main SUPPORT (macutmp) */
 /* lang=C++20 */
 
 /* print out the UTMP entry 'line' field if terminal session is registered */
@@ -86,7 +86,7 @@
 #endif
 
 
-/* local namespaces */
+/* imported namespaces */
 
 using std::cout ;			/* variable */
 using std::min ;			/* subroutine */
