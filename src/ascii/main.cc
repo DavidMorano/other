@@ -1,5 +1,8 @@
-/* main */
+/* main SUPPORT (ascii) */
 /* lang=C++23 */
+
+/* print out an ASCII table (of some sort) */
+/* version %I% last-modified %G% */
 
 
 /* revision history:
