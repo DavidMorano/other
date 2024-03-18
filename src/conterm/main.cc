@@ -71,7 +71,7 @@
 #endif
 
 
-/* namespaces */
+/* imported namespaces */
 
 
 /* typedefs */
@@ -89,9 +89,12 @@ static int uc_tcgetsid(int) noex ;
 constexpr const char	termdev[] = TERMDEV ;
 
 
+/* exported variables */
+
+
 /* exported subroutines */
 
-int main(int,mainv,mainv) noexcept {
+int main(int,mainv,mainv) {
 	int	ex = EXIT_FAILURE ;
 	int	rs ;
 	if ((rs = open(termdev,O_RDONLY,0)) >= 0) {
