@@ -1,7 +1,7 @@
 #!/usr/extra/bin/ksh
 # MAKEIT
 
-: ${REPOROOT=:${HOME}/github/system}
+: ${REPOROOT=:${HOME}/github/other}
 export REPOROOT
 
 BUILDTYPE=debug

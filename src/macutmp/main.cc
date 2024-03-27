@@ -47,10 +47,12 @@
 
 *******************************************************************************/
 
+#include	<envstandards.h>	/* ordered first to configure */
 #include	<sys/types.h>
 #include	<sys/stat.h>		/* <- for |struct stat| */
 #include	<unistd.h>		/* <- for |ttyname_r(3c)| */
 #include	<utmpx.h>		/* <- for |getutxline(3c)| */
+#include	<pwd.h>			/* <- for |getpwnam(3c)| */
 #include	<cstdlib>		/* <- for |EXIT_SUCCESS| */
 #include	<cstdio>		/* <- for |printf(3c)| */
 #include	<cstring>		/* <- |strncmp(3c)| + |strlen(3c)| */
@@ -60,6 +62,10 @@
 
 
 /* local defines */
+
+#ifndef	noex
+#define	noex		noexcept
+#endif
 
 #ifndef	FD_STDIN
 #define	FD_STDIN	0
@@ -81,14 +87,48 @@
 #define	DEVPREFIX	"/dev/"
 #endif
 
+#ifndef	UT_IDSIZE
+#define	UT_IDSIZE	4
+#endif
+#ifndef	UT_NAMESIZE
+#define	UT_NAMESIZE	8
+#endif
+#ifndef	UT_LINESIZE
+#define	UT_LINESIZE	8
+#endif
+#ifndef	UT_HOSTSIZE
+#define	UT_HOSTSIZE	16
+#endif
+
+#ifndef	STAT
+#define	STAT		struct stat
+#endif
+
+#ifndef	TM
+#define	TM		struct tm
+#endif
+
+#ifndef	PASSWD
+#define	PASSWD		struct passwd
+#endif
+
+#ifndef	UTMPX
+#define	UTMPX		struct utmpx
+#endif
+
 #ifndef	eol
 #define	eol		'\n'
+#endif
+
+#ifndef	VARUTMPLINE
+#define	VARUTMPLINE	"UTMPLINE"
 #endif
 
 
 /* imported namespaces */
 
 using std::cout ;			/* variable */
+using std::cerr ;			/* variable */
 using std::min ;			/* subroutine */
 
 
@@ -96,20 +136,23 @@ using std::min ;			/* subroutine */
 
 typedef const int		cint ;
 typedef const char		cchar ;
-typedef const char *const	*mainv ;
+typedef const char *const	cpcchar ;
+typedef const char *const *	cpccharp ;
+typedef const char *const *	mainv ;
 
 
 /* forward references */
 
-static int getpm(int,mainv,mainv) noexcept ;
-static int utmp(bool) noexcept ;
-static int boottime() noexcept ;
-static int findsid(int) noexcept ;
-static int findline(int) noexcept ;
-static int printval(int,struct utmpx *) noexcept ;
-static int sirchr(cchar *,int,int) noexcept ;
+static int getpm(int,mainv,mainv) noex ;
+static int utmp(bool) noex ;
+static int boottime() noex ;
+static int findsid(int) noex ;
+static int findline(int) noex ;
+static int findenv(int) noex ;
+static int printval(int,UTMPX *) noex ;
+static int sirchr(cchar *,int,int) noex ;
 
-static bool isourtype(struct utmpx *up) noexcept {
+static bool isourtype(UTMPX *up) noex {
 	bool	f = false ;
 	f = f || (up->ut_type == INIT_PROCESS) ;
 	f = f || (up->ut_type == LOGIN_PROCESS) ;
@@ -118,6 +161,8 @@ static bool isourtype(struct utmpx *up) noexcept {
 }
 
 static char	*strtcpy(char *,cchar *,int) noex ;
+
+static UTMPX	*getutxliner(UTMPX *) noex ;
 
 
 /* local variables */
@@ -138,7 +183,7 @@ enum progmodes {
 	progmode_iverlast
 } ;
 
-constexpr const char *const	prognames[] = {
+constexpr cpcchar	prognames[] = {
 	"utmp",
 	"nusers",
 	"boottime",
@@ -154,10 +199,10 @@ constexpr const char *const	prognames[] = {
 	nullptr
 } ;
 
-constexpr int		lid = 4 ;
-constexpr int		luser = 8 ;
-constexpr int		lline = 16 ;
-constexpr int		lhost = 27 ;
+constexpr int		utl_id = UT_IDSIZE ;
+constexpr int		utl_user = UT_NAMESIZE ;
+constexpr int		utl_line = UT_LINESIZE ;
+constexpr int		utl_host = UT_HOSTSIZE ;
 constexpr int		tlen = TIMEBUFLEN ;
 
 
@@ -202,7 +247,9 @@ int main(int argc,mainv argv,mainv) {
 		/* FALLTHROUGH */
 	    default:
 	        if ((rs = findsid(pm)) == rsn) {
-	            rs = findline(pm) ;
+	            if ((rs = findline(pm)) == rsn) {
+			rs = findenv(pm) ;
+		    }
 	        }
 		break ;
 	    } /* end switch */
@@ -215,7 +262,7 @@ int main(int argc,mainv argv,mainv) {
 
 /* local subroutines */
 
-static int getpm(int argc,mainv argv,mainv names) noexcept {
+static int getpm(int argc,mainv argv,mainv names) noex {
 	int		rs = SR_NOMSG ;
 	if (argc > 0) {
 	    cchar	*argz = argv[0] ;
@@ -248,18 +295,19 @@ static int getpm(int argc,mainv argv,mainv names) noexcept {
 }
 /* end subroutine (getpm) */
 
-static int utmp(bool fprint) noexcept {
-	struct tm	ts ;
-	struct utmpx	*up ;
+static int utmp(bool fprint) noex {
+	TM		ts ;
+	UTMPX		*up ;
 	int		rs = SR_OK ;
 	int		c = 0 ;
 	cchar		*fmt = "%-4s %-8s %-16s %s %5u %s\n" ;
 	cchar		*tmt = "%Y%m%d-%H%M%S" ;
 	char		tbuf[tlen+1] ;
-	char		ibuf[lid+1] ;
-	char		ubuf[luser+1] ;
-	char		lbuf[lline+1] ;
-	char		hbuf[lhost+1] ;
+	char		ibuf[utl_id+1] ;
+	char		ubuf[utl_user+1] ;
+	char		lbuf[utl_line+1] ;
+	char		hbuf[utl_host+1] ;
+	setutxent() ;
 	while ((up = getutxent()) != nullptr) {
 	   if (isourtype(up)) {
 		const time_t	t = time_t(up->ut_tv.tv_sec) ;
@@ -267,11 +315,11 @@ static int utmp(bool fprint) noexcept {
 		if (fprint) {
 		    cint	sid = up->ut_pid ;
 		    cchar	*lp = up->ut_line ;
-		    strncpy(ibuf,up->ut_id,lid) ;
-		    strncpy(ubuf,up->ut_user,luser) ;
+		    strncpy(ibuf,up->ut_id,utl_id) ;
+		    strncpy(ubuf,up->ut_user,utl_user) ;
 		    while (*lp == ' ') lp += 1 ;
-		    strncpy(lbuf,lp,lline) ;
-		    strncpy(hbuf,up->ut_host,lhost) ;
+		    strncpy(lbuf,lp,utl_line) ;
+		    strncpy(hbuf,up->ut_host,utl_host) ;
 		    localtime_r(&t,&ts) ;
 		    strftime(tbuf,tlen,tmt,&ts) ;
 	            printf(fmt,ibuf,ubuf,lbuf,tbuf,sid,hbuf) ;
@@ -282,12 +330,13 @@ static int utmp(bool fprint) noexcept {
 }
 /* end subroutine (utmp) */
 
-static int boottime() noexcept {
-	struct tm	ts ;
-	struct utmpx	*up ;
+static int boottime() noex {
+	TM		ts ;
+	UTMPX		*up ;
 	int		rs = SR_OK ;
 	cchar		*tmt = "%Y%m%d-%H%M%S" ;
 	char		tbuf[tlen+1] ;
+	setutxent() ;
 	while ((up = getutxent()) != nullptr) {
 	   if (up->ut_type == BOOT_TIME) {
 		const time_t	t = time_t(up->ut_tv.tv_sec) ;
@@ -300,10 +349,11 @@ static int boottime() noexcept {
 }
 /* end subroutine (boottime) */
 
-static int findsid(int pm) noexcept {
-	const int	sid = getsid(0) ;	/* get our SID */
-	struct utmpx	*up ;
+static int findsid(int pm) noex {
+	cint		sid = getsid(0) ;	/* get our SID */
+	UTMPX		*up ;
 	int		rs = SR_NOENT ;
+	setutxent() ;
 	while ((up = getutxent()) != nullptr) {
 	   if ((up->ut_pid == sid) && isourtype(up)) {
 	        rs = printval(pm,up) ;
@@ -314,23 +364,23 @@ static int findsid(int pm) noexcept {
 }
 /* end subroutine (findsid) */
 
-static int findline(int pm) noexcept {
-	struct stat	sb ;
-	const int	tlen = TERMBUFLEN ;
-	const int	fd = FD_STDIN ;
+static int findline(int pm) noex {
+	STAT		sb ;
+	cint		tlen = TERMBUFLEN ;
+	cint		fd = FD_STDIN ;
 	int		rs ;
 	bool		f = false ;
 	if ((rs = fstat(fd,&sb)) >= 0) {
-	    const char	*devprefix = DEVPREFIX ;
+	    cchar	*devprefix = DEVPREFIX ;
 	    char	tbuf[tlen+1] ;
 	    if ((rs = ttyname_r(fd,tbuf,tlen)) >= 0) {
-		const int	n = strlen(devprefix) ;
+		cint	n = strlen(devprefix) ;
 		if (strncmp(tbuf,devprefix,n) == 0) {
-		    struct utmpx	ut{} ;
-		    struct utmpx	*up ;
-		    const char		*line = (tbuf+n) ;
+		    UTMPX	ut{} ;
+		    UTMPX	*up ;
+		    cchar	*line = (tbuf+n) ;
 		    strncpy(ut.ut_line,line,sizeof(ut.ut_line)) ;
-		    if ((up = getutxline(&ut)) != nullptr) {
+		    if ((up = getutxliner(&ut)) != nullptr) {
 			f = true ;
 			rs = printval(pm,up) ;
 		    }
@@ -342,7 +392,25 @@ static int findline(int pm) noexcept {
 }
 /* end subroutine (findline) */
 
-static int printval(int pm,struct utmpx *up) noexcept {
+static int findenv(int pm) noex {
+	int		rs = SR_OK ;
+	cchar		*vn = VARUTMPLINE ;
+	bool		f = false ;
+	if (cchar *line ; (line = getenv(vn)) != nullptr) {
+	    UTMPX	ut{} ;
+	    UTMPX	*up ;
+	    strncpy(ut.ut_line,line,sizeof(ut.ut_line)) ;
+	    if ((up = getutxliner(&ut)) != nullptr) {
+		f = true ;
+		rs = printval(pm,up) ;
+	    }
+	} /* end if (getenv) */
+	if ((rs >= 0) && (!f)) rs = SR_NOTFOUND ;
+	return rs ;
+}
+/* end subroutine (findenv) */
+
+static int printval(int pm,UTMPX *up) noex {
 	cint		olen = HOSTLEN ;
 	int		rs = SR_OK ;
 	int		fl = 0 ;
@@ -383,8 +451,8 @@ static int printval(int pm,struct utmpx *up) noexcept {
 }
 /* end subroutine (printval) */
 
-static int sirchr(cchar *sp,int sl,int sch) noexcept {
-	int	i = 0 ;
+static int sirchr(cchar *sp,int sl,int sch) noex {
+	int		i = 0 ;
 	if (sl < 0) sl = strlen(sp) ;
 	for (i = (sl-1) ; i >= 0 ; i -= 1) {
 	    if (sp[i] == sch) break ;
@@ -399,5 +467,27 @@ static char *strtcpy(char *dp,cchar *sp,int dl) noex {
 	return dp ;
 }
 /* end subroutine (strtcpy) */
+
+static UTMPX *getutxliner(UTMPX *sup) noex {
+	const uid_t	uid = getuid() ;
+	UTMPX		*up ;
+	PASSWD		*pwp ;
+	char		nbuf[utl_user+1] ;
+	setutxent() ;
+	while ((up = getutxent()) != nullptr) {
+	   if (isourtype(up)) {
+		if (strncmp(up->ut_line,sup->ut_line,utl_line) == 0) {
+		    strtcpy(nbuf,up->ut_user,utl_user) ;
+		    if ((pwp = getpwnam(nbuf)) != nullptr) {
+		        if (pwp->pw_uid == uid) {
+    			    break ;
+		        } /* end if (UID match w/ us) */
+		    } /* end if (got PASSWD entry) */
+		} /* end if ("line" match) */
+	   } /* end if (our type) */
+	} /* end while */
+	return up ;
+}
+/* end subroutine (getutxliner) */
 
 
