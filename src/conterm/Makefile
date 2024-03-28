@@ -1,4 +1,4 @@
-# MAKEFILES (conterm)
+# MAKEFILE (conterm)
 
 T= conterm
 

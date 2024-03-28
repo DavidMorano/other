@@ -1,4 +1,4 @@
-# MAKEFILES (tzabbr)
+# MAKEFILE (tzabbr)
 
 T= tzabbr
 

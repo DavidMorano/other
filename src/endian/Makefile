@@ -1,4 +1,4 @@
-# MAKEFILES (endia)
+# MAKEFILE (endian)
 
 T= endian
 
