@@ -42,7 +42,7 @@
 #include	<termios.h>
 #include	<unistd.h>
 #include	<fcntl.h>
-#include	<cstdlib>
+#include	<cstdlib>		/* |EXIT_SUCCESS| */
 #include	<cerrno>
 #include	<iostream>
 
@@ -72,6 +72,8 @@
 
 
 /* imported namespaces */
+
+typedef const int	cint ;
 
 
 /* typedefs */

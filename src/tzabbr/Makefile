@@ -1,4 +1,4 @@
-# MAKEFILES (tzabbr)
+# MAKEFILE (tzabbr)
 
 T= tzabbr
 
@@ -21,7 +21,7 @@ CPP=	cpp
 CC=	gcc
 CXX=	gpp
 LD=	gld
-RANLIB=	granlin
+RANLIB=	granlib
 AR=	gar
 NM=	gnm
 COV=	gcov

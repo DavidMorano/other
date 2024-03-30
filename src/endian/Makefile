@@ -1,4 +1,4 @@
-# MAKEFILES (endia)
+# MAKEFILE (endian)
 
 T= endian
 
@@ -21,7 +21,7 @@ CPP=	cpp
 CC=	gcc
 CXX=	gpp
 LD=	gld
-RANLIB=	granlin
+RANLIB=	granlib
 AR=	gar
 NM=	gnm
 COV=	gcov
