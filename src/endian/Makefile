@@ -54,7 +54,7 @@ LDFLAGS= $(MAKELDFLAGS)
 INCS=
 
 
-OBJ_UTMP= main.o
+OBJ_ENDIAN= main.o
 
 
 default:		$(T).x
@@ -77,19 +77,19 @@ all:			$(ALL)
 	$(CXX)  $(CPPFLAGS) $(CCFLAGS) -c $<
 
 
-$(T).x:			$(OBJ_UTMP)
-	$(LD) $(LDFLAGS) -o $@ $(OBJ_UTMP)
+$(T).x:			$(OBJ_ENDIAN)
+	$(LD) $(LDFLAGS) -o $@ $(LIBDIRS) $(LIBS) $(OBJ_ENDIAN)
 
-$(T).o:			$(OBJ_UTMP)
-	$(LD) $(LDFLAGS) -r -o $@ $(OBJ_UTMP)
+$(T).o:			$(OBJ_ENDIAN)
+	$(LD) $(LDFLAGS) -r -o $@ $(OBJ_ENDIAN)
 
-$(T).a:			$(OBJ_UTMP)
+$(T).a:			$(OBJ_ENDIAN)
 	$(AR) $(ARFLAGS) -rc $@ $?
 
 $(T).nm:		$(T).o
 	$(NM) $(NMFLAGS) $(T).o > $(T).nm
 
-$(T).order:		$(OBJ_UTMP) $(T).a
+$(T).order:		$(OBJ_ENDIAN) $(T).a
 	$(LORDER) $(T).a | $(TSORT) > $(T).order
 	$(RM) $(T).a
 	while read O ; do $(AR) $(ARFLAGS) -cr $(T).a $${O} ; done < $(T).order
