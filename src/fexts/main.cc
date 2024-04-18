@@ -37,12 +37,6 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be ordered first to configure */
-#include	<sys/stat.h>
-#include	<termios.h>
-#include	<unistd.h>
-#include	<fcntl.h>
-#include	<cerrno>
-#include	<ctime>
 #include	<cstdlib>		/* |EXIT_FAILURE| */
 #include	<exception>
 #include	<new>
@@ -98,12 +92,12 @@ int main(int argc,mainv argv,mainv) {
 		    cchar	*bns ;
 		    if (e.is_regular_file()) {
 		        const path	p = e.path() ;
-		        cchar	*ep ;
+		        cchar		*ep ;
 		        bn = p.filename() ;
 		        bns = bn.c_str() ;
 		        if (int el ; (el = sfrchr(bns,-1,'.',&ep)) > 0) {
 			    auto fif = rg::find_if ;
-	    		    auto strmat = [ep] (cc *s) -> bool {
+	    		    auto strmat = [ep] (cc *s) noex -> bool {
 				return (strcmp(s,ep) == 0) ;
 	    		    } ;
 			    if (auto it = fif(exts,strmat) ; it != ite) {
@@ -112,8 +106,8 @@ int main(int argc,mainv argv,mainv) {
 		        } /* end if (had-extension) */
 		    } /* end if (regular-file) */
 	        } /* end for */
+	        ex = EXIT_SUCCESS ;
 	    } /* end if */
-	    ex = EXIT_SUCCESS ;
 	}
 	return ex ;
 }
