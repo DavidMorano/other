@@ -28,7 +28,6 @@
 #ifdef VMUNIX
 #include <sys/wait.h>
 #endif
-#include "vfork.h"
 #include "local.h"
 #include "uparm.h"
 
@@ -306,14 +305,6 @@ struct utimbuf {
 #define	M_IGNORE	1		/* Do "ignore/retain" processing */
 #define	M_SAVING	2		/* Saving to a file/folder */
 
-/*
- * VM/UNIX has a vfork system call which is faster than forking.  If we
- * don't have it, fork(2) will do . . .
- */
-
-#if !defined(VMUNIX) && defined(preSVr4)
-#define	vfork()	fork()
-#endif
 #ifndef	SIGRETRO
 #define	sigchild()
 #endif

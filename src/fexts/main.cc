@@ -82,8 +82,10 @@ int main(int argc,mainv argv,mainv) {
 	    vector<cchar *>	exts ;
 	    int			c = 0 ;
 	    for (int i = 1 ; (i < argc) && argv[i] ; i += 1) {
-		exts.push_back(argv[i]) ;
-		c += 1 ;
+		if (cchar *ep = argv[i] ; ep[0]) {
+		    exts.push_back(ep) ;
+		    c += 1 ;
+		}
 	    } /* end for */
 	    if (c > 0) {
 		auto ite = exts.end() ;
@@ -91,7 +93,7 @@ int main(int argc,mainv argv,mainv) {
 		    path	bn ;
 		    cchar	*bns ;
 		    if (e.is_regular_file()) {
-		        const path	p = e.path() ;
+		        const path	&p = e.path() ;
 		        cchar		*ep ;
 		        bn = p.filename() ;
 		        bns = bn.c_str() ;
