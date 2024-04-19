@@ -40,12 +40,11 @@
 #include	<cstdlib>		/* |EXIT_FAILURE| */
 #include	<exception>
 #include	<new>
-#include	<algorithm>		/* |ranges(3c++)| */
+#include	<algorithm>		/* |ranges(3c++)| + |strrchr(3c)| */
 #include	<iostream>
 #include	<vector>
 #include	<filesystem>
 #include	<usystem.h>
-#include	<sfx.h>
 
 
 /* local defines */
@@ -88,23 +87,26 @@ int main(int argc,mainv argv,mainv) {
 		}
 	    } /* end for */
 	    if (c > 0) {
-		auto ite = exts.end() ;
+		cnullptr	np{} ;
+		auto		ite = exts.end() ;
 	        for (auto const &e : dir) {
 		    path	bn ;
 		    cchar	*bns ;
 		    if (e.is_regular_file()) {
 		        const path	&p = e.path() ;
-		        cchar		*ep ;
 		        bn = p.filename() ;
 		        bns = bn.c_str() ;
-		        if (int el ; (el = sfrchr(bns,-1,'.',&ep)) > 0) {
-			    auto fif = rg::find_if ;
-	    		    auto strmat = [ep] (cc *s) noex -> bool {
-				return (strcmp(s,ep) == 0) ;
-	    		    } ;
-			    if (auto it = fif(exts,strmat) ; it != ite) {
-				cout << bns << '\n' ;
-			    }
+		        if (cchar *tp ; (tp = strrchr(bns,'.')) != np) {
+		            cchar	*ep = (tp + 1) ;
+			    if (ep[0]) {
+			        auto fif = rg::find_if ;
+	    		        auto strmat = [ep] (cc *s) noex -> bool {
+				    return (strcmp(s,ep) == 0) ;
+	    		        } ;
+			        if (auto it = fif(exts,strmat) ; it != ite) {
+				    cout << bns << '\n' ;
+			        }
+			    } /* end if (non-empty) */
 		        } /* end if (had-extension) */
 		    } /* end if (regular-file) */
 	        } /* end for */
