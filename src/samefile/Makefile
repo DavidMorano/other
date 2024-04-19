@@ -1,6 +1,6 @@
-# MAKEFILE (macfu)
+# MAKEFILE (samefile)
 
-T= macfu
+T= samefile
 
 ALL= $(T).x
 
@@ -51,10 +51,10 @@ ARFLAGS= $(MAKEARFLAGS)
 LDFLAGS= $(MAKELDFLAGS)
 
 
-INCS= mapblock.hh
+INCS= 
 
 
-OBJ_MACFU= main.o
+OBJ_SAMEFILE= main.o
 
 
 default:		$(T).x
@@ -77,8 +77,8 @@ all:			$(ALL)
 	$(CXX)  $(CPPFLAGS) $(CCFLAGS) -c $<
 
 
-$(T).x:			$(OBJ_MACFU)
-	$(LD) $(LDFLAGS) -o $@ $(OBJ_MACFU) $(LIBDIRS) $(LIBS)
+$(T).x:			$(OBJ_SAMEFILE)
+	$(LD) $(LDFLAGS) -o $@ $(OBJ_SAMEFILE) $(LIBDIRS) $(LIBS)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm
@@ -93,6 +93,6 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc mapblock.hh $(INCS)
+main.o:			main.cc $(INCS)
 
 

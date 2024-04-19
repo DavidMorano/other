@@ -1,0 +1,9 @@
+#!/usr/extra/bin/ksh
+# RAWHDRS
+
+fexts h hh | while read N ; do
+  if [[ ${N} -nt ${N}.gch ]] ; then
+    print -- $N
+  fi
+done
+

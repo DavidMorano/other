@@ -1,4 +1,4 @@
-/* main SUPPORT */
+/* main SUPPORT (samefile) */
 /* lang=C++23 */
 
 /* determine if two files are actually the same (but dev-ino comparison) */
