@@ -41,7 +41,7 @@ DEFS +=
 INCS +=
 
 
-LIBS +=
+LIBS += -lmacuser
 
 
 INCDIRS +=
@@ -56,7 +56,7 @@ ARFLAGS= $(MAKEARFLAGS)
 LDFLAGS= $(MAKELDFLAGS)
 
 
-OBJ_USERHOME= main.o
+OBJ_SHOWTERMS= main.o field.o sif.o
 
 
 default:		$(T).x
@@ -79,8 +79,8 @@ all:			$(ALL)
 	$(CXX) -c $(CPPFLAGS) $(CCFLAGS) $<
 
 
-$(T).x:			$(OBJ_USERHOME)
-	$(GPP) $(LDFLAGS) -o $@ $(OBJ_USERHOME) $(LIBDIRS) $(LIBS)
+$(T).x:			$(OBJ_SHOWTERMS)
+	$(CXX) $(LDFLAGS) -o $@ $(OBJ_SHOWTERMS) $(LIBDIRS) $(LIBS)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm
@@ -95,6 +95,12 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc
+# FIELD
+field.o:		field.dir
+field.dir:
+	makesubdir $@
+
+main.o:			main.cc sif.hh
+sif.o:			sif.cc sif.hh
 
 

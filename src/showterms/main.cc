@@ -18,9 +18,10 @@
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<climits>		/* |UCHAR_MAX| + |CHAR_BIT| */
 #include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>		/* |atoi(3c)| */
+#include	<cstdlib>		/* |atoi(3c)| + |strtol(3c)| */
 #include	<cstdio>
 #include	<cstring>
+#include	<string_view>
 #include	<new>
 #include	<exception>
 #include	<iostream>
@@ -31,9 +32,9 @@
 #include	<baops.h>
 #include	<strn.h>
 #include	<sfx.h>
+#include	<sif.hh>
 #include	<ccfile.hh>
 #include	<strnul.hh>
-#include	<cfhex.h>
 #include	<hasx.h>
 #include	<localmisc.h>		/* |MAXLINELEN| */
 
@@ -46,7 +47,9 @@
 /* imported namespaces */
 
 using std::nullptr_t ;			/* type */
-using std::cout ;			/* variable */
+using std::string_view ;		/* type */
+using std::cerr ;			/* (global) variable */
+using std::cout ;			/* (global) variable */
 using std::nothrow ;			/* constant */
 
 
@@ -70,9 +73,15 @@ namespace {
 	int	idx = 0 ;
 	char	terms[termsize] = {} ;
 	int accum(cchar *sp,int sl) noex {
-	    int		rs ;
-	    if (int v ; (rs = cfhex(sp,sl,&v)) >= 0) {
+	    strnul	s(sp,sl) ;
+	    int		rs = SR_OK ;
+	    long	v ; 
+	    if ((v = strtol(s,nullptr,10)) == 0) {
+		rs = (- errno) ;
+	    }
+	    if (rs >= 0) {
 		terms[idx++] = uchar(v) ;
+		rs = SR_OK ;
 	    }
 	    return rs ;
 	} ;
@@ -143,14 +152,17 @@ static int procfile(cchar *fn) noex {
 /* end subroutine (procfile) */
 
 static int procline(termer *top,cchar *lp,int ll) noex {
-	sof		fo(lp,ll) ;
+	string_view	sv(lp,ll) ;
+	sif		fo(lp,ll,',') ;
 	int		rs = SR_OK ;
 	int		cl ;
 	cchar		*cp{} ;
-	while ((cl = fo.next(&cp)) > 0) {
+	cerr << "procline ent=»" << sv << '\n' ;
+	while ((cl = fo(&cp)) > 0) {
 	    rs = top->accum(cp,cl) ;
 	    if (rs < 0) break ;
 	} /* end while */
+	cerr << "procline ret=" << rs << '\n' ;
 	return rs ;
 }
 /* end subroutine (procline) */
@@ -160,16 +172,22 @@ static int readterms(termer *top,cchar *fn) noex {
         cint            llen = MAXLINE ;
         int             rs = SR_NOMEM ;
         int             rs1 ;
+	cerr << "readterms ent\n" ;
         if (char *lbuf ; (lbuf = new(nothrow) char[llen+1]) != np) {
             try {
                 ccfile          fis ;
                 if ((rs = fis.open(fn)) >= 0) {
                     while ((rs = fis.readln(lbuf,llen)) > 0) {
 			cchar	*cp{} ;
+			cerr << "readterms line="  << lbuf ;
 			if (int cl ; (cl = sfcontent(lbuf,rs,&cp)) > 0) {
+			    string_view	sv(cp,cl) ;
+			    cerr << "readterms content=" << sv << '\n' ;
 			    rs = procline(top,cp,cl) ;
                         } /* end if (hasnotempty) */
+			if (rs < 0) break ;
                     } /* end while */
+			cerr << "readterms out=" << rs << '\n' ;
                     rs1 = fis.close ;
                     if (rs >= 0) rs = rs1 ;
                 } /* end if (opened) */
@@ -181,6 +199,7 @@ static int readterms(termer *top,cchar *fn) noex {
             }
             delete [] lbuf ;            
         } /* end if (m-a-f) */          
+	cerr << "readterms ret=" << rs << '\n' ;
         return rs ;
 }
 /* end subroutine (readterms) */
