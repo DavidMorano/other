@@ -4,6 +4,7 @@
 /* show (display) the terminator block characters */
 /* version %I% last-modified %G% */
 
+#define	CF_FIELD	0		/* used |field(3uc)| */
 
 /* revision history:
 
@@ -21,10 +22,10 @@
 #include	<cstdlib>		/* |atoi(3c)| + |strtol(3c)| */
 #include	<cstdio>
 #include	<cstring>
-#include	<string_view>
 #include	<new>
 #include	<exception>
 #include	<iostream>
+#include	<iomanip>
 #include	<usysrets.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
@@ -33,8 +34,13 @@
 #include	<strn.h>
 #include	<sfx.h>
 #include	<sif.hh>
+#include	<field.h>
+#include	<fieldterms.h>
+#include	<terminit.hh>
 #include	<ccfile.hh>
 #include	<strnul.hh>
+#include	<char.h>
+#include	<mkchar.h>
 #include	<hasx.h>
 #include	<localmisc.h>		/* |MAXLINELEN| */
 
@@ -47,8 +53,6 @@
 /* imported namespaces */
 
 using std::nullptr_t ;			/* type */
-using std::string_view ;		/* type */
-using std::cerr ;			/* (global) variable */
 using std::cout ;			/* (global) variable */
 using std::nothrow ;			/* constant */
 
@@ -76,15 +80,14 @@ namespace {
 	    strnul	s(sp,sl) ;
 	    int		rs = SR_OK ;
 	    long	v ; 
-	    if ((v = strtol(s,nullptr,10)) == 0) {
+	    if ((v = strtol(s,nullptr,0)) == 0) {
 		rs = (- errno) ;
 	    }
 	    if (rs >= 0) {
 		terms[idx++] = uchar(v) ;
-		rs = SR_OK ;
 	    }
 	    return rs ;
-	} ;
+	} ; /* end method (accum) */
     } ; /* end struct (termer) */
 }
 
@@ -99,6 +102,10 @@ static void	showterms(cchar *) noex ;
 
 
 /* local variables */
+
+static terminit		fterms(",") ;
+
+constexpr bool		f_field = CF_FIELD ;
 
 
 /* exported variables */
@@ -152,18 +159,34 @@ static int procfile(cchar *fn) noex {
 /* end subroutine (procfile) */
 
 static int procline(termer *top,cchar *lp,int ll) noex {
-	string_view	sv(lp,ll) ;
-	sif		fo(lp,ll,',') ;
 	int		rs = SR_OK ;
-	int		cl ;
-	cchar		*cp{} ;
-	cerr << "procline ent=»" << sv << '\n' ;
-	while ((cl = fo(&cp)) > 0) {
-	    rs = top->accum(cp,cl) ;
-	    if (rs < 0) break ;
-	} /* end while */
-	cerr << "procline ret=" << rs << '\n' ;
-	return rs ;
+	int		rs1 ;
+	int		c = 0 ;
+	if_constexpr (f_field) {
+	    field	fb ;
+	    if ((rs = fb.start(lp,ll)) >= 0) {
+	        int	fl ;
+	        cchar	*fp ;
+	        cchar	*t = fterms.terms ;
+	        while ((fl = fb.get(t,&fp)) > 0) {
+		    c += 1 ;
+	            rs = top->accum(fp,fl) ;
+	            if (rs < 0) break ;
+	        } /* end while */
+	        rs1 = fb.finish ;
+	        if (rs >= 0) rs = rs1 ;
+	    } /* end if (field) */
+	} else {
+	    sif		fb(lp,ll,',') ;
+	    int		fl ;
+	    cchar	*fp ;
+	        while ((fl = fb(&fp)) > 0) {
+		    c += 1 ;
+	            rs = top->accum(fp,fl) ;
+	            if (rs < 0) break ;
+	        } /* end while */
+	} /* end if_constexpr (f_field) */
+	return (rs >= 0) ? c : rs ;
 }
 /* end subroutine (procline) */
 
@@ -172,22 +195,19 @@ static int readterms(termer *top,cchar *fn) noex {
         cint            llen = MAXLINE ;
         int             rs = SR_NOMEM ;
         int             rs1 ;
-	cerr << "readterms ent\n" ;
+	int		c = 0 ;
         if (char *lbuf ; (lbuf = new(nothrow) char[llen+1]) != np) {
             try {
                 ccfile          fis ;
                 if ((rs = fis.open(fn)) >= 0) {
                     while ((rs = fis.readln(lbuf,llen)) > 0) {
 			cchar	*cp{} ;
-			cerr << "readterms line="  << lbuf ;
 			if (int cl ; (cl = sfcontent(lbuf,rs,&cp)) > 0) {
-			    string_view	sv(cp,cl) ;
-			    cerr << "readterms content=" << sv << '\n' ;
 			    rs = procline(top,cp,cl) ;
+			    c += rs ;
                         } /* end if (hasnotempty) */
 			if (rs < 0) break ;
                     } /* end while */
-			cerr << "readterms out=" << rs << '\n' ;
                     rs1 = fis.close ;
                     if (rs >= 0) rs = rs1 ;
                 } /* end if (opened) */
@@ -199,8 +219,7 @@ static int readterms(termer *top,cchar *fn) noex {
             }
             delete [] lbuf ;            
         } /* end if (m-a-f) */          
-	cerr << "readterms ret=" << rs << '\n' ;
-        return rs ;
+        return (rs >= 0) ? c : rs ;
 }
 /* end subroutine (readterms) */
 

@@ -333,7 +333,7 @@ UOBJ07= getourenv.o
 UOBJ08= strkeycmp.o strwcmp.o
 UOBJ09= readln.o ccfile.o
 UOBJ10= cfx.o
-UOBJ11= strmgr.o
+UOBJ11= strmgr.o strop.o field.o
 
 UOBJ12= ufstat.o ucttyname.o
 UOBJ13=

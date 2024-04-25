@@ -38,15 +38,19 @@ LINT= lint
 DEFS +=
 
 
-INCS +=
+INCS += sif.hh ccfile.hh
 
 
 LIBS += -lmacuser
 
 
+#LIB= field.a
+LIB= 
+
+
 INCDIRS +=
 
-LIBDIRS += -L$(LIBDIR)
+LIBDIRS += -L$(LIBDIR) -L$(PWD)
 
 # flag setting
 CPPFLAGS= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
@@ -56,7 +60,7 @@ ARFLAGS= $(MAKEARFLAGS)
 LDFLAGS= $(MAKELDFLAGS)
 
 
-OBJ_SHOWTERMS= main.o field.o sif.o
+OBJ_SHOWTERMS= main.o
 
 
 default:		$(T).x
@@ -79,7 +83,7 @@ all:			$(ALL)
 	$(CXX) -c $(CPPFLAGS) $(CCFLAGS) $<
 
 
-$(T).x:			$(OBJ_SHOWTERMS)
+$(T).x:			$(OBJ_SHOWTERMS) $(LIB)
 	$(CXX) $(LDFLAGS) -o $@ $(OBJ_SHOWTERMS) $(LIBDIRS) $(LIBS)
 
 $(T).nm:		$(T).x
@@ -96,11 +100,13 @@ control:
 
 
 # FIELD
+field.a:		field.dir
 field.o:		field.dir
 field.dir:
 	makesubdir $@
 
-main.o:			main.cc sif.hh
-sif.o:			sif.cc sif.hh
+main.o:			main.cc		$(INCS)
 
+sif.o:			sif.cc sif.hh
+ccfile.o:		ccfile.cc ccfile.hh
 

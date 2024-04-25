@@ -25,13 +25,43 @@
 #include	<clanguage.h>
 
 
+enum sifmems {
+	sifmem_iswhitechr,
+	sifmem_iswhitestr,
+	sifmem_isspanchr,
+	sifmem_isspanstr,
+	sifmem_overlast
+} ;
+struct sif ;
+struct sif_co {
+	sif		*op = nullptr ;
+	int		w = -1 ;
+	void operator () (sif *p,int m) noex {
+	    op = p ;
+	    w = m ;
+	} ;
+	operator bool () noex ;
+} ;
 struct sif {
 	cchar		*sp ;
 	cchar		*sstr = nullptr ;
 	int		sl ;
 	int		sch = 0 ;
-	sif(cchar *p,int l = -1,int c = 0) noex : sp(p), sl(l), sch(c) { } ;
+	sif_co		iswhitechr ;
+	sif_co		iswhitestr ;
+	sif_co		isspanchr ;
+	sif_co		isspanstr ;
+	void sif_init() noex {
+	    iswhitechr(this,sifmem_iswhitechr) ;
+	    iswhitestr(this,sifmem_iswhitestr) ;
+	    isspanchr(this,sifmem_isspanchr) ;
+	    isspanstr(this,sifmem_isspanstr) ;
+	} ;
+	sif(cchar *p,int l = -1,int c = 0) noex : sp(p), sl(l), sch(c) { 
+	    sif_init() ;
+	} ;
 	sif(cchar *p,int l,cchar *s) noex : sp(p), sl(l) { 
+	    sif_init() ;
 	    sstr = s ;
 	} ;
 	int next(cchar **) noex ;
