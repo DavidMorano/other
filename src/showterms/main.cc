@@ -4,6 +4,7 @@
 /* show (display) the terminator block characters */
 /* version %I% last-modified %G% */
 
+#define	CF_FIELD	0		/* used |field(3uc)| */
 
 /* revision history:
 
@@ -18,12 +19,13 @@
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<climits>		/* |UCHAR_MAX| + |CHAR_BIT| */
 #include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>		/* |atoi(3c)| */
+#include	<cstdlib>		/* |atoi(3c)| + |strtol(3c)| */
 #include	<cstdio>
 #include	<cstring>
 #include	<new>
 #include	<exception>
 #include	<iostream>
+#include	<iomanip>
 #include	<usysrets.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
@@ -31,9 +33,14 @@
 #include	<baops.h>
 #include	<strn.h>
 #include	<sfx.h>
+#include	<sif.hh>
+#include	<field.h>
+#include	<fieldterms.h>
+#include	<terminit.hh>
 #include	<ccfile.hh>
 #include	<strnul.hh>
-#include	<cfhex.h>
+#include	<char.h>
+#include	<mkchar.h>
 #include	<hasx.h>
 #include	<localmisc.h>		/* |MAXLINELEN| */
 
@@ -46,7 +53,7 @@
 /* imported namespaces */
 
 using std::nullptr_t ;			/* type */
-using std::cout ;			/* variable */
+using std::cout ;			/* (global) variable */
 using std::nothrow ;			/* constant */
 
 
@@ -70,12 +77,17 @@ namespace {
 	int	idx = 0 ;
 	char	terms[termsize] = {} ;
 	int accum(cchar *sp,int sl) noex {
-	    int		rs ;
-	    if (int v ; (rs = cfhex(sp,sl,&v)) >= 0) {
+	    strnul	s(sp,sl) ;
+	    int		rs = SR_OK ;
+	    long	v ; 
+	    if ((v = strtol(s,nullptr,0)) == 0) {
+		rs = (- errno) ;
+	    }
+	    if (rs >= 0) {
 		terms[idx++] = uchar(v) ;
 	    }
 	    return rs ;
-	} ;
+	} ; /* end method (accum) */
     } ; /* end struct (termer) */
 }
 
@@ -90,6 +102,10 @@ static void	showterms(cchar *) noex ;
 
 
 /* local variables */
+
+static terminit		fterms(",") ;
+
+constexpr bool		f_field = CF_FIELD ;
 
 
 /* exported variables */
@@ -143,15 +159,34 @@ static int procfile(cchar *fn) noex {
 /* end subroutine (procfile) */
 
 static int procline(termer *top,cchar *lp,int ll) noex {
-	sof		fo(lp,ll) ;
 	int		rs = SR_OK ;
-	int		cl ;
-	cchar		*cp{} ;
-	while ((cl = fo.next(&cp)) > 0) {
-	    rs = top->accum(cp,cl) ;
-	    if (rs < 0) break ;
-	} /* end while */
-	return rs ;
+	int		rs1 ;
+	int		c = 0 ;
+	if_constexpr (f_field) {
+	    field	fb ;
+	    if ((rs = fb.start(lp,ll)) >= 0) {
+	        int	fl ;
+	        cchar	*fp ;
+	        cchar	*t = fterms.terms ;
+	        while ((fl = fb.get(t,&fp)) > 0) {
+		    c += 1 ;
+	            rs = top->accum(fp,fl) ;
+	            if (rs < 0) break ;
+	        } /* end while */
+	        rs1 = fb.finish ;
+	        if (rs >= 0) rs = rs1 ;
+	    } /* end if (field) */
+	} else {
+	    sif		fb(lp,ll,',') ;
+	    int		fl ;
+	    cchar	*fp ;
+	        while ((fl = fb(&fp)) > 0) {
+		    c += 1 ;
+	            rs = top->accum(fp,fl) ;
+	            if (rs < 0) break ;
+	        } /* end while */
+	} /* end if_constexpr (f_field) */
+	return (rs >= 0) ? c : rs ;
 }
 /* end subroutine (procline) */
 
@@ -160,6 +195,7 @@ static int readterms(termer *top,cchar *fn) noex {
         cint            llen = MAXLINE ;
         int             rs = SR_NOMEM ;
         int             rs1 ;
+	int		c = 0 ;
         if (char *lbuf ; (lbuf = new(nothrow) char[llen+1]) != np) {
             try {
                 ccfile          fis ;
@@ -168,7 +204,9 @@ static int readterms(termer *top,cchar *fn) noex {
 			cchar	*cp{} ;
 			if (int cl ; (cl = sfcontent(lbuf,rs,&cp)) > 0) {
 			    rs = procline(top,cp,cl) ;
+			    c += rs ;
                         } /* end if (hasnotempty) */
+			if (rs < 0) break ;
                     } /* end while */
                     rs1 = fis.close ;
                     if (rs >= 0) rs = rs1 ;
@@ -181,7 +219,7 @@ static int readterms(termer *top,cchar *fn) noex {
             }
             delete [] lbuf ;            
         } /* end if (m-a-f) */          
-        return rs ;
+        return (rs >= 0) ? c : rs ;
 }
 /* end subroutine (readterms) */
 
