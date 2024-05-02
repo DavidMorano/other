@@ -44,6 +44,9 @@ gnm*)
 gcov*)
   PROG=gcov13
   ;;
+gsize*|gsz*)
+  PROG=size
+  ;;
 esac
 ${PROG} ${OPTS} "${@}"
 fi
