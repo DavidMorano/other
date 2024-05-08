@@ -1150,7 +1150,7 @@ sysnoise.o:		sysnoise.cc sysnoise.h
 findfilepath.o:		findfilepath.cc findfilepath.h
 calstrs.o:		calstrs.cc calstrs.h
 ipow.o:			ipow.cc ipow.h
-base64.o:		base64.cce	base64.h
+base64.o:		base64.cc base64.h
 #
 isproc.o:		isproc.cc isproc.h
 #
@@ -1166,5 +1166,6 @@ umask.o:		umask.cc umask.h
 unameo.o:		unameo.cc unameo.h
 utmpacc.o:		utmpacc.cc utmpacc.h
 utmpaccent.o:		utmpaccent.cc utmpaccent.h
+ucrand.o:		ucrand.cc ucrand.h
 
 
