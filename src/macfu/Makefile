@@ -36,22 +36,23 @@ LINT= lint
 
 DEFS=
 
-LDRPATH= $(EXTRA)/lib
+
+INCS= mapblock.hh
+
+
+LIBS= -lmacuser -lu
+
+
+LDRPATH= $(USRLOCAL)/lib
 
 LIBDIRS= -L$(LIBDIR)
-
-LIBS= -lmacuser
-
 
 # flag setting
 CPPFLAGS= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
 CFLAGS= $(MAKECFLAGS)
 CCFLAGS= $(MAKECCFLAGS)
 ARFLAGS= $(MAKEARFLAGS)
-LDFLAGS= $(MAKELDFLAGS)
-
-
-INCS= mapblock.hh
+LDFLAGS= $(MAKELDFLAGS) -rpath $(LDRPATH)
 
 
 OBJ_MACFU= main.o
@@ -78,13 +79,13 @@ all:			$(ALL)
 
 
 $(T).x:			$(OBJ_MACFU)
-	$(LD) $(LDFLAGS) -o $@ $(OBJ_MACFU) $(LIBDIRS) $(LIBS)
+	$(CXX) $(LDFLAGS) -o $@ $(OBJ_MACFU) $(LIBDIRS) $(LIBS)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm
 
 again:
-	rm -f $(TALL)
+	rm -f $(T).x
 
 clean:
 	makeclean $(ALL)

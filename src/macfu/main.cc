@@ -30,9 +30,8 @@
 	-		read standard-input for file(s) to process
 
 	Returns:
-	0		for normal operation success
-	126		haveprogram: some program found but not executable
-	127		haveprogram: program not found
+	==0		for normal operation success
+	!=0		some error
 
 *******************************************************************************/
 
