@@ -332,13 +332,13 @@ UOBJ07= getourenv.o
 
 UOBJ08= strkeycmp.o strwcmp.o
 UOBJ09= readln.o ccfile.o
-UOBJ10= cfx.o
+UOBJ10= cfx.o sncpyx.o sncpyxc.o sncpyxw.o
 UOBJ11= strmgr.o strop.o field.o
 
 UOBJ12= ufstat.o ucttyname.o
 UOBJ13=
 UOBJ14= ucsys.o
-UOBJ15= usys.o ustat.o ulogerror.o
+UOBJ15=
 
 UOBJ=
 UOBJ+= $(UOBJ00) $(UOBJ01) $(UOBJ02) $(UOBJ03) 
@@ -462,16 +462,6 @@ clean:
 
 control:
 	(uname -n ; date) > Control
-
-
-# pre-base
-OBJ_PREBASE0= usupport.o utimeout.o utimeouts.o ulogerror.o aflag.o
-OBJ_PREBASE1= usys_xxx.o usys_sunos.o usys_darwin.o usys_linux.o
-
-OBJ_PREBASE= $(OBJ_PREBASE0) $(OBJ_PREBASE1)
-
-prebase.o:	$(OBJ_PREBASE)
-	$(LD) -r -o $@ $(OBJ_PREBASE)
 
 
 # base
@@ -705,8 +695,7 @@ strtab.o:		strtab.cc strtab.h
 strstore.o:		strstore.cc strstore.h
 strmgr.o:		strmgr.cc strmgr.h
 
-serialbuf.o:		serialbuf.cc serialbuf.h
-
+serialbuf.o:		serialbuf.cc serialbuf.h stdorder.h
 stdorder.o:		stdorder.cc stdorder.h
 
 
@@ -824,24 +813,6 @@ ucmallocx.o:		ucmallocx.cc ucmallocx.h
 
 # UNIX C-language system library timer management
 uctimer.o:		uctimer.cc uctimer.h
-
-# UNIX operating system support
-usupport.o:		usupport.cc usupport.h
-utimeout.o:		utimeout.c utimeoutdefs.h
-utimeouts.o:		utimeouts.cc utimeouts.h utimeoutdefs.h
-ulogerror.o:		ulogerror.cc ulogerror.h
-usys_xxx.o:		usys_xxx.cc usys_xxx.h
-usys_sunos.o:		usys_sunos.cc usys_sunos.h
-usys_darwin.o:		usys_darwin.cc usys_darwin.h
-usys_linux.o:		usys_linux.cc usys_linux.h
-aflag.o:		aflag.cc aflag.hh
-timewatch.o:		timewatch.cc timewatch.hh
-timecount.o:		timecount.cc timecount.hh
-
-# USYS
-usys.o:			usys.dir
-usys.dir:
-	makesubdir $@
 
 # misc-character
 toxc.o:			toxc.c toxc.h
@@ -1151,7 +1122,6 @@ termtypemat.o:		termtypemat.cc termtypemat.h
 termcmd.o:		termcmd.cc termcmd.h
 matparam.o:		matparam.cc matparam.h
 typenonpath.o:		typenonpath.cc typenonpath.h
-endian.o:		endian.cc endian.h
 getpwetry.o:		getpwentry.cc getpwentry.h pwentry.h
 intsat.o:		intsat.cc intsat.h
 intfloor.o:		intfloor.cc intfloor.h
@@ -1180,7 +1150,7 @@ sysnoise.o:		sysnoise.cc sysnoise.h
 findfilepath.o:		findfilepath.cc findfilepath.h
 calstrs.o:		calstrs.cc calstrs.h
 ipow.o:			ipow.cc ipow.h
-base64.o:		base64.cce	base64.h
+base64.o:		base64.cc base64.h
 #
 isproc.o:		isproc.cc isproc.h
 #
@@ -1196,5 +1166,6 @@ umask.o:		umask.cc umask.h
 unameo.o:		unameo.cc unameo.h
 utmpacc.o:		utmpacc.cc utmpacc.h
 utmpaccent.o:		utmpaccent.cc utmpaccent.h
+ucrand.o:		ucrand.cc ucrand.h
 
 
