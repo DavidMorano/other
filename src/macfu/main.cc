@@ -36,7 +36,7 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<sys/param.h>
+#include	<sys/param.h>		/* |MAXPATHLEN| */
 #include	<unistd.h>
 #include	<fcntl.h>
 #include	<climits>
@@ -67,8 +67,8 @@
 
 /* local defines */
 
-#ifndef	MAXPATH
-#define	MAXPATH		4096
+#ifndef	MAXPATHLEN
+#define	MAXPATHLEN	4096
 #endif
 
 
@@ -233,7 +233,7 @@ static constexpr MAPEX	mapexs[] = {
 	{ 0, 0 }
 } ;
 
-constexpr int		maxpathlen = MAXPATH ;
+constexpr int		maxpathlen = MAXPATHLEN ;
 
 
 /* exported variables */
