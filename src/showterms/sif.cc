@@ -15,31 +15,42 @@
 /* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
 
 /******************************************************************************* 
-	These subroutines perform character case conversions
-	(cheaply).  Yes, case-conversion is used a lot in embedded
-	systems!
+	Names:
+	operator()
+	next
+	nextchr
+	nextbrk
+	chr
+	brk
 
-	Implementation note:
+	Description:
+	These subroutines allow for iterative retrieval of fields
+	from a composite c-string of fields.
 
-	The |CHAR(3dam)| translations (conversions) return an
-	unsigned character ('uchar') type.  This means that when
-	cajoled into becoming an 'int' type on return, it will not
-	be sign-extended.
+	Synopsis:
+	int operator (cchar *rpp) noex
+	int next(cchar *rpp) noex
+	int nextchr(cchar *rpp) noex
+	int nextbrk(cchar *rpp) noex
+	int chr(cchar *rpp) noex
+	int brk(cchar *rpp) noex
 
-	= 2014-01-13
-	We now use the |CHAR(3dam)| translation tables only (no
-	computed conversion compile-time option).  Deal with it.
-	See my note above under the revision history.  Look how
-	trivial the code is now!
+	Arguments:
+	rpp		result pointer pointer
+
+	Returns:
+	>0		got a field
+	==0		did not get a field, or got a zero-length field
+	<0		fif not get a field delimited by specified delimiters
 
 *******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<cstring>		/* |strlen(3c)| */
-#include	<usysrets.h>
+#include	<clanguage.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
-#include	<clanguage.h>
+#include	<usysrets.h>
 #include	<strn.h>
 #include	<sfx.h>
 #include	<char.h>
@@ -74,7 +85,7 @@
 
 int sif::operator () (cchar **rpp) noex {
 	int		rs = SR_FAULT ;
-	int		rl = 0 ;
+	int		rl = 0 ;		/* indicate zero result */
 	cchar		*rp = nullptr ;
 	if (sp && rpp) {
 	    rs = SR_OK ;
@@ -204,20 +215,23 @@ int sif::brk(cchar **rpp) noex {
 sif_co::operator bool () noex {
 	cint		ch = mkchar(op->sp[0]) ;
 	bool		f = false ;
-	switch (w) {
-	case sifmem_iswhitechr:
-	    f = CHAR_ISWHITE(ch) && (ch != op->sch) ;
-	    break ;
-	case sifmem_iswhitestr:
-	    f = CHAR_ISWHITE(ch) && (strchr(op->sstr,ch) == nullptr) ;
-	    break ;
-	case sifmem_isspanchr:
-	    f = (! CHAR_ISWHITE(ch)) && (ch != op->sch) ;
-	    break ;
-	case sifmem_isspanstr:
-	    f = (! CHAR_ISWHITE(ch)) && (strchr(op->sstr,ch) == nullptr) ;
-	    break ;
-	} /* end switch */
+	if (op) {
+	    cnullptr	np{} ;
+	    switch (w) {
+	    case sifmem_iswhitechr:
+	        f = CHAR_ISWHITE(ch) && (ch != op->sch) ;
+	        break ;
+	    case sifmem_iswhitestr:
+	        f = CHAR_ISWHITE(ch) && (strchr(op->sstr,ch) == np) ;
+	        break ;
+	    case sifmem_isspanchr:
+	        f = (! CHAR_ISWHITE(ch)) && (ch != op->sch) ;
+	        break ;
+	    case sifmem_isspanstr:
+	        f = (! CHAR_ISWHITE(ch)) && (strchr(op->sstr,ch) == np) ;
+	        break ;
+	    } /* end switch */
+	} /* end if (non-null) */
 	return f ;
 }
 /* end method (sif_co::operator) */

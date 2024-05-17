@@ -21,8 +21,9 @@
 
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<cstring>		/* |strlen(3c)| */
-#include	<utypedefs.h>
 #include	<clanguage.h>
+#include	<utypedefs.h>
+#include	<utypealiases.h>
 
 
 enum sifmems {
