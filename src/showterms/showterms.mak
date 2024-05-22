@@ -34,18 +34,18 @@ RM= rm -f
 TOUCH= touch
 LINT= lint
 
+
 DEFS +=
 
-INCS += sif.hh ccfile.hh
+INCS +=
 
 LIBS += -lmacuser
 
-#LIB= field.a
-LIB= 
 
 INCDIRS +=
 
-LIBDIRS += -L$(LIBDIR) -L$(PWD)
+LIBDIRS += -L$(LIBDIR)
+
 
 LDRPATH= $(USRLOCAL)/lib
 
@@ -98,14 +98,6 @@ control:
 	(uname -n ; date) > Control
 
 
-# FIELD
-field.a:		field.dir
-field.o:		field.dir
-field.dir:
-	makesubdir $@
-
 main.o:			main.cc		$(INCS)
 
-sif.o:			sif.cc sif.hh
-ccfile.o:		ccfile.cc ccfile.hh
 

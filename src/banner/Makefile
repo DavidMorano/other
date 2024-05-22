@@ -1,6 +1,6 @@
-# MAKEFILE (showterms)
+# MAKEFILE (banner)
 
-T= showterms
+T= banner
 
 ALL= $(T).x
 
@@ -37,7 +37,7 @@ LINT= lint
 
 DEFS +=
 
-INCS +=
+INCS += 
 
 LIBS += -lmacuser
 
@@ -59,7 +59,7 @@ ARFLAGS= $(MAKEARFLAGS)
 LDFLAGS= $(MAKELDFLAGS) -rpath $(LDRPATH)
 
 
-OBJ_SHOWTERMS= main.o
+OBJ_BANNER= main.o
 
 
 default:		$(T).x
@@ -82,8 +82,8 @@ all:			$(ALL)
 	$(CXX) -c $(CPPFLAGS) $(CCFLAGS) $<
 
 
-$(T).x:			$(OBJ_SHOWTERMS) $(LIB)
-	$(CXX) $(LDFLAGS) -o $@ $(OBJ_SHOWTERMS) $(LIBINFO)
+$(T).x:			$(OBJ_BANNER) $(LIB)
+	$(CXX) $(LDFLAGS) -o $@ $(OBJ_BANNER) $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm
