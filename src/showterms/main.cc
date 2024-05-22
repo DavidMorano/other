@@ -16,6 +16,23 @@
 /* Copyright © 2017 David A­D­ Morano.  All rights reserved. */
 /* Use is subject to license terms. */
 
+/*******************************************************************************
+
+	Name:
+	showterms(1)
+
+	Description:
+	This program displays (to STDOUT) the characters within an
+	old-style terminal block (in source C-language form).
+
+	Synopsis:
+	$ showterms [<file>]
+
+	Arguments:
+	<file>		optional file, of STDIN otherwise
+
+*******************************************************************************/
+
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<climits>		/* |UCHAR_MAX| + |CHAR_BIT| */
 #include	<cstddef>		/* |nullptr_t| */
@@ -132,7 +149,7 @@ static void showterms(cchar *terms) noexcept {
 	for (int ch = 0 ; ch < tablen ; ch += 1) {
 	    if (BATSTB(terms,ch)) {
 		if (strchr("\n\r\f\v\b",ch)) {
-		    printf("¯\\x%02X",ch) ;
+		    printf("¯\\x%02X¯",ch) ;
 		} else {
 		    if (ch < 0x20) {
 		       printf("¯»%02X«",ch) ;
@@ -180,11 +197,11 @@ static int procline(termer *top,cchar *lp,int ll) noex {
 	    sif		fb(lp,ll,',') ;
 	    int		fl ;
 	    cchar	*fp ;
-	        while ((fl = fb(&fp)) > 0) {
-		    c += 1 ;
-	            rs = top->accum(fp,fl) ;
-	            if (rs < 0) break ;
-	        } /* end while */
+	    while ((fl = fb(&fp)) > 0) {
+		c += 1 ;
+	        rs = top->accum(fp,fl) ;
+	        if (rs < 0) break ;
+	    } /* end while */
 	} /* end if_constexpr (f_field) */
 	return (rs >= 0) ? c : rs ;
 }
