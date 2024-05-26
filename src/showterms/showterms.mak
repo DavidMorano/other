@@ -39,7 +39,7 @@ DEFS +=
 
 INCS +=
 
-LIBS += -lmacuser
+LIBS += -lmacuser -lu
 
 
 INCDIRS +=
