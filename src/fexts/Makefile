@@ -37,16 +37,19 @@ LINT=	lint
 
 DEFS +=
 
-
 INCS += 
 
-
-LIBS += -lmacuser
+LIBS += -lmacuser -lu
 
 
 INCDIRS +=
 
 LIBDIRS += -L$(LIBDIR)
+
+
+LDRPATH=
+
+LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
 CPPFLAGS= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
@@ -80,7 +83,7 @@ all:			$(ALL)
 
 
 $(T).x:			$(OBJ_CONTERM)
-	$(CXX) $(LDFLAGS) -o $@ $(OBJ_CONTERM) $(LIBDIRS) $(LIBS)
+	$(CXX) $(LDFLAGS) -o $@ $(OBJ_CONTERM) $(LIBINFO)
 
 $(T).o:			$(OBJ_CONTERM)
 	$(LD) $(LDFLAGS) -r -o $@ $(OBJ_CONTERM)
