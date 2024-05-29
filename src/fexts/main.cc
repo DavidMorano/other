@@ -56,14 +56,27 @@ using namespace	std::filesystem ;	/* namespace */
 namespace	rg = std::ranges ;	/* namespace */
 
 using std::vector ;			/* type */
+using std::min ;			/* subroutine-template */
+using std::max ;			/* subroutine-template */
 using std::cerr ;			/* variable */
 using std::cout ;			/* variable */
 
 
 /* local typedefs */
 
+typedef directory_iterator	dirit ;
+typedef	vector<cchar *>		veccp ;
+
+
+/* external subroutines */
+
+
+/* external variables */
+
 
 /* forward references */
+
+static int iterate(dirit &,veccp &) ;
 
 
 /* local constants */
@@ -75,11 +88,12 @@ using std::cout ;			/* variable */
 /* exported subroutines */
 
 int main(int argc,mainv argv,mainv) {
-	int	ex = EXIT_FAILURE ;
+	int		ex = EXIT_FAILURE ;
+	int		rs = SR_OK ;
 	if (argc > 1) {
-	    directory_iterator	dir(".") ;
-	    vector<cchar *>	exts ;
-	    int			c = 0 ;
+	    dirit	dir(".") ;
+	    veccp	exts ;
+	    int		c = 0 ;
 	    for (int i = 1 ; (i < argc) && argv[i] ; i += 1) {
 		if (cchar *ep = argv[i] ; ep[0]) {
 		    exts.push_back(ep) ;
@@ -87,34 +101,47 @@ int main(int argc,mainv argv,mainv) {
 		}
 	    } /* end for */
 	    if (c > 0) {
-		cnullptr	np{} ;
-		auto		ite = exts.end() ;
-	        for (auto const &e : dir) {
-		    path	bn ;
-		    cchar	*bns ;
-		    if (e.is_regular_file()) {
-		        const path	&p = e.path() ;
-		        bn = p.filename() ;
-		        bns = bn.c_str() ;
-		        if (cchar *tp ; (tp = strrchr(bns,'.')) != np) {
-		            cchar	*ep = (tp + 1) ;
-			    if (ep[0]) {
-			        auto fif = rg::find_if ;
-	    		        auto strmat = [ep] (cc *s) noex -> bool {
-				    return (strcmp(s,ep) == 0) ;
-	    		        } ;
-			        if (auto it = fif(exts,strmat) ; it != ite) {
-				    cout << bns << '\n' ;
-			        }
-			    } /* end if (non-empty) */
-		        } /* end if (had-extension) */
-		    } /* end if (regular-file) */
-	        } /* end for */
-	        ex = EXIT_SUCCESS ;
+		if ((rs = iterate(dir,exts)) >= 0) {
+	            ex = EXIT_SUCCESS ;
+		}
 	    } /* end if */
 	}
 	return ex ;
 }
 /* end subroutine (main) */
+
+
+/* local subroutines */
+
+static int iterate(dirit &dir,veccp &exts) {
+	cnullptr	np{} ;
+	auto		ite = exts.end() ;
+	int		rs = SR_OK ;
+	int		c = 0 ;
+        for (auto const &e : dir) {
+            path        bn ;
+            cchar       *bns ;
+            if (e.is_regular_file()) {
+                const path      &p = e.path() ;
+                bn = p.filename() ;
+                bns = bn.c_str() ;
+                if (cchar *tp ; (tp = strrchr(bns,'.')) != np) {
+                    cchar       *ep = (tp + 1) ;
+                    if (ep[0]) {
+                        auto fif = rg::find_if ;
+                        auto strmat = [ep] (cc *s) noex -> bool {
+                            return (strcmp(s,ep) == 0) ;
+                        } ;
+                        if (auto const &it = fif(exts,strmat) ; it != ite) {
+			    c += 1 ;
+                            cout << bns << '\n' ;
+                        }
+                    } /* end if (non-empty) */
+                } /* end if (had-extension) */
+            } /* end if (regular-file) */
+        } /* end for */
+	return (rs >= 0) ? c : rs ;
+}
+/* end subroutine (iterate) */
 
 
