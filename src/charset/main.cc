@@ -38,6 +38,8 @@
 
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<sys/param.h>		/* |MAXPATHLEN| */
+#include	<sys/stat.h>
+#include	<sys/xattr.h>
 #include	<unistd.h>
 #include	<fcntl.h>
 #include	<climits>
@@ -90,6 +92,7 @@ using std::nothrow ;			/* constant */
 /* local typedefs */
 
 typedef string_view	strview ;
+typedef const string	cstring ;
 
 
 /* external subroutines */
@@ -181,8 +184,8 @@ namespace {
     private:
 	int getpn(mainv) noex ;
 	int readin() noex ;
-	int charprocess() noex ;
-	int charprocone(const string *) noex ;
+	int charprocess(char *,int) noex ;
+	int charprocone(char *,int,cstring *) noex ;
 	int istart() noex ;
 	int ifinish() noex ;
 	int iflistbegin(int) noex ;
@@ -235,7 +238,11 @@ static constexpr MAPEX	mapexs[] = {
 	{ 0, 0 }
 } ;
 
+constexpr cchar		*xaname = "charset" ;
+
 constexpr int		maxpathlen = MAXPATHLEN ;
+
+static cint		pagesize = getpagesize() ;
 
 
 /* exported variables */
@@ -277,10 +284,15 @@ int proginfo::charset() noex {
 	int		c = 0 ;
 	if ((argc >= 1) && (charsetval = argv[1]) != np) {
 	    if ((rs = flistbegin(2)) >= 0) {
-	        {
-	            rs = charprocess() ;
-		    c = rs ;
-	        }
+		cint	vlen = pagesize ;
+		char	*vbuf ;
+		if ((vbuf = new(nothrow) char[vlen+1]) != np) {
+		    {
+	                rs = charprocess(vbuf,vlen) ;
+		        c = rs ;
+		    }
+		    delete [] vbuf ;
+	        } /* end if (m-a-f) */
 	        rs1 = flistend ;
 	        if (rs >= 0) rs = rs1 ;
 	    } /* end if (flist) */
@@ -289,15 +301,15 @@ int proginfo::charset() noex {
 }
 /* end method (proginfo::charset) */
 
-int proginfo::charprocess() noex {
+int proginfo::charprocess(char *vbuf,int vlen) noex {
 	int		rs = SR_OK ;
 	for (const auto &e : flist) {
 	    const filenode	&f = e.second ;
 	    try {
 		cint		rc = f.rc ;
 		if (rc > 0) {
-		    const string	*n = &f.fn ;
-		    rs = charprocone(n) ;
+		    cstring	*n = &f.fn ;
+		    rs = charprocone(vbuf,vlen,n) ;
 		}
 	    } catch (...) {
 		rs = SR_IO ;
@@ -308,9 +320,18 @@ int proginfo::charprocess() noex {
 }
 /* end subroutine (proginfo::charprocess) */
 
-int proginfo::charprocone(const string *sp) noex {
-	int		rs = SR_OK ;
-	cout << *sp << eol ;
+int proginfo::charprocone(char *vbuf,int vlen,cstring *sp) noex {
+	static csize	xasz = strlen(charsetval) ;
+	cint		rse = SR_EXISTS ;
+	cint		xo = XATTR_CREATE ;
+	int		rs ;
+	cchar		*xaval = charsetval ;
+	cchar		*fn = sp->c_str() ;
+	(void) vbuf ;
+	(void) vlen ;
+	if ((rs = u_xattrset(fn,xaname,xaval,xasz,0u,xo)) == rse) {
+	    rs = SR_OK ;
+	}
 	return rs ;
 }
 /* end subroutine (proginfo::charprocone) */
@@ -367,9 +388,7 @@ int proginfo::iflistbegin(int si) noex {
 		        }
 		    } /* end if */
 	        } /* end for */
-	    } else {
-	        rs = readin() ;
-	    }
+	    } /* end if (have arguments) */
 	    if (rs < 0) {
 		flist.finish() ;
 	    }
