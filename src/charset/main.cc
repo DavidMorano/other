@@ -282,7 +282,7 @@ int proginfo::charset() noex {
 	int		rs = SR_INVALID ;
 	int		rs1 ;
 	int		c = 0 ;
-	if ((argc >= 1) && (charsetval = argv[1]) != np) {
+	if ((argc >= 2) && (charsetval = argv[1]) != np) {
 	    if ((rs = flistbegin(2)) >= 0) {
 		cint	vlen = pagesize ;
 		char	*vbuf ;
@@ -377,18 +377,16 @@ int proginfo::getpn(mainv names) noex {
 int proginfo::iflistbegin(int si) noex {
 	int		rs ;
 	if ((rs = flist.start) >= 0) {
-	    if (argc > 1) {
-	        for (int ai = si ; (rs >= 0) && (ai < argc) ; ai += 1) {
-		    cchar	*fn = argv[ai] ;
-		    if (fn[0]) {
-		        if ((fn[0] == '-') && (fn[1] == '\0')) {
-			    rs = readin() ;
-		        } else {
-			    rs = filecandidate(fn) ;
-		        }
-		    } /* end if */
-	        } /* end for */
-	    } /* end if (have arguments) */
+	    for (int ai = si ; (rs >= 0) && (ai < argc) ; ai += 1) {
+		cchar	*fn = argv[ai] ;
+		if (fn[0]) {
+		    if ((fn[0] == '-') && (fn[1] == '\0')) {
+			rs = readin() ;
+		    } else {
+			rs = filecandidate(fn) ;
+		    }
+		} /* end if */
+	    } /* end for */
 	    if (rs < 0) {
 		flist.finish() ;
 	    }
