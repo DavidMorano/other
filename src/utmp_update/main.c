@@ -84,7 +84,7 @@
 #endif
 
 #ifndef	NODENAMELEN
-#define	NODENAMELEN	257
+#define	NODENAMELEN	256
 #endif
 
 
@@ -126,16 +126,14 @@ static int bad_line(char *);
 static void check_id(char *, char *);
 
 
-/* global variables */
+/* exported variables */
 
 char	logid[LOGIDLEN + 1] ;
 
 
 /* exported subroutines */
 
-
-int main(int argc, char *argv[])
-{
+int main(int argc,const char *const *argv) {
 	struct utmpx *rutmpx;
 	struct utmpx entryx;
 

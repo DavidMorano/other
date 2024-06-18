@@ -1,6 +1,6 @@
-# MAKEFILE (macfu)
+# MAKEFILE (macsysdata)
 
-T= macfu
+T= macsysdata
 
 ALL= $(T).x
 

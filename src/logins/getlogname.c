@@ -82,9 +82,6 @@
 /* external subroutines */
 
 extern int	sncpy1(char *,int,const char *) ;
-extern int	snwcpy(char *,int,const char *,int) ;
-
-extern char	*strwcpy(char *,const char *,int) ;
 
 
 /* external variables */
@@ -93,11 +90,12 @@ extern char	*strwcpy(char *,const char *,int) ;
 /* forward references */
 
 
+/* exported variables */
+
+
 /* exported subroutines */
 
-
-int getlogname(char *rbuf,int rlen)
-{
+int getlogname(char *rbuf,int rlen) {
 	int		rs = SR_NOTFOUND ;
 
 	if (rbuf == NULL) return SR_FAULT ;
