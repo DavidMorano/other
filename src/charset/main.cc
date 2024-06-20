@@ -46,9 +46,6 @@
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<cstring>		/* <- for |strlen(3c)| */
-#include	<string>
-#include	<string_view>
-#include	<vector>
 #include	<iostream>
 #include	<usystem.h>
 #include	<varnames.hh>
@@ -59,13 +56,15 @@
 #include	<strnul.hh>
 #include	<sncpyx.h>
 #include	<getourenv.h>
-#include	<mapblock.hh>
 #include	<readln.hh>
+#include	<strnul.hh>
 #include	<rmx.h>
 #include	<isnot.h>
 #include	<mapex.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>
+
+#include	"fonce.hh"
 
 
 /* local defines */
@@ -74,14 +73,12 @@
 #define	MAXPATHLEN	4096
 #endif
 
+#define	NENTS		1000
+
 
 /* imported namespaces */
 
 using std::nullptr_t ;			/* type */
-using std::string ;			/* type */
-using std::string_view ;		/* type */
-using std::unordered_map ;		/* type */
-using std::vector ;			/* type */
 using std::istream ;			/* type */
 using std::cin;				/* variable */
 using std::cout ;			/* variable */
@@ -90,9 +87,6 @@ using std::nothrow ;			/* constant */
 
 
 /* local typedefs */
-
-typedef string_view	strview ;
-typedef const string	cstring ;
 
 
 /* external subroutines */
@@ -104,32 +98,6 @@ typedef const string	cstring ;
 /* local structures */
 
 namespace {
-    struct devino {
-	dev_t		dev ;
-	ino_t		ino ;
-	devino(dev_t d,ino_t i) noex : dev(d), ino(i) { } ;
-	size_t hashval() const noex {
-	    return size_t(dev | ino) ;
-	} ;
-	bool equal_to(const devino &o) noex {
-	    return ((dev == o.dev) && (ino == o.ino)) ;
-	} ;
-    } ; /* end struct (devino) */
-    struct filenode {
-	string		fn ;		/* "file-name" */
-	int		rc = 0 ;	/* success==1 */
-	filenode() noex = default ;
-	filenode(cchar *pp,int pl = -1) noex {
-	    if (pl < 0) pl = strlen(pp) ;
-	    strview	s(pp,pl) ;
-	    try {
-	        fn = s ;
-		rc = 1 ;
-	    } catch (...) {
-		rc = 0 ;
-	    }
-	} ; /* end if (ctor) */
-    } ; /* end struct (filenode) */
     enum proginfomems {
 	proginfomem_start,
 	proginfomem_finish,
@@ -151,9 +119,8 @@ namespace {
 	} ;
     } ; /* end struct (proginfo_co) */
     struct proginfo {
-	typedef mapblock<devino,filenode>		nodedb ;
-	typedef mapblock<devino,filenode>::iterator	plit_t ;
 	friend proginfo_co ;
+	fonce		seen ;
 	proginfo_co	start ;
 	proginfo_co	finish ;
 	proginfo_co	flistbegin ;
@@ -162,7 +129,6 @@ namespace {
 	mainv		envv ;
 	cchar		*pn = nullptr ;
 	cchar		*charsetval = nullptr ;
-	nodedb		flist ;
 	int		argc ;
 	int		pm = 0 ;
 	bool		ffound = false ;
@@ -178,32 +144,18 @@ namespace {
 	    argv = a ;
 	    envv = e ;
 	} ;
-	int filecandidate(cchar *,int = -1) noex ;
-	int filealready(dev_t,ino_t) noex ;
 	int charset() noex ;
+	int charprocess(char *,int) noex ;
+	int readin(char *,int) noex ;
+	int fileproc(char *,int,cchar *,int = -1) noex ;
+	int filecheck(CUSTAT *) noex ;
     private:
 	int getpn(mainv) noex ;
-	int readin() noex ;
-	int charprocess(char *,int) noex ;
-	int charprocone(char *,int,cstring *) noex ;
 	int istart() noex ;
 	int ifinish() noex ;
 	int iflistbegin(int) noex ;
 	int iflistend() noex ;
     } ; /* end struct (proginfo) */
-}
-
-namespace std {
-    template<> struct hash<devino> {
-	size_t operator() (const devino &di) const noex {
-	    return di.hashval() ;
-	} ;
-    } ; /* end struct-template (hash<devino>) */
-    template<> struct equal_to<devino> {
-	size_t operator() (const devino &lhs,const devino &rhs) const noex {
-	    return ((lhs.dev == rhs.dev) && (lhs.ino == rhs.ino)) ;
-	} ;
-    } ; /* end struct-template (hash<devino>) */
 }
 
 
@@ -241,6 +193,7 @@ static constexpr MAPEX	mapexs[] = {
 constexpr cchar		*xaname = "charset" ;
 
 constexpr int		maxpathlen = MAXPATHLEN ;
+constexpr int		nents = NENTS ;
 
 static cint		pagesize = getpagesize() ;
 
@@ -283,10 +236,9 @@ int proginfo::charset() noex {
 	int		rs1 ;
 	int		c = 0 ;
 	if ((argc >= 2) && (charsetval = argv[1]) != np) {
-	    if ((rs = flistbegin(2)) >= 0) {
+	    if ((rs = flistbegin(nents)) >= 0) {
 		cint	vlen = pagesize ;
-		char	*vbuf ;
-		if ((vbuf = new(nothrow) char[vlen+1]) != np) {
+		if (char *vbuf ; (vbuf = new(nothrow) char[vlen+1]) != np) {
 		    {
 	                rs = charprocess(vbuf,vlen) ;
 		        c = rs ;
@@ -303,38 +255,66 @@ int proginfo::charset() noex {
 
 int proginfo::charprocess(char *vbuf,int vlen) noex {
 	int		rs = SR_OK ;
-	for (const auto &e : flist) {
-	    const filenode	&f = e.second ;
-	    try {
-		cint		rc = f.rc ;
-		if (rc > 0) {
-		    cstring	*n = &f.fn ;
-		    rs = charprocone(vbuf,vlen,n) ;
-		}
-	    } catch (...) {
-		rs = SR_IO ;
-	    }
-	    if (rs < 0) break ;
+	int		c = 0 ;
+	for (int ai = 2 ; (rs >= SR_OK) && (ai < argc) && argv[ai] ; ai += 1) {
+            cchar   *fn = argv[ai] ;
+            if (fn[0]) {
+                if ((fn[0] == '-') && (fn[1] == '\0')) {
+                    rs = readin(vbuf,vlen) ;
+                    c += rs ;
+                } else {
+                    rs = fileproc(vbuf,vlen,fn) ;
+                    c += rs ;
+                }
+            }
+            if (rs < 0) break ;
 	} /* end for */
-	return rs ;
+	return (rs >= 0) ? c : rs ;
 }
 /* end subroutine (proginfo::charprocess) */
 
-int proginfo::charprocone(char *vbuf,int vlen,cstring *sp) noex {
+int proginfo::readin(char *vbuf,int vlen) noex {
+	istream		*isp = &cin ;
+	int		rs ;
+	int		c = 0 ;
+	if ((rs = maxpathlen) >= 0) {
+	    cnullptr	np{} ;
+	    cint	llen = rs ;
+	    rs = SR_NOMEM ;
+	    if (char *lbuf ; (lbuf = new(nothrow) char[llen+1]) != np) {
+	        while ((rs = readln(isp,lbuf,llen)) > 0) {
+		    int		ll = rs ;
+		    if ((ll > 0) && (lbuf[ll - 1] == eol)) ll -= 1 ;
+		    if (ll > 0) {
+		        rs = fileproc(vbuf,vlen,lbuf,ll) ;
+			c += rs ;
+		    }
+		    if (rs < 0) break ;
+	        } /* end if (reading lines) */
+	        delete [] lbuf ;
+	    } /* end if (m-a-f) */
+	} /* end if (maxpathlen) */
+	return (rs >= 0) ? c : rs ;
+}
+/* end method (proginfo::readin) */
+
+int proginfo::fileproc(char *vbuf,int vlen,cc *sp,int sl) noex {
 	static csize	xasz = strlen(charsetval) ;
+	strnul		fn(sp,sl) ;
 	cint		rse = SR_EXISTS ;
 	cint		xo = XATTR_CREATE ;
 	int		rs ;
+	int		c = 0 ;
 	cchar		*xaval = charsetval ;
-	cchar		*fn = sp->c_str() ;
 	(void) vbuf ;
 	(void) vlen ;
 	if ((rs = u_xattrset(fn,xaname,xaval,xasz,0u,xo)) == rse) {
 	    rs = SR_OK ;
+	    c += 1 ;
 	}
-	return rs ;
+	return (rs >= 0) ? c : rs ;
 }
-/* end subroutine (proginfo::charprocone) */
+/* end subroutine (proginfo::fileproc) */
 
 int proginfo::istart() noex {
 	int		rs ;
@@ -355,10 +335,9 @@ int proginfo::getpn(mainv names) noex {
 	if (argv) {
 	    rs = SR_NOMSG ;
 	    if ((argc > 0) && argv[0]) {
-	        int	bl ;
 		cchar	*arg0 = argv[0] ;
 	        cchar	*bp{} ;
-	        if ((bl = sfbasename(arg0,-1,&bp)) > 0) {
+	        if (int bl ; (bl = sfbasename(arg0,-1,&bp)) > 0) {
 		    int		pl = rmchr(bp,bl,'.') ;
 		    cchar	*pp = bp ;
 		    if (pl > 0) {
@@ -374,91 +353,18 @@ int proginfo::getpn(mainv names) noex {
 }
 /* end method (proginfo::getpn) */
 
-int proginfo::iflistbegin(int si) noex {
-	int		rs ;
-	if ((rs = flist.start) >= 0) {
-	    for (int ai = si ; (rs >= 0) && (ai < argc) ; ai += 1) {
-		cchar	*fn = argv[ai] ;
-		if (fn[0]) {
-		    if ((fn[0] == '-') && (fn[1] == '\0')) {
-			rs = readin() ;
-		    } else {
-			rs = filecandidate(fn) ;
-		    }
-		} /* end if */
-	    } /* end for */
-	    if (rs < 0) {
-		flist.finish() ;
-	    }
-	} /* end if (mapblock::start) */
-	return rs ;
+int proginfo::iflistbegin(int n) noex {
+        return seen.start(n) ;
 }
 /* end method (proginfo::iflistbegin) */
 
 int proginfo::iflistend() noex {
-	return flist.finish ;
+	return seen.finish ;
 }
 /* end method (proginfo::iflistend) */
 
-int proginfo::readin() noex {
-	istream		*isp = &cin ;
-	int		rs ;
-	if ((rs = maxpathlen) >= 0) {
-	    cint	llen = rs ;
-	    char	*lbuf ;
-	    rs = SR_NOMEM ;
-	    if ((lbuf = new(nothrow) char[llen+1]) != nullptr) {
-	        while ((rs = readln(isp,lbuf,llen)) > 0) {
-		    int		ll = rs ;
-		    if ((ll > 0) && (lbuf[ll - 1] == eol)) ll -= 1 ;
-		    if (ll > 0) {
-		        rs = filecandidate(lbuf,ll) ;
-		    }
-		    if (rs < 0) break ;
-	        } /* end if (reading lines) */
-	        delete [] lbuf ;
-	    } /* end if (m-a-f) */
-	} /* end if (maxpathlen) */
-	return rs ;
-}
-/* end method (proginfo::readin) */
-
-int proginfo::filecandidate(cchar *sp,int sl) noex {
-	USTAT		sb ;
-	strnul		s(sp,sl) ;
-	int		rs ;
-	if ((rs = u_stat(s,&sb)) >= 0) {
-	    if (S_ISREG(sb.st_mode)) {
-	        const dev_t	d = sb.st_dev ;
-	        const ino_t	i = sb.st_ino ;
-	        if ((rs = filealready(d,i)) == 0) {
-		    devino	di(d,i) ;
-		    filenode	e(sp,sl) ;
-		    rs = flist.ins(di,e) ;
-	        } /* end if (not-already) */
-	    } /* end if (is-dir) */
-	} else if (isNotAccess(rs)) {
-	    rs = SR_OK ;
-	}
-	return rs ;
-}
-/* end method (proginfo::filecandidate) */
-
-int proginfo::filealready(dev_t d,ino_t i) noex {
-	cint		rsn = SR_NOTFOUND ;
-	int		rs ;
-	bool		f = true ;
-	devino		di(d,i) ;
-	if ((rs = flist.present(di)) == rsn) {
-	    rs = SR_OK ;
-	    f = false ;
-	} /* end if (mapblock::present) */
-	return (rs >= 0) ? f : rs ;
-}
-/* end method (proginfo::filealready) */
-
-int proginfo_co::operator () (int si) noex {
-	int	rs = SR_BUGCHECK ;
+int proginfo_co::operator () (int a) noex {
+	int		rs = SR_BUGCHECK ;
 	if (op) {
 	    switch (w) {
 	    case proginfomem_start:
@@ -468,7 +374,7 @@ int proginfo_co::operator () (int si) noex {
 	        rs = op->ifinish() ;
 	        break ;
 	    case proginfomem_flistbegin:
-	        rs = op->iflistbegin(si) ;
+	        rs = op->iflistbegin(a) ;
 	        break ;
 	    case proginfomem_flistend:
 	        rs = op->iflistend() ;

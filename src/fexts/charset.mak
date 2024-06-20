@@ -8,6 +8,7 @@ ALL= $(T).x
 BINDIR= $(REPOROOT)/bin
 INCDIR= $(REPOROOT)/include
 LIBDIR= $(REPOROOT)/lib
+RUNDIR= $(USRLOCAL)/lib
 MANDIR= $(REPOROOT)/man
 INFODIR= $(REPOROOT)/info
 HELPDIR= $(REPOROOT)/share/help
@@ -41,10 +42,9 @@ INCS=
 LIBS= -lmacuser -lu
 
 
+INCDIRS=
+
 LIBDIRS= -L$(LIBDIR)
-
-LDRPATH= $(USRLOCAL)/lib
-
 
 LIBINFO= $(LIBDIRS) $(LIBS)
 
@@ -53,10 +53,10 @@ CPPFLAGS= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
 CFLAGS= $(MAKECFLAGS)
 CCFLAGS= $(MAKECCFLAGS)
 ARFLAGS= $(MAKEARFLAGS)
-LDFLAGS= $(MAKELDFLAGS) -rpath $(LDRPATH)
+LDFLAGS= $(MAKELDFLAGS) -rpath $(RUNDIR)
 
 
-OBJ_MACFU= main.o
+OBJ_MACFU= main.o fonce.o
 
 
 default:		$(T).x
@@ -95,6 +95,7 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc $(INCS)
+main.o:			main.cc fonce.hh	$(INCS)
+fonce.o:		fonce.cc fonce.hh
 
 

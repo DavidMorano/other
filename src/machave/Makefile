@@ -1,6 +1,6 @@
-# MAKEFILE (charset)
+# MAKEFILE (machave)
 
-T= charset
+T= machave
 
 ALL= $(T).x
 
@@ -8,7 +8,7 @@ ALL= $(T).x
 BINDIR= $(REPOROOT)/bin
 INCDIR= $(REPOROOT)/include
 LIBDIR= $(REPOROOT)/lib
-RUNDIR= $(USRLOCAL)/lib
+RUNDIR= $(REPOROOT)/lib
 MANDIR= $(REPOROOT)/man
 INFODIR= $(REPOROOT)/info
 HELPDIR= $(REPOROOT)/share/help
@@ -35,16 +35,19 @@ TOUCH= touch
 LINT= lint
 
 
-DEFS=
+DEFS +=
 
-INCS=
+INCS += usyscalls.h localmisc.h
 
-LIBS= -lmacuser -lu
+LIBS += -lmacuser -lu
 
 
 INCDIRS=
 
 LIBDIRS= -L$(LIBDIR)
+
+
+LDRPATH= $(USRLOCAL)/lib
 
 LIBINFO= $(LIBDIRS) $(LIBS)
 
@@ -53,10 +56,10 @@ CPPFLAGS= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
 CFLAGS= $(MAKECFLAGS)
 CCFLAGS= $(MAKECCFLAGS)
 ARFLAGS= $(MAKEARFLAGS)
-LDFLAGS= $(MAKELDFLAGS) -rpath $(RUNDIR)
+LDFLAGS= $(MAKELDFLAGS) -rpath $(LDRPATH)
 
 
-OBJ_MACFU= main.o fonce.o
+OBJ_MACHAVE= main.o
 
 
 default:		$(T).x
@@ -79,8 +82,8 @@ all:			$(ALL)
 	$(CXX)  $(CPPFLAGS) $(CCFLAGS) -c $<
 
 
-$(T).x:			$(OBJ_MACFU)
-	$(CXX) $(LDFLAGS) -o $@ $(OBJ_MACFU) $(LIBINFO)
+$(T).x:			$(OBJ_MACHAVE)
+	$(CXX) $(LDFLAGS) -o $@ $(OBJ_MACHAVE) $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm
@@ -95,7 +98,6 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc fonce.hh	$(INCS)
-fonce.o:		fonce.cc fonce.hh
+main.o:			main.cc
 
 

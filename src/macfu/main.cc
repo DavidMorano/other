@@ -150,8 +150,8 @@ namespace {
 	    envv = e ;
 	} ;
 	int fileproc(cchar *,int = -1) noex ;
-	int filecheck(const USTAT *) noex ;
-	int output() noex ;
+	int filecheck(CUSTAT *) noex ;
+	int process() noex ;
     private:
 	int istart() noex ;
 	int ifinish() noex ;
@@ -214,7 +214,7 @@ int main(int argc,mainv argv,mainv envv) noex {
                 switch (pi.pm) {
                 case progmode_fileuniq:
                 case progmode_fu:
-                    rs = pi.output() ;
+                    rs = pi.process() ;
                     break ;
 		default:
 		    rs = SR_BUGCHECK ;
@@ -284,6 +284,31 @@ int proginfo::iflistend() noex {
 }
 /* end method (proginfo::iflistend) */
 
+int proginfo::process() noex {
+	int		rs = SR_OK ;
+	int		c = 0 ;
+	if (argc > 1) {
+	    for (int ai = 1 ; (ai < argc) && argv[ai] ; ai += 1) {
+	        cchar	*fn = argv[ai] ;
+	        if (fn[0]) {
+		    if ((fn[0] == '-') && (fn[1] == '\0')) {
+		        rs = readin() ;
+		        c += rs ;
+		    } else {
+	                rs = fileproc(fn) ;
+		        c += rs ;
+		    }
+	        }
+	        if (rs < 0) break ;
+	    } /* end for */
+	} else {
+	    rs = readin() ;
+	    c += rs ;
+	}
+	return (rs >= 0) ? c : rs ;
+}
+/* end subroutine (proginfo::process) */
+
 int proginfo::readin() noex {
 	istream		*isp = &cin ;
 	int		rs ;
@@ -328,39 +353,13 @@ int proginfo::fileproc(cchar *sp,int sl) noex {
 }
 /* end method (proginfo::fileproc) */
 
-int proginfo::filecheck(const USTAT *sbp)  noex {
-	int		rs = seen.checkin(sbp) ;
-	return rs ;
+int proginfo::filecheck(CUSTAT *sbp)  noex {
+	return seen.checkin(sbp) ;
 }
 /* end method (proginfo::filecheck) */
 
-int proginfo::output() noex {
-	int		rs = SR_OK ;
-	int		c = 0 ;
-	if (argc > 1) {
-	    for (int ai = 1 ; (ai < argc) && argv[ai] ; ai += 1) {
-	        cchar	*fn = argv[ai] ;
-	        if (fn[0]) {
-		    if ((fn[0] == '-') && (fn[1] == '\0')) {
-		        rs = readin() ;
-		        c += rs ;
-		    } else {
-	                rs = fileproc(fn) ;
-		        c += rs ;
-		    }
-	        }
-	        if (rs < 0) break ;
-	    } /* end for */
-	} else {
-	    rs = readin() ;
-	    c += rs ;
-	}
-	return (rs >= 0) ? c : rs ;
-}
-/* end subroutine (proginfo::output) */
-
 int proginfo_co::operator () (int) noex {
-	int	rs = SR_BUGCHECK ;
+	int		rs = SR_BUGCHECK ;
 	if (op) {
 	    switch (w) {
 	    case proginfomem_start:

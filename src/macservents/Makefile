@@ -1,6 +1,6 @@
-# MAKEFILE (charset)
+# MAKEFILE (servents)
 
-T= charset
+T= servents
 
 ALL= $(T).x
 
@@ -8,7 +8,6 @@ ALL= $(T).x
 BINDIR= $(REPOROOT)/bin
 INCDIR= $(REPOROOT)/include
 LIBDIR= $(REPOROOT)/lib
-RUNDIR= $(USRLOCAL)/lib
 MANDIR= $(REPOROOT)/man
 INFODIR= $(REPOROOT)/info
 HELPDIR= $(REPOROOT)/share/help
@@ -22,10 +21,10 @@ CPP= cpp
 CC= gcc
 CXX= gpp
 LD= gld
-RANLIB= granlib
-AR= gar
-NM= gnm
-COV= gcov
+RANLIB= $(CGS_GRANLIB)
+AR= $(CGS_GAR)
+NM= $(CGS_GNM)
+COV= $(CGS_GCOV)
 
 LORDER= lorder
 TSORT= tsort
@@ -37,26 +36,25 @@ LINT= lint
 
 DEFS=
 
-INCS=
-
-LIBS= -lmacuser -lu
-
-
-INCDIRS=
+LDRPATH= $(EXTRA)/lib
 
 LIBDIRS= -L$(LIBDIR)
 
-LIBINFO= $(LIBDIRS) $(LIBS)
+LIBS=
+
 
 # flag setting
 CPPFLAGS= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
 CFLAGS= $(MAKECFLAGS)
 CCFLAGS= $(MAKECCFLAGS)
 ARFLAGS= $(MAKEARFLAGS)
-LDFLAGS= $(MAKELDFLAGS) -rpath $(RUNDIR)
+LDFLAGS= $(MAKELDFLAGS)
 
 
-OBJ_MACFU= main.o fonce.o
+INCS= usystem.h localmisc.h
+
+
+OBJ_USERHOME= main.o
 
 
 default:		$(T).x
@@ -79,14 +77,14 @@ all:			$(ALL)
 	$(CXX)  $(CPPFLAGS) $(CCFLAGS) -c $<
 
 
-$(T).x:			$(OBJ_MACFU)
-	$(CXX) $(LDFLAGS) -o $@ $(OBJ_MACFU) $(LIBINFO)
+$(T).x:			$(OBJ_USERHOME)
+	$(LD) $(LDFLAGS) -o $@ $(OBJ_USERHOME) $(LIBDIRS) $(LIBS)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm
 
 again:
-	rm -f $(T).x
+	rm -f $(TALL)
 
 clean:
 	makeclean $(ALL)
@@ -95,7 +93,6 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc fonce.hh	$(INCS)
-fonce.o:		fonce.cc fonce.hh
+main.o:			main.cc
 
 

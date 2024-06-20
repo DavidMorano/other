@@ -1,0 +1,22 @@
+MACUSER
+
+Other ways to get various user values:
+
+= real UID
+$ id -u -r
+
+= real USERNAME
+$ id -u -r -n
+
+= real GUD
+$ id -g -r
+
+= real GROUPNAME
+$ id -g -r -n
+
+Note that these work off of your current real UID in the process
+and not off of what username you logged in as.  So although the
+UID might be correst, the USERNAME, GID, and GROUPNAME could all
+be incorrect (although still a cousin of the current user, sharing
+the same real UID).
+
