@@ -8,6 +8,7 @@ ALL= $(T).x
 BINDIR= $(REPOROOT)/bin
 INCDIR= $(REPOROOT)/include
 LIBDIR= $(REPOROOT)/lib
+RUNDIR= $(USRLOCAL)/lib
 MANDIR= $(REPOROOT)/man
 INFODIR= $(REPOROOT)/info
 HELPDIR= $(REPOROOT)/share/help
@@ -15,7 +16,6 @@ HELPDIR= $(REPOROOT)/share/help
 
 CRTDIR= $(CGS_CRTDIR)
 VALDIR= $(CGS_VALDIR)
-LIBDIR= $(CGS_LIBDIR)
 
 CPP= cpp
 CC= gcc
@@ -46,8 +46,6 @@ INCDIRS= -I$(INCDIR)
 LIBDIRS= -L$(LIBDIR)
 
 
-LDRPATH= $(USRLOCAL)/lib
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -55,10 +53,10 @@ CPPFLAGS= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
 CFLAGS= $(MAKECFLAGS)
 CCFLAGS= $(MAKECCFLAGS)
 ARFLAGS= $(MAKEARFLAGS)
-LDFLAGS= $(MAKELDFLAGS) -rpath $(LDRPATH)
+LDFLAGS= $(MAKELDFLAGS) -rpath $(RUNDIR)
 
 
-OBJ_MACFU= main.o
+OBJ_MACFU= main.o fonce.o
 
 
 default:		$(T).x
@@ -75,14 +73,14 @@ all:			$(ALL)
 	$(CPP) $(CPPFLAGS) $< > $(*).i
 
 .c.o:
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
+	$(CC) -c $(CPPFLAGS) $(CFLAGS) $<
 
 .cc.o:
-	$(CXX)  $(CPPFLAGS) $(CCFLAGS) -c $<
+	$(CXX) -c $(CPPFLAGS) $(CCFLAGS) $<
 
 
 $(T).x:			$(OBJ_MACFU)
-	$(CXX) $(LDFLAGS) -o $@ $(OBJ_MACFU) $(LIBDIRS) $(LIBS)
+	$(CXX) -o $@ $(LDFLAGS) $(OBJ_MACFU) $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm
@@ -97,6 +95,7 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc $(INCS)
+main.o:			main.cc fonce.hh	$(INCS)
+fonce.o:		fonce.cc fonce.hh
 
 

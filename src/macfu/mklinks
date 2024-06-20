@@ -5,7 +5,7 @@ LOCPROG=macfu.x
 CMDS=
 CMDS+=" fu fileuniq "
 
-TDIRS=" /usr/local /opt/local "
+TDIRS=" /usr/extra /usr/local /opt/local "
 
 function linkdir {
   typeset TDIR=${1}
