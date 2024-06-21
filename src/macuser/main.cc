@@ -523,7 +523,7 @@ int userinfo::findhint(uid_t) noex {
 	int		rs = SR_OK ;
 	int		len = 0 ;
 	cchar		*hup = hintuser.c_str() ;
-	if (hup && hintpwp) {
+	if (hup[0] && hintpwp) {
 	    len = load(hintpwp) ;
 	}
 	return (rs >= 0) ? len : rs ;
