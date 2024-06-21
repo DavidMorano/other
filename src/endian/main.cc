@@ -30,7 +30,9 @@
 
 /* local defines */
 
+#ifndef	eol
 #define	eol		'\n'
+#endif
 
 
 /* namespaces */
@@ -45,10 +47,19 @@ typedef const char		cchar ;
 typedef const char *const *	mainv ;
 
 
+/* exported subroutines */
+
+
+/* exported variables */
+
+
 /* local structures */
 
 
 /* local variables */
+
+
+/* exported variables */
 
 
 /* exported subroutines */

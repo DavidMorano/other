@@ -72,9 +72,12 @@
 using std::cout ;			/* variable */
 
 
-/* typedefs */
+/* local typedefs */
 
 typedef const char *const *mainv ;
+
+
+/* local structures */
 
 
 /* forward references */

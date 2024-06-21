@@ -1,6 +1,6 @@
-# MAKEFILE (macfu)
+# MAKEFILE (macutmp)
 
-T= macfu
+T= macutmp
 
 ALL= $(T).x
 
@@ -8,30 +8,31 @@ ALL= $(T).x
 BINDIR= $(REPOROOT)/bin
 INCDIR= $(REPOROOT)/include
 LIBDIR= $(REPOROOT)/lib
-RUNDIR= $(USRLOCAL)/lib
 MANDIR= $(REPOROOT)/man
+
 INFODIR= $(REPOROOT)/info
 HELPDIR= $(REPOROOT)/share/help
 
-
 CRTDIR= $(CGS_CRTDIR)
 VALDIR= $(CGS_VALDIR)
+RUNDIR= $(USRLOCAL)/lib
 
-CPP= cpp
-CC= gcc
-CXX= gpp
-LD= gld
-RANLIB= granlib
-AR= gar
-NM= gnm
-COV= gcov
 
-LORDER= lorder
-TSORT= tsort
-LINT= lint
-RM= rm -f
-TOUCH= touch
-LINT= lint
+CPP=	cpp
+CC=	gcc
+CXX=	gpp
+LD=	gld
+RANLIB=	granlib
+AR=	gar
+NM=	gnm
+COV=	gcov
+
+LORDER=	lorder
+TSORT=	tsort
+LINT=	lint
+RM=	rm -f
+TOUCH=	touch
+LINT=	lint
 
 
 DEFS=
@@ -41,7 +42,7 @@ INCS=
 LIBS= -lmacuser -lu
 
 
-INCDIRS= -I$(INCDIR)
+INCDIRS=
 
 LIBDIRS= -L$(LIBDIR)
 
@@ -56,7 +57,7 @@ ARFLAGS= $(MAKEARFLAGS)
 LDFLAGS= $(MAKELDFLAGS) -rpath $(RUNDIR)
 
 
-OBJ_MACFU= main.o fonce.o
+OBJ_UTMP= main.o
 
 
 default:		$(T).x
@@ -73,20 +74,31 @@ all:			$(ALL)
 	$(CPP) $(CPPFLAGS) $< > $(*).i
 
 .c.o:
-	$(CC) -c $(CPPFLAGS) $(CFLAGS) $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
 
 .cc.o:
-	$(CXX) -c $(CPPFLAGS) $(CCFLAGS) $<
+	$(CXX)  $(CPPFLAGS) $(CCFLAGS) -c $<
 
 
-$(T).x:			$(OBJ_MACFU)
-	$(CXX) -o $@ $(LDFLAGS) $(OBJ_MACFU) $(LIBINFO)
+$(T).x:			$(OBJ_UTMP)
+	$(LD) -o $@ $(LDFLAGS) $(OBJ_UTMP) $(LIBINFO)
 
-$(T).nm:		$(T).x
-	$(NM) $(NMFLAGS) $(T).so > $(T).nm
+$(T).o:			$(OBJ_UTMP)
+	$(LD) $(LDFLAGS) -r -o $@ $(OBJ_UTMP)
+
+$(T).a:			$(OBJ_UTMP)
+	$(AR) $(ARFLAGS) -rc $@ $?
+
+$(T).nm:		$(T).o
+	$(NM) $(NMFLAGS) $(T).o > $(T).nm
+
+$(T).order:		$(OBJ_UTMP) $(T).a
+	$(LORDER) $(T).a | $(TSORT) > $(T).order
+	$(RM) $(T).a
+	while read O ; do $(AR) $(ARFLAGS) -cr $(T).a $${O} ; done < $(T).order
 
 again:
-	rm -f $(T).x
+	rm -f $(ALL)
 
 clean:
 	makeclean $(ALL)
@@ -95,7 +107,6 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc fonce.hh	$(INCS)
-fonce.o:		fonce.cc fonce.hh
+main.o:			main.cc
 
 

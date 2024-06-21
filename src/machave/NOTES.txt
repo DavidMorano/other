@@ -1,0 +1,40 @@
+MACHAVE
+
+There can be various implementations of the HAVEPROGRAM program
+(and the PATHTO program).  Some of these are:
+
+= using KSH and the WHICH program
+
+------------------------------------
+#!/usr/extra/bin/ksh
+# HAVEPROGRAM
+which -s "${@}"
+------------------------------------
+
+= using KSH and its own WHENCE program
+
+------------------------------------
+#!/usr/extra/bin/ksh
+# HAVEPROGRAM
+whence -p -q "${@}"
+------------------------------------
+
+Other ways to create the PATHTO program:
+
+= using KSH and the WHICH program
+
+------------------------------------
+#!/usr/extra/bin/ksh
+# PATHTO
+which -a "${@}"
+------------------------------------
+
+= using KSH and its own WHENCE command
+
+------------------------------------
+#!/usr/extra/bin/ksh
+# PATHTO
+whence -a -p "${@}"
+------------------------------------
+
+

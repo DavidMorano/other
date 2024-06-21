@@ -1,6 +1,6 @@
-# MAKEFILE (macfu)
+# MAKEFILE (mactruncate)
 
-T= macfu
+T= mactruncate
 
 ALL= $(T).x
 
@@ -8,7 +8,7 @@ ALL= $(T).x
 BINDIR= $(REPOROOT)/bin
 INCDIR= $(REPOROOT)/include
 LIBDIR= $(REPOROOT)/lib
-RUNDIR= $(USRLOCAL)/lib
+RUNDIR= $(REPOROOT)/lib
 MANDIR= $(REPOROOT)/man
 INFODIR= $(REPOROOT)/info
 HELPDIR= $(REPOROOT)/share/help
@@ -16,6 +16,7 @@ HELPDIR= $(REPOROOT)/share/help
 
 CRTDIR= $(CGS_CRTDIR)
 VALDIR= $(CGS_VALDIR)
+LIBDIR= $(CGS_LIBDIR)
 
 CPP= cpp
 CC= gcc
@@ -34,17 +35,19 @@ TOUCH= touch
 LINT= lint
 
 
-DEFS=
+DEFS +=
 
-INCS=
+INCS += usyscalls.h localmisc.h
 
-LIBS= -lmacuser -lu
+LIBS += -lmacuser -lu
 
 
-INCDIRS= -I$(INCDIR)
+INCDIRS=
 
 LIBDIRS= -L$(LIBDIR)
 
+
+LDRPATH= $(USRLOCAL)/lib
 
 LIBINFO= $(LIBDIRS) $(LIBS)
 
@@ -53,10 +56,10 @@ CPPFLAGS= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
 CFLAGS= $(MAKECFLAGS)
 CCFLAGS= $(MAKECCFLAGS)
 ARFLAGS= $(MAKEARFLAGS)
-LDFLAGS= $(MAKELDFLAGS) -rpath $(RUNDIR)
+LDFLAGS= $(MAKELDFLAGS) -rpath $(LDRPATH)
 
 
-OBJ_MACFU= main.o fonce.o
+OBJ_MACHAVE= main.o
 
 
 default:		$(T).x
@@ -73,14 +76,14 @@ all:			$(ALL)
 	$(CPP) $(CPPFLAGS) $< > $(*).i
 
 .c.o:
-	$(CC) -c $(CPPFLAGS) $(CFLAGS) $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
 
 .cc.o:
-	$(CXX) -c $(CPPFLAGS) $(CCFLAGS) $<
+	$(CXX)  $(CPPFLAGS) $(CCFLAGS) -c $<
 
 
-$(T).x:			$(OBJ_MACFU)
-	$(CXX) -o $@ $(LDFLAGS) $(OBJ_MACFU) $(LIBINFO)
+$(T).x:			$(OBJ_MACHAVE)
+	$(CXX) $(LDFLAGS) -o $@ $(OBJ_MACHAVE) $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm
@@ -95,7 +98,6 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc fonce.hh	$(INCS)
-fonce.o:		fonce.cc fonce.hh
+main.o:			main.cc
 
 

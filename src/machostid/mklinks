@@ -1,10 +1,9 @@
 #!/usr/extra/bin/ksh
 # MKLINKS
 
-LOCPROG=macfu.x
-CMDS=
-CMDS+=" fu fileuniq "
+CMDS=" hostid "
 
+LOCPROG=machostid.x
 TDIRS=" /usr/extra /usr/local /opt/local "
 
 function linkdir {

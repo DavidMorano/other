@@ -1,6 +1,6 @@
-# MAKEFILE (macfu)
+# MAKEFILE (machostid)
 
-T= macfu
+T= machostid
 
 ALL= $(T).x
 
@@ -8,23 +8,24 @@ ALL= $(T).x
 BINDIR= $(REPOROOT)/bin
 INCDIR= $(REPOROOT)/include
 LIBDIR= $(REPOROOT)/lib
-RUNDIR= $(USRLOCAL)/lib
 MANDIR= $(REPOROOT)/man
+
 INFODIR= $(REPOROOT)/info
 HELPDIR= $(REPOROOT)/share/help
 
-
 CRTDIR= $(CGS_CRTDIR)
 VALDIR= $(CGS_VALDIR)
+RUNDIR= $(USRLOCAL)/lib
+
 
 CPP= cpp
 CC= gcc
 CXX= gpp
 LD= gld
-RANLIB= granlib
-AR= gar
-NM= gnm
-COV= gcov
+RANLIB= $(CGS_GRANLIB)
+AR= $(CGS_GAR)
+NM= $(CGS_GNM)
+COV= $(CGS_GCOV)
 
 LORDER= lorder
 TSORT= tsort
@@ -38,15 +39,10 @@ DEFS=
 
 INCS=
 
-LIBS= -lmacuser -lu
+LIBS= -lmacuser
 
-
-INCDIRS= -I$(INCDIR)
 
 LIBDIRS= -L$(LIBDIR)
-
-
-LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
 CPPFLAGS= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
@@ -56,7 +52,7 @@ ARFLAGS= $(MAKEARFLAGS)
 LDFLAGS= $(MAKELDFLAGS) -rpath $(RUNDIR)
 
 
-OBJ_MACFU= main.o fonce.o
+OBJ_HOSTID= main.o
 
 
 default:		$(T).x
@@ -73,20 +69,20 @@ all:			$(ALL)
 	$(CPP) $(CPPFLAGS) $< > $(*).i
 
 .c.o:
-	$(CC) -c $(CPPFLAGS) $(CFLAGS) $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
 
 .cc.o:
-	$(CXX) -c $(CPPFLAGS) $(CCFLAGS) $<
+	$(CXX)  $(CPPFLAGS) $(CCFLAGS) -c $<
 
 
-$(T).x:			$(OBJ_MACFU)
-	$(CXX) -o $@ $(LDFLAGS) $(OBJ_MACFU) $(LIBINFO)
+$(T).x:			$(OBJ_HOSTID)
+	$(LD) $(LDFLAGS) -o $@ $(OBJ_HOSTID) $(LIBDIRS) $(LIBS)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm
 
 again:
-	rm -f $(T).x
+	rm -f $(TALL)
 
 clean:
 	makeclean $(ALL)
@@ -95,7 +91,7 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc fonce.hh	$(INCS)
-fonce.o:		fonce.cc fonce.hh
+main.o:			main.cc			$(INCS)
+gethostid.o:		gethostid.cc		$(INCS)
 
 

@@ -1,11 +1,13 @@
 #!/usr/extra/bin/ksh
 # MKLINKS
 
-LOCPROG=macfu.x
-CMDS=
-CMDS+=" fu fileuniq "
+CMDS=" username userhome usershell "
+CMDS+=" uid gid sid "
+CMDS+=" groupname sessionid shells"
+CMDS+=" userents groupents "
 
-TDIRS=" /usr/extra /usr/local /opt/local "
+LOCPROG=macuser.x
+TDIRS=" /usr/local /opt/local "
 
 function linkdir {
   typeset TDIR=${1}

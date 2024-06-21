@@ -1,6 +1,6 @@
-# MAKEFILE (macfu)
+# MAKEFILE (macsysdata)
 
-T= macfu
+T= macsysdata
 
 ALL= $(T).x
 
@@ -8,14 +8,15 @@ ALL= $(T).x
 BINDIR= $(REPOROOT)/bin
 INCDIR= $(REPOROOT)/include
 LIBDIR= $(REPOROOT)/lib
-RUNDIR= $(USRLOCAL)/lib
 MANDIR= $(REPOROOT)/man
+
 INFODIR= $(REPOROOT)/info
 HELPDIR= $(REPOROOT)/share/help
 
-
 CRTDIR= $(CGS_CRTDIR)
 VALDIR= $(CGS_VALDIR)
+RUNDIR= $(USRLOCAL)/lib
+
 
 CPP= cpp
 CC= gcc
@@ -56,7 +57,7 @@ ARFLAGS= $(MAKEARFLAGS)
 LDFLAGS= $(MAKELDFLAGS) -rpath $(RUNDIR)
 
 
-OBJ_MACFU= main.o fonce.o
+OBJ_MACFU= main.o
 
 
 default:		$(T).x
@@ -73,14 +74,14 @@ all:			$(ALL)
 	$(CPP) $(CPPFLAGS) $< > $(*).i
 
 .c.o:
-	$(CC) -c $(CPPFLAGS) $(CFLAGS) $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
 
 .cc.o:
-	$(CXX) -c $(CPPFLAGS) $(CCFLAGS) $<
+	$(CXX)  $(CPPFLAGS) $(CCFLAGS) -c $<
 
 
 $(T).x:			$(OBJ_MACFU)
-	$(CXX) -o $@ $(LDFLAGS) $(OBJ_MACFU) $(LIBINFO)
+	$(CXX) $(LDFLAGS) -o $@ $(OBJ_MACFU) $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm
@@ -95,7 +96,6 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc fonce.hh	$(INCS)
-fonce.o:		fonce.cc fonce.hh
+main.o:			main.cc $(INCS)
 
 

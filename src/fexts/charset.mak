@@ -1,6 +1,6 @@
-# MAKEFILE (macfu)
+# MAKEFILE (charset)
 
-T= macfu
+T= charset
 
 ALL= $(T).x
 
@@ -16,6 +16,7 @@ HELPDIR= $(REPOROOT)/share/help
 
 CRTDIR= $(CGS_CRTDIR)
 VALDIR= $(CGS_VALDIR)
+LIBDIR= $(CGS_LIBDIR)
 
 CPP= cpp
 CC= gcc
@@ -41,10 +42,9 @@ INCS=
 LIBS= -lmacuser -lu
 
 
-INCDIRS= -I$(INCDIR)
+INCDIRS=
 
 LIBDIRS= -L$(LIBDIR)
-
 
 LIBINFO= $(LIBDIRS) $(LIBS)
 
@@ -73,14 +73,14 @@ all:			$(ALL)
 	$(CPP) $(CPPFLAGS) $< > $(*).i
 
 .c.o:
-	$(CC) -c $(CPPFLAGS) $(CFLAGS) $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
 
 .cc.o:
-	$(CXX) -c $(CPPFLAGS) $(CCFLAGS) $<
+	$(CXX)  $(CPPFLAGS) $(CCFLAGS) -c $<
 
 
 $(T).x:			$(OBJ_MACFU)
-	$(CXX) -o $@ $(LDFLAGS) $(OBJ_MACFU) $(LIBINFO)
+	$(CXX) $(LDFLAGS) -o $@ $(OBJ_MACFU) $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm

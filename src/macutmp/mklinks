@@ -1,11 +1,14 @@
 #!/usr/extra/bin/ksh
 # MKLINKS
 
-LOCPROG=macfu.x
 CMDS=
-CMDS+=" fu fileuniq "
+CMDS+=" utmp boottime nusers"
+CMDS+=" utmpid utmpname utmpline utmphost utmpsid"
+CMDS+=" logid logname logline loghost logsid"
+CMDS+=" logged"
 
-TDIRS=" /usr/extra /usr/local /opt/local "
+LOCPROG=macutmp.x
+TDIRS=" /usr/local /opt/local "
 
 function linkdir {
   typeset TDIR=${1}

@@ -1,9 +1,10 @@
 #!/usr/extra/bin/ksh
 # MKLINKS
 
-LOCPROG=macfu.x
+LOCPROG=macsysdata.x
 CMDS=
-CMDS+=" fu fileuniq "
+CMDS+=" architecture machine platform systype "
+CMDS+=" nisdomain hostid "
 
 TDIRS=" /usr/extra /usr/local /opt/local "
 

@@ -1,11 +1,11 @@
 #!/usr/extra/bin/ksh
 # MKLINKS
 
-LOCPROG=macfu.x
+LOCPROG=charset.x
 CMDS=
-CMDS+=" fu fileuniq "
+CMDS+=" charset "
 
-TDIRS=" /usr/extra /usr/local /opt/local "
+TDIRS=" /usr/local /opt/local "
 
 function linkdir {
   typeset TDIR=${1}
