@@ -138,6 +138,7 @@ namespace {
 	    argv = a ;
 	    envv = e ;
 	} ;
+	int uname() noex ;
 	int output() noex ;
     private:
 	int istart() noex ;
@@ -153,6 +154,10 @@ namespace {
 /* local variables */
 
 enum progmodes {
+	progmode_sysname,
+	progmode_release,
+	progmode_nodename,
+	progmode_version,
 	progmode_architecture,
 	progmode_machine,
 	progmode_platform,
@@ -163,6 +168,10 @@ enum progmodes {
 } ;
 
 static constexpr cpcchar	prognames[] = {
+	"sysname",
+	"release",
+	"nodename",
+	"version",
 	"architecture",
 	"machine",
 	"platform",
@@ -202,24 +211,30 @@ int main(int argc,mainv argv,mainv envv) noex {
 	int		rs ;
 	int		rs1 ;
 	if ((rs = pi.start) >= 0) {
-                switch (pi.pm) {
-                case progmode_architecture:
-                case progmode_machine:
-                case progmode_platform:
-                case progmode_systype:
-                case progmode_nisdomain:
-                    rs = pi.output() ;
-                    break ;
-		case progmode_hostid:
-		    {
-			clong id = gethostid() ;
-			cout << ulong(id) << eol ;
-		    }
-		    break ;
-		default:
-		    rs = SR_BUGCHECK ;
-		    break ;
-                } /* end switch */
+            switch (pi.pm) {
+            case progmode_sysname:
+            case progmode_release:
+            case progmode_nodename:
+            case progmode_version:
+		rs = pi.uname() ;
+		break ;
+            case progmode_architecture:
+            case progmode_machine:
+            case progmode_platform:
+            case progmode_systype:
+            case progmode_nisdomain:
+                rs = pi.output() ;
+                break ;
+	    case progmode_hostid:
+		{
+		    clong id = gethostid() ;
+		    cout << ulong(id) << eol ;
+		}
+		break ;
+	    default:
+		rs = SR_BUGCHECK ;
+		break ;
+            } /* end switch */
 	    rs1 = pi.finish ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (proginfo) */
@@ -269,6 +284,33 @@ int proginfo::getpn(mainv names) noex {
 	return rs ;
 }
 /* end method (proginfo::getpn) */
+
+int proginfo::uname() noex {
+	UTSNAME		uts ;
+	int		rs ;
+	if ((rs = u_uname(&uts)) >= 0) {
+	    cchar	*valp = nullptr ;
+            switch (pm) {
+            case progmode_sysname:
+		valp = uts.sysname ;
+		break ;
+            case progmode_release:
+		valp = uts.release ;
+		break ;
+            case progmode_nodename:
+		valp = uts.nodename ;
+		break ;
+            case progmode_version:
+		valp = uts.version ;
+		break ;
+	    } /* end switch */
+	    if (valp) {
+		cout << valp << eol ;
+	    }
+	} /* end if (u_uname) */
+	return rs ;
+}
+/* end subroutine (proginfo::uname) */
 
 int proginfo::output() noex {
 	int		rs = SR_OK ;
