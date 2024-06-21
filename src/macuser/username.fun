@@ -1,4 +1,4 @@
-# USERNAME + HROUPNAME (shell function)
+# USERNAME + GROUPNAME (shell function)
 
 function username {
   : ${USERNAME:=${LOGNAME}}

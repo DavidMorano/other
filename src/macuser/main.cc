@@ -15,9 +15,10 @@
 	I refactored and enhanced this for use on MacOS.  MacOS is
 	a brain-damaged system and needs some help.  But I could
 	not easily port the full (featured) versions of these same
-	utilities from Solaris® and other System V syhstems because
+	utilities from Solaris® and other System V systems because
 	MacOS does not support a moderately extended POSIX® development
-	environment.
+	environment.  The stuff below is a total hack, very quickly
+	written.
 
 */
 
@@ -81,6 +82,13 @@
 	use context of this program (also the system PASSWD entry
 	will be cached on the second access w/ the same key).
 
+	Strange-note:
+	Yes, the issue is Apple Darwin -- again!  For some weirdo
+	unknown crazy reason, Darwin returns ENOTTY on an |fstat(2)|
+	when the input file-descrptor is not owned by the current
+	user!  I would have thought that ENOACCES should have been
+	returned, but NO..OOO...OOO!  We live, learn, and work around.
+
 *******************************************************************************/
 
 #include	<envstandards.h>
@@ -88,7 +96,9 @@
 #include	<sys/param.h>
 #include	<unistd.h>		/* |getusershell(3c)| */
 #include	<climits>
+#include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
+#include	<cstdio>
 #include	<cstring>		/* for |strlen(3c)| + |strnlen(3c)| */
 #include	<string>
 #include	<fstream>
@@ -220,11 +230,14 @@ static constexpr cpcchar	envs[] = {
 
 namespace {
     struct userinfo {
+	PASSWD		*hintpwp = nullptr ;
+	string		hintuser ;
 	string		un ;
 	string		uh ;
 	string		us ;
 	gid_t		gid ;
 	int find(uid_t) noex ;
+	int findhint(uid_t) noex ;
 	int findenv(uid_t) noex ;
 	int findutmp(uid_t) noex ;
 	int findutmp_sid(uid_t) noex ;
@@ -233,6 +246,8 @@ namespace {
 	int findutmp_stat(uid_t) noex ;
 	int finduid(uid_t) noex ;
 	int load(PASSWD *) noex ;
+	int printdef(int,int,mainv,uid_t) noex ;
+	int printone(int,uid_t) noex ;
     } ; /* end struct (userinfo) */
 }
 
@@ -303,26 +318,7 @@ int main(int argc,mainv argv,mainv) noex {
 		rs = printgroupents() ;
 		break ;
 	    default:
-	        if ((rs = ui.find(uid)) > 0) {
-		    switch (pm) {
-		    case progmode_username:
-		        cout << ui.un << eol ;
-		        break ;
-		    case progmode_userhome:
-		        cout << ui.uh << eol ;
-		        break ;
-		    case progmode_usershell:
-		        cout << ui.us << eol ;
-		        break ;
-		    case progmode_gid:
-		    case progmode_groupname:
-			rs = procgroup(pm,&ui) ;
-			break ;
-		    default:
-		        rs = SR_BUGCHECK ;
-		        break ;
-		    } /* end switch */
-	        } /* end if (userinfo::find) */
+		rs = ui.printdef(pm,argc,argv,uid) ;
 		break ;
 	    } /* end switch */
 	} /* end if (getpn) */
@@ -333,6 +329,53 @@ int main(int argc,mainv argv,mainv) noex {
 
 
 /* local subroutines */
+
+int userinfo::printdef(int pm,int argc,mainv argv,uid_t uid) noex {
+	int		rs = SR_OK ;
+	if ((argc > 1) && argv[1]) {
+	    PASSWD	*pwp ;
+	    for (int ai = 1 ; (ai < argc) && argv[ai] ; ai += 1) {
+		if (cchar *aun = argv[ai] ; aun[0]) {
+		    if ((pwp = getpwnam(aun)) != nullptr) {
+		        hintuser = aun ;
+		        hintpwp = pwp ;
+			rs = printone(pm,pwp->pw_uid) ;
+		    }
+		}
+		if (rs < 0) break ;
+	    } /* end for */
+	} else {
+	    rs = printone(pm,uid) ;
+	}
+	return rs ;
+}
+/* end method (userinfo::printdef) */
+
+int userinfo::printone(int pm,uid_t uid) noex {
+	int		rs ;
+        if ((rs = find(uid)) > 0) {
+            switch (pm) {
+            case progmode_username:
+                cout << un << eol ;
+                break ;
+            case progmode_userhome:
+                cout << uh << eol ;
+                break ;
+            case progmode_usershell:
+                cout << us << eol ;
+                break ;
+            case progmode_gid:
+            case progmode_groupname:
+                rs = procgroup(pm,this) ;
+                break ;
+            default:
+                rs = SR_BUGCHECK ;
+                break ;
+            } /* end switch */
+        } /* end if (userinfo::find) */
+	return rs ;
+}
+/* end method (userinfo::printone) */
 
 static int getpn(int argc,mainv argv,mainv names) noex {
 	int		rs = SR_FAULT ;
@@ -465,14 +508,26 @@ static bool isourtype(const UTMPX *up) noex {
 
 int userinfo::find(uid_t uid) noex {
 	int		rs ;
-	if ((rs = findenv(uid)) == 0) {
-	    if ((rs = findutmp(uid)) == 0) {
-	        rs = finduid(uid) ;
+	if ((rs = findhint(uid)) == 0) {
+	    if ((rs = findenv(uid)) == 0) {
+	        if ((rs = findutmp(uid)) == 0) {
+	            rs = finduid(uid) ;
+	        }
 	    }
 	}
 	return rs ;
 }
 /* end method (userinfo::find) */
+
+int userinfo::findhint(uid_t) noex {
+	int		rs = SR_OK ;
+	int		len = 0 ;
+	cchar		*hup = hintuser.c_str() ;
+	if (hup && hintpwp) {
+	    len = load(hintpwp) ;
+	}
+	return (rs >= 0) ? len : rs ;
+}
 
 int userinfo::findenv(uid_t uid) noex {
 	int		rs = SR_OK ;
@@ -566,7 +621,7 @@ int userinfo::findutmp_stdin(uid_t uid) noex {
 	    } else if (isNotTerm(rs)) {
 		rs = SR_OK ;
 	    } /* end if (ttyname) */
-	} else if (isNotAccess(rs)) {
+	} else if (isNotAccess(rs) || isNotTerm(rs)) {
 	    rs = SR_OK ;
 	} /* end if (stat) */
 	return (rs >= 0) ? len : rs ;
