@@ -33,9 +33,15 @@
 #include	<clanguage.h>
 
 
+/* local defines */
+
+
 /* imported namespaces */
 
 using std::nullptr_t ;			/* type */
+
+
+/* exported variables */
 
 
 /* exported subroutines */

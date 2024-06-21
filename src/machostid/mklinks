@@ -1,11 +1,9 @@
 #!/usr/extra/bin/ksh
 # MKLINKS
 
-LOCPROG=macsysdata.x
-CMDS=
-CMDS+=" architecture machine platform systype "
-CMDS+=" nisdomain hostid "
+CMDS=" hostid "
 
+LOCPROG=machostid.x
 TDIRS=" /usr/extra /usr/local /opt/local "
 
 function linkdir {

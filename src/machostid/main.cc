@@ -48,10 +48,16 @@ using std::cout ;			/* variable */
 /* external variables */
 
 
+/* local structures */
+
+
 /* forward references */
 
 
-/* gloabal variables */
+/* local variables */
+
+
+/* exported variables */
 
 
 /* exported subroutines */

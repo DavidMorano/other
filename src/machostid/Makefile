@@ -9,13 +9,14 @@ BINDIR= $(REPOROOT)/bin
 INCDIR= $(REPOROOT)/include
 LIBDIR= $(REPOROOT)/lib
 MANDIR= $(REPOROOT)/man
+
 INFODIR= $(REPOROOT)/info
 HELPDIR= $(REPOROOT)/share/help
 
-
 CRTDIR= $(CGS_CRTDIR)
 VALDIR= $(CGS_VALDIR)
-LIBDIR= $(CGS_LIBDIR)
+RUNDIR= $(USRLOCAL)/lib
+
 
 CPP= cpp
 CC= gcc
@@ -36,25 +37,22 @@ LINT= lint
 
 DEFS=
 
-LDRPATH= $(EXTRA)/lib
-
-LIBDIRS= -L$(LIBDIR)
+INCS=
 
 LIBS= -lmacuser
 
+
+LIBDIRS= -L$(LIBDIR)
 
 # flag setting
 CPPFLAGS= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
 CFLAGS= $(MAKECFLAGS)
 CCFLAGS= $(MAKECCFLAGS)
 ARFLAGS= $(MAKEARFLAGS)
-LDFLAGS= $(MAKELDFLAGS)
+LDFLAGS= $(MAKELDFLAGS) -rpath $(RUNDIR)
 
 
-INCS= usystem.h localmisc.h
-
-
-OBJ_USERHOME= main.o gethostid.o
+OBJ_HOSTID= main.o
 
 
 default:		$(T).x
@@ -77,8 +75,8 @@ all:			$(ALL)
 	$(CXX)  $(CPPFLAGS) $(CCFLAGS) -c $<
 
 
-$(T).x:			$(OBJ_USERHOME)
-	$(LD) $(LDFLAGS) -o $@ $(OBJ_USERHOME) $(LIBDIRS) $(LIBS)
+$(T).x:			$(OBJ_HOSTID)
+	$(LD) $(LDFLAGS) -o $@ $(OBJ_HOSTID) $(LIBDIRS) $(LIBS)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm
@@ -93,7 +91,7 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc
-gethostid.o:		gethostid.cc
+main.o:			main.cc			$(INCS)
+gethostid.o:		gethostid.cc		$(INCS)
 
 

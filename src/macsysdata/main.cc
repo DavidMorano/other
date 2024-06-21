@@ -46,7 +46,6 @@
 #include	<cstring>		/* <- for |strlen(3c)| */
 #include	<string>
 #include	<string_view>
-#include	<vector>
 #include	<iostream>
 #include	<usystem.h>
 #include	<varnames.hh>
@@ -78,8 +77,6 @@
 using std::nullptr_t ;			/* type */
 using std::string ;			/* type */
 using std::string_view ;		/* type */
-using std::unordered_map ;		/* type */
-using std::vector ;			/* type */
 using std::istream ;			/* type */
 using std::cin;				/* variable */
 using std::cout ;			/* variable */
@@ -160,6 +157,8 @@ enum progmodes {
 	progmode_machine,
 	progmode_platform,
 	progmode_systype,
+	progmode_nisdomain,
+	progmode_hostid,
 	progmode_overlast
 } ;
 
@@ -168,6 +167,8 @@ static constexpr cpcchar	prognames[] = {
 	"machine",
 	"platform",
 	"systype",
+	"nisdomain",
+	"hostid",
 	nullptr
 } ;
 
@@ -206,8 +207,15 @@ int main(int argc,mainv argv,mainv envv) noex {
                 case progmode_machine:
                 case progmode_platform:
                 case progmode_systype:
+                case progmode_nisdomain:
                     rs = pi.output() ;
                     break ;
+		case progmode_hostid:
+		    {
+			clong id = gethostid() ;
+			cout << ulong(id) << eol ;
+		    }
+		    break ;
 		default:
 		    rs = SR_BUGCHECK ;
 		    break ;
@@ -244,10 +252,9 @@ int proginfo::getpn(mainv names) noex {
 	if (argv) {
 	    rs = SR_NOMSG ;
 	    if ((argc > 0) && argv[0]) {
-	        int	bl ;
 		cchar	*arg0 = argv[0] ;
 	        cchar	*bp{} ;
-	        if ((bl = sfbasename(arg0,-1,&bp)) > 0) {
+	        if (int bl ; (bl = sfbasename(arg0,-1,&bp)) > 0) {
 		    int		pl = rmchr(bp,bl,'.') ;
 		    cchar	*pp = bp ;
 		    if (pl > 0) {
@@ -279,6 +286,9 @@ int proginfo::output() noex {
 	case progmode_systype:
 	    name = "kern.ostype" ;
 	    break ;
+	case progmode_nisdomain:
+	    name = "kern.nisdomainname" ;
+	    break ;
 	default:
 	    rs = SR_BUGCHECK ;
 	    break ;
@@ -286,9 +296,8 @@ int proginfo::output() noex {
 	if ((rs >= 0) && name) {
 	    cnullptr	np{} ;
 	    cint	olen = maxpathlen ;
-	    char	*obuf{} ;
 	    rs = SR_NOMEM ;
-	    if ((obuf = new(nothrow) char[olen+1]) != np) {
+	    if (char *obuf ; (obuf = new(nothrow) char[olen+1]) != np) {
 		size_t	rlen = olen ;
 		if ((rs = sysctlbyname(name,obuf,&rlen,np,0z)) >= 0) {
 		    cint	ol = int(rlen) ;
