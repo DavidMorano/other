@@ -1,7 +1,7 @@
-/* main SUPPORT (fu) */
+/* main SUPPORT (hasweird) */
 /* lang=C++20 */
 
-/* filter filenames */
+/* weird character identification */
 /* version %I% last-modified %G% */
 
 
@@ -17,16 +17,16 @@
 /*******************************************************************************
 
 	Names:
-	fu
+	hasweird
 
 	Description:
-	This program filters filenames keeping only unique files.
+	This program prints out the lines (read from STDIN) that have
+	weirdo characters in them.
 
 	Synopsis:
-	$ fu [<file(s)>] [-]
+	$ hasweird
 
 	Arguments:
-	<file(s)>	file(s) to process
 	-		read standard-input for file(s) to process
 
 	Returns:
@@ -52,6 +52,7 @@
 #include	<varnames.hh>
 #include	<strn.h>
 #include	<sfx.h>
+#include	<six.h>
 #include	<matstr.h>
 #include	<strwcpy.h>
 #include	<strnul.hh>
@@ -61,6 +62,7 @@
 #include	<readln.hh>
 #include	<ccfile.hh>
 #include	<rmx.h>
+#include	<hasx.h>
 #include	<isnot.h>
 #include	<mapex.h>
 #include	<exitcodes.h>
@@ -160,7 +162,7 @@ namespace {
 	int readin() noex ;
 	int fileproc(cchar *,int = -1) noex ;
 	int fileproc_fu(CUSTAT *,cchar *,int = -1) noex ;
-	int fileproc_lc(CUSTAT *,cchar *,int = -1) noex ;
+	int fileproc_hasweird(CUSTAT *,cchar *,int = -1) noex ;
 	int fileproc_lines() noex ;
     private:
 	int istart() noex ;
@@ -174,22 +176,18 @@ namespace {
 
 /* forward references */
 
+static int	weirdcheck(cchar *,int) noex ;
+
 
 /* local variables */
 
 enum progmodes {
-	progmode_fileuniq,
-	progmode_fu,
-	progmode_lc,
-	progmode_charset,
+	progmode_hasweird,
 	progmode_overlast
 } ;
 
 static constexpr cpcchar	prognames[] = {
-	"fileuniq",
-	"fu",
-	"lc",
-	"charset",
+	"hasweird",
 	nullptr
 } ;
 
@@ -226,9 +224,7 @@ int main(int argc,mainv argv,mainv envv) noex {
 	if ((rs = pi.start) >= 0) {
 	    if ((rs = pi.flistbegin) >= 0) {
                 switch (pi.pm) {
-                case progmode_fileuniq:
-                case progmode_fu:
-                case progmode_lc:
+                case progmode_hasweird:
                     rs = pi.process() ;
                     break ;
 		default:
@@ -290,12 +286,12 @@ int proginfo::getpn(mainv names) noex {
 /* end method (proginfo::getpn) */
 
 int proginfo::iflistbegin() noex {
-	return seen.start(1000) ;
+	return SR_OK ;
 }
 /* end method (proginfo::iflistbegin) */
 
 int proginfo::iflistend() noex {
-	return seen.finish ;
+	return SR_OK ;
 }
 /* end method (proginfo::iflistend) */
 
@@ -333,14 +329,7 @@ int proginfo::process_stdin() noex {
 	int		rs = SR_OK ;
 	int		c = 0 ;
 	switch (pm) {
-	case progmode_fu:
-	case progmode_fileuniq:
-	    {
-	        rs = readin() ;
-	        c += rs ;
-	    }
-	    break ;
-	case progmode_lc:
+	case progmode_hasweird:
 	    {
 		rs = fileproc_lines() ;
 		c += rs ;
@@ -354,12 +343,8 @@ int proginfo::process_stdin() noex {
 int proginfo::process_pmbegin() noex {
 	int		rs = SR_OK ;
 	switch (pm) {
-        case progmode_fileuniq:
-        case progmode_fu:
-	    m = &proginfo::fileproc_fu ;
-	    break ;
-        case progmode_lc:
-	    m = &proginfo::fileproc_lc ;
+        case progmode_hasweird:
+	    m = &proginfo::fileproc_hasweird ;
 	    if ((rs = maxlinelen) >= 0) {
 	        llen = rs ;
 		rs = SR_NOMEM ;
@@ -378,9 +363,8 @@ int proginfo::process_pmbegin() noex {
 int proginfo::process_pmend() noex {
 	int		rs = SR_OK ;
 	switch (pm) {
-        case progmode_lc:
+        case progmode_hasweird:
 	    if (lbuf) {
-		cout << lines << eol ;
 		delete [] lbuf ;
 		lbuf = nullptr ;
 	        llen = 0 ;
@@ -433,19 +417,7 @@ int proginfo::fileproc(cchar *sp,int sl) noex {
 }
 /* end method (proginfo::fileproc) */
 
-int proginfo::fileproc_fu(CUSTAT *,cchar *sp,int sl) noex {
-	int		rs = SR_OK ;
-	int		c = 0 ;
-	if (sp) {
-	    strview	fn(sp,sl) ;
-	    cout << fn << eol ;
-	    c += 1 ;
-	}
-	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::fileproc_fu) */
-
-int proginfo::fileproc_lc(CUSTAT *sbp,cchar *sp,int sl) noex {
+int proginfo::fileproc_hasweird(CUSTAT *sbp,cchar *sp,int sl) noex {
 	strview		fn(sp,sl) ;
 	int		rs = SR_OK ;
 	int		rs1 ;
@@ -458,7 +430,10 @@ int proginfo::fileproc_lc(CUSTAT *sbp,cchar *sp,int sl) noex {
 	 	if ((rs = rf.open(fn,"r",0)) >= 0) {
 		    int		nl = 0 ;
 		    while ((rs = rf.readln(lbuf,llen)) > 0) {
-			nl += 1 ;
+	    	        int	ll = rs ;
+	    	        if ((ll > 0) && (lbuf[ll - 1] == eol)) ll -= 1 ;
+	    	        rs = weirdcheck(lbuf,ll) ;
+	    	        nl += 1 ;
 		    } /* end while */
 		    lines += nl ;
 		    rs1 = rf.close ;
@@ -468,7 +443,7 @@ int proginfo::fileproc_lc(CUSTAT *sbp,cchar *sp,int sl) noex {
 	} /* end if (non-null) */
 	return (rs >= 0) ? c : rs ;
 }
-/* end method (proginfo::fileproc_lc) */
+/* end method (proginfo::fileproc_hasweird) */
 
 int proginfo::fileproc_lines() noex {
 	istream		*isp = &cin ;
@@ -476,6 +451,9 @@ int proginfo::fileproc_lines() noex {
 	int		c = 1 ;
 	int		nl = 0 ;
 	while ((rs = readln(isp,lbuf,llen)) > 0) {
+	    int		ll = rs ;
+	    if ((ll > 0) && (lbuf[ll - 1] == eol)) ll -= 1 ;
+	    rs = weirdcheck(lbuf,ll) ;
 	    nl += 1 ;
 	} /* end if (reading lines) */
 	lines += nl ;
@@ -483,10 +461,24 @@ int proginfo::fileproc_lines() noex {
 }
 /* end method (proginfo::fileproc_lines) */
 
-int proginfo::filecheck(CUSTAT *sbp)  noex {
-	return seen.checkin(sbp) ;
+int proginfo::filecheck(CUSTAT *)  noex {
+	return 1 ;
 }
 /* end method (proginfo::filecheck) */
+
+static int weirdcheck(cchar *lbuf,int llen) noex {
+	constexpr cchar	wc[] = R"xx( `\'":)xx" ;
+	int		rs = SR_OK ;
+	if (sibrk(lbuf,llen,wc) >= 0) {
+	    strview	ln(lbuf,llen) ;
+	    cout << "»" << ln << "«\n" ;
+	} else if (hasprintbad(lbuf,llen)) {
+	    strview	ln(lbuf,llen) ;
+	    cout << "»" << ln << "«\n" ;
+	}
+	return rs ;
+}
+/* end method (weirdcheck) */
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;

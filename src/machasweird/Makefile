@@ -1,6 +1,6 @@
-# MAKEFILE (charset)
+# MAKEFILE (haswrird)
 
-T= charset
+T= machasweird
 
 ALL= $(T).x
 
@@ -8,15 +8,14 @@ ALL= $(T).x
 BINDIR= $(REPOROOT)/bin
 INCDIR= $(REPOROOT)/include
 LIBDIR= $(REPOROOT)/lib
+RUNDIR= $(USRLOCAL)/lib
 MANDIR= $(REPOROOT)/man
-
 INFODIR= $(REPOROOT)/info
 HELPDIR= $(REPOROOT)/share/help
 
+
 CRTDIR= $(CGS_CRTDIR)
 VALDIR= $(CGS_VALDIR)
-RUNDIR= $(USRLOCAL)/lib
-
 
 CPP= cpp
 CC= gcc
@@ -42,12 +41,10 @@ INCS=
 LIBS= -lmacuser -lu
 
 
-INCDIRS=
+INCDIRS= -I$(INCDIR)
 
 LIBDIRS= -L$(LIBDIR)
 
-
-RUNINFO= -rpath $(RUNDIR)
 
 LIBINFO= $(LIBDIRS) $(LIBS)
 
@@ -56,7 +53,7 @@ CPPFLAGS= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
 CFLAGS= $(MAKECFLAGS)
 CCFLAGS= $(MAKECCFLAGS)
 ARFLAGS= $(MAKEARFLAGS)
-LDFLAGS= $(MAKELDFLAGS)
+LDFLAGS= $(MAKELDFLAGS) -rpath $(RUNDIR)
 
 
 OBJ_MACFU= main.o fonce.o
@@ -76,14 +73,14 @@ all:			$(ALL)
 	$(CPP) $(CPPFLAGS) $< > $(*).i
 
 .c.o:
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
+	$(CC) -c $(CPPFLAGS) $(CFLAGS) $<
 
 .cc.o:
-	$(CXX)  $(CPPFLAGS) $(CCFLAGS) -c $<
+	$(CXX) -c $(CPPFLAGS) $(CCFLAGS) $<
 
 
 $(T).x:			$(OBJ_MACFU)
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACFU) $(LIBINFO)
+	$(CXX) -o $@ $(LDFLAGS) $(OBJ_MACFU) $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm
