@@ -156,10 +156,12 @@ namespace {
 	int process() noex ;
 	int process_pmbegin() noex ;
 	int process_pmend() noex ;
+	int process_stdin() noex ;
 	int readin() noex ;
 	int fileproc(cchar *,int = -1) noex ;
 	int fileproc_fu(CUSTAT *,cchar *,int = -1) noex ;
 	int fileproc_lc(CUSTAT *,cchar *,int = -1) noex ;
+	int fileproc_lines() noex ;
     private:
 	int istart() noex ;
 	int ifinish() noex ;
@@ -317,7 +319,7 @@ int proginfo::process() noex {
 	            if (rs < 0) break ;
 	        } /* end for */
 	    } else {
-	        rs = readin() ;
+		rs = process_stdin() ;
 	        c += rs ;
 	    }
 	    rs1 = process_pmend() ;
@@ -326,6 +328,27 @@ int proginfo::process() noex {
 	return (rs >= 0) ? c : rs ;
 }
 /* end subroutine (proginfo::process) */
+
+int proginfo::process_stdin() noex {
+	int		rs = SR_OK ;
+	int		c = 0 ;
+	switch (pm) {
+	case progmode_fu:
+	    {
+	        rs = readin() ;
+	        c += rs ;
+	    }
+	    break ;
+	case progmode_lc:
+	    {
+		rs = fileproc_lines() ;
+		c += rs ;
+	    }
+	    break ;
+	} /* end switch */
+	return (rs >= 0) ? c : rs ;
+}
+/* end subroutine (proginfo::process_stdin) */
 
 int proginfo::process_pmbegin() noex {
 	int		rs = SR_OK ;
@@ -372,20 +395,20 @@ int proginfo::readin() noex {
 	int		rs ;
 	int		c = 0 ;
 	if ((rs = maxpathlen) >= 0) {
-	    cint	llen = rs ;
-	    char	*lbuf ;
+	    cint	plen = rs ;
+	    char	*pbuf ;
 	    rs = SR_NOMEM ;
-	    if ((lbuf = new(nothrow) char[llen+1]) != nullptr) {
-	        while ((rs = readln(isp,lbuf,llen)) > 0) {
-		    int		ll = rs ;
-		    if ((ll > 0) && (lbuf[ll - 1] == eol)) ll -= 1 ;
-		    if (ll > 0) {
-		        rs = fileproc(lbuf,ll) ;
+	    if ((pbuf = new(nothrow) char[plen+1]) != nullptr) {
+	        while ((rs = readln(isp,pbuf,plen)) > 0) {
+		    int		pl = rs ;
+		    if ((pl > 0) && (pbuf[pl - 1] == eol)) pl -= 1 ;
+		    if (pl > 0) {
+		        rs = fileproc(pbuf,pl) ;
 			c += rs ;
 		    }
 		    if (rs < 0) break ;
 	        } /* end if (reading lines) */
-	        delete [] lbuf ;
+	        delete [] pbuf ;
 	    } /* end if (m-a-f) */
 	} /* end if (maxpathlen) */
 	return (rs >= 0) ? c : rs ;
@@ -398,10 +421,10 @@ int proginfo::fileproc(cchar *sp,int sl) noex {
 	int		rs ;
 	int		c = 0 ;
 	if ((rs = u_stat(s,&sb)) >= 0) {
-	        if ((rs = filecheck(&sb)) > 0) {
-		    rs = (this->*m)(&sb,sp,sl) ;
-		    c += rs ;
-	        } /* end if (filecheck) */
+	    if ((rs = filecheck(&sb)) > 0) {
+		rs = (this->*m)(&sb,sp,sl) ;
+		c += rs ;
+	    } /* end if (filecheck) */
 	} else if (isNotAccess(rs)) {
 	    rs = SR_OK ;
 	}
@@ -415,6 +438,7 @@ int proginfo::fileproc_fu(CUSTAT *,cchar *sp,int sl) noex {
 	if (sp) {
 	    strview	fn(sp,sl) ;
 	    cout << fn << eol ;
+	    c += 1 ;
 	}
 	return (rs >= 0) ? c : rs ;
 }
@@ -429,6 +453,7 @@ int proginfo::fileproc_lc(CUSTAT *sbp,cchar *sp,int sl) noex {
 	    strview	fn(sp,sl) ;
 	    if (S_ISREG(sbp->st_mode)) {
 	        ccfile	rf ;
+		c += 1 ;
 	 	if ((rs = rf.open(fn,"r",0)) >= 0) {
 		    int		nl = 0 ;
 		    while ((rs = rf.readln(lbuf,llen)) > 0) {
@@ -442,7 +467,20 @@ int proginfo::fileproc_lc(CUSTAT *sbp,cchar *sp,int sl) noex {
 	} /* end if (non-null) */
 	return (rs >= 0) ? c : rs ;
 }
-/* end method (proginfo::fileproc_lcu) */
+/* end method (proginfo::fileproc_lc) */
+
+int proginfo::fileproc_lines() noex {
+	istream		*isp = &cin ;
+	int		rs ;
+	int		c = 1 ;
+	int		nl = 0 ;
+	while ((rs = readln(isp,lbuf,llen)) > 0) {
+	    nl += 1 ;
+	} /* end if (reading lines) */
+	lines += nl ;
+	return (rs >= 0) ? c : rs ;
+}
+/* end method (proginfo::fileproc_lines) */
 
 int proginfo::filecheck(CUSTAT *sbp)  noex {
 	return seen.checkin(sbp) ;
