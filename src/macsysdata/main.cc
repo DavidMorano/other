@@ -43,13 +43,12 @@
 #include	<climits>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
-#include	<cstring>		/* <- for |strlen(3c)| */
+#include	<cstring>		/* <- for |strlen(3c)| + |strchr(3c)| */
 #include	<string>
 #include	<string_view>
 #include	<iostream>
 #include	<usystem.h>
 #include	<varnames.hh>
-#include	<strn.h>
 #include	<sfx.h>
 #include	<matstr.h>
 #include	<strwcpy.h>
@@ -59,6 +58,7 @@
 #include	<mapblock.hh>
 #include	<readln.hh>
 #include	<rmx.h>
+#include	<strnul.hh>
 #include	<isnot.h>
 #include	<mapex.h>
 #include	<exitcodes.h>
@@ -285,6 +285,17 @@ int proginfo::getpn(mainv names) noex {
 }
 /* end method (proginfo::getpn) */
 
+static int printnodename(cchar *valp) noex {
+	int		rs = SR_OK ;
+	if (cchar *tp ; (tp = strchr(valp,'.')) != nullptr) {
+	    string_view		s(valp,(tp - valp)) ;
+	    cout << s << eol ;
+	} else {
+	    cout << valp << eol ;
+	}
+	return rs ;
+}
+
 int proginfo::uname() noex {
 	UTSNAME		uts ;
 	int		rs ;
@@ -298,7 +309,7 @@ int proginfo::uname() noex {
 		valp = uts.release ;
 		break ;
             case progmode_nodename:
-		valp = uts.nodename ;
+		rs = printnodename(uts.nodename) ;
 		break ;
             case progmode_version:
 		valp = uts.version ;

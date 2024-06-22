@@ -63,7 +63,7 @@ using std::nothrow ;			/* constant */
 
 typedef decltype(std::nothrow)	nothrow_t ;
 
-typedef fonce::stype::iterator		setiter ;
+typedef fonce::stype::iterator	setiter ;
 
 
 /* external subroutines */
