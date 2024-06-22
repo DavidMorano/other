@@ -59,6 +59,7 @@
 #include	<getourenv.h>
 #include	<mapblock.hh>
 #include	<readln.hh>
+#include	<ccfile.hh>
 #include	<rmx.h>
 #include	<isnot.h>
 #include	<mapex.h>
@@ -81,8 +82,6 @@ using std::nullptr_t ;			/* type */
 using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::unordered_set ;		/* type */
-using std::unordered_map ;		/* type */
-using std::vector ;			/* type */
 using std::istream ;			/* type */
 using std::cin;				/* variable */
 using std::cout ;			/* variable */
@@ -124,6 +123,7 @@ namespace {
 	    return operator () (0) ;
 	} ;
     } ; /* end struct (proginfo_co) */
+    typedef int (proginfo::*proginfo_m)(CUSTAT *,cchar *,int) noex ;
     struct proginfo {
 	friend		proginfo_co ;
 	proginfo_co	start ;
@@ -131,12 +131,15 @@ namespace {
 	proginfo_co	flistbegin ;
 	proginfo_co	flistend ;
 	fonce		seen ;
+	proginfo_m	m ;
 	mainv		argv ;
 	mainv		envv ;
 	cchar		*pn = nullptr ;
+	char		*lbuf = nullptr ;
 	int		argc ;
 	int		pm = 0 ;
-	bool		ffound = false ;
+	int		llen = 0 ;
+	int		lines = 0 ;
 	proginfo(int c,mainv a,mainv e) noex : argc(c), argv(a), envv(e) { 
 	    start(this,proginfomem_start) ;
 	    finish(this,proginfomem_finish) ;
@@ -149,16 +152,20 @@ namespace {
 	    argv = a ;
 	    envv = e ;
 	} ;
-	int fileproc(cchar *,int = -1) noex ;
 	int filecheck(CUSTAT *) noex ;
 	int process() noex ;
+	int process_pmbegin() noex ;
+	int process_pmend() noex ;
+	int readin() noex ;
+	int fileproc(cchar *,int = -1) noex ;
+	int fileproc_fu(CUSTAT *,cchar *,int = -1) noex ;
+	int fileproc_lc(CUSTAT *,cchar *,int = -1) noex ;
     private:
 	int istart() noex ;
 	int ifinish() noex ;
 	int getpn(mainv) noex ;
 	int iflistbegin() noex ;
 	int iflistend() noex ;
-	int readin() noex ;
     } ; /* end struct (proginfo) */
 }
 
@@ -171,12 +178,16 @@ namespace {
 enum progmodes {
 	progmode_fileuniq,
 	progmode_fu,
+	progmode_lc,
+	progmode_charset,
 	progmode_overlast
 } ;
 
 static constexpr cpcchar	prognames[] = {
 	"fileuniq",
 	"fu",
+	"lc",
+	"charset",
 	nullptr
 } ;
 
@@ -197,6 +208,7 @@ static constexpr MAPEX	mapexs[] = {
 } ;
 
 constexpr int		maxpathlen = MAXPATHLEN ;
+constexpr int		maxlinelen = MAXLINELEN ;
 
 
 /* exported variables */
@@ -214,6 +226,7 @@ int main(int argc,mainv argv,mainv envv) noex {
                 switch (pi.pm) {
                 case progmode_fileuniq:
                 case progmode_fu:
+                case progmode_lc:
                     rs = pi.process() ;
                     break ;
 		default:
@@ -285,29 +298,74 @@ int proginfo::iflistend() noex {
 /* end method (proginfo::iflistend) */
 
 int proginfo::process() noex {
-	int		rs = SR_OK ;
+	int		rs ;
+	int		rs1 ;
 	int		c = 0 ;
-	if (argc > 1) {
-	    for (int ai = 1 ; (ai < argc) && argv[ai] ; ai += 1) {
-	        cchar	*fn = argv[ai] ;
-	        if (fn[0]) {
-		    if ((fn[0] == '-') && (fn[1] == '\0')) {
-		        rs = readin() ;
-		        c += rs ;
-		    } else {
-	                rs = fileproc(fn) ;
-		        c += rs ;
-		    }
-	        }
-	        if (rs < 0) break ;
-	    } /* end for */
-	} else {
-	    rs = readin() ;
-	    c += rs ;
-	}
+	if ((rs = process_pmbegin()) >= 0) {
+	    if (argc > 1) {
+	        for (int ai = 1 ; (ai < argc) && argv[ai] ; ai += 1) {
+	            cchar	*fn = argv[ai] ;
+	            if (fn[0]) {
+		        if ((fn[0] == '-') && (fn[1] == '\0')) {
+		            rs = readin() ;
+		            c += rs ;
+		        } else {
+	                    rs = fileproc(fn) ;
+		            c += rs ;
+		        }
+	            }
+	            if (rs < 0) break ;
+	        } /* end for */
+	    } else {
+	        rs = readin() ;
+	        c += rs ;
+	    }
+	    rs1 = process_pmend() ;
+	    if (rs >= 0) rs = rs1 ;
+	} /* end if (process_pm) */
 	return (rs >= 0) ? c : rs ;
 }
 /* end subroutine (proginfo::process) */
+
+int proginfo::process_pmbegin() noex {
+	int		rs = SR_OK ;
+	switch (pm) {
+        case progmode_fileuniq:
+        case progmode_fu:
+	    m = &proginfo::fileproc_fu ;
+	    break ;
+        case progmode_lc:
+	    m = &proginfo::fileproc_lc ;
+	    {
+		rs = SR_NOMEM ;
+	        llen = maxlinelen ;
+	        if ((lbuf = new(nothrow) char[llen+1]) != nullptr) {
+		    rs = SR_OK ;
+	        } else {
+		    llen = 0 ;
+		}
+	    } /* end block */
+	    break ;
+	} /* end switch */
+	return rs ;
+}
+/* end subroutine (proginfo::process_pmbegin) */
+
+int proginfo::process_pmend() noex {
+	int		rs = SR_OK ;
+	switch (pm) {
+        case progmode_lc:
+	    if (lbuf) {
+		cout << lines << eol ;
+		delete [] lbuf ;
+		lbuf = nullptr ;
+	        llen = 0 ;
+	    } /* end block */
+	    break ;
+	} /* end switch */
+	return rs ;
+}
+/* end subroutine (proginfo::process_pmend) */
 
 int proginfo::readin() noex {
 	istream		*isp = &cin ;
@@ -340,18 +398,51 @@ int proginfo::fileproc(cchar *sp,int sl) noex {
 	int		rs ;
 	int		c = 0 ;
 	if ((rs = u_stat(s,&sb)) >= 0) {
-	    if (S_ISREG(sb.st_mode)) {
 	        if ((rs = filecheck(&sb)) > 0) {
-		    c = 1 ;
-		    cout << s << eol ;
+		    rs = (this->*m)(&sb,sp,sl) ;
+		    c += rs ;
 	        } /* end if (filecheck) */
-	    } /* end if (is-dir) */
 	} else if (isNotAccess(rs)) {
 	    rs = SR_OK ;
 	}
 	return (rs >= 0) ? c : rs ;
 }
 /* end method (proginfo::fileproc) */
+
+int proginfo::fileproc_fu(CUSTAT *,cchar *sp,int sl) noex {
+	int		rs = SR_OK ;
+	int		c = 0 ;
+	if (sp) {
+	    strview	fn(sp,sl) ;
+	    cout << fn << eol ;
+	}
+	return (rs >= 0) ? c : rs ;
+}
+/* end method (proginfo::fileproc_fu) */
+
+int proginfo::fileproc_lc(CUSTAT *sbp,cchar *sp,int sl) noex {
+	strview		fn(sp,sl) ;
+	int		rs = SR_OK ;
+	int		rs1 ;
+	int		c = 0 ;
+	if (sp && sl) {
+	    strview	fn(sp,sl) ;
+	    if (S_ISREG(sbp->st_mode)) {
+	        ccfile	rf ;
+	 	if ((rs = rf.open(fn,"r",0)) >= 0) {
+		    int		nl = 0 ;
+		    while ((rs = rf.readln(lbuf,llen)) > 0) {
+			nl += 1 ;
+		    } /* end while */
+		    lines += nl ;
+		    rs1 = rf.close ;
+		    if (rs >= 0) rs = rs1 ;
+		 } /* end if (ccfile) */
+	    } /* end if (is-reg) */
+	} /* end if (non-null) */
+	return (rs >= 0) ? c : rs ;
+}
+/* end method (proginfo::fileproc_lcu) */
 
 int proginfo::filecheck(CUSTAT *sbp)  noex {
 	return seen.checkin(sbp) ;

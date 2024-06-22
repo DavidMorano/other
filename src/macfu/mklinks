@@ -3,7 +3,7 @@
 
 LOCPROG=macfu.x
 CMDS=
-CMDS+=" fu fileuniq "
+CMDS+=" fu fileuniq lc "
 
 TDIRS=" /usr/extra /usr/local /opt/local "
 
