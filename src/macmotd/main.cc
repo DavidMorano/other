@@ -64,12 +64,13 @@
 #include	<isnot.h>
 #include	<mapex.h>
 #include	<exitcodes.h>
-#include	<localmisc.h>
+#include	<localmisc.h>		/* system constants */
 
 
 /* local defines */
 
-#define	INTRUN		(3600)		/* seconds */
+#define	INTRUN		(30*60)		/* seconds */
+#define	INTUPDATE	9		/* seconds */
 #define	FN_MOTD		"/etc/motd"
 
 
@@ -80,6 +81,8 @@ using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::unordered_set ;		/* type */
 using std::istream ;			/* type */
+using libu::ustrftime ;			/* subroutine */
+using libu::snwcpy ;			/* subroutine */
 using std::cin;				/* variable */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
@@ -151,7 +154,12 @@ namespace {
 	int process() noex ;
 	int process_pmbegin() noex ;
 	int process_pmend() noex ;
-	int procfile() noex ;
+	int procfile(time_t) noex ;
+	int procline(time_t) noex ;
+	int procline_node(int) noex ;
+	int procline_str(int,cchar *) noex ;
+	int procline_date(int,const tm *) noex ;
+	int procline_end(int) noex ;
     private:
 	int istart() noex ;
 	int ifinish() noex ;
@@ -194,6 +202,7 @@ static constexpr MAPEX	mapexs[] = {
 } ;
 
 constexpr int		maxlinelen = MAXLINELEN ;
+constexpr int		nodenamelen = NODENAMELEN ;
 
 
 /* exported variables */
@@ -301,8 +310,15 @@ int proginfo::process() noex {
 	int		c = 0 ;
 	if ((rs = process_pmbegin()) >= 0) {
 	    ustime	ticur = tistart ;
-	    while ((rs >= 0) && ((ticur - tistart) < INTRUN)) {
-		rs = procfile() ;
+	    auto lamb = [&] () noex {
+		int	rs = SR_OK ;
+	        if ((ticur - tistart) < INTRUN) {
+	    	    rs = procfile(ticur) ;
+		}
+		return rs ;
+	    } ;
+	    while ((rs = lamb()) > 0) {
+		sleep(INTUPDATE) ;
 		ticur = getustime ;
 	    } /* end while */
 	    rs1 = process_pmend() ;
@@ -312,28 +328,112 @@ int proginfo::process() noex {
 }
 /* end subroutine (proginfo::process) */
 
-int proginfo::procfile() noex {
+int proginfo::procfile(time_t ti) noex {
 	int		rs = SR_FAULT ;
 	int		rs1 ;
+	int		wlen = 0 ;
 	if (fn) {
 	    rs = SR_INVALID ;
 	    if (fn[0]) {
 		cint	of = O_WRONLY ;
 		cmode	om = 0664 ;
 		if ((rs = u_open(fn,of,om)) >= 0) {
-	    	cint	fd = rs ;
-	    	int	bl = llen ;
-	    	char	*bp = lbuf ;
-	    	(void) bp ;
-	    	(void) bl ;
-	    	rs1 = u_close(fd) ;
-	    	if (rs >= 0) rs = rs1 ;
+	    	    cint	fd = rs ;
+		    if ((rs = procline(ti)) >= 0) {
+			if ((rs = u_write(fd,lbuf,rs)) >= 0) {
+			    coff	fo = off_t(rs) ;
+			    wlen = rs ;
+			    rs = u_ftruncate(fd,fo) ;
+			}
+		    }
+	    	    rs1 = u_close(fd) ;
+	    	    if (rs >= 0) rs = rs1 ;
 		} /* end if (file) */
 	    } /* end if (valid) */
 	} /* end if (non-null) */
-	return rs ;
+	return (rs >= 0) ? wlen : rs ;
 }
 /* end subroutine (proginfo::procfile) */
+
+int proginfo::procline(time_t ti) noex {
+	TM		ts ;
+	int		rs ;
+	int		wl = 0 ;
+	localtime_r(&ti,&ts) ;
+	if ((rs = procline_node(wl)) >= 0) {
+	    wl += rs ;
+	    if ((rs = procline_str(wl," - ")) >= 0) {
+	        wl += rs ;
+	        if ((rs = procline_date(wl,&ts)) >= 0) {
+	            wl += rs ;
+	            if ((rs = procline_end(wl)) >= 0) {
+	                wl += rs ;
+		    }
+		}
+	    }
+	}
+	return (rs >= 0) ? wl : rs ;
+}
+/* end subroutine (proginfo::procline) */
+
+int proginfo::procline_node(int i) noex {
+	cnullptr	np{} ;
+	int		rs ;
+	if ((rs = nodenamelen) >= 0) {
+	    cint	nlen = rs ;
+	    rs = SR_NOMEM ;
+	    if (char *nbuf ; (nbuf = new(nothrow) char[nlen+1]) != np) {
+	        if ((rs = u_getnodename(nbuf,nlen)) >= 0) {
+		    cint	nl = rs ;
+		    cint	bl = (llen - i) ;
+		    char	*bp = (lbuf + i) ;
+		    if ((rs = snwcpy(bp,bl,nbuf,nl)) >= 0) {
+			i += rs ;
+		    } /* end if (snwcpy) */
+	        } /* end if (u_getnodename) */
+		delete [] nbuf ;
+	    } /* end if (m-a-f) */
+	} /* end if (nodenamelen) */
+	return (rs >= 0) ? i : rs ;
+}
+/* end subroutine (proginfo::procline_node) */
+
+int proginfo::procline_str(int i,cchar *s) noex {
+	cint		bl = (llen - i) ;
+	int		rs ;
+	char		*bp = (lbuf + i) ;
+	if ((rs = snwcpy(bp,bl,s)) >= 0) {
+	    i += rs ;
+	}
+	return (rs >= 0) ? i : rs ;
+}
+/* end subroutine (proginfo::procline_str) */
+
+int proginfo::procline_date(int i,const tm *tsp) noex {
+	constexpr cchar	fmt[] = "%a %e %b %H:%M:%S" ;
+	cint		bl = (llen - i) ;
+	int		rs ;
+	char		*bp = (lbuf + i) ;
+	if ((rs = ustrftime(bp,bl,fmt,tsp)) >= 0) {
+	    i += rs ;
+	}
+	return (rs >= 0) ? i : rs ;
+}
+/* end subroutine (proginfo::procline_date) */
+
+int proginfo::procline_end(int i) noex {
+	cint		bl = (llen - i) ;
+	int		rs = SR_OVERFLOW ;
+	char		*bp = (lbuf + i) ;
+	if (bl > 0) {
+	    *bp++ = eol ;
+	    *bp = '\0' ;
+	    i += 1 ;
+	    rs = SR_OK ;
+	}
+	return (rs >= 0) ? i : rs ;
+}
+/* end subroutine (proginfo::procline_date) */
 
 int proginfo::process_pmbegin() noex {
 	int		rs = SR_OK ;
