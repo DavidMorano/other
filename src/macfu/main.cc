@@ -71,6 +71,8 @@
 
 /* local defines */
 
+#define	NENTS		1000
+
 #ifndef	MAXPATHLEN
 #define	MAXPATHLEN	4096
 #endif
@@ -211,6 +213,7 @@ static constexpr MAPEX	mapexs[] = {
 
 constexpr int		maxpathlen = MAXPATHLEN ;
 constexpr int		maxlinelen = MAXLINELEN ;
+constexpr int		nents = NENTS ;
 
 
 /* exported variables */
@@ -290,7 +293,7 @@ int proginfo::getpn(mainv names) noex {
 /* end method (proginfo::getpn) */
 
 int proginfo::iflistbegin() noex {
-	return seen.start(1000) ;
+	return seen.start(nents) ;
 }
 /* end method (proginfo::iflistbegin) */
 
