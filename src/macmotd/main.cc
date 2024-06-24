@@ -23,9 +23,10 @@
 	This is a small Message-Of-The-Day (MOTD) server for macOS.
 
 	Synopsis:
-	$ macmotd
+	$ macmotd [<file>]
 
 	Arguments:
+	<file>		optional MOTD file to write
 
 	Returns:
 	==0		for normal operation success
@@ -302,6 +303,7 @@ int proginfo::iservend() noex {
 	int		rs = SR_OK ;
 	if (lbuf) {
 	    delete [] lbuf ;
+	    lbuf = nullptr ;
 	    llen = 0 ;
 	}
 	return rs ;
@@ -315,7 +317,7 @@ int proginfo::process() noex {
 	int		c = 0 ;
 	if ((rs = process_pmbegin()) >= 0) {
 	    ustime	ticur = tistart ;
-	    auto lamb = [&] () noex {
+	    cauto lamb = [&] () noex {
 		int	rs = SR_OK ;
 	        if ((ticur - tistart) < INTRUN) {
 	    	    rs = procfile(ticur) ;
