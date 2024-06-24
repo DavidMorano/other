@@ -81,7 +81,10 @@ using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::unordered_set ;		/* type */
 using std::istream ;			/* type */
+using libu::uloadavgd ;			/* subroutine */
 using libu::ustrftime ;			/* subroutine */
+using libu::snuprintf ;			/* subroutine */
+using libu::snuloadavg ;		/* subroutine */
 using libu::snwcpy ;			/* subroutine */
 using std::cin;				/* variable */
 using std::cout ;			/* variable */
@@ -159,6 +162,7 @@ namespace {
 	int procline_node(int) noex ;
 	int procline_str(int,cchar *) noex ;
 	int procline_date(int,const tm *) noex ;
+	int procline_la(int) noex ;
 	int procline_end(int) noex ;
     private:
 	int istart() noex ;
@@ -356,18 +360,25 @@ int proginfo::procfile(time_t ti) noex {
 /* end subroutine (proginfo::procfile) */
 
 int proginfo::procline(time_t ti) noex {
+	constexpr cchar	sep[] = " - " ;
 	TM		ts ;
 	int		rs ;
 	int		wl = 0 ;
 	localtime_r(&ti,&ts) ;
 	if ((rs = procline_node(wl)) >= 0) {
 	    wl += rs ;
-	    if ((rs = procline_str(wl," - ")) >= 0) {
+	    if ((rs = procline_str(wl,sep)) >= 0) {
 	        wl += rs ;
 	        if ((rs = procline_date(wl,&ts)) >= 0) {
 	            wl += rs ;
-	            if ((rs = procline_end(wl)) >= 0) {
+	            if ((rs = procline_str(wl,sep)) >= 0) {
 	                wl += rs ;
+	                if ((rs = procline_la(wl)) >= 0) {
+	                    wl += rs ;
+	                    if ((rs = procline_end(wl)) >= 0) {
+	                        wl += rs ;
+			    }
+			}
 		    }
 		}
 	    }
@@ -410,7 +421,7 @@ int proginfo::procline_str(int i,cchar *s) noex {
 /* end subroutine (proginfo::procline_str) */
 
 int proginfo::procline_date(int i,const tm *tsp) noex {
-	constexpr cchar	fmt[] = "%a %e %b %H:%M:%S" ;
+	constexpr cchar	fmt[] = "%a %e %b %H:%M" ;
 	cint		bl = (llen - i) ;
 	int		rs ;
 	char		*bp = (lbuf + i) ;
@@ -420,6 +431,21 @@ int proginfo::procline_date(int i,const tm *tsp) noex {
 	return (rs >= 0) ? i : rs ;
 }
 /* end subroutine (proginfo::procline_date) */
+
+int proginfo::procline_la(int i) noex {
+	double		dla[3] ;
+	cint		bl = (llen - i) ;
+	int		rs ;
+	char		*bp = (lbuf + i) ;
+	if ((rs = uloadavgd(dla,3)) >= 0) {
+	    cint	prec = 1 ;
+	    if ((rs = snuloadavg(bp,bl,prec,dla,3)) >= 0) {
+	        i += rs ;
+	    }
+	}
+	return (rs >= 0) ? i : rs ;
+}
+/* end subroutine (proginfo::procline_la) */
 
 int proginfo::procline_end(int i) noex {
 	cint		bl = (llen - i) ;
