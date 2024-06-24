@@ -86,7 +86,7 @@ using libu::ustrftime ;			/* subroutine */
 using libu::snuprintf ;			/* subroutine */
 using libu::snuloadavgd ;		/* subroutine */
 using libu::snwcpy ;			/* subroutine */
-using std::cin;				/* variable */
+using std::cin ;			/* variable */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
 using std::nothrow ;			/* constant */
@@ -207,6 +207,7 @@ static constexpr MAPEX	mapexs[] = {
 
 constexpr int		maxlinelen = MAXLINELEN ;
 constexpr int		nodenamelen = NODENAMELEN ;
+constexpr int		nlas = 3 ;	/* max is fixed by convention */
 
 
 /* exported variables */
@@ -433,13 +434,13 @@ int proginfo::procline_date(int i,const tm *tsp) noex {
 /* end subroutine (proginfo::procline_date) */
 
 int proginfo::procline_la(int i) noex {
-	double		dla[3] ;
+	double		dla[nlas] ;
 	cint		bl = (llen - i) ;
 	int		rs ;
 	char		*bp = (lbuf + i) ;
-	if ((rs = uloadavgd(dla,3)) >= 0) {
+	if ((rs = uloadavgd(dla,nlas)) >= 0) {
 	    cint	prec = 1 ;
-	    if ((rs = snuloadavgd(bp,bl,prec,dla,3)) >= 0) {
+	    if ((rs = snuloadavgd(bp,bl,prec,dla,nlas)) >= 0) {
 	        i += rs ;
 	    }
 	}
