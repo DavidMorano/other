@@ -1,6 +1,6 @@
-# MAKEFILE (charset)
+# MAKEFILE (macmotd)
 
-T= charset
+T= macmotd
 
 ALL= $(T).x
 
@@ -42,7 +42,7 @@ INCS=
 LIBS= -lmacuser -lu
 
 
-INCDIRS=
+INCDIRS= -I$(INCDIR)
 
 LIBDIRS= -L$(LIBDIR)
 
@@ -59,7 +59,7 @@ ARFLAGS= $(MAKEARFLAGS)
 LDFLAGS= $(MAKELDFLAGS)
 
 
-OBJ_MACFU= main.o fonce.o
+OBJ_MACFU= main.o
 
 
 default:		$(T).x
@@ -76,10 +76,10 @@ all:			$(ALL)
 	$(CPP) $(CPPFLAGS) $< > $(*).i
 
 .c.o:
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
+	$(CC) -c $(CPPFLAGS) $(CFLAGS) $<
 
 .cc.o:
-	$(CXX)  $(CPPFLAGS) $(CCFLAGS) -c $<
+	$(CXX) -c $(CPPFLAGS) $(CCFLAGS) $<
 
 
 $(T).x:			$(OBJ_MACFU)
@@ -98,7 +98,6 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc fonce.hh	$(INCS)
-fonce.o:		fonce.cc fonce.hh
+main.o:			main.cc 	$(INCS)
 
 

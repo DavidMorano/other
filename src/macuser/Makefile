@@ -47,6 +47,8 @@ INCDIRS +=
 LIBDIRS += -L$(LIBDIR)
 
 
+RUNINFO= -rpath $(RUNDIR)
+
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -81,7 +83,7 @@ all:			$(ALL)
 
 
 $(T).x:			$(OBJ_MACUSER)
-	$(CXX) $(LDFLAGS) -o $@ $(OBJ_MACUSER) $(LIBINFO)
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACUSER) $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm

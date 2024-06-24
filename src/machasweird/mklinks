@@ -1,9 +1,9 @@
 #!/usr/extra/bin/ksh
 # MKLINKS
 
-LOCPROG=macfu.x
+LOCPROG=machasweird.x
 CMDS=
-CMDS+=" fu fileuniq lc "
+CMDS+=" hasweird "
 
 TDIRS=" /usr/extra /usr/local /opt/local "
 

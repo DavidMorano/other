@@ -1,7 +1,7 @@
-/* main SUPPORT (fu) */
+/* main SUPPORT (macmotd) */
 /* lang=C++20 */
 
-/* filter filenames */
+/* small Message-Of-The-Day (MOTD) server for macOS */
 /* version %I% last-modified %G% */
 
 
@@ -17,17 +17,15 @@
 /*******************************************************************************
 
 	Names:
-	fu
+	macmotd
 
 	Description:
-	This program filters filenames keeping only unique files.
+	This is a small Message-Of-The-Day (MOTD) server for macOS.
 
 	Synopsis:
-	$ fu [<file(s)>] [-]
+	$ macmotd
 
 	Arguments:
-	<file(s)>	file(s) to process
-	-		read standard-input for file(s) to process
 
 	Returns:
 	==0		for normal operation success
@@ -40,13 +38,15 @@
 #include	<unistd.h>
 #include	<fcntl.h>
 #include	<climits>
+#include	<ctime>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<cstdio>
 #include	<cstring>		/* <- for |strlen(3c)| */
+#include	<utility>		/* |unreachable(3c++)| */
 #include	<string>
 #include	<string_view>
-#include	<vector>
+#include	<unordered_set>
 #include	<iostream>
 #include	<usystem.h>
 #include	<varnames.hh>
@@ -64,18 +64,14 @@
 #include	<isnot.h>
 #include	<mapex.h>
 #include	<exitcodes.h>
-#include	<localmisc.h>
-
-#include	"fonce.hh"
+#include	<localmisc.h>		/* system constants */
 
 
 /* local defines */
 
-#define	NENTS		1000
-
-#ifndef	MAXPATHLEN
-#define	MAXPATHLEN	4096
-#endif
+#define	INTRUN		(30*60)		/* seconds */
+#define	INTUPDATE	9		/* seconds */
+#define	FN_MOTD		"/etc/motd"
 
 
 /* imported namespaces */
@@ -85,7 +81,12 @@ using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::unordered_set ;		/* type */
 using std::istream ;			/* type */
-using std::cin;				/* variable */
+using libu::uloadavgd ;			/* subroutine */
+using libu::ustrftime ;			/* subroutine */
+using libu::snuprintf ;			/* subroutine */
+using libu::snuloadavgd ;		/* subroutine */
+using libu::snwcpy ;			/* subroutine */
+using std::cin ;			/* variable */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
 using std::nothrow ;			/* constant */
@@ -108,8 +109,8 @@ namespace {
     enum proginfomems {
 	proginfomem_start,
 	proginfomem_finish,
-	proginfomem_flistbegin,
-	proginfomem_flistend,
+	proginfomem_servbegin,
+	proginfomem_servend,
 	proginfomem_overlast
     } ;
     struct proginfo ;
@@ -130,23 +131,22 @@ namespace {
 	friend		proginfo_co ;
 	proginfo_co	start ;
 	proginfo_co	finish ;
-	proginfo_co	flistbegin ;
-	proginfo_co	flistend ;
-	fonce		seen ;
+	proginfo_co	servbegin ;
+	proginfo_co	servend ;
 	proginfo_m	m ;
 	mainv		argv ;
 	mainv		envv ;
 	cchar		*pn = nullptr ;
+	cchar		*fn = FN_MOTD ;
 	char		*lbuf = nullptr ;
 	int		argc ;
 	int		pm = 0 ;
 	int		llen = 0 ;
-	int		lines = 0 ;
 	proginfo(int c,mainv a,mainv e) noex : argc(c), argv(a), envv(e) { 
 	    start(this,proginfomem_start) ;
 	    finish(this,proginfomem_finish) ;
-	    flistbegin(this,proginfomem_flistbegin) ;
-	    flistend(this,proginfomem_flistend) ;
+	    servbegin(this,proginfomem_servbegin) ;
+	    servend(this,proginfomem_servend) ;
 	} ;
 	proginfo() noex : proginfo(0,nullptr,nullptr) { } ;
 	void operator () (int c,mainv a,mainv e) noex {
@@ -154,22 +154,22 @@ namespace {
 	    argv = a ;
 	    envv = e ;
 	} ;
-	int filecheck(CUSTAT *) noex ;
 	int process() noex ;
 	int process_pmbegin() noex ;
 	int process_pmend() noex ;
-	int process_stdin() noex ;
-	int readin() noex ;
-	int fileproc(cchar *,int = -1) noex ;
-	int fileproc_fu(CUSTAT *,cchar *,int = -1) noex ;
-	int fileproc_lc(CUSTAT *,cchar *,int = -1) noex ;
-	int fileproc_lines() noex ;
+	int procfile(time_t) noex ;
+	int procline(time_t) noex ;
+	int procline_node(int) noex ;
+	int procline_str(int,cchar *) noex ;
+	int procline_date(int,const tm *) noex ;
+	int procline_la(int) noex ;
+	int procline_end(int) noex ;
     private:
 	int istart() noex ;
 	int ifinish() noex ;
 	int getpn(mainv) noex ;
-	int iflistbegin() noex ;
-	int iflistend() noex ;
+	int iservbegin() noex ;
+	int iservend() noex ;
     } ; /* end struct (proginfo) */
 }
 
@@ -180,18 +180,12 @@ namespace {
 /* local variables */
 
 enum progmodes {
-	progmode_fileuniq,
-	progmode_fu,
-	progmode_lc,
-	progmode_charset,
+	progmode_macmotd,
 	progmode_overlast
 } ;
 
 static constexpr cpcchar	prognames[] = {
-	"fileuniq",
-	"fu",
-	"lc",
-	"charset",
+	"macmotd",
 	nullptr
 } ;
 
@@ -211,9 +205,9 @@ static constexpr MAPEX	mapexs[] = {
 	{ 0, 0 }
 } ;
 
-constexpr int		maxpathlen = MAXPATHLEN ;
 constexpr int		maxlinelen = MAXLINELEN ;
-constexpr int		nents = NENTS ;
+constexpr int		nodenamelen = NODENAMELEN ;
+constexpr int		nlas = 3 ;	/* max is fixed by convention */
 
 
 /* exported variables */
@@ -227,18 +221,16 @@ int main(int argc,mainv argv,mainv envv) noex {
 	int		rs ;
 	int		rs1 ;
 	if ((rs = pi.start) >= 0) {
-	    if ((rs = pi.flistbegin) >= 0) {
+	    if ((rs = pi.servbegin) >= 0) {
                 switch (pi.pm) {
-                case progmode_fileuniq:
-                case progmode_fu:
-                case progmode_lc:
+                case progmode_macmotd:
                     rs = pi.process() ;
                     break ;
 		default:
 		    rs = SR_BUGCHECK ;
 		    break ;
                 } /* end switch */
-		rs1 = pi.flistend ;
+		rs1 = pi.servend ;
 		if (rs >= 0) rs = rs1 ;
 	    } /* end if (flist-) */
 	    rs1 = pi.finish ;
@@ -292,39 +284,48 @@ int proginfo::getpn(mainv names) noex {
 }
 /* end method (proginfo::getpn) */
 
-int proginfo::iflistbegin() noex {
-	return seen.start(nents) ;
+int proginfo::iservbegin() noex {
+	int		rs ;
+	if ((rs = maxlinelen) >= 0) {
+	    cint	maxline = rs ;
+	    rs = SR_NOMEM ;
+	    if ((lbuf = new(nothrow) char[maxline + 1]) != nullptr) {
+		llen = maxline ;
+		rs = SR_OK ;
+	    }
+	} /* end if (maclinelen) */
+	return rs ;
 }
-/* end method (proginfo::iflistbegin) */
+/* end method (proginfo::iservbegin) */
 
-int proginfo::iflistend() noex {
-	return seen.finish ;
+int proginfo::iservend() noex {
+	int		rs = SR_OK ;
+	if (lbuf) {
+	    delete [] lbuf ;
+	    llen = 0 ;
+	}
+	return rs ;
 }
-/* end method (proginfo::iflistend) */
+/* end method (proginfo::iservend) */
 
 int proginfo::process() noex {
+	custime		tistart = getustime ;
 	int		rs ;
 	int		rs1 ;
 	int		c = 0 ;
 	if ((rs = process_pmbegin()) >= 0) {
-	    if (argc > 1) {
-	        for (int ai = 1 ; (ai < argc) && argv[ai] ; ai += 1) {
-	            cchar	*fn = argv[ai] ;
-	            if (fn[0]) {
-		        if ((fn[0] == '-') && (fn[1] == '\0')) {
-		            rs = readin() ;
-		            c += rs ;
-		        } else {
-	                    rs = fileproc(fn) ;
-		            c += rs ;
-		        }
-	            }
-	            if (rs < 0) break ;
-	        } /* end for */
-	    } else {
-		rs = process_stdin() ;
-	        c += rs ;
-	    }
+	    ustime	ticur = tistart ;
+	    auto lamb = [&] () noex {
+		int	rs = SR_OK ;
+	        if ((ticur - tistart) < INTRUN) {
+	    	    rs = procfile(ticur) ;
+		}
+		return rs ;
+	    } ;
+	    while ((rs = lamb()) > 0) {
+		sleep(INTUPDATE) ;
+		ticur = getustime ;
+	    } /* end while */
 	    rs1 = process_pmend() ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (process_pm) */
@@ -332,164 +333,148 @@ int proginfo::process() noex {
 }
 /* end subroutine (proginfo::process) */
 
-int proginfo::process_stdin() noex {
-	int		rs = SR_OK ;
-	int		c = 0 ;
-	switch (pm) {
-	case progmode_fu:
-	case progmode_fileuniq:
-	    {
-	        rs = readin() ;
-	        c += rs ;
-	    }
-	    break ;
-	case progmode_lc:
-	    {
-		rs = fileproc_lines() ;
-		c += rs ;
-	    }
-	    break ;
-	} /* end switch */
-	return (rs >= 0) ? c : rs ;
+int proginfo::procfile(time_t ti) noex {
+	int		rs = SR_FAULT ;
+	int		rs1 ;
+	int		wlen = 0 ;
+	if (fn) {
+	    rs = SR_INVALID ;
+	    if (fn[0]) {
+		cint	of = O_WRONLY ;
+		cmode	om = 0664 ;
+		if ((rs = u_open(fn,of,om)) >= 0) {
+	    	    cint	fd = rs ;
+		    if ((rs = procline(ti)) >= 0) {
+			if ((rs = u_write(fd,lbuf,rs)) >= 0) {
+			    coff	fo = off_t(rs) ;
+			    wlen = rs ;
+			    rs = u_ftruncate(fd,fo) ;
+			}
+		    }
+	    	    rs1 = u_close(fd) ;
+	    	    if (rs >= 0) rs = rs1 ;
+		} /* end if (file) */
+	    } /* end if (valid) */
+	} /* end if (non-null) */
+	return (rs >= 0) ? wlen : rs ;
 }
-/* end subroutine (proginfo::process_stdin) */
+/* end subroutine (proginfo::procfile) */
+
+int proginfo::procline(time_t ti) noex {
+	constexpr cchar	sep[] = " - " ;
+	TM		ts ;
+	int		rs ;
+	int		wl = 0 ;
+	localtime_r(&ti,&ts) ;
+	if ((rs = procline_node(wl)) >= 0) {
+	    wl += rs ;
+	    if ((rs = procline_str(wl,sep)) >= 0) {
+	        wl += rs ;
+	        if ((rs = procline_date(wl,&ts)) >= 0) {
+	            wl += rs ;
+	            if ((rs = procline_str(wl,sep)) >= 0) {
+	                wl += rs ;
+	                if ((rs = procline_la(wl)) >= 0) {
+	                    wl += rs ;
+	                    if ((rs = procline_end(wl)) >= 0) {
+	                        wl += rs ;
+			    }
+			}
+		    }
+		}
+	    }
+	}
+	return (rs >= 0) ? wl : rs ;
+}
+/* end subroutine (proginfo::procline) */
+
+int proginfo::procline_node(int i) noex {
+	cnullptr	np{} ;
+	int		rs ;
+	if ((rs = nodenamelen) >= 0) {
+	    cint	nlen = rs ;
+	    rs = SR_NOMEM ;
+	    if (char *nbuf ; (nbuf = new(nothrow) char[nlen+1]) != np) {
+	        if ((rs = u_getnodename(nbuf,nlen)) >= 0) {
+		    cint	nl = rs ;
+		    cint	bl = (llen - i) ;
+		    char	*bp = (lbuf + i) ;
+		    if ((rs = snwcpy(bp,bl,nbuf,nl)) >= 0) {
+			i += rs ;
+		    } /* end if (snwcpy) */
+	        } /* end if (u_getnodename) */
+		delete [] nbuf ;
+	    } /* end if (m-a-f) */
+	} /* end if (nodenamelen) */
+	return (rs >= 0) ? i : rs ;
+}
+/* end subroutine (proginfo::procline_node) */
+
+int proginfo::procline_str(int i,cchar *s) noex {
+	cint		bl = (llen - i) ;
+	int		rs ;
+	char		*bp = (lbuf + i) ;
+	if ((rs = snwcpy(bp,bl,s)) >= 0) {
+	    i += rs ;
+	}
+	return (rs >= 0) ? i : rs ;
+}
+/* end subroutine (proginfo::procline_str) */
+
+int proginfo::procline_date(int i,const tm *tsp) noex {
+	constexpr cchar	fmt[] = "%a %e %b %H:%M" ;
+	cint		bl = (llen - i) ;
+	int		rs ;
+	char		*bp = (lbuf + i) ;
+	if ((rs = ustrftime(bp,bl,fmt,tsp)) >= 0) {
+	    i += rs ;
+	}
+	return (rs >= 0) ? i : rs ;
+}
+/* end subroutine (proginfo::procline_date) */
+
+int proginfo::procline_la(int i) noex {
+	double		dla[nlas] ;
+	cint		bl = (llen - i) ;
+	int		rs ;
+	char		*bp = (lbuf + i) ;
+	if ((rs = uloadavgd(dla,nlas)) >= 0) {
+	    cint	prec = 1 ;
+	    if ((rs = snuloadavgd(bp,bl,prec,dla,nlas)) >= 0) {
+	        i += rs ;
+	    }
+	}
+	return (rs >= 0) ? i : rs ;
+}
+/* end subroutine (proginfo::procline_la) */
+
+int proginfo::procline_end(int i) noex {
+	cint		bl = (llen - i) ;
+	int		rs = SR_OVERFLOW ;
+	char		*bp = (lbuf + i) ;
+	if (bl > 0) {
+	    *bp++ = eol ;
+	    *bp = '\0' ;
+	    i += 1 ;
+	    rs = SR_OK ;
+	}
+	return (rs >= 0) ? i : rs ;
+}
+/* end subroutine (proginfo::procline_date) */
 
 int proginfo::process_pmbegin() noex {
 	int		rs = SR_OK ;
-	switch (pm) {
-        case progmode_fileuniq:
-        case progmode_fu:
-	    m = &proginfo::fileproc_fu ;
-	    break ;
-        case progmode_lc:
-	    m = &proginfo::fileproc_lc ;
-	    if ((rs = maxlinelen) >= 0) {
-	        llen = rs ;
-		rs = SR_NOMEM ;
-	        if ((lbuf = new(nothrow) char[llen+1]) != nullptr) {
-		    rs = SR_OK ;
-	        } else {
-		    llen = 0 ;
-		}
-	    } /* end block */
-	    break ;
-	} /* end switch */
+	if ((argc > 1) && argv[1]) {
+	    fn = argv[1] ;
+	}
 	return rs ;
 }
 /* end subroutine (proginfo::process_pmbegin) */
 
 int proginfo::process_pmend() noex {
-	int		rs = SR_OK ;
-	switch (pm) {
-        case progmode_lc:
-	    if (lbuf) {
-		cout << lines << eol ;
-		delete [] lbuf ;
-		lbuf = nullptr ;
-	        llen = 0 ;
-	    } /* end block */
-	    break ;
-	} /* end switch */
-	return rs ;
+	return SR_OK ;
 }
 /* end subroutine (proginfo::process_pmend) */
-
-int proginfo::readin() noex {
-	istream		*isp = &cin ;
-	int		rs ;
-	int		c = 0 ;
-	if ((rs = maxpathlen) >= 0) {
-	    cint	plen = rs ;
-	    char	*pbuf ;
-	    rs = SR_NOMEM ;
-	    if ((pbuf = new(nothrow) char[plen+1]) != nullptr) {
-	        while ((rs = readln(isp,pbuf,plen)) > 0) {
-		    int		pl = rs ;
-		    if ((pl > 0) && (pbuf[pl - 1] == eol)) pl -= 1 ;
-		    if (pl > 0) {
-		        rs = fileproc(pbuf,pl) ;
-			c += rs ;
-		    }
-		    if (rs < 0) break ;
-	        } /* end if (reading lines) */
-	        delete [] pbuf ;
-	    } /* end if (m-a-f) */
-	} /* end if (maxpathlen) */
-	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::readin) */
-
-int proginfo::fileproc(cchar *sp,int sl) noex {
-	USTAT		sb ;
-	strnul		s(sp,sl) ;
-	int		rs ;
-	int		c = 0 ;
-	if ((rs = u_stat(s,&sb)) >= 0) {
-	    if ((rs = filecheck(&sb)) > 0) {
-		rs = (this->*m)(&sb,sp,sl) ;
-		c += rs ;
-	    } /* end if (filecheck) */
-	} else if (isNotAccess(rs)) {
-	    rs = SR_OK ;
-	}
-	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::fileproc) */
-
-int proginfo::fileproc_fu(CUSTAT *,cchar *sp,int sl) noex {
-	int		rs = SR_OK ;
-	int		c = 0 ;
-	if (sp) {
-	    strview	fn(sp,sl) ;
-	    cout << fn << eol ;
-	    c += 1 ;
-	}
-	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::fileproc_fu) */
-
-int proginfo::fileproc_lc(CUSTAT *sbp,cchar *sp,int sl) noex {
-	strview		fn(sp,sl) ;
-	int		rs = SR_OK ;
-	int		rs1 ;
-	int		c = 0 ;
-	if (sp && sl) {
-	    strview	fn(sp,sl) ;
-	    if (S_ISREG(sbp->st_mode)) {
-	        ccfile	rf ;
-		c += 1 ;
-	 	if ((rs = rf.open(fn,"r",0)) >= 0) {
-		    int		nl = 0 ;
-		    while ((rs = rf.readln(lbuf,llen)) > 0) {
-			nl += 1 ;
-		    } /* end while */
-		    lines += nl ;
-		    rs1 = rf.close ;
-		    if (rs >= 0) rs = rs1 ;
-		 } /* end if (ccfile) */
-	    } /* end if (is-reg) */
-	} /* end if (non-null) */
-	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::fileproc_lc) */
-
-int proginfo::fileproc_lines() noex {
-	istream		*isp = &cin ;
-	int		rs ;
-	int		c = 1 ;
-	int		nl = 0 ;
-	while ((rs = readln(isp,lbuf,llen)) > 0) {
-	    nl += 1 ;
-	} /* end if (reading lines) */
-	lines += nl ;
-	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::fileproc_lines) */
-
-int proginfo::filecheck(CUSTAT *sbp)  noex {
-	return seen.checkin(sbp) ;
-}
-/* end method (proginfo::filecheck) */
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
@@ -501,11 +486,11 @@ int proginfo_co::operator () (int) noex {
 	    case proginfomem_finish:
 	        rs = op->ifinish() ;
 	        break ;
-	    case proginfomem_flistbegin:
-	        rs = op->iflistbegin() ;
+	    case proginfomem_servbegin:
+	        rs = op->iservbegin() ;
 	        break ;
-	    case proginfomem_flistend:
-	        rs = op->iflistend() ;
+	    case proginfomem_servend:
+	        rs = op->iservend() ;
 	        break ;
 	    } /* end switch */
 	} /* end if (non-null) */

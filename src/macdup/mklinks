@@ -1,9 +1,9 @@
 #!/usr/extra/bin/ksh
 # MKLINKS
 
-LOCPROG=macfu.x
+LOCPROG=macdup.x
 CMDS=
-CMDS+=" fu fileuniq lc "
+CMDS+=" dup "
 
 TDIRS=" /usr/extra /usr/local /opt/local "
 

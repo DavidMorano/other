@@ -3,6 +3,7 @@
 
 LOCPROG=macsysdata.x
 CMDS=
+CMDS+=" sysname release nodename version "
 CMDS+=" architecture machine platform systype "
 CMDS+=" nisdomain hostid "
 

@@ -1,6 +1,6 @@
-# MAKEFILE (charset)
+# MAKEFILE (macdup)
 
-T= charset
+T= macdup
 
 ALL= $(T).x
 
@@ -42,7 +42,7 @@ INCS=
 LIBS= -lmacuser -lu
 
 
-INCDIRS=
+INCDIRS= -I$(INCDIR)
 
 LIBDIRS= -L$(LIBDIR)
 
@@ -76,10 +76,10 @@ all:			$(ALL)
 	$(CPP) $(CPPFLAGS) $< > $(*).i
 
 .c.o:
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
+	$(CC) -c $(CPPFLAGS) $(CFLAGS) $<
 
 .cc.o:
-	$(CXX)  $(CPPFLAGS) $(CCFLAGS) -c $<
+	$(CXX) -c $(CPPFLAGS) $(CCFLAGS) $<
 
 
 $(T).x:			$(OBJ_MACFU)
