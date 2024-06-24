@@ -84,7 +84,7 @@ using std::istream ;			/* type */
 using libu::uloadavgd ;			/* subroutine */
 using libu::ustrftime ;			/* subroutine */
 using libu::snuprintf ;			/* subroutine */
-using libu::snuloadavg ;		/* subroutine */
+using libu::snuloadavgd ;		/* subroutine */
 using libu::snwcpy ;			/* subroutine */
 using std::cin;				/* variable */
 using std::cout ;			/* variable */
@@ -439,7 +439,7 @@ int proginfo::procline_la(int i) noex {
 	char		*bp = (lbuf + i) ;
 	if ((rs = uloadavgd(dla,3)) >= 0) {
 	    cint	prec = 1 ;
-	    if ((rs = snuloadavg(bp,bl,prec,dla,3)) >= 0) {
+	    if ((rs = snuloadavgd(bp,bl,prec,dla,3)) >= 0) {
 	        i += rs ;
 	    }
 	}
