@@ -365,27 +365,28 @@ int proginfo::procfile(time_t ti) noex {
 int proginfo::procline(time_t ti) noex {
 	constexpr cchar	sep[] = " - " ;
 	TM		ts ;
-	int		rs ;
+	int		rs = SR_OK ;
 	int		wl = 0 ;
-	localtime_r(&ti,&ts) ;
-	if ((rs = procline_node(wl)) >= 0) {
-	    wl += rs ;
-	    if ((rs = procline_str(wl,sep)) >= 0) {
+	if (localtime_r(&ti,&ts) != nullptr) {
+	    if ((rs = procline_node(wl)) >= 0) {
 	        wl += rs ;
-	        if ((rs = procline_date(wl,&ts)) >= 0) {
+	        if ((rs = procline_str(wl,sep)) >= 0) {
 	            wl += rs ;
-	            if ((rs = procline_str(wl,sep)) >= 0) {
+	            if ((rs = procline_date(wl,&ts)) >= 0) {
 	                wl += rs ;
-	                if ((rs = procline_la(wl)) >= 0) {
+	                if ((rs = procline_str(wl,sep)) >= 0) {
 	                    wl += rs ;
-	                    if ((rs = procline_end(wl)) >= 0) {
+	                    if ((rs = procline_la(wl)) >= 0) {
 	                        wl += rs ;
+	                        if ((rs = procline_end(wl)) >= 0) {
+	                            wl += rs ;
+				}
 			    }
 			}
 		    }
 		}
 	    }
-	}
+	} /* end if (conversion ok) */
 	return (rs >= 0) ? wl : rs ;
 }
 /* end subroutine (proginfo::procline) */
