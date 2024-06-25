@@ -23,9 +23,10 @@
 	This is a small Message-Of-The-Day (MOTD) server for macOS.
 
 	Synopsis:
-	$ macmotd
+	$ macmotd [<file>]
 
 	Arguments:
+	<file>		optional MOTD file to write
 
 	Returns:
 	==0		for normal operation success
@@ -302,6 +303,7 @@ int proginfo::iservend() noex {
 	int		rs = SR_OK ;
 	if (lbuf) {
 	    delete [] lbuf ;
+	    lbuf = nullptr ;
 	    llen = 0 ;
 	}
 	return rs ;
@@ -315,7 +317,7 @@ int proginfo::process() noex {
 	int		c = 0 ;
 	if ((rs = process_pmbegin()) >= 0) {
 	    ustime	ticur = tistart ;
-	    auto lamb = [&] () noex {
+	    cauto lamb = [&] () noex {
 		int	rs = SR_OK ;
 	        if ((ticur - tistart) < INTRUN) {
 	    	    rs = procfile(ticur) ;
@@ -363,27 +365,28 @@ int proginfo::procfile(time_t ti) noex {
 int proginfo::procline(time_t ti) noex {
 	constexpr cchar	sep[] = " - " ;
 	TM		ts ;
-	int		rs ;
+	int		rs = SR_OK ;
 	int		wl = 0 ;
-	localtime_r(&ti,&ts) ;
-	if ((rs = procline_node(wl)) >= 0) {
-	    wl += rs ;
-	    if ((rs = procline_str(wl,sep)) >= 0) {
+	if (localtime_r(&ti,&ts) != nullptr) {
+	    if ((rs = procline_node(wl)) >= 0) {
 	        wl += rs ;
-	        if ((rs = procline_date(wl,&ts)) >= 0) {
+	        if ((rs = procline_str(wl,sep)) >= 0) {
 	            wl += rs ;
-	            if ((rs = procline_str(wl,sep)) >= 0) {
+	            if ((rs = procline_date(wl,&ts)) >= 0) {
 	                wl += rs ;
-	                if ((rs = procline_la(wl)) >= 0) {
+	                if ((rs = procline_str(wl,sep)) >= 0) {
 	                    wl += rs ;
-	                    if ((rs = procline_end(wl)) >= 0) {
+	                    if ((rs = procline_la(wl)) >= 0) {
 	                        wl += rs ;
+	                        if ((rs = procline_end(wl)) >= 0) {
+	                            wl += rs ;
+				}
 			    }
 			}
 		    }
 		}
 	    }
-	}
+	} /* end if (conversion ok) */
 	return (rs >= 0) ? wl : rs ;
 }
 /* end subroutine (proginfo::procline) */

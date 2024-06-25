@@ -47,6 +47,8 @@ INCDIRS= -I$(INCDIR)
 LIBDIRS= -L$(LIBDIR)
 
 
+RUNINFO= -rpath $(RUNDIR)
+
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -54,7 +56,7 @@ CPPFLAGS= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
 CFLAGS= $(MAKECFLAGS)
 CCFLAGS= $(MAKECCFLAGS)
 ARFLAGS= $(MAKEARFLAGS)
-LDFLAGS= $(MAKELDFLAGS) -rpath $(RUNDIR)
+LDFLAGS= $(MAKELDFLAGS)
 
 
 OBJ_MACFU= main.o
@@ -81,7 +83,7 @@ all:			$(ALL)
 
 
 $(T).x:			$(OBJ_MACFU)
-	$(CXX) $(LDFLAGS) -o $@ $(OBJ_MACFU) $(LIBINFO)
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACFU) $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm

@@ -2,12 +2,14 @@
 # GNU Compiler Collection
 PN=${0##*/}
 RF_OK=true
-INCDIR=include
+: ${INCDIR:=include}
+INCDIRS=
 if [[ ! -d ${INCDIR} ]] ; then
-  INCDIR=${REPOROOT}/include
-  if [[ ! -d ${INCDIR} ]] ; then
-    ED_OK=false
-    print -u2 "${PN}: no repository root found"
+  if [[ -n "${REPOROOT}" ]] && [[ -d "${REPOROOT}" ]] ; then
+    A=${REPOROOT}/include
+    if [[ -d "${A}" ]] ; then
+      INCDIR=${A}
+    fi
   fi
 fi
 if [[ -n "${INCDIR}" ]] && [[ -d "${INCDIR}" ]] ; then
@@ -15,39 +17,41 @@ if [[ -n "${INCDIR}" ]] && [[ -d "${INCDIR}" ]] ; then
 fi
 PROG="print -u2 -- ${PN}: no-program"
 if ${RF_OK} ; then
-OPTS=
-case ${PN} in
-gcpp*)
-  PROG=gcpp13
-  OPTS="${INCDIRS}"
-  ;;
-gcc*)
-  PROG=gcc13
-  OPTS="${INCDIRS}"
-  ;;
-gpp*)
-  PROG=gpp13
-  OPTS="${INCDIRS}"
-  ;;
-gld*)
-  PROG=gld13
-  ;;
-granlib*)
-  PROG=granlib13
-  ;;
-gar*)
-  PROG=gar13
-  ;;
-gnm*)
-  PROG=gnm13
-  ;;
-gcov*)
-  PROG=gcov13
-  ;;
-gsize*|gsz*)
-  PROG=size
-  ;;
-esac
-${PROG} ${OPTS} "${@}"
+  POPT="-pthread"
+  OPTS=
+  case ${PN} in
+  gcpp*)
+    PROG=gcpp13
+    OPTS="${INCDIRS}"
+    ;;
+  gcc*)
+    PROG=gcc13
+    OPTS="${POPT} ${INCDIRS}"
+    ;;
+  gpp*)
+    PROG=gpp13
+    OPTS="${POPT} ${INCDIRS}"
+    ;;
+  gld*)
+    PROG=gld13
+    OPTS="${POPT}"
+    ;;
+  granlib*)
+    PROG=granlib13
+    ;;
+  gar*)
+    PROG=gar13
+    ;;
+  gnm*)
+    PROG=gnm13
+    ;;
+  gcov*)
+    PROG=gcov13
+    ;;
+  gsize*|gsz*)
+    PROG=size
+    ;;
+  esac
+  ${PROG} ${OPTS} "${@}"
 fi
 

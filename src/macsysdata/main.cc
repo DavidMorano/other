@@ -54,15 +54,12 @@
 #include	<strwcpy.h>
 #include	<strnul.hh>
 #include	<sncpyx.h>
-#include	<getourenv.h>
-#include	<mapblock.hh>
-#include	<readln.hh>
 #include	<rmx.h>
 #include	<strnul.hh>
 #include	<isnot.h>
 #include	<mapex.h>
 #include	<exitcodes.h>
-#include	<localmisc.h>
+#include	<localmisc.h>		/* |DIGBUFLEN| + |REALNAMELEN| */
 
 
 /* local defines */
@@ -78,6 +75,8 @@ using std::nullptr_t ;			/* type */
 using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::istream ;			/* type */
+using libu::uloadavgd ;			/* subroutine */
+using libu::snuloadavgd ;		/* subroutine */
 using std::cin;				/* variable */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
@@ -140,6 +139,7 @@ namespace {
 	} ;
 	int uname() noex ;
 	int output() noex ;
+	int lax() noex ;
     private:
 	int istart() noex ;
 	int ifinish() noex ;
@@ -164,6 +164,7 @@ enum progmodes {
 	progmode_systype,
 	progmode_nisdomain,
 	progmode_hostid,
+	progmode_lax,
 	progmode_overlast
 } ;
 
@@ -178,6 +179,7 @@ static constexpr cpcchar	prognames[] = {
 	"systype",
 	"nisdomain",
 	"hostid",
+	"lax",
 	nullptr
 } ;
 
@@ -198,6 +200,7 @@ static constexpr MAPEX	mapexs[] = {
 } ;
 
 constexpr int		maxpathlen = MAXPATHLEN ;
+constexpr int		nlas = 3 ;	/* by long convention */
 
 
 /* exported variables */
@@ -230,6 +233,9 @@ int main(int argc,mainv argv,mainv envv) noex {
 		    clong id = gethostid() ;
 		    cout << ulong(id) << eol ;
 		}
+		break ;
+	    case progmode_lax:
+		rs = pi.lax() ;
 		break ;
 	    default:
 		rs = SR_BUGCHECK ;
@@ -351,9 +357,9 @@ int proginfo::output() noex {
 	    cint	olen = maxpathlen ;
 	    rs = SR_NOMEM ;
 	    if (char *obuf ; (obuf = new(nothrow) char[olen+1]) != np) {
-		size_t	rlen = olen ;
-		if ((rs = sysctlbyname(name,obuf,&rlen,np,0z)) >= 0) {
-		    cint	ol = int(rlen) ;
+		size_t	rsz = size_t(olen) ; /* <- return value also */
+		if ((rs = sysctlbyname(name,obuf,&rsz,np,0z)) >= 0) {
+		    cint	ol = int(rsz) ;
 		    obuf[ol] = '\0' ;
 		    cout << obuf << eol ;
 		} else {
@@ -365,6 +371,21 @@ int proginfo::output() noex {
 	return rs ;
 }
 /* end subroutine (proginfo::output) */
+
+int proginfo::lax() noex {
+	int		rs ;
+	double		dla[nlas] ;
+	if ((rs = uloadavgd(dla,nlas)) >= 0) {
+	    cint	prec = 1 ;
+	    cint	dlen = DIGBUFLEN ;
+	    char	dbuf[DIGBUFLEN + 1] ;
+	    if ((rs = snuloadavgd(dbuf,dlen,prec,dla,nlas)) >= 0) {
+		cout << dbuf << eol ;
+	    }
+	}
+	return rs ;
+}
+/* end subroutine (proginfo::lax) */
 
 int proginfo_co::operator () (int) noex {
 	int	rs = SR_BUGCHECK ;
