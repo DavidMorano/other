@@ -4,7 +4,6 @@
 /* generic front-end for SHELL built-ins */
 /* version %I% last-modified %G% */
 
-#define	CF_STRTCPY	0
 
 /* revision history:
 
@@ -161,10 +160,6 @@ namespace {
 
 /* forward references */
 
-#if	CF_STRTCPY
-static char *strtcpy(char *,cchar *,int) noex ;
-#endif
-
 
 /* local variables */
 
@@ -177,20 +172,6 @@ constexpr cpcchar	prognames[] = {
 	"mktmpusers",
 	nullptr
 } ;
-
-constexpr proginfo_m	mems[] = {
-	&proginfo::mktmp_wait,
-	&proginfo::mktmp_make,
-	&proginfo::mktmp_mode
-} ;
-
-constexpr mode_t		dm = (0777|S_ISVTX) ;
-
-
-/* forward references */
-
-
-/* local variables */
 
 static constexpr MAPEX	mapexs[] = {
 	{ SR_NOENT,	EX_NOUSER },
@@ -208,8 +189,14 @@ static constexpr MAPEX	mapexs[] = {
 	{ 0, 0 }
 } ;
 
+constexpr proginfo_m	mems[] = {
+	&proginfo::mktmp_wait,
+	&proginfo::mktmp_make,
+	&proginfo::mktmp_mode
+} ;
+
 constexpr int		maxpathlen = MAXPATHLEN ;
-constexpr int		maxlinelen = MAXLINELEN ;
+constexpr mode_t	dm = (0777|S_ISVTX) ;
 
 
 /* exported variables */
@@ -269,6 +256,8 @@ int proginfo::ifinish() noex {
 	if (pbuf) {
 	    delete [] pbuf ;
 	    pbuf = nullptr ;
+	    plen = 0 ;
+	    pl = 0 ;
 	}
 	return rs ;
 }
@@ -398,19 +387,5 @@ int proginfo_co::operator () (int) noex {
 	return rs ;
 }
 /* end method (proginfo_co::operator) */
-
-#if	CF_STRTCPY
-/* this is similar to |strwcpy(3uc)| */
-static char *strtcpy(char *dp,cchar *sp,int dl) noex {
-	if (dl >= 0) {
-	    dp = strncpy(dp,sp,dl) + dl ;
-	    *dp = '\0' ;
-	} else {
-	    dp = nullptr ;
-	}
-	return dp ;
-}
-/* end subroutine (strtcpy) */
-#endif /* CF_STRTCPY */
 
 
