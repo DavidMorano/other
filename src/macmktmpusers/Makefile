@@ -1,6 +1,6 @@
-# MAKEFILE (macuser)
+# MAKEFILE (macmktmpusers)
 
-T= macuser
+T= macmktmpusers
 
 ALL= $(T).x
 
@@ -39,7 +39,8 @@ DEFS +=
 
 INCS +=
 
-LIBS += -lmacuser -lu
+#LIBS += -lmacuser -lu
+LIBS += -lmacuser
 
 
 INCDIRS +=
@@ -47,7 +48,7 @@ INCDIRS +=
 LIBDIRS += -L$(LIBDIR)
 
 
-RUNINFO= -rpath $(RUNDIR)
+#RUNINFO= -rpath $(RUNDIR)
 
 LIBINFO= $(LIBDIRS) $(LIBS)
 
@@ -59,7 +60,7 @@ ARFLAGS= $(MAKEARFLAGS)
 LDFLAGS= $(MAKELDFLAGS)
 
 
-OBJ_MACUSER= main.o
+OBJ= main.o libu.a
 
 
 default:		$(T).x
@@ -82,8 +83,8 @@ all:			$(ALL)
 	$(CXX)  $(CPPFLAGS) $(CCFLAGS) -c $<
 
 
-$(T).x:			$(OBJ_MACUSER)
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACUSER) $(LIBINFO)
+$(T).x:			$(OBJ)
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ) $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm
