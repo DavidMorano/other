@@ -60,7 +60,7 @@ ARFLAGS= $(MAKEARFLAGS)
 LDFLAGS= $(MAKELDFLAGS)
 
 
-OBJ= main.o libu.a
+OBJ= main.o snadd.o snaddw.o libu.a
 
 
 default:		$(T).x

@@ -52,7 +52,6 @@
 #include	<unordered_set>
 #include	<utility>
 #include	<usystem.h>
-#include	<uvariables.hh>
 #include	<sfx.h>
 #include	<matstr.h>
 #include	<rmx.h>
@@ -61,8 +60,7 @@
 #include	<pwd.h>
 #include	<grp.h>
 #include	<ccfile.hh>
-#include	<snadd.h>
-#include	<rmx.h>
+#include	<snx.h>
 #include	<hasx.h>
 #include	<isoneof.h>
 #include	<isnot.h>
@@ -85,6 +83,8 @@ using std::nothrow ;			/* constant */
 
 /* local typedefs */
 
+using setiter = std::unordered_set<string>::iterator ;
+
 
 /* external subroutines */
 
@@ -95,7 +95,6 @@ using std::nothrow ;			/* constant */
 /* local structures */
 
 namespace {
-    struct confstritem ;
     enum proginfomems {
 	proginfomem_start,
 	proginfomem_finish,
@@ -129,14 +128,10 @@ namespace {
 	mainv		envv ;
 	cchar		*pn = nullptr ;
 	char		*pbuf = nullptr ;
-	char		*dbuf = nullptr ;
 	int		argc ;
 	int		pm = 0 ;
 	int		plen = 0 ;
-	int		dlen = 0 ;
 	int		pl = 0 ;
-	int		dl = 0 ;
-	int		dl_homevar ;
 	proginfo(int c,mainv a,mainv e) noex : argc(c), argv(a), envv(e) { 
 	    start(this,proginfomem_start) ;
 	    finish(this,proginfomem_finish) ;
@@ -149,28 +144,18 @@ namespace {
 	    argv = a ;
 	    envv = e ;
 	} ;
-	int tmpusers() noex ;
-	int tmpusers_present() noex ;
-	int tmpusers_wait() noex ;
-	int tmpusers_make() noex ;
-	int tmpusers_mode() noex ;
-	int tmpmounts() noex ;
-	int tmpmounts_one(const confstritem *) noex ;
-	int tmpmounts_oner(const confstritem *) noex ;
-	int tmpmounts_vardir() noex ;
-	int tmpmounts_vardirs(cchar *) noex ;
+	int mktmp() noex ;
+	int mktmp_present() noex ;
+	int mktmp_wait() noex ;
+	int mktmp_make() noex ;
+	int mktmp_mode() noex ;
     private:
 	int istart() noex ;
 	int ifinish() noex ;
 	int ipmbegin() noex ;
 	int ipmend() noex ;
 	int getpn(mainv) noex ;
-	int revertuser() noex ;
     } ; /* end struct (proginfo) */
-    struct confstritem {
-	cchar		*dname ;
-	int		req ;
-    } ;
 }
 
 
@@ -182,18 +167,16 @@ namespace {
 enum progmodes {
 	progmode_mktmpusers,
 	progmode_tmpusers,
-	progmode_tmpmounts,
 	progmode_overlast
 } ;
 
 constexpr cpcchar	prognames[] = {
 	"mktmpusers",
 	"tmpusers",
-	"tmpmounts",
 	nullptr
 } ;
 
-constexpr MAPEX		mapexs[] = {
+static constexpr MAPEX	mapexs[] = {
 	{ SR_NOENT,	EX_NOUSER },
 	{ SR_AGAIN,	EX_TEMPFAIL },
 	{ SR_DEADLK,	EX_TEMPFAIL },
@@ -209,16 +192,10 @@ constexpr MAPEX		mapexs[] = {
 	{ 0, 0 }
 } ;
 
-constexpr confstritem	confstritems[] = {
-	{ "public",	_CS_PUBLICDIR },
-	{ "tmp",	_CS_TMPDIR },
-	{ "cache",	_CS_CACHEDIR }
-} ;
-
-constexpr proginfo_m	tmpusers_mems[] = {
-	&proginfo::tmpusers_wait,
-	&proginfo::tmpusers_make,
-	&proginfo::tmpusers_mode
+constexpr proginfo_m	mems[] = {
+	&proginfo::mktmp_wait,
+	&proginfo::mktmp_make,
+	&proginfo::mktmp_mode
 } ;
 
 constexpr int		maxpathlen = MAXPATHLEN ;
@@ -240,10 +217,7 @@ int main(int argc,mainv argv,mainv envv) noex {
                 switch (pi.pm) {
                 case progmode_mktmpusers:
                 case progmode_tmpusers:
-                    rs = pi.tmpusers() ;
-                    break ;
-                case progmode_tmpmounts:
-                    rs = pi.tmpmounts() ;
+                    rs = pi.mktmp() ;
                     break ;
 		default:
 		    rs = SR_BUGCHECK ;
@@ -273,15 +247,7 @@ int proginfo::istart() noex {
 	        rs = SR_NOMEM ;
 	        if ((pbuf = new(nothrow) char[pathlen + 1]) != nullptr) {
 		    plen = pathlen ;
-	            if ((dbuf = new(nothrow) char[pathlen + 1]) != nullptr) {
-			dlen = pathlen ;
-		        rs = SR_OK ;
-	            } /* end if (new-char) */
-		    if (rs < 0) {
-			delete pbuf ;
-			pbuf = nullptr ;
-			plen = 0 ;
-		    }
+		    rs = SR_OK ;
 	        } /* end if (new-char) */
 	    } /* end if (maxpathlen) */
 	} /* end if (proginfo::getpn) */
@@ -291,12 +257,6 @@ int proginfo::istart() noex {
 
 int proginfo::ifinish() noex {
 	int		rs = SR_OK ;
-	if (dbuf) {
-	    delete [] dbuf ;
-	    dbuf = nullptr ;
-	    dlen = 0 ;
-	    dl = 0 ;
-	}
 	if (pbuf) {
 	    delete [] pbuf ;
 	    pbuf = nullptr ;
@@ -309,20 +269,15 @@ int proginfo::ifinish() noex {
 
 int proginfo::ipmbegin() noex {
 	int		rs = SR_OK ;
-	switch (pm) {
-	case progmode_tmpusers:
-	    rs = revertuser() ;
-	    break ;
-	} /* end switch */
 	return rs ;
 }
-/* end method (proginfo::ipmbegin) */
+/* end subroutine (proginfo::ipmbegin) */
 
 int proginfo::ipmend() noex {
 	int		rs = SR_OK ;
 	return rs ;
 }
-/* end method (proginfo::ipmend) */
+/* end subroutine (proginfo::ipmend) */
 
 int proginfo::getpn(mainv names) noex {
 	int		rs = SR_FAULT ;
@@ -348,28 +303,16 @@ int proginfo::getpn(mainv names) noex {
 }
 /* end method (proginfo::getpn) */
 
-int proginfo::revertuser() noex {
-	const uid_t	uid = getuid() ;
-	const uid_t	euid = geteuid() ;
+int proginfo::mktmp() noex {
 	int		rs = SR_OK ;
-	if (uid != euid) {
-	    rs = u_seteuid(uid) ; /* revert effective to real ID */
-	} /* end if */
-	return rs ;
-}
-/* end method (proginfo::revertuser) */
-
-int proginfo::tmpusers() noex {
-	int		rs = SR_OK ;
-	for (cauto &m : tmpusers_mems) {
+	for (cauto &m : mems) {
 	    rs = (this->*m)() ;
 	    if (rs < 0) break ;
 	} /* end for */
 	return rs ;
 }
-/* end method (proginfo::tmpusers) */
 
-int proginfo::tmpusers_present() noex {
+int proginfo::mktmp_present() noex {
 	int		rs = SR_BUGCHECK ;
 	int		fpresent = false ;
 	if (pbuf) {
@@ -384,19 +327,19 @@ int proginfo::tmpusers_present() noex {
 	return (rs >= 0) ? fpresent : rs ;
 }
 
-int proginfo::tmpusers_wait() noex {
+int proginfo::mktmp_wait() noex {
 	int		rs ;
 	if ((rs = snadd(pbuf,plen,pl,"/tmp")) >= 0) {
 	    pl += rs ;
-	    while ((rs = tmpusers_present()) == 0) {
+	    while ((rs = mktmp_present()) == 0) {
 		sleep(1) ;
 	    } /* end while */
 	} /* end if (snadd) */
 	return rs ;
 }
-/* end subroutine (proginfo::tmpusers_wait) */
+/* end subroutine (proginfo::mktmp_wait) */
 
-int proginfo::tmpusers_make() noex {
+int proginfo::mktmp_make() noex {
 	int		rs ;
 	int		c = 0 ;
 	if ((rs = snadd(pbuf,plen,pl,"/users")) >= 0) {
@@ -413,9 +356,9 @@ int proginfo::tmpusers_make() noex {
 	} /* end if (snadd) */
 	return (rs >= 0) ? c : rs ;
 }
-/* end subroutine (proginfo::tmpusers_make) */
+/* end subroutine (proginfo::mktmp_make) */
 
-int proginfo::tmpusers_mode() noex {
+int proginfo::mktmp_mode() noex {
 	int		rs = SR_OK ;
 	int		c = 0 ;
 	mode_t		efm = (sb.st_mode & (~S_IFMT)) ;
@@ -425,101 +368,7 @@ int proginfo::tmpusers_mode() noex {
 	} /* end if (fix mode) */
 	return (rs >= 0) ? c : rs ;
 }
-/* end method (proginfo::tmpusers_mode) */
-
-int proginfo::tmpmounts() noex {
-	int		rs ;
-	int		c = 0 ;
-	if ((rs = tmpmounts_vardir()) > 0) {
-	    for (const auto &item : confstritems) {
-	        rs = tmpmounts_one(&item) ;
-	        if (rs < 0) break ;
-	    } /* end for */
-	} /* end if (tmpmounts_vardir) */
-	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::tmpmounts) */
-
-int proginfo::tmpmounts_one(const confstritem *itp) noex {
-	int		rs ;
-	int		c = 0 ;
-	dl = dl_homevar ; /* start fresh each time */
-	if ((rs = snadd(dbuf,dlen,dl,"/",itp->dname)) >= 0) {
-	    dl += rs ;
-fprintf(stderr,"tmpmounts_one: dn=%s path=»%s«\n",itp->dname,dbuf) ;
-
-		rs = tmpmounts_oner(itp) ;
-
-	} /* end if (snadd) */
-	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::tmpmounts_one) */
-
-int proginfo::tmpmounts_oner(const confstritem *itp) noex {
-	int		rs = SR_OK ;
-	int		c = 0 ;
-	if (itp->req >= 0) {
-	    if ((rs = uc_sysconfstr(pbuf,plen,itp->req)) > 0) {
-	        cint	pl = rmtrailchr(pbuf,rs,'/') ;
-	        pbuf[pl] = '\0' ;
-	        if ((rs = u_lstat(pbuf,&sb)) >= 0) {
-		    if (S_ISDIR(sb.st_mode)) {
-fprintf(stderr,"dn=%s path=»%s«\n",itp->dname,pbuf) ;
-    
-		    } /* end if (is-dir) */
-	        } else if (isNotPresent(rs)) {
-		    rs = SR_OK ;
-	        }
-	    } else if (isNotSupport(rs)) {
-	        rs = SR_OK ;
-	    }
-	} /* end if (valid-request) */
-	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::tmpmounts_oner) */
-
-int proginfo::tmpmounts_vardir() noex {
-	static cchar	*homedname = getenv(varname.home) ;
-	int		rs = SR_OK ;
-	int		fok = false ;
-	if (homedname) {
-	    if (homedname[0]) {
-		if ((rs = u_stat(homedname,&sb)) >= 0) {
-		    rs = tmpmounts_vardirs(homedname) ;
-		    fok = rs ;
-		} else if (isNotPresent(rs)) {
-	    	    cerr << "tmpmounts: no-home-directory " << rs << eol ;
-		}
-	    }
-	} else {
-	    cerr << "tmpmounts: no-home-directory" << eol ;
-	}
-	return (rs >= 0) ? fok : rs ;
-}
-/* end method (proginfo::tmpmounts_vardir) */
-
-int proginfo::tmpmounts_vardirs(cchar *homedname) noex {
-	int		rs ;
-	int		fok = false ;
-	if ((rs = snadd(dbuf,dlen,dl,homedname)) >= 0) {
-	    dl += rs ;
-	    if ((rs = snadd(dbuf,dlen,dl,"/var")) >= 0) {
-		dl += rs ;
-		if ((rs = u_stat(dbuf,&sb)) >= 0) {
-		    if (S_ISDIR(sb.st_mode)) {
-			dl_homevar = dl ;
-fprintf(stderr,"tmpusers_vardirs: dl=%d dbuf=%s\n",dl,dbuf) ;
-			fok = true ;
-		    }
-		} else if (isNotPresent(rs)) {
-		    if ((rs = u_mkdir(dbuf,0664)) >= 0) {
-			fok = true ;
-		    }
-		}
-	    }
-	}
-	return (rs >= 0) ? fok : rs ;
-}
+/* end method (proginfo::mktmp_mode) */
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
