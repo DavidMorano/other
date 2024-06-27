@@ -1,4 +1,4 @@
-/* main (macmktmpusers) */
+/* main SUPPORT (macmktmpusers) */
 /* lang=C++20 */
 
 /* generic front-end for SHELL built-ins */
@@ -21,6 +21,7 @@
 
 	Names:
 	mktmpusers
+	tmpusers
 
 	Description:
 	Make the directory:
@@ -165,11 +166,13 @@ namespace {
 
 enum progmodes {
 	progmode_mktmpusers,
+	progmode_tmpusers,
 	progmode_overlast
 } ;
 
 constexpr cpcchar	prognames[] = {
 	"mktmpusers",
+	"tmpusers",
 	nullptr
 } ;
 
@@ -213,6 +216,7 @@ int main(int argc,mainv argv,mainv envv) noex {
 	    if ((rs = pi.pmbegin) >= 0) {
                 switch (pi.pm) {
                 case progmode_mktmpusers:
+                case progmode_tmpusers:
                     rs = pi.mktmp() ;
                     break ;
 		default:

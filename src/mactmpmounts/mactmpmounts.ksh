@@ -41,13 +41,13 @@ if [[ -d "${VARDIR}" ]] ; then
         if [[ -n "${VAL}" ]] ; then
           if [[ -L ${VARDIRNAME} ]] ; then
             A=$( readlink ${VARDIRNAME} )
-            if [[ $A != $VAL ]] ; then
+            if [[ "${A}" != "${VAL}" ]] ; then
               rm -f ${VARDIRNAME}
-              ln -s ${VAL} ${VARDIRNAME}
+              ln -s "${VAL}" ${VARDIRNAME}
             fi
 	  elif [[ ! -d ${VARDIRNAME} ]] ; then
             rm -f ${VARDIRNAME}
-            ln -s ${VAL} ${VARDIRNAME}
+            ln -s "${VAL}" ${VARDIRNAME}
           fi
         fi
       fi
