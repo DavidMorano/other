@@ -3,6 +3,9 @@ MACMKTMPUSERS
 This program is used (near system startup) to create the directory:
 	/tmp/users/
 
+Synopsis:
+$ mktmpusers
+
 Arguments:
 -		NONE, because we are too lean even for that
 
