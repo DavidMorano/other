@@ -547,10 +547,10 @@ int proginfo::tmpmounts_cklink() noex {
 /* end method (proginfo::tmpmounts_cklink) */
 
 int proginfo::tmpmounts_same(cchar *lbuf) noex {
-	USTAT		sb_link ;
-	int		rs ;
+	int		rs = SR_OK ;
 	int		fsame = false ;
-	if (lbuf[0] == '/') {
+	if ((lbuf[0] == '/') && (pbuf[0] == '/')) {
+	    USTAT	sb_link ;
 	    if ((rs = u_stat(lbuf,&sb_link)) >= 0) {
 	        USTAT	sb_tmpconf ;
 	        if ((rs = u_stat(pbuf,&sb_tmpconf)) >= 0) {
