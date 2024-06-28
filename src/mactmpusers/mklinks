@@ -1,7 +1,7 @@
 #!/usr/extra/bin/ksh
 # MACMKTMPUSERS
 
-CMDS=" mktmpusers tmpusers "
+CMDS=" mktmpusers tmpusers tmpmounts "
 
 LOCPROG=macmktmpusers.x
 TDIRS=" /usr/extra /usr/local /opt/local "

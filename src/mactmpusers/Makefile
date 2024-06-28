@@ -1,6 +1,6 @@
-# MAKEFILE (macmktmpusers)
+# MAKEFILE (mactmpusers)
 
-T= macmktmpusers
+T= mactmpusers
 
 ALL= $(T).x
 
@@ -39,8 +39,8 @@ DEFS +=
 
 INCS +=
 
-#LIBS += -lmacuser -lu
-LIBS += -lmacuser
+LIBS += -lmacuser -lu
+#LIBS += -lmacuser
 
 
 INCDIRS +=
@@ -60,7 +60,8 @@ ARFLAGS= $(MAKEARFLAGS)
 LDFLAGS= $(MAKELDFLAGS)
 
 
-OBJ= main.o snadd.o snaddw.o libu.a
+#OBJ= main.o snadd.o snaddw.o libu.a
+OBJ= main.o snadd.o snaddw.o
 
 
 default:		$(T).x
@@ -100,5 +101,8 @@ control:
 
 
 main.o:			main.cc			$(INCS)
+
+snadd.o:		snadd.cc snadd.h snaddw.h
+snaddw.o:		snaddw.cc snaddw.h
 
 

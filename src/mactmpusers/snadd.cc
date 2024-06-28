@@ -1,7 +1,7 @@
 /* snadd SUPPORT */
 /* lang=C++20 */
 
-/* append a counted c-string to a given counted c-string */
+/* append a c-string to a given counted c-string */
 /* version %I% last-modified %G% */
 
 
@@ -41,7 +41,8 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<stdarg.h>
+#include	<cstddef>		/* |nullptr_t| */
+#include	<cstdarg>
 #include	<usystem.h>
 
 #include	"snadd.h"

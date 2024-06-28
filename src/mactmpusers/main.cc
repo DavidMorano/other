@@ -45,7 +45,6 @@
 #include	<cstdlib>
 #include	<cstdio>
 #include	<cstring>		/* for |strlen(3c)| + |strnlen(3c)| */
-#include	<string>
 #include	<fstream>
 #include	<iostream>
 #include	<algorithm>
@@ -76,10 +75,7 @@
 
 /* imported namespaces */
 
-using std::string ;			/* type */
-using std::clog ;			/* variable */
-using std::cerr ;			/* variable */
-using std::cout ;			/* variable */
+using std::nullptr_t ;			/* type */
 using std::nothrow ;			/* constant */
 
 
@@ -157,6 +153,10 @@ namespace {
 	int tmpmounts() noex ;
 	int tmpmounts_one(const confstritem *) noex ;
 	int tmpmounts_oner(const confstritem *) noex ;
+	int tmpmounts_oners() noex ;
+	int tmpmounts_mklink() noex ;
+	int tmpmounts_cklink() noex ;
+	int tmpmounts_same(cchar *) noex ;
 	int tmpmounts_vardir() noex ;
 	int tmpmounts_vardirs(cchar *) noex ;
     private:
@@ -433,6 +433,7 @@ int proginfo::tmpmounts() noex {
 	if ((rs = tmpmounts_vardir()) > 0) {
 	    for (const auto &item : confstritems) {
 	        rs = tmpmounts_one(&item) ;
+		c += rs ;
 	        if (rs < 0) break ;
 	    } /* end for */
 	} /* end if (tmpmounts_vardir) */
@@ -446,10 +447,10 @@ int proginfo::tmpmounts_one(const confstritem *itp) noex {
 	dl = dl_homevar ; /* start fresh each time */
 	if ((rs = snadd(dbuf,dlen,dl,"/",itp->dname)) >= 0) {
 	    dl += rs ;
-fprintf(stderr,"tmpmounts_one: dn=%s path=»%s«\n",itp->dname,dbuf) ;
-
+	    {
 		rs = tmpmounts_oner(itp) ;
-
+		c = rs ;
+	    }
 	} /* end if (snadd) */
 	return (rs >= 0) ? c : rs ;
 }
@@ -462,10 +463,10 @@ int proginfo::tmpmounts_oner(const confstritem *itp) noex {
 	    if ((rs = uc_sysconfstr(pbuf,plen,itp->req)) > 0) {
 	        cint	pl = rmtrailchr(pbuf,rs,'/') ;
 	        pbuf[pl] = '\0' ;
-	        if ((rs = u_lstat(pbuf,&sb)) >= 0) {
+	        if ((rs = u_stat(pbuf,&sb)) >= 0) {
 		    if (S_ISDIR(sb.st_mode)) {
-fprintf(stderr,"dn=%s path=»%s«\n",itp->dname,pbuf) ;
-    
+    			rs = tmpmounts_oners() ;
+			c = rs ;
 		    } /* end if (is-dir) */
 	        } else if (isNotPresent(rs)) {
 		    rs = SR_OK ;
@@ -478,21 +479,96 @@ fprintf(stderr,"dn=%s path=»%s«\n",itp->dname,pbuf) ;
 }
 /* end method (proginfo::tmpmounts_oner) */
 
+int proginfo::tmpmounts_oners() noex {
+	int		rs ;
+	int		c = 0 ;
+	if ((rs = u_lstat(dbuf,&sb)) >= 0) {
+	    cmode	sm = sb.st_mode ;
+	    if (S_ISLNK(sm)) {
+		rs = tmpmounts_cklink() ;
+		c = rs ;
+	    } else if (S_ISREG(sm) || S_ISFIFO(sm) || S_ISSOCK(sm)) {
+		if ((rs = u_unlink(dbuf)) >= 0) {
+		    rs = tmpmounts_mklink() ;
+		    c = rs ;
+		}
+	    }
+	} else if (isNotPresent(rs)) {
+	    rs = tmpmounts_mklink() ;
+	    c = rs ;
+	}
+	return (rs >= 0) ? c : rs ;
+}
+/* end method (proginfo::tmpmounts_oners) */
+
+int proginfo::tmpmounts_mklink() noex {
+	int		rs ;
+	if ((rs = u_symlink(pbuf,dbuf)) >= 0) {
+	    rs = 1 ;
+	}
+	return rs ;
+}
+/* end method (proginfo::tmpmounts_mklink) */
+
+int proginfo::tmpmounts_cklink() noex {
+	int		rs ;
+	int		c = 0 ;
+	if ((rs = maxpathlen) >= 0) {
+	    cnullptr	np{} ;
+	    cint	llen = rs ;
+	    if (char *lbuf ; (lbuf = new(nothrow) char[llen + 1]) != np) {
+		if ((rs = u_readlink(dbuf,lbuf,llen)) >= 0) {
+		    cint	ll = rmtrailchr(lbuf,rs,'/') ;
+		    lbuf[ll] = '\0' ;
+		    (void) ll ;
+		    if ((rs = tmpmounts_same(lbuf)) == 0) {
+			if ((rs = u_unlink(dbuf)) >= 0) {
+		    	    rs = tmpmounts_mklink() ;
+		    	    c = rs ;
+			}
+		    }
+		} /* end if (u_readlink) */
+		delete [] lbuf ;
+	    } /* end if (new-char) */
+	} /* end if (maxpathlen) */
+	return (rs >= 0) ? c : rs ;
+}
+/* end method (proginfo::tmpmounts_cklink) */
+
+int proginfo::tmpmounts_same(cchar *lbuf) noex {
+	USTAT		sb_link ;
+	int		rs = SR_OK ;	
+	int		fsame = false ;
+	if ((rs = u_stat(lbuf,&sb_link)) >= 0) {
+	    USTAT	sb_tmpconf ;
+	    if ((rs = u_stat(pbuf,&sb_tmpconf)) >= 0) {
+		fsame = true ;
+		fsame = fsame && (sb_link.st_dev == sb_tmpconf.st_dev) ;
+		fsame = fsame && (sb_link.st_ino == sb_tmpconf.st_ino) ;
+	    } 
+	} else if (isNotPresent(rs)) {
+	    rs = SR_OK ;
+	}
+	return (rs >= 0) ? fsame : rs ;
+}
+/* end method (proginfo::tmpmounts_samecklink) */
+
 int proginfo::tmpmounts_vardir() noex {
 	static cchar	*homedname = getenv(varname.home) ;
 	int		rs = SR_OK ;
 	int		fok = false ;
+	cchar		*fmt = "%s: no-home-directory (%d)\n" ;
 	if (homedname) {
 	    if (homedname[0]) {
 		if ((rs = u_stat(homedname,&sb)) >= 0) {
 		    rs = tmpmounts_vardirs(homedname) ;
 		    fok = rs ;
 		} else if (isNotPresent(rs)) {
-	    	    cerr << "tmpmounts: no-home-directory " << rs << eol ;
+	    	    fprintf(stderr,fmt,pn,rs) ;
 		}
 	    }
 	} else {
-	    cerr << "tmpmounts: no-home-directory" << eol ;
+	    fprintf(stderr,fmt,pn,rs) ;
 	}
 	return (rs >= 0) ? fok : rs ;
 }
@@ -507,16 +583,18 @@ int proginfo::tmpmounts_vardirs(cchar *homedname) noex {
 		dl += rs ;
 		if ((rs = u_stat(dbuf,&sb)) >= 0) {
 		    if (S_ISDIR(sb.st_mode)) {
-			dl_homevar = dl ;
-fprintf(stderr,"tmpusers_vardirs: dl=%d dbuf=%s\n",dl,dbuf) ;
 			fok = true ;
 		    }
 		} else if (isNotPresent(rs)) {
-		    if ((rs = u_mkdir(dbuf,0664)) >= 0) {
-			fok = true ;
+		    cmode	dm = 0775 ;
+		    if ((rs = u_mkdir(dbuf,dm)) >= 0) {
+			if ((rs = u_minmod(dbuf,dm)) >= 0) {
+			    fok = true ;
+			}
 		    }
 		}
-	    }
+	        dl_homevar = dl ;
+	    } /* end if (snadd) */
 	}
 	return (rs >= 0) ? fok : rs ;
 }
