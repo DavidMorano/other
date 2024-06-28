@@ -1,6 +1,6 @@
-# MAKEFILE (macuser)
+# MAKEFILE (mactmpusers)
 
-T= macuser
+T= mactmpusers
 
 ALL= $(T).x
 
@@ -40,14 +40,15 @@ DEFS +=
 INCS +=
 
 LIBS += -lmacuser -lu
+#LIBS += -lmacuser
 
 
-INCDIRS +=
+INCDIRS += -I$(INCDIR)
 
 LIBDIRS += -L$(LIBDIR)
 
 
-RUNINFO= -rpath $(RUNDIR)
+#RUNINFO= -rpath $(RUNDIR)
 
 LIBINFO= $(LIBDIRS) $(LIBS)
 
@@ -59,7 +60,8 @@ ARFLAGS= $(MAKEARFLAGS)
 LDFLAGS= $(MAKELDFLAGS)
 
 
-OBJ_MACUSER= main.o
+#OBJ= main.o snadd.o snaddw.o libu.a
+OBJ= main.o snadd.o snaddw.o
 
 
 default:		$(T).x
@@ -82,8 +84,8 @@ all:			$(ALL)
 	$(CXX)  $(CPPFLAGS) $(CCFLAGS) -c $<
 
 
-$(T).x:			$(OBJ_MACUSER)
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACUSER) $(LIBINFO)
+$(T).x:			$(OBJ)
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ) $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm
@@ -99,5 +101,8 @@ control:
 
 
 main.o:			main.cc			$(INCS)
+
+snadd.o:		snadd.cc snadd.h snaddw.h
+snaddw.o:		snaddw.cc snaddw.h
 
 
