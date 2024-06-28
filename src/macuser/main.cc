@@ -204,7 +204,7 @@ enum prognames {
 	progmode_overlast
 } ;
 
-static constexpr cpcchar	prognames[] = {
+constexpr cpcchar	prognames[] = {
 	"username",
 	"userhome",
 	"usershell",
@@ -219,7 +219,7 @@ static constexpr cpcchar	prognames[] = {
 	nullptr
 } ;
 
-static constexpr cpcchar	envs[] = {
+constexpr cpcchar	envs[] = {
 	"USERNAME",
 	"USER",
 	"LOGNAME",
@@ -441,7 +441,7 @@ static int printshells() noex {
 	    cint	llen = MAXLINE ;
 	    if ((lbuf = new(nothrow) char[llen+1]) != nullptr) {
 	        try {
-		    ccfile		fis ;
+		    ccfile	fis ;
 		    if ((rs = fis.open(fnshells)) >= 0) {
 		        while ((rs = fis.readln(lbuf,llen)) > 0) {
 			    if (hasnotempty(lbuf,rs) && (lbuf[0] != '#')) {

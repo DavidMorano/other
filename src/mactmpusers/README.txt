@@ -5,8 +5,8 @@ Two functions here.
 The TMPUSERS function is used (near system startup) to create the
 directory:
 	/tmp/users/
-It created it mode 0777+t with the user of the invoking caller
-(normally the user 'extra'.  Once this directory is created and
+It is created with mode 0777+t with the user-ID of the invoking caller
+(normally the user 'extra').  Once this directory is created and
 exists, other programs or functions will place (usually) symbolic
 links in that directory for a temporary directory for each 
 individual user.
@@ -29,5 +29,6 @@ Arguments:
 
 Returns:
 EXIT_SUCCESS	(numeric 0) successfully processed the user
-EXIT_FAILURE	(numeric 1) one of many errors occurred
+EXIT_FAILURE	(numeric 1) one of several possible errors occurred
+>0		other errors (see |sysexits| or |exitcodes|)
 
