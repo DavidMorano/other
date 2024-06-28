@@ -43,7 +43,7 @@ LIBS += -lmacuser -lu
 #LIBS += -lmacuser
 
 
-INCDIRS +=
+INCDIRS += -I$(INCDIR)
 
 LIBDIRS += -L$(LIBDIR)
 

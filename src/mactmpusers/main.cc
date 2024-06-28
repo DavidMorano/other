@@ -34,6 +34,14 @@
 	EXIT_SUCCESS	user was found and processed successfully
 	EXIT_FAILURE	some kind of error (there could be many)
 
+	Notes:
+	Some things are considered errors.  Some errors are printed
+	out, whether the program returns an error on it or not.
+	Other "errors" are silently ignored (like we do not really
+	care overly too much about them).  Feel free to fix up
+	whatever errors you think the program should terminate on
+	(or not).
+
 *******************************************************************************/
 
 #include	<envstandards.h>
@@ -310,7 +318,7 @@ int proginfo::ifinish() noex {
 int proginfo::ipmbegin() noex {
 	int		rs = SR_OK ;
 	switch (pm) {
-	case progmode_tmpusers:
+	case progmode_tmpmounts:
 	    rs = revertuser() ;
 	    break ;
 	} /* end switch */
@@ -330,9 +338,9 @@ int proginfo::getpn(mainv names) noex {
 	    rs = SR_NOMSG ;
 	    if ((argc > 0) && argv[0]) {
 	        int	bl ;
-		cchar	*arg0 = argv[0] ;
+		cchar	*argz = argv[0] ;
 	        cchar	*bp{} ;
-	        if ((bl = sfbasename(arg0,-1,&bp)) > 0) {
+	        if ((bl = sfbasename(argz,-1,&bp)) > 0) {
 		    int		pl = rmchr(bp,bl,'.') ;
 		    cchar	*pp = bp ;
 		    if (pl > 0) {
@@ -383,6 +391,7 @@ int proginfo::tmpusers_present() noex {
 	} /* end if (non-null) */
 	return (rs >= 0) ? fpresent : rs ;
 }
+/* end method (proginfo::tmpusers_present) */
 
 int proginfo::tmpusers_wait() noex {
 	int		rs ;
@@ -520,7 +529,6 @@ int proginfo::tmpmounts_cklink() noex {
 		if ((rs = u_readlink(dbuf,lbuf,llen)) >= 0) {
 		    cint	ll = rmtrailchr(lbuf,rs,'/') ;
 		    lbuf[ll] = '\0' ;
-		    (void) ll ;
 		    if ((rs = tmpmounts_same(lbuf)) == 0) {
 			if ((rs = u_unlink(dbuf)) >= 0) {
 		    	    rs = tmpmounts_mklink() ;
@@ -537,7 +545,7 @@ int proginfo::tmpmounts_cklink() noex {
 
 int proginfo::tmpmounts_same(cchar *lbuf) noex {
 	USTAT		sb_link ;
-	int		rs = SR_OK ;	
+	int		rs ;
 	int		fsame = false ;
 	if ((rs = u_stat(lbuf,&sb_link)) >= 0) {
 	    USTAT	sb_tmpconf ;
@@ -551,7 +559,7 @@ int proginfo::tmpmounts_same(cchar *lbuf) noex {
 	}
 	return (rs >= 0) ? fsame : rs ;
 }
-/* end method (proginfo::tmpmounts_samecklink) */
+/* end method (proginfo::tmpmounts_same) */
 
 int proginfo::tmpmounts_vardir() noex {
 	static cchar	*homedname = getenv(varname.home) ;
@@ -586,18 +594,19 @@ int proginfo::tmpmounts_vardirs(cchar *homedname) noex {
 			fok = true ;
 		    }
 		} else if (isNotPresent(rs)) {
-		    cmode	dm = 0775 ;
-		    if ((rs = u_mkdir(dbuf,dm)) >= 0) {
-			if ((rs = u_minmod(dbuf,dm)) >= 0) {
+		    cmode	vdm = 0775 ;
+		    if ((rs = u_mkdir(dbuf,vdm)) >= 0) {
+			if ((rs = u_minmod(dbuf,vdm)) >= 0) {
 			    fok = true ;
 			}
 		    }
-		}
+		} /* end if */
 	        dl_homevar = dl ;
 	    } /* end if (snadd) */
 	}
 	return (rs >= 0) ? fok : rs ;
 }
+/* end method (proginfo::tmpmounts_vardirs) */
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
