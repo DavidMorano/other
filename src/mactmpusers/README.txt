@@ -5,11 +5,11 @@ Two functions here.
 The TMPUSERS function is used (near system startup) to create the
 directory:
 	/tmp/users/
-It created it mode 0777+t with the user of the invoking caller
-(normally the user 'extra'.  Once this directory is created and
+It is created with mode 0777+t with the user-ID of the invoking caller
+(normally the user 'extra').  Once this directory is created and
 exists, other programs or functions will place (usually) symbolic
 links in that directory for a temporary directory for each 
-individual user.
+individual user (see |tmpuserdir(1kf)|).
 
 The TMPMOUNTS function is meant to be invoked by individual users
 to (as needed) create the directory 'var' under their HOME directory,
@@ -28,6 +28,6 @@ Arguments:
 -		NONE, because we are too lean even for that
 
 Returns:
-EXIT_SUCCESS	(numeric 0) successfully processed the user
-EXIT_FAILURE	(numeric 1) one of many errors occurred
+0		OK
+>0		errors (see |sysexits| or |exitcodes|)
 

@@ -1,7 +1,7 @@
-/* main SUPPORT (macmktmpusers) */
+/* main SUPPORT (mactmpusers) */
 /* lang=C++20 */
 
-/* generic front-end for SHELL built-ins */
+/* create the '/tmp/users' directory */
 /* version %I% last-modified %G% */
 
 
@@ -22,21 +22,26 @@
 	Names:
 	mktmpusers
 	tmpusers
+	tmpmounts
 
 	Description:
-	Make the directory:
+	[tmpusers] Make the directory:
 		/tmp/users/
+	[tmpmounts] Make the symbolic links to various "tmp"
+	directories under the directory:
+		${HOME}/var
 
 	Synopsis:
-	$ mktmpusers
+	$ tmpusers
+	$ tmpmounts
 
 	Returns:
-	EXIT_SUCCESS	user was found and processed successfully
-	EXIT_FAILURE	some kind of error (there could be many)
+	0		OK
+	>0		various error codes (see |exitcodes|)
 
 	Notes:
 	Some things are considered errors.  Some errors are printed
-	out, whether the program returns an error on it or not.
+	out, whether the program returns an error code on it or not.
 	Other "errors" are silently ignored (like we do not really
 	care overly too much about them).  Feel free to fix up
 	whatever errors you think the program should terminate on
@@ -53,23 +58,18 @@
 #include	<cstdlib>
 #include	<cstdio>
 #include	<cstring>		/* for |strlen(3c)| + |strnlen(3c)| */
-#include	<fstream>
 #include	<iostream>
-#include	<algorithm>
-#include	<unordered_set>
-#include	<utility>
+#include	<algorithm>		/* |min(3c++)| + |max(3c++)| */
+#include	<utility>		/* |pair(3c++)| */
 #include	<usystem.h>
 #include	<uvariables.hh>
 #include	<sfx.h>
-#include	<matstr.h>
 #include	<rmx.h>
+#include	<matstr.h>
+#include	<snadd.h>
 #include	<strwcpy.h>
-#include	<utmpx.h>
 #include	<pwd.h>
 #include	<grp.h>
-#include	<ccfile.hh>
-#include	<snadd.h>
-#include	<rmx.h>
 #include	<hasx.h>
 #include	<isoneof.h>
 #include	<isnot.h>
@@ -337,10 +337,9 @@ int proginfo::getpn(mainv names) noex {
 	if (argv) {
 	    rs = SR_NOMSG ;
 	    if ((argc > 0) && argv[0]) {
-	        int	bl ;
 		cchar	*argz = argv[0] ;
 	        cchar	*bp{} ;
-	        if ((bl = sfbasename(argz,-1,&bp)) > 0) {
+	        if (int bl ; (bl = sfbasename(argz,-1,&bp)) > 0) {
 		    int		pl = rmchr(bp,bl,'.') ;
 		    cchar	*pp = bp ;
 		    if (pl > 0) {
@@ -427,7 +426,7 @@ int proginfo::tmpusers_make() noex {
 int proginfo::tmpusers_mode() noex {
 	int		rs = SR_OK ;
 	int		c = 0 ;
-	mode_t		efm = (sb.st_mode & (~S_IFMT)) ;
+	cmode		efm = (sb.st_mode & (~ S_IFMT)) ;
 	if ((efm & dm) != dm) {
 	    rs = u_minmod(pbuf,(efm | dm)) ;
 	    c = 1 ;
@@ -440,7 +439,7 @@ int proginfo::tmpmounts() noex {
 	int		rs ;
 	int		c = 0 ;
 	if ((rs = tmpmounts_vardir()) > 0) {
-	    for (const auto &item : confstritems) {
+	    for (cauto &item : confstritems) {
 	        rs = tmpmounts_one(&item) ;
 		c += rs ;
 	        if (rs < 0) break ;
@@ -471,15 +470,17 @@ int proginfo::tmpmounts_oner(const confstritem *itp) noex {
 	if (itp->req >= 0) {
 	    if ((rs = uc_sysconfstr(pbuf,plen,itp->req)) > 0) {
 	        cint	pl = rmtrailchr(pbuf,rs,'/') ;
-	        pbuf[pl] = '\0' ;
-	        if ((rs = u_stat(pbuf,&sb)) >= 0) {
-		    if (S_ISDIR(sb.st_mode)) {
-    			rs = tmpmounts_oners() ;
-			c = rs ;
-		    } /* end if (is-dir) */
-	        } else if (isNotPresent(rs)) {
-		    rs = SR_OK ;
-	        }
+		if (pl > 1) { /* <- my own restriction */
+	            pbuf[pl] = '\0' ;
+	            if ((rs = u_stat(pbuf,&sb)) >= 0) {
+		        if (S_ISDIR(sb.st_mode)) {
+    			    rs = tmpmounts_oners() ;
+			    c = rs ;
+		        } /* end if (is-dir) */
+	            } else if (isNotPresent(rs)) {
+		        rs = SR_OK ;
+	            }
+		} /* end if (length-check) */
 	    } else if (isNotSupport(rs)) {
 	        rs = SR_OK ;
 	    }
@@ -526,15 +527,17 @@ int proginfo::tmpmounts_cklink() noex {
 	    cnullptr	np{} ;
 	    cint	llen = rs ;
 	    if (char *lbuf ; (lbuf = new(nothrow) char[llen + 1]) != np) {
-		if ((rs = u_readlink(dbuf,lbuf,llen)) >= 0) {
+		if ((rs = u_readlink(dbuf,lbuf,llen)) > 0) {
 		    cint	ll = rmtrailchr(lbuf,rs,'/') ;
-		    lbuf[ll] = '\0' ;
-		    if ((rs = tmpmounts_same(lbuf)) == 0) {
-			if ((rs = u_unlink(dbuf)) >= 0) {
-		    	    rs = tmpmounts_mklink() ;
-		    	    c = rs ;
-			}
-		    }
+		    if (ll > 0) {
+		        lbuf[ll] = '\0' ;
+		        if ((rs = tmpmounts_same(lbuf)) == 0) {
+			    if ((rs = u_unlink(dbuf)) >= 0) {
+		    	        rs = tmpmounts_mklink() ;
+		    	        c = rs ;
+			    }
+		        }
+		    } /* end if (length-check) */
 		} /* end if (u_readlink) */
 		delete [] lbuf ;
 	    } /* end if (new-char) */
@@ -544,19 +547,23 @@ int proginfo::tmpmounts_cklink() noex {
 /* end method (proginfo::tmpmounts_cklink) */
 
 int proginfo::tmpmounts_same(cchar *lbuf) noex {
-	USTAT		sb_link ;
-	int		rs ;
+	int		rs = SR_OK ;
 	int		fsame = false ;
-	if ((rs = u_stat(lbuf,&sb_link)) >= 0) {
-	    USTAT	sb_tmpconf ;
-	    if ((rs = u_stat(pbuf,&sb_tmpconf)) >= 0) {
-		fsame = true ;
-		fsame = fsame && (sb_link.st_dev == sb_tmpconf.st_dev) ;
-		fsame = fsame && (sb_link.st_ino == sb_tmpconf.st_ino) ;
-	    } 
-	} else if (isNotPresent(rs)) {
-	    rs = SR_OK ;
-	}
+	if ((lbuf[0] == '/') && (pbuf[0] == '/')) {
+	    USTAT	sb_link ;
+	    if ((rs = u_stat(lbuf,&sb_link)) >= 0) {
+	        USTAT	sb_tmpconf ;
+	        if ((rs = u_stat(pbuf,&sb_tmpconf)) >= 0) {
+		    fsame = true ;
+		    fsame = fsame && (sb_link.st_dev == sb_tmpconf.st_dev) ;
+		    fsame = fsame && (sb_link.st_ino == sb_tmpconf.st_ino) ;
+	        }  /* end if (already 'stat'ed, so should not fail) */
+	    } else if (isNotPresent(rs)) {
+	        rs = SR_OK ;
+	    }
+	} else {
+	    fsame = (strcmp(lbuf,pbuf) == 0) ;
+	} /* end if (absolute path or not) */
 	return (rs >= 0) ? fsame : rs ;
 }
 /* end method (proginfo::tmpmounts_same) */
