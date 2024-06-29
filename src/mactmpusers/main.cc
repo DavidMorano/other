@@ -426,7 +426,7 @@ int proginfo::tmpusers_make() noex {
 int proginfo::tmpusers_mode() noex {
 	int		rs = SR_OK ;
 	int		c = 0 ;
-	mode_t		efm = (sb.st_mode & (~S_IFMT)) ;
+	cmode		efm = (sb.st_mode & (~ S_IFMT)) ;
 	if ((efm & dm) != dm) {
 	    rs = u_minmod(pbuf,(efm | dm)) ;
 	    c = 1 ;
@@ -439,7 +439,7 @@ int proginfo::tmpmounts() noex {
 	int		rs ;
 	int		c = 0 ;
 	if ((rs = tmpmounts_vardir()) > 0) {
-	    for (const auto &item : confstritems) {
+	    for (cauto &item : confstritems) {
 	        rs = tmpmounts_one(&item) ;
 		c += rs ;
 	        if (rs < 0) break ;
@@ -557,7 +557,7 @@ int proginfo::tmpmounts_same(cchar *lbuf) noex {
 		    fsame = true ;
 		    fsame = fsame && (sb_link.st_dev == sb_tmpconf.st_dev) ;
 		    fsame = fsame && (sb_link.st_ino == sb_tmpconf.st_ino) ;
-	        } 
+	        }  /* end if (already 'stat'ed, so should not fail) */
 	    } else if (isNotPresent(rs)) {
 	        rs = SR_OK ;
 	    }
