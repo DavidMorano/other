@@ -441,8 +441,7 @@ static int printshells() noex {
 	    cint	llen = MAXLINE ;
 	    if ((lbuf = new(nothrow) char[llen+1]) != nullptr) {
 	        try {
-		    ccfile	fis ;
-		    if ((rs = fis.open(fnshells)) >= 0) {
+		    if (ccfile fis ; (rs = fis.open(fnshells)) >= 0) {
 		        while ((rs = fis.readln(lbuf,llen)) > 0) {
 			    if (hasnotempty(lbuf,rs) && (lbuf[0] != '#')) {
 			        cout << lbuf ;
