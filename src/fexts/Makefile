@@ -12,10 +12,10 @@ MANDIR= $(REPOROOT)/man
 
 INFODIR= $(REPOROOT)/info
 HELPDIR= $(REPOROOT)/share/help
-LDRPATH= $(REPOROOT)/lib
 
 CRTDIR= $(CGS_CRTDIR)
 VALDIR= $(CGS_VALDIR)
+RUNDIR= $(USRLOCAL)/lib
 
 
 CPP=	cpp
@@ -47,7 +47,7 @@ INCDIRS +=
 LIBDIRS += -L$(LIBDIR)
 
 
-LDRPATH=
+RUNINFO= -rpath $(RUNDIR)
 
 LIBINFO= $(LIBDIRS) $(LIBS)
 
@@ -83,7 +83,7 @@ all:			$(ALL)
 
 
 $(T).x:			$(OBJ_CONTERM)
-	$(CXX) $(LDFLAGS) -o $@ $(OBJ_CONTERM) $(LIBINFO)
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_CONTERM) $(LIBINFO)
 
 $(T).o:			$(OBJ_CONTERM)
 	$(LD) $(LDFLAGS) -r -o $@ $(OBJ_CONTERM)
