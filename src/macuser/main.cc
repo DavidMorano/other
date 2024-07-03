@@ -160,7 +160,7 @@
 #endif
 
 #ifndef	CF_GETUSERSHELL
-#define	CF_GETUSERSHELL		1		/* use |getusershell(3c)| */
+#define	CF_GETUSERSHELL		1	/* use |getusershell(3c)| */
 #endif
 
 

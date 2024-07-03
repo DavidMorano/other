@@ -163,6 +163,8 @@ enum progmodes {
 	progmode_platform,
 	progmode_systype,
 	progmode_nisdomain,
+	progmode_uuid,
+	progmode_symfile,
 	progmode_hostid,
 	progmode_lax,
 	progmode_overlast
@@ -178,6 +180,8 @@ static constexpr cpcchar	prognames[] = {
 	"platform",
 	"systype",
 	"nisdomain",
+	"uuid",
+	"symfile",
 	"hostid",
 	"lax",
 	nullptr
@@ -226,6 +230,8 @@ int main(int argc,mainv argv,mainv envv) noex {
             case progmode_platform:
             case progmode_systype:
             case progmode_nisdomain:
+            case progmode_uuid:
+            case progmode_symfile:
                 rs = pi.output() ;
                 break ;
 	    case progmode_hostid:
@@ -347,6 +353,12 @@ int proginfo::output() noex {
 	    break ;
 	case progmode_nisdomain:
 	    name = "kern.nisdomainname" ;
+	    break ;
+	case progmode_uuid:
+	    name = "kern.uuid" ;
+	    break ;
+	case progmode_symfile:
+	    name = "kern.symfile" ;
 	    break ;
 	default:
 	    rs = SR_BUGCHECK ;
