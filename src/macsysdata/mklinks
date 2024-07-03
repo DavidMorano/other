@@ -5,7 +5,7 @@ LOCPROG=macsysdata.x
 CMDS=
 CMDS+=" sysname release nodename version "
 CMDS+=" architecture machine platform systype "
-CMDS+=" nisdomain hostid lax "
+CMDS+=" nisdomain symfile hostid lax "
 
 TDIRS=" /usr/extra /usr/local /opt/local "
 
