@@ -47,6 +47,7 @@
 #include	<string>
 #include	<string_view>
 #include	<iostream>
+#include	<iomanip>
 #include	<usystem.h>
 #include	<varnames.hh>
 #include	<sfx.h>
@@ -77,9 +78,11 @@ using std::string_view ;		/* type */
 using std::istream ;			/* type */
 using libu::uloadavgd ;			/* subroutine */
 using libu::snuloadavgd ;		/* subroutine */
-using std::cin;				/* variable */
+using std::hex ;			/* subroutine */
+using std::cin ;			/* variable */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
+using std::hex ;			/* subroutine */
 using std::nothrow ;			/* constant */
 
 
@@ -163,10 +166,11 @@ enum progmodes {
 	progmode_platform,
 	progmode_systype,
 	progmode_nisdomain,
-	progmode_uuid,
+	progmode_sysuuid,
 	progmode_symfile,
 	progmode_hostid,
 	progmode_lax,
+	progmode_unixtime,
 	progmode_overlast
 } ;
 
@@ -180,10 +184,11 @@ static constexpr cpcchar	prognames[] = {
 	"platform",
 	"systype",
 	"nisdomain",
-	"uuid",
+	"sysuuid",
 	"symfile",
 	"hostid",
 	"lax",
+	"unixtime",
 	nullptr
 } ;
 
@@ -230,7 +235,7 @@ int main(int argc,mainv argv,mainv envv) noex {
             case progmode_platform:
             case progmode_systype:
             case progmode_nisdomain:
-            case progmode_uuid:
+            case progmode_sysuuid:
             case progmode_symfile:
                 rs = pi.output() ;
                 break ;
@@ -242,6 +247,13 @@ int main(int argc,mainv argv,mainv envv) noex {
 		break ;
 	    case progmode_lax:
 		rs = pi.lax() ;
+		break ;
+	    case progmode_unixtime:
+		{
+		    const time_t	t = time(nullptr) ;
+		    cout << ulong(t) << " - " ;
+		    cout << hex << ulong(t) << eol ;
+		}
 		break ;
 	    default:
 		rs = SR_BUGCHECK ;
@@ -354,7 +366,7 @@ int proginfo::output() noex {
 	case progmode_nisdomain:
 	    name = "kern.nisdomainname" ;
 	    break ;
-	case progmode_uuid:
+	case progmode_sysuuid:
 	    name = "kern.uuid" ;
 	    break ;
 	case progmode_symfile:
