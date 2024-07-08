@@ -400,7 +400,7 @@ int proginfo::iuserbegin() noex {
 		if (rs != 0) break ;
 	    } /* end for */
 	} /* end if (new-char) */
-	return rs ;
+	return (rs >= 0) ? ul : rs ;
 }
 /* end method (proginfo::iuserbegin) */
 
@@ -733,7 +733,7 @@ int proginfo::tmpuserdir_base() noex {
 	    if ((rs = u_stat(pbuf,&sb)) >= 0) {
 		fcontinue = true ;
 	    } else if (isNotPresent(rs)) {
-		pl = 0 ;
+		pl = 0 ;		/* reset buffer */
 		if ((rs = tmpusers()) >= 0) {
 		    fcontinue = true ;
 		}
