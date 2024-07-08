@@ -86,6 +86,7 @@
 /* imported namespaces */
 
 using std::nullptr_t ;			/* type */
+using libu::snwcpy ;			/* subroutine (internal from LIBU) */
 using std::nothrow ;			/* constant */
 
 
@@ -109,6 +110,7 @@ namespace {
 	proginfomem_pmend,
 	proginfomem_userbegin,
 	proginfomem_userend,
+	proginfomem_userload,
 	proginfomem_overlast
     } ;
     struct proginfo ;
@@ -149,6 +151,7 @@ namespace {
 	int		pl = 0 ;
 	int		dl = 0 ;
 	int		dl_homevar ;
+	int		ul = 0 ;
 	proginfo(int c,mainv a,mainv e) noex : argc(c), argv(a), envv(e) { 
 	    start(this,proginfomem_start) ;
 	    finish(this,proginfomem_finish) ;
@@ -180,6 +183,7 @@ namespace {
 	int tmpuserdir() noex ;
 	int tmpuserdir_base() noex ;
 	int tmpuserdir_already() noex ;
+	int tmpuserdir_link() noex ;
     private:
 	int istart() noex ;
 	int ifinish() noex ;
@@ -367,9 +371,23 @@ int proginfo::ipmend() noex {
 /* end method (proginfo::ipmend) */
 
 int proginfo::iuserbegin() noex {
+	const uid_t	uid = getuid() ;
 	int		rs = SR_NOMEM ;
 	if ((ubuf = new(nothrow) char[usernamelen + 1]) != nullptr) {
 	    ulen = usernamelen ;
+	    rs = SR_OK ;
+	    for (cauto &vn : uservars) {
+		char	*vv = getenv(vn) ;
+		if (vv && vn[0]) {
+		    if (PASSWD *pwp ; (pwp = getpwnam(vv)) != nullptr) {
+			if (pwp->pw_uid == uid) {
+			    rs = snwcpy(ubuf,ulen,pwp->pw_name) ;
+			    ul = rs ;
+			}
+		    }
+		} /* end if */
+		if (rs != 0) break ;
+	    } /* end for */
 	} /* end if (new-char) */
 	return rs ;
 }
@@ -678,48 +696,86 @@ int proginfo::tmpmounts_vardirs(cchar *homedname) noex {
 int proginfo::tmpuserdir() noex {
 	int		rs ;
 	int		rs1 ;
-	if ((rs = userbegin) >= 0) {
+	int		fdone = false ;
+	if ((rs = userbegin) > 0) {
 	    for (cauto &m : tmpuserdir_mems) {
-	        rs = (this->*m)() ;
-		if (rs < 0) break ;
+		if (rs > 0) {
+	            rs = (this->*m)() ;
+		}
+		if (rs <= 0) break ;
 	    } /* end for */
+	    fdone = rs ;
 	    rs1 = userend ;
 	    if (rs >= 0) rs = rs1 ;
+	} else if (rs == 0) {
+	    fprintf(stderr,"%s: no-user\n",pn) ;
 	} /* end if (user-) */
-	return rs ;
+	return (rs >= 0) ? fdone : rs ;
 }
 /* end method (proginfo::tmpuserdir) */
 
 int proginfo::tmpuserdir_base() noex {
 	int		rs ;
-	int		fpresent = false ;
+	int		fcontinue = false ;
 	if ((rs = snadd(pbuf,plen,pl,"/tmp/users")) >= 0) {
 	    pl += rs ;
 	    if ((rs = u_stat(pbuf,&sb)) >= 0) {
-		fpresent = true ;
+		fcontinue = true ;
 	    } else if (isNotPresent(rs)) {
+		pl = 0 ;
 		if ((rs = tmpusers()) >= 0) {
-		    fpresent = true ;
-		    rs = revertuser() ;
+		    fcontinue = true ;
 		}
 	    }
-	}
-	return (rs >= 0) ? fpresent : rs ;
+	} /* end if (snadd) */
+	return (rs >= 0) ? fcontinue : rs ;
 }
 /* end method (proginfo::tmpuserdir_base) */
 
 int proginfo::tmpuserdir_already() noex {
 	int		rs ;
-	int		fpresent = false ;
-	if ((rs = snadd(pbuf,plen,pl,"/tmp/users")) >= 0) {
-	    pl += rs ;
-	    if ((rs = u_stat(pbuf,&sb)) >= 0) {
-		rs = 1 ;
-	    }
-	}
-	return (rs >= 0) ? fpresent : rs ;
+	int		fcontinue = false ;
+	if ((rs = revertuser()) >= 0) {
+	    if ((rs = snadd(pbuf,plen,pl,"/",ubuf)) >= 0) {
+	        pl += rs ;
+	        if ((rs = u_stat(pbuf,&sb)) >= 0) {
+		    if (S_ISDIR(sb.st_mode)) {
+		        fcontinue = false ;
+		    }
+	        } else if (rs == SR_NOEXIST) {
+		    rs = tmpuserdir_link() ;
+		    fcontinue = rs ;
+	        }
+	    } /* end if (snadd) */
+	} /* end if (revertuser) */
+	return (rs >= 0) ? fcontinue : rs ;
 }
 /* end method (proginfo::tmpuserdir_already) */
+
+int proginfo::tmpuserdir_link() noex {
+	cint		req = _CS_TMPDIR ;
+	int		rs ;
+	int		fmade = false ;
+	if ((rs = uc_sysconfstr(dbuf,dlen,req)) > 0) {
+	    cint	dl = rmtrailchr(dbuf,rs,'/') ;
+	    if (dl > 1) { /* <- my own restriction */
+	        dbuf[dl] = '\0' ;
+	        if ((rs = u_stat(dbuf,&sb)) >= 0) {
+		    if (S_ISDIR(sb.st_mode)) {
+    			if ((rs = u_symlink(dbuf,pbuf)) >= 0) {
+			    fmade = true ;
+			} else if (rs == SR_EXISTS) {
+			    rs = SR_OK ;
+			}
+		    } /* end if (is-dir) */
+	        } else if (isNotPresent(rs)) {
+		    rs = SR_OK ;
+	        }
+	    } /* end if (length-check) */
+	} /* end if (uc_sysconfstr) */
+	return (rs >= 0) ? fmade : rs ;
+}
+/* end method (proginfo::tmpuserdir_link) */
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
