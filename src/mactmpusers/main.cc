@@ -745,21 +745,17 @@ int proginfo::tmpuserdir_base() noex {
 
 int proginfo::tmpuserdir_already() noex {
 	int		rs ;
-	int		fcontinue = false ;
+	int		fdone = false ;
 	if ((rs = revertuser()) >= 0) {
 	    if ((rs = snadd(pbuf,plen,pl,"/",ubuf)) >= 0) {
 	        pl += rs ;
-	        if ((rs = u_stat(pbuf,&sb)) >= 0) {
-		    if (S_ISDIR(sb.st_mode)) {
-		        fcontinue = false ;
-		    }
-	        } else if (rs == SR_NOEXIST) {
+	        if ((rs = u_stat(pbuf,&sb)) == SR_NOEXIST) {
 		    rs = tmpuserdir_link() ;
-		    fcontinue = rs ;
+		    fdone = rs ;
 	        }
 	    } /* end if (snadd) */
 	} /* end if (revertuser) */
-	return (rs >= 0) ? fcontinue : rs ;
+	return (rs >= 0) ? fdone : rs ;
 }
 /* end method (proginfo::tmpuserdir_already) */
 
