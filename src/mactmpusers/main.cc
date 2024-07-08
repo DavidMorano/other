@@ -63,6 +63,7 @@
 #include	<iostream>
 #include	<algorithm>		/* |min(3c++)| + |max(3c++)| */
 #include	<utility>		/* |pair(3c++)| */
+#include	<string>
 #include	<usystem.h>
 #include	<uvariables.hh>
 #include	<sfx.h>
@@ -86,6 +87,9 @@
 /* imported namespaces */
 
 using std::nullptr_t ;			/* type */
+using std::string ;			/* type (C++STD library) */
+using std::min ;			/* subroutine-template (C++STD) */
+using std::max ;			/* subroutine-template (C++STD) */
 using libu::snwcpy ;			/* subroutine (internal from LIBU) */
 using std::nothrow ;			/* constant */
 
@@ -249,8 +253,7 @@ constexpr cpcchar	uservars[] = {
 	varname.logname,
 	varname.user,
 	varname.home,
-	varname.mail,
-	varname.maildir
+	varname.mail
 } ;
 
 constexpr proginfo_m	tmpusers_mems[] = {
@@ -265,6 +268,7 @@ constexpr proginfo_m	tmpuserdir_mems[] = {
 
 constexpr int		maxpathlen = MAXPATHLEN ;
 constexpr int		usernamelen = USERNAMELEN ;
+constexpr int		varbuflen = max(USERNAMELEN,DIGBUFLEN) ;
 constexpr mode_t	dm = (0777|S_ISVTX) ;
 
 
@@ -371,20 +375,27 @@ int proginfo::ipmend() noex {
 /* end method (proginfo::ipmend) */
 
 int proginfo::iuserbegin() noex {
+	cnullptr	np{} ;
 	const uid_t	uid = getuid() ;
 	int		rs = SR_NOMEM ;
+	cint		vlen = varbuflen ;
+	char		vbuf[varbuflen + 1] ;
 	if ((ubuf = new(nothrow) char[usernamelen + 1]) != nullptr) {
 	    ulen = usernamelen ;
 	    rs = SR_OK ;
 	    for (cauto &vn : uservars) {
 		char	*vv = getenv(vn) ;
 		if (vv && vn[0]) {
-		    if (PASSWD *pwp ; (pwp = getpwnam(vv)) != nullptr) {
-			if (pwp->pw_uid == uid) {
-			    rs = snwcpy(ubuf,ulen,pwp->pw_name) ;
-			    ul = rs ;
-			}
-		    }
+		    cchar	*bp{} ;
+		    if (int bl ; (bl = sfbasename(vv,-1,&bp)) > 0) {
+		        strwcpy(vbuf,bp,min(vlen,bl)) ;
+		        if (PASSWD *pwp ; (pwp = getpwnam(vbuf)) != np) {
+			    if (pwp->pw_uid == uid) {
+			        rs = snwcpy(ubuf,ulen,pwp->pw_name) ;
+			        ul = rs ;
+			    }
+		        } /* end if (getpwnam) */
+		    } /* end if (sfbasename) */
 		} /* end if */
 		if (rs != 0) break ;
 	    } /* end for */
