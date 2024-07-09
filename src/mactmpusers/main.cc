@@ -114,7 +114,6 @@ namespace {
 	proginfomem_pmend,
 	proginfomem_userbegin,
 	proginfomem_userend,
-	proginfomem_userload,
 	proginfomem_overlast
     } ;
     struct proginfo ;

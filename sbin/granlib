@@ -28,7 +28,7 @@ if ${RF_OK} ; then
     PROG=gcc13
     OPTS="${POPT} ${INCDIRS}"
     ;;
-  gpp*)
+  gpp*|gxx*)
     PROG=gpp13
     OPTS="${POPT} ${INCDIRS}"
     ;;

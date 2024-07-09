@@ -42,9 +42,10 @@
 #include	<fcntl.h>
 #include	<cerrno>
 #include	<ctime>
-#include	<cstdlib>
+#include	<cstddef>		/* |nullptr_t| */
+#include	<cstdlib>		/* |EXIT_{xx}| */
 #include	<iostream>
-#include	<iostream>
+#include	<iomanip>
 
 
 /* local defines */
@@ -95,7 +96,7 @@ int main(int,mainv,mainv) {
 	struct tm	tms ;
 	struct tm	*tmp ;
 	const time_t	dt = time(nullptr) ;
-	int	ex = EXIT_FAILURE ;
+	int		ex = EXIT_FAILURE ;
 	if ((tmp = localtime_r(&dt,&tms)) != nullptr) {
 	    cout << tms.tm_zone << '\n' ;
 	    ex = EXIT_SUCCESS ;
