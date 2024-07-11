@@ -23,7 +23,7 @@
 	This program filters filenames keeping only unique files.
 
 	Synopsis:
-	$ fu [<file(s)>] [-]
+	$ dup [<file(s)>] [-]
 
 	Arguments:
 	<file(s)>	file(s) to process
@@ -213,12 +213,12 @@ enum progmodes {
 	progmode_overlast
 } ;
 
-static constexpr cpcchar	prognames[] = {
+constexpr cpcchar	prognames[] = {
 	"dup",
 	nullptr
 } ;
 
-static constexpr MAPEX	mapexs[] = {
+constexpr MAPEX		mapexs[] = {
 	{ SR_NOENT,	EX_NOUSER },
 	{ SR_AGAIN,	EX_TEMPFAIL },
 	{ SR_DEADLK,	EX_TEMPFAIL },
