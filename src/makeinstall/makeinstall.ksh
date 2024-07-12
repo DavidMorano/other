@@ -10,7 +10,7 @@ if [[ -r "${ID}" ]] && [[ -r "${IN}" ]] ; then
       if [[ -d "${D}" ]] ; then
         for N in $( < ${IN} ) ; do
           if [[ -n "${N}" ]] ; then
-	    lnx ${PROG} ${D}/bin/${N}
+	    ln -f ${PROG} ${D}/bin/${N}
           fi
         done
       fi

@@ -44,6 +44,7 @@
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<cstring>		/* <- for |strlen(3c)| */
+#include	<utility>		/* |pair(3c++)| */
 #include	<string>
 #include	<string_view>
 #include	<vector>
@@ -81,6 +82,7 @@ using std::string_view ;		/* type */
 using std::unordered_map ;		/* type */
 using std::vector ;			/* type */
 using std::istream ;			/* type */
+using std::pair ;			/* type */
 using std::cin;				/* variable */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
@@ -117,7 +119,7 @@ namespace {
     } ; /* end struct (devino) */
     struct filenode {
 	string		fn ;		/* "file-name" */
-	size_t		fsize ;
+	size_t		fsize ;		/* "file-size" */
 	int		rc = 0 ;	/* success==1 */
 	filenode() noex = default ;
 	filenode(size_t sz,cchar *pp,int pl = -1) noex {
@@ -156,7 +158,7 @@ namespace {
     } ; /* end struct (proginfo_co) */
     struct proginfo {
 	typedef mapblock<devino,filenode>		nodedb ;
-	typedef mapblock<devino,filenode>::iterator	plit_t ;
+	typedef mapblock<devino,filenode>::iterator	flit_t ;
 	friend proginfo_co ;
 	proginfo_co	start ;
 	proginfo_co	finish ;
@@ -208,6 +210,11 @@ namespace std {
 
 
 /* forward references */
+
+typedef mapblock<devino,filenode>::iterator	nodeit_t ;
+typedef pair<devino,filenode>			elem_t ;
+
+static bool isnodesame(csize,nodeit_t &) noex ;
 
 
 /* local variables */
@@ -381,8 +388,6 @@ int proginfo::filecandidate(cchar *sp,int sl) noex {
 		    devino	di(d,i) ;
 		    filenode	e(fsz,sp,sl) ;
 		    rs = flist.ins(di,e) ;
-		} else {
-	            cerr << s << eol ;
 	        } /* end if (not-already) */
 	    } /* end if (is-dir) */
 	} else if (isNotAccess(rs)) {
@@ -407,14 +412,29 @@ int proginfo::filealready(dev_t d,ino_t i) noex {
 
 int proginfo::output() noex {
 	int		rs = SR_OK ;
-	for (const auto &e : flist) {
+	flit_t		ite = flist.end() ;
+	for (flit_t it = flist.begin() ; it != ite ; ++it) {
+	    const pair<devino,filenode>	&e = *it ;
 	    const filenode	&f = e.second ;
 	    try {
 		cint		rc = f.rc ;
 		if (rc > 0) {
-		    cstring	*n = &f.fn ;
-	            cout << *n << eol ;
-		}
+		    csize	fsz = f.fsize ;
+		    int		c = 0 ;
+		    for (nodeit_t itt = it ; itt != ite ; ++itt) {
+			if (isnodesame(fsz,itt) && (itt != it)) {
+			    const elem_t	&oe = *itt ;
+			    if (c++ == 0) {
+		                cstring	*n = &f.fn ;
+	                        cout << *n << " " << f.fsize << eol ;
+			    }
+			    {
+				const filenode	&of = oe.second ;
+				cout << of.fn << " " << of.fsize << eol ;
+			    }
+			}
+		    } /* end while */
+		} /* end if */
 	    } catch (...) {
 		rs = SR_IO ;
 	    }
@@ -423,6 +443,16 @@ int proginfo::output() noex {
 	return rs ;
 }
 /* end subroutine (proginfo::output) */
+
+static bool isnodesame(csize fsz,nodeit_t &itt) noex {
+	const pair<devino,filenode>	&e = *itt ;
+	bool		f = false ;
+	{
+	    const filenode	&fm = e.second ;
+	    f = (fsz == fm.fsize) ;
+	}
+	return f ;
+}
 
 int proginfo_co::operator () (int) noex {
 	int	rs = SR_BUGCHECK ;
