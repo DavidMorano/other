@@ -117,17 +117,21 @@ namespace {
     } ; /* end struct (devino) */
     struct filenode {
 	string		fn ;		/* "file-name" */
+	size_t		fsize ;
 	int		rc = 0 ;	/* success==1 */
 	filenode() noex = default ;
-	filenode(cchar *pp,int pl = -1) noex {
+	filenode(size_t sz,cchar *pp,int pl = -1) noex {
 	    if (pl < 0) pl = strlen(pp) ;
-	    strview	s(pp,pl) ;
-	    try {
-	        fn = s ;
-		rc = 1 ;
-	    } catch (...) {
-		rc = 0 ;
-	    }
+	    fsize = sz ;
+	    {
+	        strview	s(pp,pl) ;
+	        try {
+	            fn = s ;
+		    rc = 1 ;
+	        } catch (...) {
+		    rc = 0 ;
+	        }
+	    } /* end block */
 	} ; /* end if (ctor) */
     } ; /* end struct (filenode) */
     enum proginfomems {
@@ -369,12 +373,13 @@ int proginfo::filecandidate(cchar *sp,int sl) noex {
 	strnul		s(sp,sl) ;
 	int		rs ;
 	if ((rs = u_stat(s,&sb)) >= 0) {
+	    csize	fsz = size_t(sb.st_size) ;
 	    if (S_ISREG(sb.st_mode)) {
 	        const dev_t	d = sb.st_dev ;
 	        const ino_t	i = sb.st_ino ;
 	        if ((rs = filealready(d,i)) == 0) {
 		    devino	di(d,i) ;
-		    filenode	e(sp,sl) ;
+		    filenode	e(fsz,sp,sl) ;
 		    rs = flist.ins(di,e) ;
 		} else {
 	            cerr << s << eol ;
@@ -390,7 +395,7 @@ int proginfo::filecandidate(cchar *sp,int sl) noex {
 int proginfo::filealready(dev_t d,ino_t i) noex {
 	cint		rsn = SR_NOTFOUND ;
 	int		rs ;
-	bool		f = true ;
+	int		f = true ;
 	devino		di(d,i) ;
 	if ((rs = flist.present(di)) == rsn) {
 	    rs = SR_OK ;

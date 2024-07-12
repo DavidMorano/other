@@ -56,7 +56,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACFU= main.o fonce.o
+OBJ_MACFU= main.o
 
 
 .SUFFIXES:		.hh .ii
@@ -100,8 +100,9 @@ clean:
 control:
 	(uname -n ; date) > Control
 
+install:		$(T).x
 
-main.o:			main.cc fonce.hh	$(INCS)
-fonce.o:		fonce.cc fonce.hh
+
+main.o:			main.cc 	$(INCS)
 
 
