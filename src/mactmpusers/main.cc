@@ -23,6 +23,7 @@
 	mktmpusers
 	tmpusers
 	tmpmounts
+	tmpuserdir
 
 	Description:
 	[tmpusers] Make the directory:
@@ -34,6 +35,7 @@
 	Synopsis:
 	$ tmpusers
 	$ tmpmounts
+	$ tmpuserdir
 
 	Returns:
 	0		OK
@@ -61,6 +63,7 @@
 #include	<iostream>
 #include	<algorithm>		/* |min(3c++)| + |max(3c++)| */
 #include	<utility>		/* |pair(3c++)| */
+#include	<string>
 #include	<usystem.h>
 #include	<uvariables.hh>
 #include	<sfx.h>
@@ -75,7 +78,7 @@
 #include	<isnot.h>
 #include	<mapex.h>
 #include	<exitcodes.h>
-#include	<localmisc.h>
+#include	<localmisc.h>		/* |MAXPATHLEN| + |USERNAMELEN| */
 
 
 /* local defines */
@@ -84,6 +87,10 @@
 /* imported namespaces */
 
 using std::nullptr_t ;			/* type */
+using std::string ;			/* type (C++STD library) */
+using std::min ;			/* subroutine-template (C++STD) */
+using std::max ;			/* subroutine-template (C++STD) */
+using libu::snwcpy ;			/* subroutine (internal from LIBU) */
 using std::nothrow ;			/* constant */
 
 
@@ -105,6 +112,8 @@ namespace {
 	proginfomem_finish,
 	proginfomem_pmbegin,
 	proginfomem_pmend,
+	proginfomem_userbegin,
+	proginfomem_userend,
 	proginfomem_overlast
     } ;
     struct proginfo ;
@@ -127,6 +136,8 @@ namespace {
 	proginfo_co	finish ;
 	proginfo_co	pmbegin ;
 	proginfo_co	pmend ;
+	proginfo_co	userbegin ;
+	proginfo_co	userend ;
 	USTAT		sb ;
 	proginfo_m	m ;
 	mainv		argv ;
@@ -134,18 +145,23 @@ namespace {
 	cchar		*pn = nullptr ;
 	char		*pbuf = nullptr ;
 	char		*dbuf = nullptr ;
+	char		*ubuf = nullptr ;
 	int		argc ;
 	int		pm = 0 ;
 	int		plen = 0 ;
 	int		dlen = 0 ;
+	int		ulen = 0 ;
 	int		pl = 0 ;
 	int		dl = 0 ;
 	int		dl_homevar ;
+	int		ul = 0 ;
 	proginfo(int c,mainv a,mainv e) noex : argc(c), argv(a), envv(e) { 
 	    start(this,proginfomem_start) ;
 	    finish(this,proginfomem_finish) ;
 	    pmbegin(this,proginfomem_pmbegin) ;
 	    pmend(this,proginfomem_pmend) ;
+	    userbegin(this,proginfomem_userbegin) ;
+	    userend(this,proginfomem_userend) ;
 	} ;
 	proginfo() noex : proginfo(0,nullptr,nullptr) { } ;
 	void operator () (int c,mainv a,mainv e) noex {
@@ -167,6 +183,10 @@ namespace {
 	int tmpmounts_same(cchar *) noex ;
 	int tmpmounts_vardir() noex ;
 	int tmpmounts_vardirs(cchar *) noex ;
+	int tmpuserdir() noex ;
+	int tmpuserdir_base() noex ;
+	int tmpuserdir_already() noex ;
+	int tmpuserdir_link() noex ;
     private:
 	int istart() noex ;
 	int ifinish() noex ;
@@ -174,6 +194,8 @@ namespace {
 	int ipmend() noex ;
 	int getpn(mainv) noex ;
 	int revertuser() noex ;
+	int iuserbegin() noex ;
+	int iuserend() noex ;
     } ; /* end struct (proginfo) */
     struct confstritem {
 	cchar		*dname ;
@@ -191,6 +213,7 @@ enum progmodes {
 	progmode_mktmpusers,
 	progmode_tmpusers,
 	progmode_tmpmounts,
+	progmode_tmpuserdir,
 	progmode_overlast
 } ;
 
@@ -198,6 +221,7 @@ constexpr cpcchar	prognames[] = {
 	"mktmpusers",
 	"tmpusers",
 	"tmpmounts",
+	"tmpuserdir",
 	nullptr
 } ;
 
@@ -223,13 +247,27 @@ constexpr confstritem	confstritems[] = {
 	{ "cache",	_CS_CACHEDIR }
 } ;
 
+constexpr cpcchar	uservars[] = {
+	varname.username,
+	varname.logname,
+	varname.user,
+	varname.home,
+	varname.mail
+} ;
+
 constexpr proginfo_m	tmpusers_mems[] = {
 	&proginfo::tmpusers_wait,
 	&proginfo::tmpusers_make,
 	&proginfo::tmpusers_mode
 } ;
+constexpr proginfo_m	tmpuserdir_mems[] = {
+	&proginfo::tmpuserdir_base,
+	&proginfo::tmpuserdir_already
+} ;
 
 constexpr int		maxpathlen = MAXPATHLEN ;
+constexpr int		usernamelen = USERNAMELEN ;
+constexpr int		varbuflen = max(USERNAMELEN,DIGBUFLEN) ;
 constexpr mode_t	dm = (0777|S_ISVTX) ;
 
 
@@ -252,6 +290,9 @@ int main(int argc,mainv argv,mainv envv) noex {
                     break ;
                 case progmode_tmpmounts:
                     rs = pi.tmpmounts() ;
+                    break ;
+		case progmode_tmpuserdir:
+		    rs = pi.tmpuserdir() ;
                     break ;
 		default:
 		    rs = SR_BUGCHECK ;
@@ -331,6 +372,47 @@ int proginfo::ipmend() noex {
 	return rs ;
 }
 /* end method (proginfo::ipmend) */
+
+int proginfo::iuserbegin() noex {
+	cnullptr	np{} ;
+	const uid_t	uid = getuid() ;
+	int		rs = SR_NOMEM ;
+	cint		vlen = varbuflen ;
+	char		vbuf[varbuflen + 1] ;
+	if ((ubuf = new(nothrow) char[usernamelen + 1]) != nullptr) {
+	    ulen = usernamelen ;
+	    rs = SR_OK ;
+	    for (cauto &vn : uservars) {
+		char	*vv = getenv(vn) ;
+		if (vv && vn[0]) {
+		    cchar	*bp{} ;
+		    if (int bl ; (bl = sfbasename(vv,-1,&bp)) > 0) {
+		        strwcpy(vbuf,bp,min(vlen,bl)) ;
+		        if (PASSWD *pwp ; (pwp = getpwnam(vbuf)) != np) {
+			    if (pwp->pw_uid == uid) {
+			        rs = snwcpy(ubuf,ulen,pwp->pw_name) ;
+			        ul = rs ;
+			    }
+		        } /* end if (getpwnam) */
+		    } /* end if (sfbasename) */
+		} /* end if */
+		if (rs != 0) break ;
+	    } /* end for */
+	} /* end if (new-char) */
+	return (rs >= 0) ? ul : rs ;
+}
+/* end method (proginfo::iuserbegin) */
+
+int proginfo::iuserend() noex {
+	int		rs = SR_OK ;
+	if (ubuf) {
+	    delete [] ubuf ;
+	    ubuf = nullptr ;
+	    ulen = 0 ;
+	}
+	return rs ;
+}
+/* end method (proginfo::iuserend) */
 
 int proginfo::getpn(mainv names) noex {
 	int		rs = SR_FAULT ;
@@ -416,6 +498,8 @@ int proginfo::tmpusers_make() noex {
 		    if ((rs = u_stat(pbuf,&sb)) >= 0) {
 		        c = 1 ;
 		    }
+		} else if (rs == SR_EXISTS) {	/* race condition? */
+		    rs = SR_OK ;
 		}
 	    }
 	} /* end if (snadd) */
@@ -515,6 +599,8 @@ int proginfo::tmpmounts_mklink() noex {
 	int		rs ;
 	if ((rs = u_symlink(pbuf,dbuf)) >= 0) {
 	    rs = 1 ;
+	} else if (rs == SR_EXISTS) {
+	    rs = SR_OK ;
 	}
 	return rs ;
 }
@@ -606,6 +692,8 @@ int proginfo::tmpmounts_vardirs(cchar *homedname) noex {
 			if ((rs = u_minmod(dbuf,vdm)) >= 0) {
 			    fok = true ;
 			}
+		    } else if (rs == SR_EXISTS) {	/* race condition? */
+			rs = SR_OK ;
 		    }
 		} /* end if */
 	        dl_homevar = dl ;
@@ -614,6 +702,86 @@ int proginfo::tmpmounts_vardirs(cchar *homedname) noex {
 	return (rs >= 0) ? fok : rs ;
 }
 /* end method (proginfo::tmpmounts_vardirs) */
+
+int proginfo::tmpuserdir() noex {
+	int		rs ;
+	int		rs1 ;
+	int		fdone = false ;
+	if ((rs = userbegin) > 0) {
+	    for (cauto &m : tmpuserdir_mems) {
+		if (rs > 0) {
+	            rs = (this->*m)() ;
+		}
+		if (rs <= 0) break ;
+	    } /* end for */
+	    fdone = rs ;
+	    rs1 = userend ;
+	    if (rs >= 0) rs = rs1 ;
+	} else if (rs == 0) {
+	    fprintf(stderr,"%s: no-user\n",pn) ;
+	} /* end if (user-) */
+	return (rs >= 0) ? fdone : rs ;
+}
+/* end method (proginfo::tmpuserdir) */
+
+int proginfo::tmpuserdir_base() noex {
+	int		rs ;
+	int		fcontinue = false ;
+	if ((rs = snadd(pbuf,plen,pl,"/tmp/users")) >= 0) {
+	    pl += rs ;
+	    if ((rs = u_stat(pbuf,&sb)) >= 0) {
+		fcontinue = true ;
+	    } else if (isNotPresent(rs)) {
+		pl = 0 ;		/* reset buffer */
+		if ((rs = tmpusers()) >= 0) {
+		    fcontinue = true ;
+		}
+	    }
+	} /* end if (snadd) */
+	return (rs >= 0) ? fcontinue : rs ;
+}
+/* end method (proginfo::tmpuserdir_base) */
+
+int proginfo::tmpuserdir_already() noex {
+	int		rs ;
+	int		fdone = false ;
+	if ((rs = revertuser()) >= 0) {
+	    if ((rs = snadd(pbuf,plen,pl,"/",ubuf)) >= 0) {
+	        pl += rs ;
+	        if ((rs = u_stat(pbuf,&sb)) == SR_NOEXIST) {
+		    rs = tmpuserdir_link() ;
+		    fdone = rs ;
+	        }
+	    } /* end if (snadd) */
+	} /* end if (revertuser) */
+	return (rs >= 0) ? fdone : rs ;
+}
+/* end method (proginfo::tmpuserdir_already) */
+
+int proginfo::tmpuserdir_link() noex {
+	cint		req = _CS_TMPDIR ;
+	int		rs ;
+	int		fmade = false ;
+	if ((rs = uc_sysconfstr(dbuf,dlen,req)) > 0) {
+	    cint	dl = rmtrailchr(dbuf,rs,'/') ;
+	    if (dl > 1) { /* <- my own restriction */
+	        dbuf[dl] = '\0' ;
+	        if ((rs = u_stat(dbuf,&sb)) >= 0) {
+		    if (S_ISDIR(sb.st_mode)) {
+    			if ((rs = u_symlink(dbuf,pbuf)) >= 0) {
+			    fmade = true ;
+			} else if (rs == SR_EXISTS) {
+			    rs = SR_OK ;
+			}
+		    } /* end if (is-dir) */
+	        } else if (isNotPresent(rs)) {
+		    rs = SR_OK ;
+	        }
+	    } /* end if (length-check) */
+	} /* end if (uc_sysconfstr) */
+	return (rs >= 0) ? fmade : rs ;
+}
+/* end method (proginfo::tmpuserdir_link) */
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
@@ -630,6 +798,12 @@ int proginfo_co::operator () (int) noex {
 	        break ;
 	    case proginfomem_pmend:
 	        rs = op->ipmend() ;
+	        break ;
+	    case proginfomem_userbegin:
+	        rs = op->iuserbegin() ;
+	        break ;
+	    case proginfomem_userend:
+	        rs = op->iuserend() ;
 	        break ;
 	    } /* end switch */
 	} /* end if (non-null) */

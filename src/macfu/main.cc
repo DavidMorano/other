@@ -187,7 +187,7 @@ enum progmodes {
 	progmode_overlast
 } ;
 
-static constexpr cpcchar	prognames[] = {
+constexpr cpcchar	prognames[] = {
 	"fileuniq",
 	"fu",
 	"lc",
@@ -195,7 +195,7 @@ static constexpr cpcchar	prognames[] = {
 	nullptr
 } ;
 
-static constexpr MAPEX	mapexs[] = {
+constexpr MAPEX		mapexs[] = {
 	{ SR_NOENT,	EX_NOUSER },
 	{ SR_AGAIN,	EX_TEMPFAIL },
 	{ SR_DEADLK,	EX_TEMPFAIL },

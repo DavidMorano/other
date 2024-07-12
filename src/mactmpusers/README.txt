@@ -20,9 +20,16 @@ itself).  The three links created in that directory are:
 	tmp	used for per-used only temporary files
 	cache	used for storing semipersistent cache files per-user
 
+The TMPUSERDIR function mounts (links) the user-specific temporary
+directory at the mount (link) point:
+	/tmp/users/<user>
+where <user> is the user-specific "tmp" directory provided by the 
+operating system (on a per user basis).
+
 Synopsis:
 $ tmpusers
 $ tmpmounts
+$ tmpuserdir
 
 Arguments:
 -		NONE, because we are too lean even for that
