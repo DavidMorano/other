@@ -1,6 +1,6 @@
-# MAKEFILE (samefile)
+# MAKEFILE (fieldterms)
 
-T= samefile
+T= fieldterms
 
 ALL= $(T).x
 
