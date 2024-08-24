@@ -1,16 +1,54 @@
 #!/usr/extra/bin/ksh
 # MAKEIT
 
-: ${REPOROOT=:${HOME}/github/other}
+: ${REPOROOT:=${HOME}/github/system}
 export REPOROOT
 
-BUILDTYPE=debug
+BUILDTYPE=develop
+#BUILDTYPE=deliver
 
 
-: ${CGS_INCDIR:=${REPOROOT}/include}}
-: ${CGS_CRTDIR:=${REPOROOT}/lib}}
-: ${CGS_VALDIR:=${REPOROOT}/lib}}
-: ${CGS_LIBDIR:=${REPOROOT}/lib}}
+: ${ARCHITECTURE:=$( architecture )}
+: ${SYSNAME:=$( sysname )}
+: ${RELEASE:=$( release )}
+export ARCHITECTURE SYSNAME RELEASE 
+
+: ${OSNAME:=${SYSNAME}}
+: ${OSTYPE:=$( systype )}
+: ${OSRELEASE:=${RELEASE}}
+: ${OSNUM:=${RELEASE%%.*}}
+export OSNAME OSTYPE OSRELEASE OSNUM
+
+
+integer i=0
+typeset -a DIRS
+DIRS[i++]=${GH}/other/include
+DIRS[i++]=${GH}/system/include
+DIRS[i++]=${GH}/test/include
+DIRS[i++]=${GH}/research/include
+
+VPATH=
+for (( i = 0 ; i < ${#DIRS[@]} ; i += 1 )) ; do
+  if [[ $i > 0 ]] ; then
+    VPATH+=":"
+  fi
+  VPATH+="${DIRS[i]}"
+done
+export VPATH
+
+
+: ${CGS_BINDIR:=${REPOROOT}/bin}
+: ${CGS_INCDIR:=${REPOROOT}/include}
+: ${CGS_LIBDIR:=${REPOROOT}/lib}
+: ${CGS_MANDIR:=${REPOROOT}/man}
+
+: ${CGS_CRTDIR:=${USRLOCAL}/lib}
+: ${CGS_VALDIR:=${USRLOCAL}/lib}
+: ${CGS_RUNDIR:=${USRLOCAL}/lib}
+
+: ${CGS_INFODIR:=${REPOROOT}/info}
+: ${CGS_HELPDIR:=${REPOROOT}/share/help}
+: ${CGS_LDRPATH:=${REPOROOT}/lib}
 
 : ${CGS_CPP:=cpp}
 : ${CGS_CC:=clang}
@@ -19,36 +57,49 @@ BUILDTYPE=debug
 : ${CGS_RANLIB:=ranlib}
 : ${CGS_AR:=ar}
 : ${CGS_NM:=nm}
+: ${CGS_COV:=cov}
+: ${CGS_SZ:=sz}
 
-: ${CGS_GCPP:=gcpp13}
-: ${CGS_GCC:=gcc13}
-: ${CGS_GPP:=gpp13}
-: ${CGS_GLD:=gld13}
-: ${CGS_GRANLIB:=granlib13}
-: ${CGS_GAR:=gar13}
-: ${CGS_GNM:=gnm13}
-: ${CGS_GCOV:=gcov13}
+: ${CGS_GCPP:=gcpp}
+: ${CGS_GCC:=gcc}
+: ${CGS_GXX:=gxx}
+: ${CGS_GLD:=gld}
+: ${CGS_GRANLIB:=granlib}
+: ${CGS_GAR:=gar}
+: ${CGS_GNM:=gnm}
+: ${CGS_GCOV:=gcov}
+: ${CGS_GSZ:=gsz}
 
+export CGS_BINDIR
+export CGS_INCDIR
 export CGS_CRTDIR
 export CGS_VALDIR
 export CGS_LIBDIR
+export CGS_MANDIR
+export CGS_RUNDIR
+
+export CGS_INFODIR
+export CGS_HELPDIR
+export CGS_LDRPATH
 
 export CGS_CPP
 export CGS_CC
 export CGS_CXX
 export CGS_LD
+export CGS_RANLIB
 export CGS_AR
 export CGS_NM
-export CGS_RANLIB
+export CGS_SZ
 
 export CGS_GCPP
 export CGS_GCC
-export CGS_GPP
+export CGS_GXX
 export CGS_GLD
 export CGS_GAR
 export CGS_GNM
 export CGS_GRANLIB
 export CGS_GCOV
+export CGS_GSZ
 
 
 function getflags {
@@ -61,32 +112,29 @@ function getflags {
   fi
 }
 
-
-: ${SYSNAME:=$( uname -s )}
-: ${RELEASE:=$( uname -r )}
-: ${ARCHITECTURE:=$( uname -p )}
-export SYSNAME RELEASE ARCHITECTURE
-
-: ${OSNAME:=${SYSNAME}}
-: ${OSNUM:=${RELEASE%%.*}}
-export OSNAME OSNUM
-
-
-# compile for a library 
-
 case ${OSNAME}:${OSNUM} in
 Darwin:*)
   : ${CO_GCCALL:=""}
   : ${CO_GCCDEB:="-Wall -Wextra"}
-  : ${CO_GCCOPT:="-O"}
-  : ${CO_GCCLIB:=""}
-  : ${CO_GPPALL:=""}
-  : ${CO_GPPDEB:="-Wall -Wextra"}
-  : ${CO_GPPOPT:="-O"}
-  : ${CO_GPPLIB:=""}
+  : ${CO_GCCOPT:=""}
+  : ${CO_GCCLIB:="-fpic"}
+  : ${CO_GXXALL:=""}
+  : ${CO_GXXDEB:="-Wall -Wextra"}
+  : ${CO_GXXOPT:=""}
+  : ${CO_GXXLIB:="-fpic"}
+  case ${BUILDTYPE} in
+  debug)
+    CO_GCCOPT="-g"
+    CO_GXXOPT="-g"
+    ;;
+  deliver)
+    CO_GCCOPT="-O"
+    CO_GXXOPT="-O"
+    ;;
+  esac
   ;;
 SunOS:*)
-  : ${CO_GCCALL:="-pthreads"}
+  : ${CO_GCCALL:=""}
   case "${ARCHITECTURE}" in
   sparc)
     CO_GCOPARC="-mcpu=v9"
@@ -96,6 +144,7 @@ SunOS:*)
     ;;
   *)
     : ${CO_GCCOPT:="-O3"}
+    : ${CO_GCCLIB:="-fpic"}
     ;;
   esac
   : ${CO_GCCOPT:="-O3"}
@@ -121,20 +170,49 @@ export CO_GCCDEB
 export CO_GCCOPT
 export CO_GCCLIB
 
-export CO_GPPALL 
-export CO_GPPDEB
-export CO_GPPOPT
-export CO_GPPLIB
+export CO_GXXALL 
+export CO_GXXDEB
+export CO_GXXOPT
+export CO_GXXLIB
+
+
+export BINDIR=${REPOROOT}/bin
+export INCDIR=${REPOROOT}/include
+export LIBDIR=${REPOROOT}/lib
+export MANDIR=${REPOROOT}/man
+export INFODIR=${REPOROOT}/info
+export HELPDIR=${REPOROOT}/share/help
+export CRTDIR=${CGS_CRTDIR}
+export VALDIR=${CGS_VALDIR}
+export RUNDIR=${CGS_RUNDIR}
+
+
+export CPP=${CGS_GCPP}
+export CC=${CGS_GCC}
+export CXX=${CGS_GXX}
+export LD=${CGS_GLD}
+export AR=${CGS_GAR}
+export NM=${CGS_GNM}
+export RANLIB=${CGS_GRANLIB}
+export COV=${CGS_GCOV}
+export SZ=${CGS_GSZ}
+export LORDER="lorder"
+export TSORT="tsort"
+export LINT="lint"
+export RM="rm -f"
+export TOUCH="touch"
+export LINT="lint"
+
 
 # compiler and flags seletion for MAKE
 CFLAGS=
-CCFLAGS=
+CXXFLAGS=
 
 case ${BUILDTYPE} in
-debug)
+develop|debug)
   MAKECPPFLAGS=
   MAKECFLAGS="${CO_GCCALL} ${CO_GCCDEB} ${CO_GCCOPT} ${CO_GCCLIB}"
-  MAKECCFLAGS="${CO_GPPALL} ${CO_GPPDEB} ${CO_GPPOPT} ${CO_GPPLIB}"
+  MAKECXXFLAGS="${CO_GXXALL} ${CO_GXXDEB} ${CO_GXXOPT} ${CO_GXXLIB}"
   MAKELDFLAGS=
   ;;
 test)
@@ -144,18 +222,23 @@ analyze)
 profile)
   ;;
 deliver)
+  MAKECPPFLAGS=
+  MAKECFLAGS="${CO_GCCALL} ${CO_GCCOPT} ${CO_GCCLIB}"
+  MAKECXXFLAGS="${CO_GXXALL} ${CO_GXXOPT} ${CO_GXXLIB}"
+  MAKELDFLAGS=
+  MAKELDFLAGS=
   ;;
 esac
 
 export BUILDTYPE
 export MAKECPPFLAGS
 export MAKECFLAGS
-export MAKECCFLAGS
+export MAKECXXFLAGS
 export MAKELDFLAGS
 
 
 #print -- CGS_CC=${CGS_CC}
-#print -- CGS_GPP=${CGS_GPP}
+#print -- CGS_GXX=${CGS_GXX}
 #print -- REPOROOT=${REPOROOT}
 
 export PATH=${REPOROOT}/bin:${PATH}
