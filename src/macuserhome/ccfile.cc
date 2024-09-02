@@ -8,7 +8,7 @@
 /* revision history:
 
 	= 1998-04-10, David A­D­ Morano
-        This subroutine was originally written.
+        This code was originally written.
 
 	= 2023-12-28, David A­D­ Morano
 	This is (substantially) refactored. I went from using
