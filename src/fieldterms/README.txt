@@ -2,7 +2,7 @@ FIELDTERMS
 
 This program is used to show the terminator characters that are
 making up a field terminator character block.  These field terminator
-blocks are used in subroutine like:
+blocks are used in subroutines like:
 
 	field_get(3dam)
 	field_sharg(3dam)

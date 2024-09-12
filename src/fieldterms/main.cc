@@ -55,8 +55,6 @@ using std::nothrow ;			/* constant */
 
 /* local typedefs */
 
-static void showterms(cchar *) noexcept ;
-
 
 /* external subroutines */
 
@@ -64,9 +62,29 @@ static void showterms(cchar *) noexcept ;
 /* external variables */
 
 
+/* local structures */
+
+namespace {
+    struct termer {
+	int	idx = 0 ;
+	char	terms[termsize] = {} ;
+	int accum(cchar *sp,int sl) noex {
+	    int		rs ;
+	    if (int v ; (rs = cfhex(sp,sl,&v)) >= 0) {
+		terms[idx++] = uchar(v) ;
+	    }
+	    return rs ;
+	} ;
+    } ; /* end struct (termer) */
+}
+
+
 /* forward references */
 
+static void	showterms(cchar *) noexcept ;
 static void	procfile(cchar *) noex ;
+static int	procfiler(termer *,cchar *) noex ;
+static int	procline(termer *,cchar *,int) noex ;
 static int	cfhex(cchar *,int,int *) noex ;
 
 
@@ -116,43 +134,16 @@ static void showterms(cchar *terms) noexcept {
 }
 /* end subroutine (showterms) */
 
-namespace {
-    struct termer {
-	int	idx = 0 ;
-	char	terms[termsize] = {} ;
-	int accum(cchar *sp,int sl) noex {
-	    int		rs ;
-	    if (int v ; (rs = cfhex(sp,sl,&v)) >= 0) {
-		terms[idx++] = uchar(v) ;
-	    }
-	    return rs ;
-	} ;
-    } ; /* end struct (termer) */
-}
-
 static void procfile(cchar *fn) noex {
 	termer		to ;
 	int		rs ;
-	if ((rs = readterms(&to,fn)) >= 0) {
+	if ((rs = procfiler(&to,fn)) >= 0) {
 	}
 	return rs ;
 }
 /* end subroutine (procfile) */
 
-static int procline(termer *top,cchar *lp,int ll) noex {
-	sof		fo(lp,ll) ;
-	int		rs = SR_OK ;
-	int		cl ;
-	cchar		*cp{} ;
-	while ((sl = fo.next(&cp)) > 0) {
-	    rs = top->accum(cp,sl) ;
-	    if (rs < 0) break ;
-	} /* end while */
-	return rs ;
-}
-/* end subroutine (procline) */
-
-static int readterms(termer *top,cchar *fn) noex {
+static int procfiler(termer *top,cchar *fn) noex {
 	cnullptr	np{} ;
         cint            llen = MAXLINE ;
         int             rs = SR_NOMEM ;
@@ -180,7 +171,20 @@ static int readterms(termer *top,cchar *fn) noex {
         } /* end if (m-a-f) */          
         return rs ;
 }
-/* end subroutine (readterms) */
+/* end subroutine (procfiler) */
+
+static int procline(termer *top,cchar *lp,int ll) noex {
+	sof		fo(lp,ll) ;
+	int		rs = SR_OK ;
+	int		cl ;
+	cchar		*cp{} ;
+	while ((sl = fo.next(&cp)) > 0) {
+	    rs = top->accum(cp,sl) ;
+	    if (rs < 0) break ;
+	} /* end while */
+	return rs ;
+}
+/* end subroutine (procline) */
 
 static int cfhex(cchar *sp,int sl,int *rp) noex {
 	int		rs = SR_FAULT ;
