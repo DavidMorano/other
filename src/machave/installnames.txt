@@ -1,0 +1,5 @@
+haveprogram 
+havefunction 
+pathto 
+fpathto 
+pathenum

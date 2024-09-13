@@ -1,0 +1,11 @@
+username 
+userhome 
+usershell
+uid 
+gid 
+sid
+groupname 
+sessionid 
+shells
+userents 
+groupents

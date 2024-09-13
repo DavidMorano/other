@@ -1,7 +1,7 @@
-/* main SUPPORT (dup) */
+/* main SUPPORT (dups) */
 /* lang=C++20 */
 
-/* print duplicate (by DEV-INO) files */
+/* print duplicate (by name) files */
 /* version %I% last-modified %G% */
 
 
@@ -17,13 +17,13 @@
 /*******************************************************************************
 
 	Names:
-	dup
+	dups
 
 	Description:
-	This program does something with duplicates.
+	This program does something w/ duplicates (by names).
 
 	Synopsis:
-	$ dup [<file(s)>] [-]
+	$ dups [<file(s)>] [-]
 
 	Arguments:
 	<file(s)>	file(s) to process
