@@ -21,32 +21,32 @@ if ${RF_OK} ; then
   OPTS=
   case ${PN} in
   gcpp*)
-    PROG=gcpp13
+    PROG=gcpp14
     OPTS="${INCDIRS}"
     ;;
   gcc*)
-    PROG=gcc13
+    PROG=gcc14
     OPTS="${POPT} ${INCDIRS}"
     ;;
   gpp*|gxx*)
-    PROG=gpp13
+    PROG=gpp14
     OPTS="${POPT} ${INCDIRS}"
     ;;
   gld*)
-    PROG=gld13
+    PROG=gld14
     OPTS="${POPT}"
     ;;
   granlib*)
-    PROG=granlib13
+    PROG=granlib14
     ;;
   gar*)
-    PROG=gar13
+    PROG=gar14
     ;;
   gnm*)
-    PROG=gnm13
+    PROG=gnm14
     ;;
   gcov*)
-    PROG=gcov13
+    PROG=gcov14
     ;;
   gsize*|gsz*)
     PROG=size

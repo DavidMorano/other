@@ -101,7 +101,7 @@ control:
 	(uname -n ; date) > Control
 
 install:		$(T).x
-	mklinks
+	makeinstall $(T).x
 
 
 main.o:			main.cc $(INCS)

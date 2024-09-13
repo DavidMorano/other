@@ -1,9 +1,9 @@
 DUPS
 
-This is a filter program that reads filenames as either arguments
-or from standard-input if no arguments (or from standard-input if
-an argument is '-') and writes out only the unique filenames
-(selecting one at random).
+This program takes file-names on its standard-input (or the
+command-line arguments) and sorts them (sollates them really) into
+groups that share a moderately common basename.  It then prints out
+all of the collated entries that have two or more files within them.
 
 Synopsis:
 $ dups [<file(s)>] [-]

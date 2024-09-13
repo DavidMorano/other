@@ -53,7 +53,6 @@
 
 using std::nullptr_t ;			/* type */
 using std::string ;			/* type */
-using std::istringstream ;		/* type */
 using std::cerr ;			/* variable */
 using std::cout ;			/* variable */
 using std::nothrow ;			/* constant */
@@ -64,12 +63,6 @@ using std::bad_alloc ;			/* constant */
 
 
 /* external subroutines */
-
-extern "C" {
-    extern int	sfnexty(cchar *,int,cchar **) noex ;
-    extern int	sfnextchry(cchar *,int,int,cchar **) noex ;
-    extern int	sfnextbrky(cchar *,int,cchar *,cchar **) noex ;
-}
 
 
 /* external variables */
@@ -221,11 +214,10 @@ static int cfnum(cchar *sp,int sl,int *rp) noex {
 	    try {
 	        string	sbuf(sp,sl) ;
 		{
-		    long	val ;
 		    cchar	*raw = sbuf.c_str() ;
 		    errno = 0 ;
 		    {
-			val = strtol(raw,nullptr,0) ;
+			long	val = strtol(raw,nullptr,0) ;
 			if (errno) {
 			    rs = (- errno) ;
 			} else {
