@@ -56,7 +56,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_SAMEFILE= main.o
+OBJ_SAMEFILE= main.o sif.o ccfile.o
 
 
 .SUFFIXES:		.hh .ii
@@ -100,7 +100,14 @@ clean:
 control:
 	(uname -n ; date) > Control
 
+install:		$(T).x
+	mklinks
+
 
 main.o:			main.cc $(INCS)
+
+sif.o:			sif.cc sif.hh
+sfnexty.o:		sfnexty.cc 
+ccfile.o:		ccfile.cc ccfile.hh
 
 

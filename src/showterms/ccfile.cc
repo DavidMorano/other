@@ -8,7 +8,7 @@
 /* revision history:
 
 	= 1998-04-10, David A­D­ Morano
-        This subroutine was originally written.
+        This code was originally written.
 
 	= 2023-12-28, David A­D­ Morano
 	This is (substantially) refactored. I went from using
@@ -34,10 +34,9 @@
 	error code is returned
 
 	Synopsis:
-	int readln(istream &cin,char *ibuf,int ilen,int chdelim = eol) noex
+	int readln(char *ibuf,int ilen,int chdelim = eol) noex
 
 	Arguments:
-	cin		input |istream(3c++)| to read from
 	ibuf		input character buffer to store read characteds
 	ilen		input character buffer length
 	chdelim		optional delimiter character
@@ -53,6 +52,7 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be first to configure */
+#include	<cstddef>		/* |nullptr_t| */
 #include	<string>
 #include	<string_view>
 #include	<istream>
@@ -161,6 +161,7 @@ int ccfile::readln(char *ibuf,int ilen,int dch) noex {
 	int		len = 0 ;
 	if (dch == 0) dch = eol ;
 	if (ibuf) {
+	    ibuf[0] = '\0' ;
 	    try {
 		rs = SR_BADFMT ;
 	        if (bool(getline(ibuf,(ilen+1),char(dch)))) {
