@@ -244,9 +244,12 @@ static int cfnum(cchar *sp,int sl,int *rp) noex {
 static void showterms(cchar *terms) noexcept {
 	for (int ch = 0 ; ch < tablen ; ch += 1) {
 	    if (BATSTB(terms,ch)) {
-		if (strchr("\n\r\f\v\b",ch)) {
+		if (strchr("\t\n\r\f\v\b",ch)) {
 		    cchar	*ostr = nullptr ;
 		    switch (ch) {
+		    case '\t':
+			ostr = "HT" ;
+			break ;
 		    case '\n':
 			ostr = "NL" ;
 			break ;
