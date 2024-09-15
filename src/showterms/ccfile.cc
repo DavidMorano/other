@@ -11,7 +11,7 @@
         This code was originally written.
 
 	= 2023-12-28, David A­D­ Morano
-	This is (substantially) refactored. I went from using
+	This is (substantially) refactored.  I went from using
 	|std::getline(3c++)| to |std::iostream::getline(3c++)|.
 
 */
@@ -55,12 +55,14 @@
 #include	<cstddef>		/* |nullptr_t| */
 #include	<string>
 #include	<string_view>
-#include	<istream>
+#include	<fstream>
 #include	<usystem.h>
 #include	<storebuf.h>		/* <- not used! */
 #include	<sncpyx.h>		/* <- not used! */
 #include	<snwcpy.h>
 #include	<strnul.hh>
+#include	<stdfnames.h>
+#include	<matstr.h>
 #include	<mkchar.h>
 #include	<localmisc.h>
 
@@ -91,7 +93,8 @@ using openmode = std::ios_base::openmode ; /* type */
 
 /* local typedefs */
 
-typedef string_view	strview ;
+typedef string_view		strview ;
+typedef	ios_base::openmode	omode ;
 
 
 /* external subroutines */
@@ -100,12 +103,31 @@ typedef string_view	strview ;
 /* external variables */
 
 
+/* local structures */
+
+namespace {
+    struct devnames {
+	cchar	*name[stdfile_overlast] ;
+	constexpr devnames() noex {
+	    name[stdfile_in] = "/dev/fd/0" ;
+	    name[stdfile_out] = "/dev/fd/1" ;
+	    name[stdfile_err] = "/dev/fd/2" ;
+	    name[stdfile_log] = "/dev/fd/2" ;
+	} ; /* end ctor */
+    } ; /* end struct (devnames) */
+}
+
+
 /* forward references */
 
 static ios_base::openmode getopenmode(cchar *) noex ;
 
+static bool	isnomode(omode) noex ;
+
 
 /* local variables */
+
+static const devnames	dev ;
 
 
 /* exported variables */
@@ -118,7 +140,7 @@ int ccfile::open(cchar *fn,cchar *ofs,mode_t) noex {
 	if (fn) {
 	    rs = SR_INVALID ;
 	    if (fn[0]) {
-		openmode	of = ios::in ;
+		openmode	of{} ;
 		rs = SR_OK ;
 		if (ofs) {
 		    rs = SR_INVALID ;
@@ -128,12 +150,31 @@ int ccfile::open(cchar *fn,cchar *ofs,mode_t) noex {
 		    }
 		} /* end if (had open-flags) */
 		if (rs >= 0) {
-		    fstream::open(fn,of) ;
-		    rs = SR_NOENT ;
-		    if (good()) {
-			if (of & ios::in) freading = true ;
-		        rs = SR_OK ;
-		    }
+		    if (int fni ; (fni = matstr(stdfnames,fn,-1)) >= 0) {
+			fn = dev.name[fni] ;
+			switch (fni) {
+			case stdfile_in:
+			    if (isnomode(of)) of |= ios::in ;
+			    break ;
+			case stdfile_out:
+			case stdfile_err:
+			case stdfile_log:
+			    if (isnomode(of)) of |= ios::out ;
+			    break ;
+			case stdfile_null:
+			    fl.fnulling = true ;
+			    break ;
+			} /* end switch */
+		    } /* end if (match on special names) */
+		    if (! fl.fnulling) {
+		        if (isnomode(of)) of |= ios::in ;
+			fstream::open(fn,of) ;
+		        rs = SR_NOENT ;
+		        if (good()) {
+			    if (of & ios::in) fl.freading = true ;
+		            rs = SR_OK ;
+		        }
+		    } /*& end if (not fnulling) */
 		} /* end if (ok) */
 	    } /* end if (valid) */
 	} /* end if (non-null) */
@@ -162,96 +203,103 @@ int ccfile::readln(char *ibuf,int ilen,int dch) noex {
 	if (dch == 0) dch = eol ;
 	if (ibuf) {
 	    ibuf[0] = '\0' ;
-	    try {
-		rs = SR_BADFMT ;
-	        if (bool(getline(ibuf,(ilen+1),char(dch)))) {
-		    if ((rs = gcount()) <= ilen) {
-			len = rs ;
-			if (len > 0) {
-			    ibuf[len-1] = dch ;
-			    ibuf[len] = '\0' ;
-			}
+	    if (! fl.fnulling) {
+	        try {
+		    rs = SR_BADFMT ;
+	            if (bool(getline(ibuf,(ilen+1),char(dch)))) {
+		        if ((rs = gcount()) <= ilen) {
+			    len = rs ;
+			    if (len > 0) {
+			        ibuf[len-1] = dch ;
+			        ibuf[len] = '\0' ;
+			    }
+		        } else {
+			    rs = SR_OVERFLOW ;
+		        } /* end if (adding delimiter to input buffer) */
 		    } else {
-			rs = SR_OVERFLOW ;
-		    } /* end if (adding delimiter to input buffer) */
-		} else {
-		    cbool	feof	= eof() ;
-		    cbool	ffail	= fail() ;
-		    cbool	fbad	= bad() ;
-		    if (feof) {
-		        rs = SR_OK ;
-		    } else if (ffail) {
-		        rs = SR_NOMSG ;
-		    } else if (fbad) {
-		        rs = SR_IO ;
-	            }
-	        } /* end block */
-	    } catch (...) {
-		rs = SR_NOMEM ;
-	    }
+		        cbool	feof	= eof() ;
+		        cbool	ffail	= fail() ;
+		        cbool	fbad	= bad() ;
+		        if (feof) {
+		            rs = SR_OK ;
+		        } else if (ffail) {
+		            rs = SR_NOMSG ;
+		        } else if (fbad) {
+		            rs = SR_IO ;
+	                }
+	            } /* end block */
+	        } catch (...) {
+		    rs = SR_NOMEM ;
+	        }
+	    } /* end if (not-fnulling) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? len : rs ;
 }
 /* end method (ccfile::readln) */
 
 int ccfile::readln(string &s,int dch) noex {
-	cint		llen = MAXLINE ;
-	char		*lbuf ;
-	int		rs = SR_NOMEM ;
-	if ((lbuf = new(nothrow) char[llen+1]) != nullptr) {
-	    if ((rs = readln(lbuf,llen,char(dch))) >= 0) {
-		lbuf[rs] = '\0' ;
-		try {
-		    s = lbuf ;
-		} catch (...) {
-		    rs = SR_NOMEM ;
-		}
-	    } /* end if (readln) */
-	    delete [] lbuf ;
-	} /* end if (m-a-f) */
+	int		rs = SR_OK ;
+	if (! fl.fnulling) {
+	    cint	llen = MAXLINE ;
+	    char	*lbuf ;
+	    rs = SR_NOMEM ;
+	    if ((lbuf = new(nothrow) char[llen+1]) != nullptr) {
+	        if ((rs = readln(lbuf,llen,char(dch))) >= 0) {
+		    lbuf[rs] = '\0' ;
+		    try {
+		        s = lbuf ;
+		    } catch (...) {
+		        rs = SR_NOMEM ;
+		    }
+	        } /* end if (readln) */
+	        delete [] lbuf ;
+	    } /* end if (m-a-f) */
+	} /* end if (not-fnulling) */
 	return rs ;
 }
 /* end method (ccfile::readln) */
 
 int ccfile::seek(off_t o,int w) noex {
 	int		rs = SR_OK ;
-	seekdir		sv = beg ;
-	switch (w) {
-	case -1:
-	case SEEK_SET:
-	    sv = beg ;
-	    break ;
-	case SEEK_CUR:
-	    sv = cur ;
-	    break ;
-	case SEEK_END:
-	    sv = end ;
-	    break ;
-	default:
-	    rs = SR_INVALID ;
-	    break ;
-	} /* end switch */
-	if (rs >= 0) {
-	    try {
-	        if (freading) {
-		    seekg(o,sv) ;	
-		} else {
-		    seekp(o,sv) ;
-		}
-		if (fail()) {
+	if (! fl.fnulling) {
+	    seekdir	sv = beg ;
+	    if (w < 0) w = SEEK_SET ;
+	    switch (w) {
+	    case SEEK_SET:
+	        sv = beg ;
+	        break ;
+	    case SEEK_CUR:
+	        sv = cur ;
+	        break ;
+	    case SEEK_END:
+	        sv = end ;
+	        break ;
+	    default:
+	        rs = SR_INVALID ;
+	        break ;
+	    } /* end switch */
+	    if (rs >= 0) {
+	        try {
+	            if (fl.freading) {
+		        seekg(o,sv) ;	
+		    } else {
+		        seekp(o,sv) ;
+		    }
+		    if (fail()) {
+		        rs = SR_IO ;
+		    }
+	        } catch (failure &e) {
+		    error_code	ec = e.code() ;
+		    cchar		*es = e.what() ;
+		    int		ev ;
 		    rs = SR_IO ;
-		}
-	    } catch (failure &e) {
-		error_code	ec = e.code() ;
-		cchar		*es = e.what() ;
-		int		ev ;
-		rs = SR_IO ;
-		ev = ec.value() ;
-		ulogerror("ccfile",ev,es) ;
-	    } catch (...) {
-		rs = SR_BADFMT ;
-	    }
-	} /* end if (ok) */
+		    ev = ec.value() ;
+		    ulogerror("ccfile",ev,es) ;
+	        } catch (...) {
+		    rs = SR_BADFMT ;
+	        }
+	    } /* end if (ok) */
+	} /* end if (not-fnulling) */
 	return rs ;
 }
 /* end method (ccfile::seek) */
@@ -261,23 +309,28 @@ int ccfile::seek(off_t o,int w) noex {
 
 int ccfile::iclose() noex {
 	int		rs = SR_OK ;
-	clear() ;
-	fstream::close() ; /* superclass */
-	if (fail()) {
-	    rs = SR_IO ;
-	}
+	if (! fl.fnulling) {
+	    clear() ;
+	    fstream::close() ; /* superclass */
+	    if (fail()) {
+	        rs = SR_IO ;
+	    }
+	} /* end if (not-fnulling) */
 	return rs ;
 }
 /* end method (ccfile::iclose) */
 
 int ccfile::irewind() noex {
-	return seek(0z) ;
+	int		rs = SR_OK ;
+	if (! fl.fnulling) {
+	    rs = seek(0z) ;
+	}
+	return rs ;
 }
 /* end method (ccfile::irewind) */
 
 void ccfile::dtor() noex {
-	cint		rs = iclose() ;
-	if (rs < 0) {
+	if (int rs ; (rs = iclose()) < 0) {
 	    ulogerror("ccfile",rs,"dtor-close") ;
 	}
 }
@@ -306,11 +359,11 @@ static openmode getopenmode(cchar *sp) noex {
 	    switch (ch) {
 	    case 'r': om |= ios::in ; break ; 
 	    case 'w': om |= ios::out ; break ;
-	    case 'a': om |= ios::app ; break ;
-	    case 't': om |= ios::trunc ; break ;
-	    case 'e': om |= ios::noreplace ; break ;
-	    case 'b': om |= ios::binary ; break ;
-	    case 'T': om |= ios::ate ; break ;
+	    case 'a': om |= ios::app ; break ;		/* append */
+	    case 't': om |= ios::trunc ; break ;	/* truncate */
+	    case 'e': om |= ios::noreplace ; break ;	/* exclusive-open */
+	    case 'b': om |= ios::binary ; break ;	/* binary-file */
+	    case 'T': om |= ios::ate ; break ;		/* seek-end at open */
 	   } /* end switch */
 	   if (om == 0) {
 		om |= ios::in ;
@@ -319,5 +372,9 @@ static openmode getopenmode(cchar *sp) noex {
 	return om ;
 }
 /* end subroutine (getopenmode) */
+
+static bool isnomode(omode of) noex {
+	return ((! (of & ios::in)) && (! (of & ios::out))) ;
+}
 
 
