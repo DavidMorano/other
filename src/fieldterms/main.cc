@@ -233,10 +233,18 @@ static int cfnum(cchar *sp,int sl,int *rp) noex {
 }
 /* end subroutine (cfnum) */
 
-static void showterms(cchar *terms) noexcept {
+void showterms(cchar *terms) noexcept {
+	cint		cols = 8 ;
+	int		cnt = 0 ;
 	for (int ch = 0 ; ch < tablen ; ch += 1) {
 	    if (BATSTB(terms,ch)) {
-		if (strchr("\t\n\r\f\v\b",ch)) {
+		if (cnt >= cols) {
+		    printf("\n") ;
+		    cnt = 0 ;
+		}
+		if (ch == 0) {
+		    printf(" NUL") ;
+		} else if (strchr("\t\n\r\f\v\b",ch)) {
 		    cchar	*ostr = nullptr ;
 		    switch (ch) {
 		    case '\t':
@@ -272,9 +280,10 @@ static void showterms(cchar *terms) noexcept {
 		       printf(" %c",ch) ;
 		    }
 		} /* end if (special) */
+		cnt += 1 ;
 	    } /* end if (hit) */
 	} /* end for */
-	printf("\n") ;
+	if (cnt > 0) printf("\n") ;
 }
 /* end subroutine (showterms) */
 
