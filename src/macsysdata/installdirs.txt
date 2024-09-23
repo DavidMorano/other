@@ -1,0 +1,2 @@
+/usr/extra
+/usr/local
