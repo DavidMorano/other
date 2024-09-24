@@ -1,6 +1,6 @@
-# MAKEFILE (macsysdata)
+# MAKEFILE (macdups)
 
-T= macsysdata
+T= macdups
 
 ALL= $(T).x
 
@@ -14,7 +14,6 @@ HELPDIR		?= $(REPOROOT)/share/help
 CRTDIR		?= $(CGS_CRTDIR)
 VALDIR		?= $(CGS_VALDIR)
 RUNDIR		?= $(CGS_RUNDIR)
-
 
 CPP		?= cpp
 CC		?= gcc
@@ -56,7 +55,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACFU= main.o
+OBJ_MACDUPS= main.o
 
 
 .SUFFIXES:		.hh .ii
@@ -85,8 +84,8 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 
-$(T).x:			$(OBJ_MACFU)
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACFU) $(LIBINFO)
+$(T).x:			$(OBJ_MACDUPS)
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACDUPS) $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm
@@ -104,6 +103,7 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
-main.o:			main.cc $(INCS)
+main.o:			main.cc 	$(INCS)
+mapblock.o:		mapblock.cc mapblock.hh
 
 

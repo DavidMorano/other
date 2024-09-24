@@ -1,0 +1,14 @@
+sysname 
+release 
+nodename 
+version 
+architecture 
+machine 
+platform 
+systype
+nisdomain 
+symfile 
+hostid 
+lax 
+sysuuid
+unixtime

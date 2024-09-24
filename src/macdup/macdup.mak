@@ -1,6 +1,6 @@
-# MAKEFILE (macsysdata)
+# MAKEFILE (macdup)
 
-T= macsysdata
+T= macdup
 
 ALL= $(T).x
 
@@ -104,6 +104,6 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
-main.o:			main.cc $(INCS)
+main.o:			main.cc 	$(INCS)
 
 
