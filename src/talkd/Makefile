@@ -95,7 +95,6 @@ TSORT= tsort
 RM= rm -f
 
 
-
 INCS= config.h defs.h ctl.h
 
 
@@ -191,8 +190,7 @@ control:
 	date >> Control
 
 
-
-main.o:			main.c $(INCS)
+main.o:			main.cc $(INCS)
 
 whatinfo.o:		whatinfo.c config.h
 

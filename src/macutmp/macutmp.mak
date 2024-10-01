@@ -1,6 +1,6 @@
-# MAKEFILE (mactmpusers)
+# MAKEFILE (macutmp)
 
-T= mactmpusers
+T= macutmp
 
 ALL= $(T).x
 
@@ -18,7 +18,7 @@ RUNDIR		?= $(CGS_RUNDIR)
 
 CPP		?= cpp
 CC		?= gcc
-CXX		?= gpp
+CXX		?= gxx
 LD		?= gld
 RANLIB		?= granlib
 AR		?= gar
@@ -32,16 +32,16 @@ TOUCH		?= touch
 LINT		?= lint
 
 
-DEFS +=
+DEFS=
 
-INCS +=
+INCS=
 
-LIBS += -lmacuser -lu
+LIBS= -lmacuser -lu
 
 
-INCDIRS += -I$(INCDIR)
+INCDIRS=
 
-LIBDIRS += -L$(LIBDIR)
+LIBDIRS= -L$(LIBDIR)
 
 
 RUNINFO= -rpath $(RUNDIR)
@@ -56,8 +56,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-#OBJ= main.o snadd.o snaddw.o libu.a
-OBJ= main.o snadd.o snaddw.o
+OBJ_UTMP= main.o
 
 
 .SUFFIXES:		.hh .ii
@@ -66,6 +65,7 @@ OBJ= main.o snadd.o snaddw.o
 default:		$(T).x
 
 all:			$(ALL)
+
 
 .c.i:
 	$(CPP) $(CPPFLAGS) $< > $(*).i
@@ -86,14 +86,22 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 
-$(T).x:			$(OBJ)
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ) $(LIBINFO)
+$(T).x:			$(OBJ_UTMP)
+	$(LD) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_UTMP) $(LIBINFO)
 
-$(T).nm:		$(T).x
-	$(NM) $(NMFLAGS) $(T).so > $(T).nm
+$(T).o:			$(OBJ_UTMP)
+	$(LD) $(LDFLAGS) -r -o $@ $(OBJ_UTMP)
+
+$(T).nm:		$(T).o
+	$(NM) $(NMFLAGS) $(T).o > $(T).nm
+
+$(T).order:		$(OBJ_UTMP) $(T).a
+	$(LORDER) $(T).a | $(TSORT) > $(T).order
+	$(RM) $(T).a
+	while read O ; do $(AR) $(ARFLAGS) -cr $(T).a $${O} ; done < $(T).order
 
 again:
-	rm -f $(T).x
+	rm -f $(ALL)
 
 clean:
 	makeclean $(ALL)
@@ -101,10 +109,10 @@ clean:
 control:
 	(uname -n ; date) > Control
 
+install:		$(T).x
+	makeinstall $(T).x
 
-main.o:			main.cc			$(INCS)
 
-snadd.o:		snadd.cc snadd.h snaddw.h
-snaddw.o:		snaddw.cc snaddw.h
+main.o:			main.cc
 
 

@@ -5,34 +5,30 @@ T= servents
 ALL= $(T).x
 
 
-BINDIR= $(REPOROOT)/bin
-INCDIR= $(REPOROOT)/include
-LIBDIR= $(REPOROOT)/lib
-MANDIR= $(REPOROOT)/man
+BINDIR		?= $(REPOROOT)/bin
+INCDIR		?= $(REPOROOT)/include
+LIBDIR		?= $(REPOROOT)/lib
+MANDIR		?= $(REPOROOT)/man
+INFODIR		?= $(REPOROOT)/info
+HELPDIR		?= $(REPOROOT)/share/help
+CRTDIR		?= $(CGS_CRTDIR)
+VALDIR		?= $(CGS_VALDIR)
+RUNDIR		?= $(CGS_RUNDIR)
 
-INFODIR= $(REPOROOT)/info
-HELPDIR= $(REPOROOT)/share/help
-
-CRTDIR= $(CGS_CRTDIR)
-VALDIR= $(CGS_VALDIR)
-RUNDIR= $(USRLOCAL)/lib
-
-
-CPP= cpp
-CC= gcc
-CXX= gpp
-LD= gld
-RANLIB= $(CGS_GRANLIB)
-AR= $(CGS_GAR)
-NM= $(CGS_GNM)
-COV= $(CGS_GCOV)
-
-LORDER= lorder
-TSORT= tsort
-LINT= lint
-RM= rm -f
-TOUCH= touch
-LINT= lint
+CPP		?= cpp
+CC		?= gcc
+CXX		?= gxx
+LD		?= gld
+RANLIB		?= granlib
+AR		?= gar
+NM		?= gnm
+COV		?= gcov
+LORDER		?= lorder
+TSORT		?= tsort
+LINT		?= lint
+RM		?= rm -f
+TOUCH		?= touch
+LINT		?= lint
 
 
 DEFS=
@@ -47,37 +43,30 @@ INCDIRS=
 LIBDIRS= -L$(LIBDIR)
 
 
+RUNINFO= -rpath $(RUNDIR)
+
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
-CPPFLAGS= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
-CFLAGS= $(MAKECFLAGS)
-CXXFLAGS= $(MAKECXXFLAGS)
-ARFLAGS= $(MAKEARFLAGS)
-LDFLAGS= $(MAKELDFLAGS) -rpath $(RUNDIR)
+CPPFLAGS	?= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
+CFLAGS		?= $(MAKECFLAGS)
+CXXFLAGS	?= $(MAKECXXFLAGS)
+ARFLAGS		?= $(MAKEARFLAGS)
+LDFLAGS		?= $(MAKELDFLAGS)
 
 
 OBJ_USERHOME= main.o
+
+
+.SUFFIXES:		.hh .ii
 
 
 default:		$(T).x
 
 all:			$(ALL)
 
-.c.ln:
-	$(LINT) -c $(LINTFLAGS) $(CPPFLAGS) $<
 
-.c.ls:
-	$(LINT) $(LINTFLAGS) $(CPPFLAGS) $<
-
-.c.i:
-	$(CPP) $(CPPFLAGS) $< > $(*).i
-
-.c.o:
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $<
-
-.cc.o:
-	$(CXX)  $(CPPFLAGS) $(CXXFLAGS) -c $<
+.SUFFIXES:		.hh .ii
 
 
 $(T).x:			$(OBJ_USERHOME)

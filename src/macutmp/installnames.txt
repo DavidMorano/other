@@ -1,0 +1,14 @@
+utmp 
+boottime 
+nusers
+utmpid 
+utmpname 
+utmpline 
+utmphost 
+utmpsid
+logid 
+logname 
+logline 
+loghost 
+logsid
+logged

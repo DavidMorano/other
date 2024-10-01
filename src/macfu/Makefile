@@ -15,7 +15,6 @@ CRTDIR		?= $(CGS_CRTDIR)
 VALDIR		?= $(CGS_VALDIR)
 RUNDIR		?= $(CGS_RUNDIR)
 
-
 CPP		?= cpp
 CC		?= gcc
 CXX		?= gxx
@@ -99,6 +98,9 @@ clean:
 
 control:
 	(uname -n ; date) > Control
+
+install:		$(T).x
+	makeinstall $(T).x
 
 
 main.o:			main.cc fonce.hh	$(INCS)

@@ -1,4 +1,4 @@
-/* main SUPPORT (mactmpusers) */
+/* main SUPPORT (macmktmpusers) */
 /* lang=C++20 */
 
 /* create the '/tmp/users' directory */
@@ -33,6 +33,7 @@
 		${HOME}/var
 
 	Synopsis:
+	$ mktmpusers
 	$ tmpusers
 	$ tmpmounts
 	$ tmpuserdir
