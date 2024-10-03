@@ -66,6 +66,7 @@ default:		$(T).x
 
 all:			$(ALL)
 
+
 .c.i:
 	$(CPP) $(CPPFLAGS) $< > $(*).i
 
@@ -91,9 +92,6 @@ $(T).x:			$(OBJ_UTMP)
 $(T).o:			$(OBJ_UTMP)
 	$(LD) $(LDFLAGS) -r -o $@ $(OBJ_UTMP)
 
-$(T).a:			$(OBJ_UTMP)
-	$(AR) $(ARFLAGS) -rc $@ $?
-
 $(T).nm:		$(T).o
 	$(NM) $(NMFLAGS) $(T).o > $(T).nm
 
@@ -110,6 +108,9 @@ clean:
 
 control:
 	(uname -n ; date) > Control
+
+install:		$(T).x
+	makeinstall $(T).x
 
 
 main.o:			main.cc

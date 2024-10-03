@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Disabled</key> 
+		<false/>
+	<key>Label</key> 
+		<string>org.rightcore.mktmpusers</string>
+	<key>UserName</key>
+		<string>extra</string>
+	<key>GroupName</key>
+		<string>admin</string>
+	<key>ProcessType</key>
+		<string>Background</string>
+	<key>WorkingDirectory</key>
+		<string>/var/empty</string>
+	<key>StandardOutPath</key>
+		<string>/usr/extra/log/mktmpusers</string>
+	<key>StandardErrorPath</key>
+		<string>/usr/extra/log/launchd</string>
+	<key>Program</key>
+		<string>/usr/extra/bin/mktmpusers</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/usr/extra/bin/mktmpusers</string>
+	</array>
+	<key>RunAtLoad</key>
+		<true/>
+</dict>
+</plist>

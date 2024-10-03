@@ -1,4 +1,4 @@
-/* main SUPPORT (mactmpusers) */
+/* main SUPPORT (macmktmpusers) */
 /* lang=C++20 */
 
 /* create the '/tmp/users' directory */
@@ -33,6 +33,7 @@
 		${HOME}/var
 
 	Synopsis:
+	$ mktmpusers
 	$ tmpusers
 	$ tmpmounts
 	$ tmpuserdir
@@ -57,7 +58,7 @@
 #include	<unistd.h>		/* |getusershell(3c)| */
 #include	<climits>
 #include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
+#include	<cstdlib>		/* |getenv(3c)| */
 #include	<cstdio>
 #include	<cstring>		/* for |strlen(3c)| + |strnlen(3c)| */
 #include	<iostream>

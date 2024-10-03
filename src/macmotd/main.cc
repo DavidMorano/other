@@ -82,11 +82,11 @@ using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::unordered_set ;		/* type */
 using std::istream ;			/* type */
-using libu::uloadavgd ;			/* subroutine */
-using libu::ustrftime ;			/* subroutine */
-using libu::snuprintf ;			/* subroutine */
-using libu::snuloadavgd ;		/* subroutine */
-using libu::snwcpy ;			/* subroutine */
+using libu::uloadavgd ;			/* subroutine (libu) */
+using libu::ustrftime ;			/* subroutine (libu) */
+using libu::snuprintf ;			/* subroutine (libu) */
+using libu::snuloadavgd ;		/* subroutine (libu) */
+using libu::snwcpy ;			/* subroutine (libu) */
 using std::cin ;			/* variable */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
