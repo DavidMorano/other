@@ -58,7 +58,7 @@
 #include	<unistd.h>		/* |getusershell(3c)| */
 #include	<climits>
 #include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
+#include	<cstdlib>		/* |getenv(3c)| */
 #include	<cstdio>
 #include	<cstring>		/* for |strlen(3c)| + |strnlen(3c)| */
 #include	<iostream>
