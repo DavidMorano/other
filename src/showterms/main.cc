@@ -53,7 +53,7 @@
 #include	<sif.hh>
 #include	<field.h>
 #include	<fieldterms.h>
-#include	<terminit.hh>
+#include	<fieldterminit.hh>
 #include	<ccfile.hh>
 #include	<strnul.hh>
 #include	<char.h>
@@ -120,9 +120,9 @@ static void	showterms(cchar *) noex ;
 
 /* local variables */
 
-static terminit		fterms(",") ;
+static fieldterminit		fterms(",") ;
 
-constexpr bool		f_field = CF_FIELD ;
+constexpr bool			f_field = CF_FIELD ;
 
 
 /* exported variables */
