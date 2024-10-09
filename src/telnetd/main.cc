@@ -183,23 +183,23 @@
 
 /* external subroutines */
 
-extern int	sncpy2(char *,int,const char *,const char *) ;
-extern int	sfshrink(const char *,int,const char **) ;
-extern int	matstr(const char **,const char *,int) ;
-extern int	cfdeci(const char *,int,int *) ;
-extern int	mkutmpid(char *,int,const char *,int) ;
-extern int	strwcmp(const char *,const char *,int) ;
-extern int	bufprintf(char *,int,const char *,...) ;
+extern int	sncpy2(char *,int,cchar *,cchar *) ;
+extern int	sfshrink(cchar *,int,cchar **) ;
+extern int	matstr(cchar **,cchar *,int) ;
+extern int	cfdeci(cchar *,int,int *) ;
+extern int	mkutmpid(char *,int,cchar *,int) ;
+extern int	strwcmp(cchar *,cchar *,int) ;
+extern int	bufprintf(char *,int,cchar *,...) ;
 
 #if	CF_DEBUGS || CF_DEBUG
-extern int	nprintf(const char *,const char *,...) ;
-extern int	debugopen(const char *) ;
-extern int	debugprintf(const char *,...) ;
+extern int	nprintf(cchar *,cchar *,...) ;
+extern int	debugopen(cchar *) ;
+extern int	debugprintf(cchar *,...) ;
 extern int	debugclose() ;
-extern int	strlinelen(const char *,int,int) ;
+extern int	strlinelen(cchar *,int,int) ;
 #endif
 
-extern char	*strwcpy(char *,const char *,int) ;
+extern char	*strwcpy(char *,cchar *,int) ;
 extern char	*strdomain(char *) ;
 
 
@@ -229,20 +229,20 @@ struct envlist {
 
 /* forward references */
 
-static int	termsecure(const char *,char *) ;
-static int	telserv_service(const char *,const char *) ;
+static int	termsecure(cchar *,char *) ;
+static int	telserv_service(cchar *,cchar *) ;
 static int	tcsetdefault(int) ;
 static int	tcspeednonzero(int) ;
 static int	tcnoecho(int) ;
 static int	readstream();
 static int	send_oob(int fd, char *ptr, int count);
-static int	setenv(const char *name, const char *value, int rdebugwrite);
+static int	setenv(cchar *name, cchar *value, int rdebugwrite);
 static int	removemod(int f, char *modname);
 static int	issock(int) ;
 static int	blowoff(int) ;
 
 static void	drainstream();
-static void	unsetenv(const char *name);
+static void	unsetenv(cchar *name);
 static void	suboption();
 static void	showbanner() ;
 
@@ -377,7 +377,7 @@ extern int audit_settid(int);	/* set terminal ID */
 
 /* local variables */
 
-static const char *termtypes[] = {
+static cchar *termtypes[] = {
 	"screen",
 	"vt100",
 	"vt101",
@@ -395,14 +395,14 @@ static const char *termtypes[] = {
 	NULL
 } ;
 
-static const char *services[] = {
+static cchar *services[] = {
 	"talker",			/* historical */
 	"talk",
 	"weather",
 	NULL
 } ;
 
-static const char	*domains[] = {
+static cchar	*domains[] = {
 	"rightcore.com",
 	"rightcore.org",
 	"neu.edu",
@@ -418,7 +418,7 @@ static const char	*domains[] = {
  */
 
 static int
-new_env(const char *name, const char *value)
+new_env(cchar *name, cchar *value)
 {
 	struct envlist *env, *index;
 
@@ -449,7 +449,7 @@ new_env(const char *name, const char *value)
  */
 
 static int
-del_env(const char *name)
+del_env(cchar *name)
 {
 	struct envlist *env;
 
@@ -474,8 +474,8 @@ static int issock(int fd)
 
 int main(argc,argv,envv)
 int		argc ;
-const char	*argv[] ;
-const char	*envv[] ;
+cchar	*argv[] ;
+cchar	*envv[] ;
 {
 	struct sockaddr_storage from;
 
@@ -484,7 +484,7 @@ const char	*envv[] ;
 	int on = 1;
 	int issocket;
 
-	const char	*cp ;
+	cchar	*cp ;
 
 #if	defined(DEBUG)
 	ushort_t porttouse = 0;
@@ -610,7 +610,7 @@ const char	*envv[] ;
 		exit(1);
 	}
 
-	if (setsockopt(0, SOL_SOCKET, SO_KEEPALIVE, (const char *)&on,
+	if (setsockopt(0, SOL_SOCKET, SO_KEEPALIVE, (cchar *)&on,
 						sizeof (on)) < 0) {
 		syslog(LOG_WARNING, "setsockopt (SO_KEEPALIVE): %m");
 	}
@@ -973,7 +973,7 @@ gotpty:
 	{
 		int	f_secure = FALSE ;
 
-		const char	*cp ;
+		cchar	*cp ;
 
 
 	if (terminaltype != NULL) {
@@ -1010,7 +1010,7 @@ gotpty:
 	} /* end if */
 
 	if (! f_secure) {
-	    const char	*resp = "get lost -- loser!\r\n" ;
+	    cchar	*resp = "get lost -- loser!\r\n" ;
 
 	   	blowoff(f) ;
 
@@ -1320,7 +1320,7 @@ gotpty:
 	{
 		pam_handle_t    *pamh;
 		int		ex = EX_NOUSER ;
-		const char	*args[10], *envs[10] ;
+		cchar	*args[10], *envs[10] ;
 
 /* make a PAM session since nobody else is doing it for us! */
 
@@ -2953,7 +2953,7 @@ send_oob(int fd, char *ptr, int count)
 #define	__P(x)	()
 #endif
 
-static char *__findenv __P((const char *, int *));
+static char *__findenv __P((cchar *, int *));
 
 /*
  * setenv --
@@ -2961,8 +2961,8 @@ static char *__findenv __P((const char *, int *));
  *	"value".  If rdebugwrite is set, replace any current value.
  */
 setenv(name, value, rdebugwrite)
-	const char *name;
-	const char *value;
+	cchar *name;
+	cchar *value;
 	int rdebugwrite;
 {
 	extern char **environ;
@@ -3040,7 +3040,7 @@ setenv(name, value, rdebugwrite)
  */
 void
 unsetenv(name)
-	const char *name;
+	cchar *name;
 {
 	extern char **environ;
 	register char **p;
@@ -3060,7 +3060,7 @@ unsetenv(name)
  */
 char *
 getenv(name)
-	const char *name;
+	cchar *name;
 {
 	int offset;
 
@@ -3077,12 +3077,12 @@ getenv(name)
  */
 static char *
 __findenv(name, offset)
-	register const char *name;
+	register cchar *name;
 	int *offset;
 {
 	extern char **environ;
 	register int len;
-	register const char *np;
+	register cchar *np;
 	register char **p, *c;
 
 	if (name == NULL || environ == NULL)
@@ -3253,15 +3253,15 @@ static int removemod(int f, char *modname)
 
 /* check if a terminal-service specification is allowed */
 static int termsecure(terminaltype,svc)
-const char	terminaltype[] ;
+cchar	terminaltype[] ;
 char		svc[] ;
 {
 	int	svcoff, j ;
 	int	i = 0 ;
 	int	f_secure = FALSE ;
 
-	const char	*termsvc = NULL ;
-	const char	*cp ;
+	cchar	*termsvc = NULL ;
+	cchar	*cp ;
 
 	if ((cp = strchr(terminaltype,'_')) != NULL) {
 
@@ -3310,8 +3310,8 @@ char		svc[] ;
 
 /* see if this service is allowed from the "services" file */
 static int telserv_service(fname,service)
-const char	fname[] ;
-const char	service[] ;
+cchar	fname[] ;
+cchar	service[] ;
 {
 	FILE	*fp ;
 
@@ -3319,7 +3319,7 @@ const char	service[] ;
 	int	cl ;
 	int	c = 0 ;
 
-	const char	*cp ;
+	cchar	*cp ;
 
 	char	lbuf[LINEBUFLEN + 1] ;
 
@@ -3461,20 +3461,17 @@ int	fd ;
 
 static int blowoff(int fd)
 {
-	FILER	b ;
-
+	filer		b ;
 	bfile	src, *sfp = &src ;
-
 	int	rs ;
 	int	wlen = 0 ;
 
-	const char	*fn = "/usr/extra/etc/telnetd/blowoff.txt" ;
-
+	cchar	*fn = "/usr/extra/etc/telnetd/blowoff.txt" ;
 
 	if ((rs = bopen(sfp,fn,"r",0666)) >= 0) {
-	    if ((rs = filer_start(&b,fd,0L,512,0)) >= 0) {
-		const int	llen = LINEBUFLEN ;
-		char		lbuf[LINEBUFLEN+3] ;
+	    if ((rs = filer_start(&b,fd,0z,512,0)) >= 0) {
+		cint	llen = LINEBUFLEN ;
+		char	lbuf[LINEBUFLEN+3] ;
 
 		while ((rs = breadln(sfp,lbuf,llen)) > 0) {
 		    int	len = rs ;

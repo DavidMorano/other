@@ -50,7 +50,7 @@ int main(int argc,const char **argv,const char **envv)
 
 #if	CF_REAL
 	if ((rs = bopen(sfp,fn,"r",0666)) >= 0) {
-	    if ((rs = filer_start(&b,fd,0L,512,0)) >= 0) {
+	    if ((rs = filer_start(&b,fd,0z,512,0)) >= 0) {
 		const int	llen = LINEBUFLEN ;
 		char		lbuf[LINEBUFLEN+3] ;
 
@@ -75,9 +75,9 @@ int main(int argc,const char **argv,const char **envv)
 	rs = bopen(sfp,fn,"r",0666) ;
 	nprintf(DFNAME,"bopen() rs=%d\n",rs) ;
 	if (rs >= 0) {
-	    if ((rs = filer_start(&b,fd,0L,512,0)) >= 0) {
-		const int	llen = LINEBUFLEN ;
-		char		lbuf[LINEBUFLEN+3] ;
+	    if ((rs = filer_start(&b,fd,0z,512,0)) >= 0) {
+		cint	llen = LINEBUFLEN ;
+		char	lbuf[LINEBUFLEN+3] ;
 
 		while (rs >= 0) {
 		    int	len ;
@@ -100,7 +100,7 @@ int main(int argc,const char **argv,const char **envv)
 	    } /* end if (filer) */
 	    bclose(sfp) ;
 	} /* end if (open source) */
-	    if ((rs = filer_start(&b,fd,0L,512,0)) >= 0) {
+	    if ((rs = filer_start(&b,fd,0z,512,0)) >= 0) {
 	    const char	*resp = "hello there\r\n" ;
 		    rs = filer_write(&b,resp,strlen(resp)) ;
 		filer_finish(&b) ;
