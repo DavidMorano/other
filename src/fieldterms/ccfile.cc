@@ -112,7 +112,7 @@ namespace {
 	    name[stdfile_in] = "/dev/fd/0" ;
 	    name[stdfile_out] = "/dev/fd/1" ;
 	    name[stdfile_err] = "/dev/fd/2" ;
-	    name[stdfile_log] = "/dev/fd/2" ;
+	    name[stdfile_log] = "/dev/fd/3" ;
 	} ; /* end ctor */
     } ; /* end struct (devnames) */
 }
@@ -355,7 +355,7 @@ int ccfile_co::operator () (int) noex {
 static openmode getopenmode(cchar *sp) noex {
 	openmode	om{} ;
 	int		ch ;
-	while ((ch = mkchar(*sp++))) {
+	while ((ch = mkchar(*sp++)) > 0) {
 	    switch (ch) {
 	    case 'r': om |= ios::in ; break ; 
 	    case 'w': om |= ios::out ; break ;

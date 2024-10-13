@@ -1,10 +1,9 @@
-/* main SUPPORT (showterms) */
+/* main SUPPORT (fieldterms) */
 /* lang=C++20 */
 
 /* show (display) the terminator block characters */
 /* version %I% last-modified %G% */
 
-#define	CF_FIELD	0		/* used |field(3uc)| */
 
 /* revision history:
 
@@ -16,48 +15,26 @@
 /* Copyright © 2017 David A­D­ Morano.  All rights reserved. */
 /* Use is subject to license terms. */
 
-/*******************************************************************************
-
-	Name:
-	showterms(1)
-
-	Description:
-	This program displays (to STDOUT) the characters within an
-	old-style terminal block (in source C-language form).
-
-	Synopsis:
-	$ showterms [<file>]
-
-	Arguments:
-	<file>		optional file, of STDIN otherwise
-
-*******************************************************************************/
-
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<climits>		/* |UCHAR_MAX| + |CHAR_BIT| */
+#include	<climits>		/* <- for |UCHAR_MAX| */
 #include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>		/* |atoi(3c)| + |strtol(3c)| */
+#include	<cstdlib>		/* |atoi(3c)| */
 #include	<cstdio>
-#include	<cstring>
+#include	<cstring>		/* |strlen(3c)| */
 #include	<new>
 #include	<exception>
+#include	<stdexcept>
 #include	<iostream>
-#include	<iomanip>
-#include	<usysrets.h>
+#include	<sstream>
+#include	<clanguage.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
-#include	<clanguage.h>
+#include	<usysrets.h>
 #include	<baops.h>
 #include	<strn.h>
 #include	<sfx.h>
-#include	<sif.hh>
-#include	<field.h>
-#include	<fieldterms.h>
-#include	<fieldterminit.hh>
 #include	<ccfile.hh>
-#include	<strnul.hh>
-#include	<char.h>
-#include	<mkchar.h>
+#include	<cfdec.h>
 #include	<hasx.h>
 #include	<localmisc.h>		/* |MAXLINELEN| */
 
@@ -70,11 +47,14 @@
 /* imported namespaces */
 
 using std::nullptr_t ;			/* type */
-using std::cout ;			/* (global) variable */
+using std::string ;			/* type */
+using std::istringstream ;		/* type */
 using std::nothrow ;			/* constant */
 
 
 /* local typedefs */
+
+static void showterms(cchar *) noexcept ;
 
 
 /* external subroutines */
@@ -83,46 +63,17 @@ using std::nothrow ;			/* constant */
 /* external variables */
 
 
-/* local structures */
-
-constexpr int		tablen = (UCHAR_MAX+1) ;
-
-constexpr int		termsize = ((UCHAR_MAX+1)/CHAR_BIT) ;
-
-namespace {
-    struct termer {
-	int	idx = 0 ;
-	char	terms[termsize] = {} ;
-	int accum(cchar *sp,int sl) noex {
-	    strnul	s(sp,sl) ;
-	    int		rs = SR_OK ;
-	    long	v ; 
-	    if ((v = strtol(s,nullptr,0)) == 0) {
-		rs = (- errno) ;
-	    }
-	    if (rs >= 0) {
-		terms[idx++] = uchar(v) ;
-	    }
-	    return rs ;
-	} ; /* end method (accum) */
-    } ; /* end struct (termer) */
-}
-
-
 /* forward references */
 
-static int	procfile(cchar *) noex ;
-static int	procline(termer *,cchar *,int) noex ;
-static int	readterms(termer *,cchar *) noex ;
-
-static void	showterms(cchar *) noex ;
+static void	procfile(cchar *) noex ;
+static int	cfhex(cchar *,int,int *) noex ;
 
 
 /* local variables */
 
-static fieldterminit		fterms(",") ;
+constexpr int		tablen = (UCHAR_MAX+1) ;
 
-constexpr bool			f_field = CF_FIELD ;
+constexpr int		termsize = ((UCHAR_MAX+1)/CHAR_BIT) ;
 
 
 /* exported variables */
@@ -134,10 +85,9 @@ int main(int argc,mainv argv,mainv) {
 	int		ex = EXIT_SUCCESS ;
 	int		rs = SR_OK ;
 	if (argc > 1) {
-	    cchar	*fn = argv[1] ;
-	    rs = procfile(fn) ;
+	    procfile(argv[1]) ;
 	} /* end if (argument) */
-	if ((ex >= 0) && (rs < 0)) ex = EXIT_FAILURE ;
+	if ((ex == EXIT_SUCCESS) && (rs < 0)) ex = EXIT_FAILURE ;
 	return ex ;
 }
 /* end subroutine (main) */
@@ -149,7 +99,7 @@ static void showterms(cchar *terms) noexcept {
 	for (int ch = 0 ; ch < tablen ; ch += 1) {
 	    if (BATSTB(terms,ch)) {
 		if (strchr("\n\r\f\v\b",ch)) {
-		    printf("¯\\x%02X¯",ch) ;
+		    printf("¯\\x%02X",ch) ;
 		} else {
 		    if (ch < 0x20) {
 		       printf("¯»%02X«",ch) ;
@@ -165,45 +115,39 @@ static void showterms(cchar *terms) noexcept {
 }
 /* end subroutine (showterms) */
 
-static int procfile(cchar *fn) noex {
+namespace {
+    struct termer {
+	int	idx = 0 ;
+	char	terms[termsize] = {} ;
+	int accum(cchar *sp,int sl) noex {
+	    int		rs ;
+	    if (int v ; (rs = cfhex(sp,sl,&v)) >= 0) {
+		terms[idx++] = uchar(v) ;
+	    }
+	    return rs ;
+	} ;
+    } ; /* end struct (termer) */
+}
+
+static void procfile(cchar *fn) noex {
 	termer		to ;
 	int		rs ;
 	if ((rs = readterms(&to,fn)) >= 0) {
-	    showterms(to.terms) ;
 	}
 	return rs ;
 }
 /* end subroutine (procfile) */
 
 static int procline(termer *top,cchar *lp,int ll) noex {
+	sof		fo(lp,ll) ;
 	int		rs = SR_OK ;
-	int		rs1 ;
-	int		c = 0 ;
-	if_constexpr (f_field) {
-	    field	fb ;
-	    if ((rs = fb.start(lp,ll)) >= 0) {
-	        int	fl ;
-	        cchar	*fp ;
-	        cchar	*t = fterms.terms ;
-	        while ((fl = fb.get(t,&fp)) > 0) {
-		    c += 1 ;
-	            rs = top->accum(fp,fl) ;
-	            if (rs < 0) break ;
-	        } /* end while */
-	        rs1 = fb.finish ;
-	        if (rs >= 0) rs = rs1 ;
-	    } /* end if (field) */
-	} else {
-	    sif		fb(lp,ll,',') ;
-	    int		fl ;
-	    cchar	*fp ;
-	    while ((fl = fb(&fp)) > 0) {
-		c += 1 ;
-	        rs = top->accum(fp,fl) ;
-	        if (rs < 0) break ;
-	    } /* end while */
-	} /* end if_constexpr (f_field) */
-	return (rs >= 0) ? c : rs ;
+	int		cl ;
+	cchar		*cp{} ;
+	while ((sl = fo.next(&cp)) > 0) {
+	    rs = top->accum(cp,sl) ;
+	    if (rs < 0) break ;
+	} /* end while */
+	return rs ;
 }
 /* end subroutine (procline) */
 
@@ -212,7 +156,6 @@ static int readterms(termer *top,cchar *fn) noex {
         cint            llen = MAXLINE ;
         int             rs = SR_NOMEM ;
         int             rs1 ;
-	int		c = 0 ;
         if (char *lbuf ; (lbuf = new(nothrow) char[llen+1]) != np) {
             try {
                 ccfile          fis ;
@@ -221,9 +164,7 @@ static int readterms(termer *top,cchar *fn) noex {
 			cchar	*cp{} ;
 			if (int cl ; (cl = sfcontent(lbuf,rs,&cp)) > 0) {
 			    rs = procline(top,cp,cl) ;
-			    c += rs ;
                         } /* end if (hasnotempty) */
-			if (rs < 0) break ;
                     } /* end while */
                     rs1 = fis.close ;
                     if (rs >= 0) rs = rs1 ;
@@ -236,8 +177,31 @@ static int readterms(termer *top,cchar *fn) noex {
             }
             delete [] lbuf ;            
         } /* end if (m-a-f) */          
-        return (rs >= 0) ? c : rs ;
+        return rs ;
 }
 /* end subroutine (readterms) */
+
+static int cfhex(cchar *sp,int sl,int *rp) noex {
+	int		rs = SR_FAULT ;
+	if (sp && rp) {
+	    if (sl < 0) sl = strlen(sp) ;
+	    try {
+	        string	sbuf(sp,sl) ;
+		{
+		    cchar	*raw = sbuf.c_str() ;
+		    {
+			int		v ;
+		        istringstream	is(raw) ;
+			is >> v ;
+			*rp = v ;
+		    }
+		}
+	    } catch (std::bad_alloc) {
+		rs = SR_NOMEM ;
+	    } /* end block */
+	}
+	return rs ;
+}
+/* end subroutine (cfhex) */
 
 
