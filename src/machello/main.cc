@@ -1,4 +1,4 @@
-/* main SUPPPORT (machell) */
+/* main SUPPPORT (machello) */
 /* lang=C++11 */
 
 
@@ -13,9 +13,8 @@ typedef const char	cchar ;
 using namespace std ;
 
 /* ARGSUSED */
-int main(int argc,char **aargv,char **aenvv) {
+int main(int argc,char **aargv,char **) {
 	cchar	**argv = (cchar **) aargv ;
-	cchar	**envv = (cchar **) aenvv ;
 	cout << "Hello world!\n" ;
 	if (argc) {
 	    int	ai ;
