@@ -170,6 +170,7 @@ enum progmodes {
 	progmode_symfile,
 	progmode_hostid,
 	progmode_lax,
+	progmode_systime,
 	progmode_unixtime,
 	progmode_overlast
 } ;
@@ -188,6 +189,7 @@ static constexpr cpcchar	prognames[] = {
 	"symfile",
 	"hostid",
 	"lax",
+	"systime",
 	"unixtime",
 	nullptr
 } ;
@@ -248,6 +250,7 @@ int main(int argc,mainv argv,mainv envv) noex {
 	    case progmode_lax:
 		rs = pi.lax() ;
 		break ;
+	    case progmode_systime:
 	    case progmode_unixtime:
 		{
 		    const time_t	t = time(nullptr) ;
