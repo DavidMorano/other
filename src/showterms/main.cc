@@ -120,9 +120,9 @@ static void	showterms(cchar *) noex ;
 
 /* local variables */
 
-static fieldterminit		fterms(",") ;
+static fieldterminit	fterms(",") ;
 
-constexpr bool			f_field = CF_FIELD ;
+constexpr bool		f_field = CF_FIELD ;
 
 
 /* exported variables */
@@ -137,7 +137,9 @@ int main(int argc,mainv argv,mainv) {
 	    cchar	*fn = argv[1] ;
 	    rs = procfile(fn) ;
 	} /* end if (argument) */
-	if ((ex >= 0) && (rs < 0)) ex = EXIT_FAILURE ;
+	if ((ex >= 0) && (rs < 0)) {
+	    ex = EXIT_FAILURE ;
+	}
 	return ex ;
 }
 /* end subroutine (main) */
@@ -166,9 +168,8 @@ static void showterms(cchar *terms) noexcept {
 /* end subroutine (showterms) */
 
 static int procfile(cchar *fn) noex {
-	termer		to ;
 	int		rs ;
-	if ((rs = readterms(&to,fn)) >= 0) {
+	if (termer to ; (rs = readterms(&to,fn)) >= 0) {
 	    showterms(to.terms) ;
 	}
 	return rs ;
@@ -180,8 +181,7 @@ static int procline(termer *top,cchar *lp,int ll) noex {
 	int		rs1 ;
 	int		c = 0 ;
 	if_constexpr (f_field) {
-	    field	fb ;
-	    if ((rs = fb.start(lp,ll)) >= 0) {
+	    if (field fb ; (rs = fb.start(lp,ll)) >= 0) {
 	        int	fl ;
 	        cchar	*fp ;
 	        cchar	*t = fterms.terms ;
@@ -215,8 +215,7 @@ static int readterms(termer *top,cchar *fn) noex {
 	int		c = 0 ;
         if (char *lbuf ; (lbuf = new(nothrow) char[llen+1]) != np) {
             try {
-                ccfile          fis ;
-                if ((rs = fis.open(fn)) >= 0) {
+                if (ccfile fis ; (rs = fis.open(fn)) >= 0) {
                     while ((rs = fis.readln(lbuf,llen)) > 0) {
 			cchar	*cp{} ;
 			if (int cl ; (cl = sfcontent(lbuf,rs,&cp)) > 0) {
