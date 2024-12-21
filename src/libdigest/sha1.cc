@@ -1,4 +1,5 @@
 /* sha1 SUPPORT */
+/* encoding=ISO8859-1 */
 /* lang=C++20 */
 
 /* NIST Secure Hash Algorithm (SHA) */
@@ -15,9 +16,15 @@
 
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<sys/types.h>
+#include	<cstddef>		/* |nullptr_t| */
+#include	<cstdlib>
 #include	<cstring>
-#include	<utypedefs.h>
 #include	<clanguage.h>
+#include	<utypedefs.h>
+#include	<utypealiases.h>
+#include	<usysdefs.h>
+#include	<usysrets.h>
+#include	<localmisc.h>
 
 #include	"sha1.h"
 
