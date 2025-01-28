@@ -1,4 +1,5 @@
 /* readln HEADER */
+/* encoding=ISO8859-1 */
 /* lang=C++20 */
 
 /* read characters from Standard-Input (STDIN) */
@@ -21,8 +22,11 @@
 
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<istream>
-#include	<utypedefs.h>
 #include	<clanguage.h>
+#include	<utypedefs.h>
+#include	<utypealiases.h>
+#include	<usysdefs.h>
+#include	<usysrets.h>
 
 
 extern int readln(std::istream *,char *,int,int = eol) noex ;
