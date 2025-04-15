@@ -1,4 +1,5 @@
 /* main SUPPORT (showterms) */
+/* encoding=ISO8859-1 */
 /* lang=C++20 */
 
 /* show (display) the terminator block characters */
