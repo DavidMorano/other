@@ -1,7 +1,8 @@
 /* sif HEADER */
+/* encoding=ISO8859-1 */
 /* lang=C++20 */
 
-/* string-interate-find object */
+/* String-Interate-Find (SIF) object */
 /* version %I% last-modified %G% */
 
 
@@ -20,10 +21,13 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
+#include	<cstddef>		/* |nullptr_t| */
+#include	<cstdlib>
 #include	<cstring>		/* |strlen(3c)| */
 #include	<clanguage.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
+#include	<usysdefs.h>
 #include	<usysrets.h>
 
 
@@ -71,7 +75,7 @@ struct sif {
 	int nextbrk(cchar **) noex ;
 	int chr(cchar **) noex ;
 	int brk(cchar **) noex ;
-	int operator () (cchar **rpp) noex ;
+	int operator () (cchar **) noex ;
 } ; /* end struct (sif) */
 
 

@@ -1,7 +1,8 @@
 /* sif SUPPORT */
+/* encoding=ISO8859-1 */
 /* lang=C++20 */
 
-/* string-interate-find object */
+/* String-Interate-Find (SIF) object */
 /* version %I% last-modified %G% */
 
 
@@ -41,16 +42,18 @@
 	Returns:
 	>0		got a field
 	==0		did not get a field, or got a zero-length field
-	<0		fif not get a field delimited by specified delimiters
+	<0		did not get a field delimited by specified delimiters
 
 *******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<cstddef>		/* |nullptr_t| */
+#include	<cstdlib>
 #include	<cstring>		/* |strlen(3c)| */
 #include	<clanguage.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
+#include	<usysdefs.h>
 #include	<usysrets.h>
 #include	<strn.h>
 #include	<sfx.h>
@@ -184,6 +187,11 @@ int sif::chr(cchar **rpp) noex {
 		rl = (tp - sp) ;
 		sl -= ((tp + 1) - sp) ;
 		sp = (tp + 1) ;
+	    } else {
+		rp = sp ;
+		rl = sl ;
+		sp += sl ;
+		sl = 0 ;
 	    }
 	    *rpp = (rl > 0) ? rp : nullptr ;
 	} /* end if (non-null) */
@@ -203,6 +211,11 @@ int sif::brk(cchar **rpp) noex {
 		rl = (tp - sp) ;
 		sl -= ((tp + 1) - sp) ;
 		sp = (tp + 1) ;
+	    } else {
+		rp = sp ;
+		rl = sl ;
+		sp += sl ;
+		sl = 0 ;
 	    }
 	    *rpp = (rl > 0) ? rp : nullptr ;
 	} /* end if (non-null) */
