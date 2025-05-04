@@ -1,4 +1,5 @@
 /* main SUPPORT (haveprogram) */
+/* encoding=ISO8859-1 */
 /* lang=C++20 */
 
 /* determine if a given name is an executable program */
@@ -8,7 +9,7 @@
 /* revision history:
 
 	= 1989-03-01, David A.D. Morano
-	This subroutine was originally written.
+	This code was originally written.
 
 */
 
