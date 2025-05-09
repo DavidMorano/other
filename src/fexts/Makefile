@@ -15,7 +15,6 @@ CRTDIR		?= $(CGS_CRTDIR)
 VALDIR		?= $(CGS_VALDIR)
 RUNDIR		?= $(CGS_RUNDIR)
 
-
 CPP		?= cpp
 CC		?= gcc
 CXX		?= gxx
@@ -35,6 +34,8 @@ LINT		?= lint
 DEFS +=
 
 INCS += 
+
+MODS +=
 
 LIBS += -lmacuser -lu
 
@@ -59,12 +60,13 @@ LDFLAGS		?= $(MAKELDFLAGS)
 OBJ_CONTERM= main.o
 
 
-.SUFFIXES:		.hh .ii
+.SUFFIXES:		.hh .ii .ccm
 
 
 default:		$(T).x
 
 all:			$(ALL)
+
 
 .c.i:
 	$(CPP) $(CPPFLAGS) $< > $(*).i
@@ -83,6 +85,9 @@ all:			$(ALL)
 
 .cc.o:
 	$(COMPILE.cc) $<
+
+.ccm.o:
+	makemodule $(*)
 
 
 $(T).x:			$(OBJ_CONTERM)
