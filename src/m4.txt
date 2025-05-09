@@ -1,2 +1,1 @@
-.SUFFIXES:		.hh .ii
-
+.SUFFIXES:		.hh .ii .ccm
