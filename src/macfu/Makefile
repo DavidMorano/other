@@ -35,6 +35,8 @@ DEFS=
 
 INCS=
 
+MODS +=
+
 LIBS= -lmacuser -lu
 
 
@@ -58,12 +60,13 @@ LDFLAGS		?= $(MAKELDFLAGS)
 OBJ_MACFU= main.o fonce.o
 
 
-.SUFFIXES:		.hh .ii
+.SUFFIXES:		.hh .ii .ccm
 
 
 default:		$(T).x
 
 all:			$(ALL)
+
 
 .c.i:
 	$(CPP) $(CPPFLAGS) $< > $(*).i
@@ -82,6 +85,9 @@ all:			$(ALL)
 
 .cc.o:
 	$(COMPILE.cc) $<
+
+.ccm.o:
+	makemodule $(*)
 
 
 $(T).x:			$(OBJ_MACFU)
