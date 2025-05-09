@@ -1,4 +1,5 @@
 /* main SUPPORT (dups) */
+/* encoding=ISO8859-1 */
 /* lang=C++20 */
 
 /* print duplicate (by name) files */
@@ -357,9 +358,8 @@ int proginfo::readin() noex {
 	int		rs ;
 	if ((rs = maxpathlen) >= 0) {
 	    cint	plen = rs ;
-	    char	*pbuf ;
 	    rs = SR_NOMEM ;
-	    if ((pbuf = new(nothrow) char[plen+1]) != nullptr) {
+	    if (char *pbuf ; (pbuf = new(nothrow) char[plen+1]) != nullptr) {
 	        while ((rs = readln(isp,pbuf,plen)) > 0) {
 		    int		pl = rs ;
 		    if ((pl > 0) && (pbuf[pl - 1] == eol)) pl -= 1 ;
@@ -376,10 +376,9 @@ int proginfo::readin() noex {
 /* end method (proginfo::readin) */
 
 int proginfo::filecandidate(cchar *sp,int sl) noex {
-	USTAT		sb ;
 	strnul		s(sp,sl) ;
 	int		rs ;
-	if ((rs = u_stat(s,&sb)) >= 0) {
+	if (USTAT sb ; (rs = u_stat(s,&sb)) >= 0) {
 	    csize	fsz = size_t(sb.st_size) ;
 	    if (S_ISREG(sb.st_mode)) {
 	        const dev_t	d = sb.st_dev ;
