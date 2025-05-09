@@ -1,4 +1,5 @@
 /* fonce HEADER */
+/* encoding=ISO8859-1 */
 /* lang=C++20 */
 
 /* implement a map container of blocks (of a given structure) */
