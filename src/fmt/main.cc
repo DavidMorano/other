@@ -1,4 +1,6 @@
 /* main (FMT) */
+/* encoding=ISO8859-1 */
+/* lang=C++20 (conformance reviewed) */
 
 #pragma ident "@(#)fmt.c 1.18	97/05/05 SMI" /* from UCB 2.1 07/01/81 */
 
@@ -99,7 +101,7 @@ static void process_hdrbuf(void);
 
 int main(int argc,cchar *argv[],cchar *envv[])
 {
-	register FILE *fi;
+	FILE *fi;
 	int nofile;
 	const char *cp;
 	char sobuf[BUFSIZ];
@@ -157,8 +159,8 @@ single:
 int fmt(FILE *fi)
 {
 	wchar_t linebuf[BUFSIZ], canonb[BUFSIZ];
-	register wchar_t *cp, *cp2;
-	register int col;
+	wchar_t *cp, *cp2;
+	int col;
 	wchar_t	c;
 	char	cbuf[BUFSIZ];	/* stores wchar_t string as char string */
 
@@ -290,9 +292,9 @@ int fmt(FILE *fi)
 
 prefix(wchar_t line[])
 {
-	register wchar_t *cp;
-	register int np;
-	register int i;
+	wchar_t *cp;
+	int np;
+	int i;
 	int nosplit = 0;	/* flag set if line should not be split */
 
 	if (line[0] == L'\0') {
@@ -378,7 +380,7 @@ prefix(wchar_t line[])
 
 csplit(wchar_t line[])
 {
-	register wchar_t *cp, *cp2;
+	wchar_t *cp, *cp2;
 	wchar_t word[BUFSIZ];
 	static const wchar_t *srchlist = (const wchar_t *) L".:!?";
 
@@ -418,7 +420,7 @@ csplit(wchar_t line[])
 
 msplit(wchar_t line[])
 {
-	register wchar_t *cp, *cp2, prev;
+	wchar_t *cp, *cp2, prev;
 	wchar_t word[BUFSIZ];
 	static const wchar_t *srchlist = (const wchar_t *) L".:!?";
 
@@ -483,8 +485,8 @@ msplit(wchar_t line[])
 
 pack(wchar_t word[])
 {
-	register wchar_t *cp;
-	register int s, t;
+	wchar_t *cp;
+	int s, t;
 
 	if (outp == NOSTR)
 		leadin();
@@ -528,8 +530,8 @@ oflush(void)
 
 tabulate(wchar_t line[])
 {
-	register wchar_t *cp, *cp2;
-	register int b, t;
+	wchar_t *cp, *cp2;
+	int b, t;
 
 
 	/* Toss trailing blanks in the output line */
@@ -564,9 +566,9 @@ tabulate(wchar_t line[])
 
 leadin()
 {
-	register int b;
-	register wchar_t *cp;
-	register int l;
+	int b;
+	wchar_t *cp;
+	int l;
 
 	switch (crown_state) {
 	case c_head:
@@ -616,9 +618,7 @@ ispref(wchar_t *s1, wchar_t *s2)
  * Set an input option
  */
 
-setopt(cp)
-register char *cp;
-{
+setopt(char *cp) {
 	static int ws = 0;
 
 	if (*cp == '-') {
