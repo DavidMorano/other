@@ -1,5 +1,8 @@
-/* defs */
+/* defs HEADER */
+/* encoding=ISO8859-1 */
+/* lang=C20 */
 
+/* definitions */
 /* version %I% last-modified %G% */
 
 
@@ -13,7 +16,7 @@
 /* Copyright © 2000 David A­D­ Morano.  All rights reserved. */
 
 #ifndef	DEFS_INCLUDE
-#define	DEFS_INCLUDE	1
+#define	DEFS_INCLUDE
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
