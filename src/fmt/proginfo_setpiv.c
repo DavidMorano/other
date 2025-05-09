@@ -1,19 +1,17 @@
 /* proginfo_setpiv */
+/* encoding=ISO8859-1 */
+/* lang=C++20 (conformance reviewed) */
 
 /* utility for KSH built-in commands */
 /* version %I% last-modified %G% */
 
-
 #define	CF_DEBUGS	0		/* compile-time debugging */
 #define	CF_DEBUG	0		/* switchable at invocation */
-
 
 /* revision history:
 
 	= 1998-03-01, David A­D­ Morano
-
 	This subroutine was originally written.
-
 
 */
 
@@ -21,11 +19,11 @@
 
 /*******************************************************************************
 
-        This subroutine is used for acquiring (setting) the program-root for KSH
-        built-in commands.
+  	Description:
+	This subroutine is used for acquiring (setting) the
+	program-root for KSH built-in commands.
 
 	Synopsis:
-
 	int proginfo_setpiv(pip,pr,vars)
 	PROGINFO	*pip ;
 	cchar		pr[] ;
