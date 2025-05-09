@@ -1,4 +1,5 @@
 /* main SUPPORT (charset) */
+/* encoding=ISO8859-1 */
 /* lang=C++20 */
 
 /* Character-Set */
