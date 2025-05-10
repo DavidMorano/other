@@ -97,7 +97,7 @@ __FBSDID("$FreeBSD: src/usr.bin/makewhatis/makewhatis.c,v 1.9 2002/09/04 23:29:0
 #define	SBUF			struct sbuf
 
 #ifndef	STAT
-#define	STAT			struct stat
+#define	STAT			USTAT
 #endif
 
 #ifndef	DIRENT
@@ -1018,7 +1018,7 @@ static int select_sections(DIRENT *entry) noexcept {
 static void process_mandir(char *dir_name) noexcept {
 	nullptr_t	np{} ;
 	int dir_fd;
-	/* struct stat st; */			/* <- was not used! */
+	/* USTAT st; */			/* <- was not used! */
 
 	if (already_visited(dir_name))
 		return;
