@@ -552,7 +552,7 @@ struct proginfo	*pip ;
 char		namespec[] ;
 ulong		trunclen ;
 {
-	struct stat64	sb ;
+	USTAT	sb ;
 
 	ulong	flen ;
 
