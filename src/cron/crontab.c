@@ -128,7 +128,7 @@ main(int argc, char **argv)
 	int	errflg	= 0;
 	char *pp;
 	FILE *fp, *tmpfp;
-	struct stat stbuf;
+	USTAT stbuf;
 	struct passwd *pwp;
 	time_t omodtime;
 	char *editor;
