@@ -224,7 +224,7 @@ countfiles(uid_t *uidlist, int nuids)
 	int numfiles = 0;			/* number of files owned by a */
 						/* certain person(s) */
 	uid_t *ptr;			/* scratch pointer */
-	struct stat stbuf;			/* buffer for file stats */
+	USTAT stbuf;			/* buffer for file stats */
 
 
 	/*
@@ -263,7 +263,7 @@ printqueue(uid_t *uidlist, int nuids)
 	int entryfound;				/* found file owned by users */
 	char *getname();
 	uid_t *ptr;			/* scratch pointer */
-	struct stat stbuf;			/* buffer for file stats */
+	USTAT stbuf;			/* buffer for file stats */
 	char curqueue;				/* queue of current job */
 	char lastqueue;				/* queue of previous job */
 
@@ -461,7 +461,7 @@ creation(struct dirent **d1, struct dirent **d2)
 {
 	char *p1, *p2;
 	int i;
-	struct stat stbuf1, stbuf2;
+	USTAT stbuf1, stbuf2;
 	int seq1, seq2;
 
 	if ((p1 = strchr((*d1)->d_name, '.')) == NULL)
