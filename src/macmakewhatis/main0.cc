@@ -224,7 +224,7 @@ static PAGE_INFO *new_page_info(char *dir,DIRENT *dirent) noex {
 	PAGE_INFO	*info;
 	int basename_length;
 	char *suffix;
-	struct stat st;
+	USTAT st;
 
 	info = (PAGE_INFO *) malloc(sizeof(PAGE_INFO)) ;
 	if (info == nullptr)
@@ -390,7 +390,7 @@ static void trap_signal(int sig __unused) noex {
 static FILE *open_output(char *name, int dir_fd,cchar *rel_name) noex {
 	FILE *output;
 	int output_fd;
-	struct stat statbuf;
+	USTAT statbuf;
 
 	whatis_lines = sl_init();
 	if (append) {
@@ -502,7 +502,7 @@ static void finish_whatis(FILE *output, char *mandir, int mandir_fd) noexcept {
  * Tests to see if the given directory has already been visited.
  */
 static int already_visited(char *dir) noexcept {
-	struct stat st;
+	USTAT st;
 	struct visited_dir *visit;
 
 	if (stat(dir, &st) < 0) {
@@ -988,7 +988,7 @@ static void process_mandir(char *dir_name) noexcept {
 	DIR *dir;
 	FILE *fp = nullptr;
 	DIRENT	*entry;
-	/* struct stat st; */			/* <- was not used! */
+	/* USTAT st; */			/* <- was not used! */
 
 	if (already_visited(dir_name))
 		return;
