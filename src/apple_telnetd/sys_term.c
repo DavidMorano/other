@@ -451,7 +451,7 @@ getpty(int *ptynum __unused, int *slavepty)
 	p2 = &line[9];
 
 	for (cp = "pqrsPQRS"; *cp; cp++) {
-		struct stat stb;
+		USTAT stb;
 
 		*p1 = *cp;
 		*p2 = '0';
