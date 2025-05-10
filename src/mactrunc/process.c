@@ -81,7 +81,7 @@ struct proginfo	*pip ;
 char		namespec[] ;
 ULONG		trunclen ;
 {
-	struct stat64	sb ;
+	USTAT	sb ;
 
 	ULONG	flen ;
 
