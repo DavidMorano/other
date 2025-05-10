@@ -64,8 +64,8 @@ static void atperror2(char *msg, char *name);
 static void aterror(char *msg);
 static void powner(char *file);
 
-int	getjoblist(struct dirent ***, struct stat ***, int (*)());
-int	removentry(char *, struct stat *, uid_t);
+int	getjoblist(struct dirent ***, USTAT ***, int (*)());
+int	removentry(char *, USTAT *, uid_t);
 
 int
 main(int argc, char **argv)
@@ -76,7 +76,7 @@ main(int argc, char **argv)
 	int jobexists;			/* does a requested job exist? */
 	char *pp;
 	struct dirent **namelist;	/* names of jobs in spooling area */
-	struct stat **statlist;
+	USTAT **statlist;
 	struct passwd *pwd;
 
 	/*
@@ -245,7 +245,7 @@ usage(void)
  * it is removed.  Return TRUE if file removed, else FALSE.
  */
 int
-removentry(char *filename, struct stat *statptr, uid_t user)
+removentry(char *filename, USTAT *statptr, uid_t user)
 {
 	struct passwd *pwd;
 	char *pp;
@@ -311,7 +311,7 @@ removentry(char *filename, struct stat *statptr, uid_t user)
 static void
 powner(char *file)
 {
-	struct stat statb;
+	USTAT statb;
 	char *getname();
 
 	if (stat(file, &statb) < 0) {
@@ -326,14 +326,14 @@ powner(char *file)
 
 
 int
-getjoblist(struct dirent ***namelistp, struct stat ***statlistp,
+getjoblist(struct dirent ***namelistp, USTAT ***statlistp,
     int (*sortfunc)())
 {
 	int numjobs;
 	struct dirent **namelist;
 	int i;
-	struct stat *statptr;	/* pointer to file stat structure */
-	struct stat **statlist;
+	USTAT *statptr;	/* pointer to file stat structure */
+	USTAT **statlist;
 	extern int filewanted();	/* should a file be listed in queue? */
 	if (chdir(ATDIR) < 0)
 		atabortperror(CANTCD);
@@ -345,7 +345,7 @@ getjoblist(struct dirent ***namelistp, struct stat ***statlistp,
 		atabortperror(NOREADDIR);
 
 	if ((statlist =
-	    (struct stat **)malloc(numjobs * sizeof (struct stat ***)))
+	    (USTAT **)malloc(numjobs * sizeof (USTAT ***)))
 	    == NULL)
 		atabort("Out of memory");
 
@@ -356,7 +356,7 @@ getjoblist(struct dirent ***namelistp, struct stat ***statlistp,
 	 * the spooling area.
 	 */
 	for (i = 0; i < numjobs; ++i) {
-		statptr = (struct stat *)malloc(sizeof (struct stat));
+		statptr = (USTAT *)malloc(sizeof (USTAT));
 		if (statptr == NULL)
 			atabort("Out of memory");
 		if (stat(namelist[i]->d_name, statptr) < 0) {
