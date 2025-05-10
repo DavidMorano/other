@@ -160,7 +160,7 @@ new_page_info(char *dir, struct dirent *dirent)
 	struct page_info *info;
 	int basename_length;
 	char *suffix;
-	struct stat st;
+	USTAT st;
 
 	info = (struct page_info *) malloc(sizeof(struct page_info));
 	if (info == NULL)
@@ -340,7 +340,7 @@ open_output(char *name, int dir_fd, char *rel_name)
 {
 	FILE *output;
 	int output_fd;
-	struct stat statbuf;
+	USTAT statbuf;
 
 	whatis_lines = sl_init();
 	if (append) {
@@ -458,7 +458,7 @@ finish_whatis(FILE *output, char *mandir, int mandir_fd)
 static int
 already_visited(char *dir)
 {
-	struct stat st;
+	USTAT st;
 	struct visited_dir *visit;
 
 	if (stat(dir, &st) < 0) {
@@ -951,7 +951,7 @@ process_mandir(char *dir_name)
 	DIR *dir;
 	FILE *fp = NULL;
 	struct dirent *entry;
-	struct stat st;
+	USTAT st;
 
 	if (already_visited(dir_name))
 		return;
