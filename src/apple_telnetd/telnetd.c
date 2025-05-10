@@ -806,7 +806,7 @@ telnet(int f, int p, char *host)
 	char *IF = NULL;
 	int if_fd = -1;
 	char *if_buf;
-	struct stat statbuf;
+	USTAT statbuf;
 #endif
 	int nfd;
 
