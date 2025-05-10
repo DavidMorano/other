@@ -54,7 +54,7 @@
 
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<sys/types.h>
-#include	<sys/stat.h>		/* <- for |struct stat| */
+#include	<sys/stat.h>		/* <- for |USTAT| */
 #include	<unistd.h>		/* <- for |ttyname_r(3c)| */
 #include	<utmpx.h>		/* <- for |getutxline(3c)| */
 #include	<pwd.h>			/* <- for |getpwnam(3c)| */
@@ -101,7 +101,7 @@
 #endif
 
 #ifndef	STAT
-#define	STAT		struct stat
+#define	STAT		USTAT
 #endif
 
 #ifndef	TM
