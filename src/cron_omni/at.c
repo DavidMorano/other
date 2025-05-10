@@ -740,7 +740,7 @@ remove_jobs(int argc, char **argv, char *login)
 {
 	int		i, r;
 	int		error = 0;
-	struct stat	buf;
+	USTAT	buf;
 	struct passwd *pw;
 
 	pw = getpwuid(user);
@@ -792,7 +792,7 @@ list_jobs(int argc, char **argv, int qflag, int queue)
 	char		*patdir, *atdir, *ptr;
 	char		timebuf[80];
 	time_t		t;
-	struct stat	buf, st1, st2;
+	USTAT	buf, st1, st2;
 	struct dirent	*dentry;
 	struct passwd	*pw;
 	unsigned int	atdirlen;
