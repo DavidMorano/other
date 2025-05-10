@@ -20,7 +20,7 @@
 *******************************************************************************/
 
 #include	<sys/types.h>
-#include	<sys/stat.h>		/* <- for |struct stat| */
+#include	<sys/stat.h>		/* <- for |USTAT| */
 #include	<unistd.h>		/* <- for |ttyname_r(3c)| */
 #include	<utmpx.h>		/* <- for |getutxline(3c)| */
 #include	<cstdlib>		/* <- for |EXIT_SUCCESS| */
