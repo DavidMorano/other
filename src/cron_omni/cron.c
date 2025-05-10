@@ -430,7 +430,7 @@ main(int argc, char *argv[])
 	time_t newtime, lastmtime = 0L;
 	struct usr *u;
 	struct event *e, *e2, *eprev;
-	struct stat buf;
+	USTAT buf;
 	pid_t rfork;
 	struct sigaction act;
 
@@ -800,7 +800,7 @@ read_dirs(int first)
 static int
 valid_entry(char *name, int type)
 {
-	struct stat	buf;
+	USTAT	buf;
 
 	if (strcmp(name, ".") == 0 ||
 	    strcmp(name, "..") == 0)
@@ -2154,7 +2154,7 @@ ex(struct event *e)
 	FILE *atcmdfp;
 	char mailvar[4];
 	char *at_cmdfile = NULL;
-	struct stat buf;
+	USTAT buf;
 	struct queue *qp;
 	struct runinfo *rp;
 	struct project proj, *pproj = NULL;
