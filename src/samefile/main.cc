@@ -38,7 +38,7 @@ using namespace		std ;
 
 typedef const char *const *	mainv ;
 typedef const char		cchar ;
-typedef struct stat		statblock ;
+typedef USTAT		statblock ;
 
 /* exported subroutines */
 
