@@ -49,12 +49,13 @@
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
-#include	<cstring>		/* |strlen(3c)| */
+#include	<cstring>		/* |strchr(3c)| */
 #include	<clanguage.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
 #include	<usysdefs.h>
 #include	<usysrets.h>
+#include	<libutil.hh>		/* |xstrlen(3u)| */
 #include	<strn.h>
 #include	<sfx.h>
 #include	<char.h>
@@ -98,9 +99,9 @@ int sif::operator () (cchar **rpp) noex {
 	    } else if (sch) {
 		rl = nextchr(rpp) ;
 	    } else {
-		if (sl < 0) sl = strlen(sp) ;
+		if (sl < 0) sl = xstrlen(sp) ;
 		if ((rl = sfnext(sp,sl,&rp)) > 0) {
-		    sl -= ((rp + rl) - sp) ;
+		    sl -= intconv((rp + rl) - sp) ;
 		    sp = (rp + rl) ;
 		}
 	        *rpp = rp ;
@@ -116,9 +117,9 @@ int sif::next(cchar **rpp) noex {
 	cchar		*rp = nullptr ;
 	if (sp && rpp) {
 	    rs = SR_OK ;
-	    if (sl < 0) sl = strlen(sp) ;
+	    if (sl < 0) sl = xstrlen(sp) ;
 	    if ((rl = sfnext(sp,sl,&rp)) > 0) {
-		sl -= ((rp + rl) - sp) ;
+		sl -= intconv((rp + rl) - sp) ;
 		sp = (rp + rl) ;
 	    }
 	    *rpp = rp ;
@@ -133,11 +134,12 @@ int sif::nextchr(cchar **rpp) noex {
 	cchar		*rp = nullptr ;
 	if (sp && rpp) {
 	    rs = SR_OK ;
-	    if (sl < 0) sl = strlen(sp) ;
+	    if (sl < 0) sl = xstrlen(sp) ;
 	    while ((sl > 0) && (rl <= 0)) {
 	        if (cchar *tp ; (tp = strnchr(sp,sl,sch)) != nullptr) {
-		    rl = sfshrink(sp,(tp-sp),&rp) ;
-		    sl -= ((tp + 1) - sp) ;
+		    cint tl = intconv(tp - sp) ;
+		    rl = sfshrink(sp,tl,&rp) ;
+		    sl -= intconv((tp + 1) - sp) ;
 		    sp = (tp + 1) ;
 		} else {
 		    rl = sfshrink(sp,sl,&rp) ;
@@ -157,10 +159,11 @@ int sif::nextbrk(cchar **rpp) noex {
 	cchar		*rp = nullptr ;
 	if (sp && sstr && rpp) {
 	    rs = SR_OK ;
-	    if (sl < 0) sl = strlen(sp) ;
+	    if (sl < 0) sl = xstrlen(sp) ;
 	    while ((sl > 0) && (rl <= 0)) {
 	        if (cchar *tp ; (tp = strnpbrk(sp,sl,sstr)) != nullptr) {
-		    rl = sfshrink(sp,(tp-sp),&rp) ;
+		    cint tl = intconv(tp - sp) ;
+		    rl = sfshrink(sp,tl,&rp) ;
 		    rp = sp ;
 		    sp = (tp + 1) ;
 		} else {
@@ -181,11 +184,11 @@ int sif::chr(cchar **rpp) noex {
 	cchar		*rp = nullptr ;
 	if (sp && rpp) {
 	    rs = SR_OK ;
-	    if (sl < 0) sl = strlen(sp) ;
+	    if (sl < 0) sl = xstrlen(sp) ;
 	    if (cchar *tp ; (tp = strnchr(sp,sl,sch)) != nullptr) {
 		rp = sp ;
-		rl = (tp - sp) ;
-		sl -= ((tp + 1) - sp) ;
+		rl = intconv(tp - sp) ;
+		sl -= intconv((tp + 1) - sp) ;
 		sp = (tp + 1) ;
 	    } else {
 		rp = sp ;
@@ -205,11 +208,11 @@ int sif::brk(cchar **rpp) noex {
 	cchar		*rp = nullptr ;
 	if (sp && sstr && rpp) {
 	    rs = SR_OK ;
-	    if (sl < 0) sl = strlen(sp) ;
+	    if (sl < 0) sl = xstrlen(sp) ;
 	    if (cchar *tp ; (tp = strnpbrk(sp,sl,sstr)) != nullptr) {
 		rp = sp ;
-		rl = (tp - sp) ;
-		sl -= ((tp + 1) - sp) ;
+		rl = intconv(tp - sp) ;
+		sl -= intconv((tp + 1) - sp) ;
 		sp = (tp + 1) ;
 	    } else {
 		rp = sp ;
