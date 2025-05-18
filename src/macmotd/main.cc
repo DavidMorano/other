@@ -1,4 +1,5 @@
 /* main SUPPORT (macmotd) */
+/* encoding=ISO8859-1 */
 /* lang=C++20 */
 
 /* small Message-Of-The-Day (MOTD) server for macOS */
@@ -50,18 +51,12 @@
 #include	<unordered_set>
 #include	<iostream>
 #include	<usystem.h>
-#include	<varnames.hh>
 #include	<strn.h>
 #include	<sfx.h>
-#include	<matstr.h>
+#include	<rmx.h>			/* |rmchr(3uc)| */
 #include	<strwcpy.h>
-#include	<strnul.hh>
 #include	<sncpyx.h>
-#include	<getourenv.h>
-#include	<mapblock.hh>
-#include	<readln.hh>
-#include	<ccfile.hh>
-#include	<rmx.h>
+#include	<matstr.h>
 #include	<isnot.h>
 #include	<mapex.h>
 #include	<exitcodes.h>
@@ -84,8 +79,8 @@ using std::unordered_set ;		/* type */
 using std::istream ;			/* type */
 using libu::uloadavgd ;			/* subroutine (libu) */
 using libu::ustrftime ;			/* subroutine (libu) */
-using libu::snuprintf ;			/* subroutine (libu) */
-using libu::snuloadavgd ;		/* subroutine (libu) */
+using libu::snprintf ;			/* subroutine (libu) */
+using libu::snloadavgd ;		/* subroutine (libu) */
 using libu::snwcpy ;			/* subroutine (libu) */
 using std::cin ;			/* variable */
 using std::cout ;			/* variable */
@@ -266,10 +261,9 @@ int proginfo::getpn(mainv names) noex {
 	if (argv) {
 	    rs = SR_NOMSG ;
 	    if ((argc > 0) && argv[0]) {
-	        int	bl ;
 		cchar	*arg0 = argv[0] ;
-	        cchar	*bp{} ;
-	        if ((bl = sfbasename(arg0,-1,&bp)) > 0) {
+	        cchar *bp ; 
+		if (int bl ; (bl = sfbasename(arg0,-1,&bp)) > 0) {
 		    int		pl = rmchr(bp,bl,'.') ;
 		    cchar	*pp = bp ;
 		    if (pl > 0) {
@@ -318,11 +312,11 @@ int proginfo::process() noex {
 	if ((rs = process_pmbegin()) >= 0) {
 	    ustime	ticur = tistart ;
 	    cauto lamb = [&] () noex {
-		int	rs = SR_OK ;
+		int	rsl = SR_OK ;
 	        if ((ticur - tistart) < INTRUN) {
-	    	    rs = procfile(ticur) ;
+	    	    rsl = procfile(ticur) ;
 		}
-		return rs ;
+		return rsl ;
 	    } ;
 	    while ((rs = lamb()) > 0) {
 		sleep(INTUPDATE) ;
@@ -364,10 +358,9 @@ int proginfo::procfile(time_t ti) noex {
 
 int proginfo::procline(time_t ti) noex {
 	constexpr cchar	sep[] = " - " ;
-	TM		ts ;
 	int		rs = SR_OK ;
 	int		wl = 0 ;
-	if (localtime_r(&ti,&ts) != nullptr) {
+	if (TM ts ; localtime_r(&ti,&ts) != nullptr) {
 	    if ((rs = procline_node(wl)) >= 0) {
 	        wl += rs ;
 	        if ((rs = procline_str(wl,sep)) >= 0) {
@@ -437,13 +430,12 @@ int proginfo::procline_date(int i,const tm *tsp) noex {
 /* end subroutine (proginfo::procline_date) */
 
 int proginfo::procline_la(int i) noex {
-	double		dla[nlas] ;
 	cint		bl = (llen - i) ;
 	int		rs ;
 	char		*bp = (lbuf + i) ;
-	if ((rs = uloadavgd(dla,nlas)) >= 0) {
+	if (double dla[nlas] ; (rs = uloadavgd(dla,nlas)) >= 0) {
 	    cint	prec = 1 ;
-	    if ((rs = snuloadavgd(bp,bl,prec,dla,nlas)) >= 0) {
+	    if ((rs = snloadavgd(bp,bl,prec,dla,nlas)) >= 0) {
 	        i += rs ;
 	    }
 	}
