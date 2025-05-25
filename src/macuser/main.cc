@@ -1,4 +1,5 @@
 /* main (userhome) */
+/* encoding=ISO8859-1 */
 /* lang=C++20 */
 
 /* generic front-end for SHELL built-ins */
@@ -91,7 +92,7 @@
 
 *******************************************************************************/
 
-#include	<envstandards.h>
+#include	<envstandards.h>	/* must be ordered fist to configure */
 #include	<sys/types.h>
 #include	<sys/param.h>
 #include	<unistd.h>		/* |getusershell(3c)| */
