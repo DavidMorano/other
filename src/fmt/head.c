@@ -47,7 +47,6 @@ char	*copyin() ;
 
 /* exported subroutines */
 
-
 /*
  * See if the passed line buffer is a mail header.
  * Return true if yes.  Note the extreme pains to
