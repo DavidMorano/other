@@ -161,7 +161,6 @@ namespace {
 	} ;
     } ; /* end struct (proginfo_pabeg) */
     struct proginfo {
-	typedef vector<pathent>::iterator	plit_t ;
 	friend proginfo_co ;
 	friend proginfo_pabeg ;
 	proginfo_co	start ;
@@ -322,9 +321,8 @@ int proginfo::getpn(mainv names) noex {
 	if (argv) {
 	    rs = SR_NOMSG ;
 	    if ((argc > 0) && argv[0]) {
-	        int	bl ;
-	        cchar	*bp{} ;
-	        if ((bl = sfbasename(argv[0],-1,&bp)) > 0) {
+	        cchar	*bp ;
+	        if (int bl ; (bl = sfbasename(argv[0],-1,&bp)) > 0) {
 		    int		pl = rmchr(bp,bl,'.') ;
 		    cchar	*pp = bp ;
 		    if (pl > 0) {
@@ -368,12 +366,11 @@ int proginfo::ipathbegin(cchar *vn) noex {
 /* end method (proginfo::ipathbegin) */
 
 int proginfo::pathcandidate(cchar *sp,int sl) noex {
-	USTAT		sb ;
 	strnul		s(sp,sl) ;
 	int		rs ;
 	cint		fl = rmtrailchr(sp,sl,'/') ;
 	cchar		*fp = sp ;
-	if ((rs = u_stat(s,&sb)) >= 0) {
+	if (USTAT sb ; (rs = u_stat(s,&sb)) >= 0) {
 	    if (S_ISDIR(sb.st_mode)) {
 	        const dev_t	d = sb.st_dev ;
 	        const ino_t	i = sb.st_ino ;
@@ -406,7 +403,7 @@ int proginfo::ipathend() noex {
 int proginfo::pathalready(dev_t d,ino_t i) noex {
 	int		rs = SR_OK ;
 	bool		f = false ;
-	for (auto const &e : pl) {
+	for (cauto &e : pl) {
 	    f = ((e.dev == d) && (e.ino == i)) ;
 	    if (f) break ;
 	} /* end for */
@@ -443,7 +440,7 @@ int proginfo::pathenumone(cchar *vn) noex {
 	    }
 	} /* end if (manpath match) */
 	if ((rs = pathbegin(vn)) >= 0) {
-	    for (auto const &e : pl) {
+	    for (cauto &e : pl) {
 		cout << e.ps << eol ;
 	    } /* end for */
 	    rs1 = pathend ;
@@ -487,7 +484,7 @@ int proginfo::pathto(cchar *vn) noex {
 	                if (ap[0]) {
 			    ffound = false ;
 			    bool	f = false ;
-	                    for (auto const &e : pl) {
+	                    for (cauto &e : pl) {
 			        cchar	*pp = e.ps.c_str() ; /* <- throw? */
 			        if ((rs = sncpy(pbuf,plen,pp,"/",ap)) >= 0) {
 				    USTAT	sb ;
