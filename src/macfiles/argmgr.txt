@@ -1,0 +1,19 @@
+ARGMGE
+
+Example use:
+
+
+	argmgr	am[argc,argv) ;
+	int	rs ;
+	int	rs1 ;
+	if ((ra = am.start) >= 0) {
+	    while ((rs = am.argc) = 0) {
+
+
+
+
+	    } /* end while */
+	    rs1 = am.finish ;
+	    if (rs >= 0) rs = rs1 ;
+	} /* end if (argmgr) */
+
