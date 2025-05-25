@@ -8,12 +8,12 @@
 
 /* revision history:
 
-	= 1989-03-01, David A.D. Morano
+	= 1998-03-01, David A-D- Morano
 	This subroutine was originally written.
 
 */
 
-/* Copyright © 1989 David A­D­ Morano.  All rights reserved. */
+/* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
 
 /*******************************************************************************
 
@@ -58,7 +58,6 @@
 #include	<strnul.hh>
 #include	<sncpyx.h>
 #include	<getourenv.h>
-#include	<mapblock.hh>
 #include	<readln.hh>
 #include	<ccfile.hh>
 #include	<rmx.h>
@@ -274,10 +273,9 @@ int proginfo::getpn(mainv names) noex {
 	if (argv) {
 	    rs = SR_NOMSG ;
 	    if ((argc > 0) && argv[0]) {
-	        int	bl ;
 		cchar	*arg0 = argv[0] ;
 	        cchar	*bp{} ;
-	        if ((bl = sfbasename(arg0,-1,&bp)) > 0) {
+	        if (int bl ; (bl = sfbasename(arg0,-1,&bp)) > 0) {
 		    int		pl = rmchr(bp,bl,'.') ;
 		    cchar	*pp = bp ;
 		    if (pl > 0) {
@@ -450,16 +448,14 @@ int proginfo::fileproc_fu(CUSTAT *,cchar *sp,int sl) noex {
 /* end method (proginfo::fileproc_fu) */
 
 int proginfo::fileproc_lc(CUSTAT *sbp,cchar *sp,int sl) noex {
-	strview		fn(sp,sl) ;
 	int		rs = SR_OK ;
 	int		rs1 ;
 	int		c = 0 ;
-	if (sp && sl) {
+	if (sbp && sp && sl) {
 	    strview	fn(sp,sl) ;
 	    if (S_ISREG(sbp->st_mode)) {
-	        ccfile	rf ;
 		c += 1 ;
-	 	if ((rs = rf.open(fn,"r",0)) >= 0) {
+	        if (ccfile rf ; (rs = rf.open(fn,"r",0)) >= 0) {
 		    int		nl = 0 ;
 		    while ((rs = rf.readln(lbuf,llen)) > 0) {
 			nl += 1 ;
