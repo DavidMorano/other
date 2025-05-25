@@ -1,0 +1,4 @@
+CHARSET
+
+This program could have been merge dwith MACFU.
+
