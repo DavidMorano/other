@@ -14,7 +14,7 @@
  * onto standard output.  Designed for use with Mail ~|
  *
  * Syntax: fmt [ -width | -w width ] [ -cs ] [ name ... ]
- * Author: Kurt Shoens (UCB) 12/7/78
+ * Author: Kurt Shoens (UCB) 1978-12-07
  */
 
 
