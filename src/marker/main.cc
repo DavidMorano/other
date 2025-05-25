@@ -1,7 +1,8 @@
 /* main SUPPORT (marker) */
+/* encoding=ISO8859-1 */
 /* lang=C++23 */
 
-/* print out the abbreviation of the curreent time-zone */
+/* undetermined */
 /* version %I% last-modified %G% */
 
 
@@ -20,8 +21,7 @@
 	main (marker)
 
 	Description:
-	This program prints out the abbreviation of the curreent
-	time-zone.
+	the purpose of this program is undermined.
 
 	Synopsis:
 	$ marker
