@@ -1,0 +1,41 @@
+ARGMGE
+
+Example use:
+
+
+	argmgr	am[argc,argv) ;
+	int	rs ;
+	int	rs1 ;
+	if ((ra = am.start) >= 0) {
+	    while ((rs = am.arg) >= 0) {
+		int	cl ;
+
+		if ((rs = am.keyword(&sp)) > 0) {
+		    cl = rs ;
+
+		} else if ((rs >= 0) && ((rs = am.keylong(&cp)) > 0)) {
+		    cl = rs ;
+
+		} else if ((rs >= 0) && ((rs = am.keychar(&cp)) > 0)) {
+		    cl = rs ;
+
+		} else if (rs >= 0) {
+
+		    /* positional argument */
+
+		}
+
+
+		if (rs < 0) break ;
+	    } /* end while */
+
+
+	    for (cauto &a : am) {
+
+	    }
+
+
+	    rs1 = am.finish ;
+	    if (rs >= 0) rs = rs1 ;
+	} /* end if (argmgr) */
+
