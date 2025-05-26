@@ -34,7 +34,6 @@ module ;
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<new>			/* |nothrow(3c++)| */
-#include	<vector>
 #include	<clanguage.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
@@ -77,31 +76,6 @@ module argmgr ;
 
 /* local subroutines */
 
-int argmgr::resize(int n) noex {
-	    int		rs = SR_INVALID ;
-	    if (n >= 0) {
-		try {
-	            csize nsize = size_t(n) ;
-	            vector<bool>::resize(nsize,false) ;
-	            rs = SR_OK ;
-		} catch (...) {
-		    rs = SR_NOMEM ;
-		}
-	    }
-	    return rs ;
-} /* end method (argmgr::resize) */
-
-int argmgr::adj(int idx) noex {
-	int		rs = SR_OK ;
-	try {
-	    csize	nsize = size_t(idx + 1) ;
-	    vector<bool>::resize(nsize,false) ;
-	} catch (...) {
-	    rs = SR_NOMEM ;
-	}
-	return rs ;
-} /* end method (argmgr::adj) */
-
 argmgr_co::operator int () noex {
 	int		rs = SR_BUGCHECK ;
 	if (op) {
@@ -112,11 +86,11 @@ argmgr_co::operator int () noex {
 	    case argmgrmem_finish:
 	        rs = SR_OK ;
 	        break ;
-	    case argmgrmem_extent:
-	        rs = int(op->capacity()) ;
+	    case argmgrmem_arg:
+	        rs = SR_OK ;
 	        break ;
 	    case argmgrmem_count:
-	        rs = int(op->size()) ;
+	        rs = op->cpos ;
 	        break ;
 	    default:
 		rs = SR_INVALID ;
@@ -126,29 +100,31 @@ argmgr_co::operator int () noex {
 	return rs ;
 } /* end method (argmgr_co) */
 
-int argmgr_co::operator [] (int idx) noex {
+int argmgr_co::operator () (int idx) noex {
     	int		rs = SR_BUGCHECK ;
-	bool		f = false ;
 	if (op) {
 	    rs = SR_INVALID ;
 	    if (idx >= 0) {
-	        if ((rs = op->adj(idx)) >= 0) {
                     switch (w) {
-                    case argmgrmem_set:
-                        (*op)[idx] = true ;
+                    case argmgrmem_start:
+                        rs = SR_OK ;
                         break ;
-                    case argmgrmem_clr:
-                        (*op)[idx] = false ;
+                    case argmgrmem_finish:
+                        rs = SR_OK ;
                         break ;
-                    case argmgrmem_tst:
-                        f = (*op)[idx] ;
+                    case argmgrmem_arg:
+                        rs = SR_OK ;
+                        break ;
+                    case argmgrmem_posarg:
+                        rs = SR_OK ;
+                        break ;
+                    case argmgrmem_count:
+                        rs = SR_OK ;
                         break ;
 	            default:
 		        rs = SR_INVALID ;
 		        break ;
                     } /* end switch */
-		    if (rs >= 0) rs = int(f) ;
-	        } /* end if (adj) */
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return rs ;
