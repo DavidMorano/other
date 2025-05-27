@@ -47,9 +47,9 @@ __FBSDID("$FreeBSD: src/usr.bin/makewhatis/makewhatis.c,v 1.9 2002/09/04 23:29:0
 #include <dirent.h>
 #include <err.h>
 #include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <stringlist.h>
 #include <unistd.h>
 #include <zlib.h>
