@@ -55,7 +55,6 @@
 #include	<utypealiases.h>
 #include	<usysdefs.h>
 #include	<usysrets.h>
-#include	<libutil.hh>		/* |xstrlen(3u)| */
 #include	<strn.h>
 #include	<sfx.h>
 #include	<char.h>
@@ -64,6 +63,7 @@
 
 #include	"sif.hh"
 
+import libutil ;
 
 /* local defines */
 
