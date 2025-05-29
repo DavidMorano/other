@@ -36,7 +36,11 @@ DEFS=
 
 INCS=
 
+MODS +=
+
 LIBS= -lmacuser -lu
+
+ELIBINFO= /usr/extra/lib/libu.so -L/usr/extra/lib -lmacuser 
 
 
 INCDIRS=
@@ -56,10 +60,10 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_UTMP= main.o
+OBJ_UTMP= utmp_main.o
 
 
-.SUFFIXES:		.hh .ii
+.SUFFIXES:		.hh .ii .ccm
 
 
 default:		$(T).x
@@ -85,12 +89,18 @@ all:			$(ALL)
 .cc.o:
 	$(COMPILE.cc) $<
 
+.ccm.o:
+	makemodule $(*)
+
+
+consoleid.x:		$(OBJ_UTMP)
+	$(LD) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_UTMP) $(ELIBINFO)
 
 $(T).x:			$(OBJ_UTMP)
 	$(LD) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_UTMP) $(LIBINFO)
 
 $(T).o:			$(OBJ_UTMP)
-	$(LD) $(LDFLAGS) -r -o $@ $(OBJ_UTMP)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ_UTMP)
 
 $(T).nm:		$(T).o
 	$(NM) $(NMFLAGS) $(T).o > $(T).nm
@@ -113,6 +123,6 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
-main.o:			main.cc
+utmp_main.o:		utmp_main.cc
 
 
