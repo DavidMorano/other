@@ -5,7 +5,6 @@
 /* print out the UTMP entry 'line' field if terminal session is registered */
 /* version %I% last-modified %G% */
 
-#define	CF_UTMPWRITE	1		/* endable */
 
 /* revision history:
 
@@ -67,6 +66,7 @@
 #include	<cstring>		/* <- |strncmp(3c)| */
 #include	<iostream>
 #include	<usystem.h>		/* for |u_fstat(3u)| */
+#include	<getfdfile.h>		/* |FD_STDIN| */
 #include	<snx.h>
 #include	<isoneof.h>
 #include	<isnot.h>
@@ -75,14 +75,6 @@
 import libutil ;
 
 /* local defines */
-
-#ifndef	FD_STDIN
-#define	FD_STDIN	0
-#endif
-
-#ifndef	TERMBUFLEN
-#define	TERMBUFLEN	256		/* terminal-device buffer length */
-#endif
 
 #ifndef	HOSTLEN
 #define	HOSTLEN		1024		/* guessed that this is big enough! */
@@ -106,27 +98,7 @@ import libutil ;
 #define	UT_LINESIZE	8
 #endif
 #ifndef	UT_HOSTSIZE
-#define	UT_HOSTSIZE	16
-#endif
-
-#ifndef	TM
-#define	TM		struct tm
-#endif
-
-#ifndef	PASSWD
-#define	PASSWD		struct passwd
-#endif
-
-#ifndef	UTMPX
-#define	UTMPX		struct utmpx
-#endif
-
-#ifndef	PASSWD
-#define	PASSWD		struct passwd
-#endif
-
-#ifndef	eol
-#define	eol		'\n'
+#define	UT_HOSTSIZE	32
 #endif
 
 #ifndef	VARUTMPLINE
@@ -146,11 +118,25 @@ using std::cerr ;			/* variable */
 
 /* local typedefs */
 
-typedef const int		cint ;
-typedef const char		cchar ;
-typedef const char *const	cpcchar ;
-typedef const char *const *	cpccharp ;
-typedef const char *const *	mainv ;
+
+/* external subroutines */
+
+
+/* external variables */
+
+
+/* local structures */
+
+struct utmpx32 {
+        char ut_user[_UTX_USERSIZE];    /* login name */
+        char ut_id[_UTX_IDSIZE];        /* id */
+        char ut_line[_UTX_LINESIZE];    /* tty name */
+        pid_t ut_pid;                   /* process id creating the entry */
+        short ut_type;                  /* type of this entry */
+	uint32_t		tv[2] ;
+        char ut_host[_UTX_HOSTSIZE];    /* host name */
+        __uint32_t ut_pad[16];          /* reserved for future use */
+} ; /* end struct (utmpx32) */
 
 
 /* forward references */
@@ -168,6 +154,14 @@ static int sirchr(cchar *,int,int) noex ;
 static int utmpwrite(UTMPX *) noex ;
 
 static bool isourtype(UTMPX *up) noex {
+	bool	f = false ;
+	f = f || (up->ut_type == INIT_PROCESS) ;
+	f = f || (up->ut_type == LOGIN_PROCESS) ;
+	f = f || (up->ut_type == USER_PROCESS) ;
+	return f ;
+}
+
+static bool isourtype32(utmpx32 *up) noex {
 	bool	f = false ;
 	f = f || (up->ut_type == INIT_PROCESS) ;
 	f = f || (up->ut_type == LOGIN_PROCESS) ;
@@ -391,20 +385,14 @@ static int consoleid() noex {
 	int		f = false ; /* return-value */
 	setutxent() ;
 	for (UTMPX *up ; (up = getutxent()) != nullptr ; ) {
-		cerr << "check" << eol ;
 	    if (isourtype(up)) {
 		cint	lid = szof(up->ut_id) ;
 		cint	lline = szof(up->ut_line) ;
-		cerr << "1" << eol ;
 	        if (strncmp(up->ut_line,"console",lline) == 0) {
-		cerr << "2" << eol ;
 		    if (strncmp(up->ut_id,"co",lid) != 0) {
 			auto getpw = getpwnam ;
-		cerr << "3" << eol ;
 			if (PASSWD *pwp ; (pwp = getpw(up->ut_user)) != np) {
-		cerr << "4" << eol ;
 			    if ((uid == pwp->pw_uid) || (uid == 0)) {
-				cerr << "found" << eol ;
 			        strncpy(up->ut_id,"co",4) ;
 				rs = utmpwrite(up) ;
 				f = true ;
@@ -616,42 +604,29 @@ static char *strtcpy(char *dp,cchar *sp,int sl) noex {
 }
 /* end subroutine (strtcpy) */
 
-#if	CF_UTMPWRITE
 static int utmpwrite(UTMPX *up) noex {
     	cnullptr	np{} ;
-	cint		lline = szof(up->ut_line) ;
     	int		rs ;
 	int		rs1 ;
 	int		f = false ;
-	(void) up ;
-	cerr << "utmpwrite ent" << eol ;
-	if ((rs = u_open(utmpxfname,O_RDONLY,0664)) >= 0) {
+	if ((rs = u_open(utmpxfname,O_RDWR,0664)) >= 0) {
 	    cint	fd = rs ;
-	    cerr << "opened" << eol ;
 	    if (USTAT sb ; (rs = u_fstat(fd,&sb)) >= 0) {
 	        csize	ms = sb.st_size ;
-		cint	mp = (PROT_READ ) ;
+		cint	mp = (PROT_READ | PROT_WRITE) ;
 		cint	mf = MAP_SHARED ;
-	    cerr << "fstat" << eol ;
 		if (char *md ; (rs = u_mmapbegin(np,ms,mp,mf,fd,0z,&md)) >= 0) {
-		    csize usize = sizeof(UTMPX) ;
+		    csize usize = sizeof(utmpx32) ;
 		    cint  n = int(ms / usize) ;
-		    UTMPX *utp = (UTMPX *) (md + 1256) ;
-		cerr << "mapped" << eol ;
-	    cerr << "usize=" << usize << " n=" << (0x075C - 0x04E8) << eol ;
+		    utmpx32	*utp = cast_reinterpret<utmpx32 *>(md + 1256) ;
 		    for (int i = 0 ; i < (n-1) ; i += 1) {
-	    cerr << "check=" << i << " type=" << utp[i].ut_type << eol ;
-		        if (isourtype(utp+i)) {
-			    cerr << "type" << eol ;
+			cint	lid = szof(utp->ut_id) ;
+			cint	lline = szof(utp->ut_line) ;
+		        if (isourtype32(utp+i)) {
 			    if (strncmp(utp[i].ut_line,"console",lline) == 0) {
-			    cerr << "console" << eol ;
 				if (utp[i].ut_pid == up->ut_pid) {
-			    cerr << "uid" << eol ;
-				    if (utp[i].ut_id[0] != '/') {
-			    cerr << "needed" << eol ;
-#ifdef	COMMENT
+				    if (utp[i].ut_id[0] == '/') {
 				        strncpy((utp+i)->ut_id,"co",lid) ;
-#endif
 				        f = true ;
 				    }
 				}
@@ -666,46 +641,7 @@ static int utmpwrite(UTMPX *up) noex {
 	    rs1 = u_close(fd) ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (open-close) */
-	cerr << "utmpwrite rs=" << rs << " f=" << f << eol ;
 	return (rs >= 0) ? f : rs ;
 } /* end subroutine (utmpwrite) */
-#else
-static int utmpwrite(UTMPX *up) noex {
-    	cnullptr	np{} ;
-	[[maybe_unused]] cint	lid = szof(up->ut_id) ;
-	[[maybe_unused]] cint	lline = szof(up->ut_line) ;
-    	int		rs ;
-	int		rs1 ;
-	int		f = false ;
-	(void) up ;
-	cerr << "utmpwrite ent" << eol ;
-	if ((rs = u_open(utmpxfname,O_RDONLY,0664)) >= 0) {
-	    cint	fd = rs ;
-	    cerr << "opened" << eol ;
-	    if (USTAT sb ; (rs = u_fstat(fd,&sb)) >= 0) {
-	        csize	ms = sb.st_size ;
-		cint	mp = PROT_READ ;
-		cint	mf = MAP_SHARED ;
-		int	lasti = 0 ;
-		if (char *md ; (rs = u_mmapbegin(np,ms,mp,mf,fd,0z,&md)) >= 0) {
-		    cchar	*sp = md ;
-		    for (int i = 0 ; i < int(ms - 3) ; i += 1) {
-			if (memcmp((sp+i),"dam",3) == 0) {
-			    cerr << "mat i=" << i ;
-			    cerr << " d=" << (i - lasti) << eol ;
-			    lasti = i ;
-			}
-		    } /* end for */
-		    rs1 = u_mmapend(md,ms) ;
-	    	    if (rs >= 0) rs = rs1 ;
-		} /* end if (mapbegin-mapend) */
-	    } /* end if (u_fstat) */
-	    rs1 = u_close(fd) ;
-	    if (rs >= 0) rs = rs1 ;
-	} /* end if (open-close) */
-	cerr << "utmpwrite rs=" << rs << " f=" << f << eol ;
-	return (rs >= 0) ? f : rs ;
-} /* end subroutine (utmpwrite) */
-#endif /* CF_UTMPWRITE */
 
 
