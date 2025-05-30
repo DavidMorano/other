@@ -3,6 +3,7 @@
 T= macutmp
 
 ALL= $(T).x
+EXTRA ?= /usr/extra
 
 
 BINDIR		?= $(REPOROOT)/bin
@@ -38,9 +39,9 @@ INCS=
 
 MODS +=
 
-LIBS= -lmacuser -lu
+LIBS= -lu
 
-ELIBINFO= /usr/extra/lib/libu.so -L/usr/extra/lib -lmacuser 
+ELIBINFO= $(EXTRA)/lib/libu.o -L$(EXTRA)/lib -lmacuser -liconv -lproc
 
 
 INCDIRS=
@@ -49,7 +50,6 @@ LIBDIRS= -L$(LIBDIR)
 
 
 RUNINFO= -rpath $(RUNDIR)
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -60,7 +60,22 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_UTMP= utmp_main.o
+OBJ00_LIBUO= isx.o snx.o ucx.o
+OBJ01_LIBUO= sbuf.o storebuf.o ctx.o
+OBJ02_LIBUO= sfx.o strdcpy.o strx.o
+OBJ03_LIBUO= calstrs.o char.o
+
+OBJ04_LIBUO= 
+OBJ05_LIBUO= 
+OBJ06_LIBUO= 
+OBJ07_LIBUO= 
+
+OBJA_LIBUO= obj00_libuo.o obj01_libuo.o 
+OBJB_LIBUO= obj02_libuo.o obj03_libuo.o
+
+OBJ_LIBUO= obja_libuo.o objb_libuo.o
+
+OBJ_UTMP= utmp_main.o $(OBJ_LIBUO)
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -123,6 +138,68 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
+obj00_libuo.o:		$(OBJ00_LIBUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ00_LIBUO)
+
+obj01_libuo.o:		$(OBJ01_LIBUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ01_LIBUO)
+
+obj02_libuo.o:		$(OBJ02_LIBUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ02_LIBUO)
+
+obj03_libuo.o:		$(OBJ03_LIBUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ03_LIBUO)
+
+
+obja_libuo.o:		$(OBJA_LIBUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJA_LIBUO)
+
+objb_libuo.o:		$(LIBB_LIBUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJB_LIBUO)
+
+
 utmp_main.o:		utmp_main.cc
+
+libuo.o:		$(OBJ_LIBUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ_LIBUO)
+
+isx.o:			isx.dir
+isx.dir:
+	makesubdir $@
+
+snx.o:			snx.dir
+snx.dir:
+	makesubdir $@
+
+sbuf.o:			sbuf.dir
+sbuf.dir:
+	makesubdir $@
+
+ctx.o:			ctx.dir
+ctx.dir:
+	makesubdir $@
+
+sfx.o:			sfx.dir
+sfx.dir:
+	makesubdir $@
+
+strdcpy.o:		strdcpy.dir
+strdcpy.dir:
+	makesubdir $@
+
+strx.o:		strx.dir
+strx.dir:
+	makesubdir $@
+
+calstrs.o:		calstrs.cc calstrs.h
+storebuf.o:		storebuf.cc storebuf.h
+char.o:			char.cc char.h
+
+ucx.o:			uctc.o ucttyname.o
+	$(LD) -r $(LDFLAGS) -o $@ uctc.o ucttyname.o
+
+uctc.o:			uctc.cc
+ucttyname.o:		ucttyname.cc
+ucmemalloc.o:		ucmemalloc.cc ucmemalloc.h
 
 
