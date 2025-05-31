@@ -53,10 +53,10 @@
 
 
 /* support tables; not accessed directly by callers  */
-extern const unsigned char	char_tolc[] ;
-extern const unsigned char	char_touc[] ;
-extern const unsigned char	char_tofc[] ;
-extern const short		char_dictorder[] ;
+extern const unsigned char	chardata_tolc[] ;
+extern const unsigned char	chardata_touc[] ;
+extern const unsigned char	chardata_tofc[] ;
+extern const short		chardata_dictorder[] ;
 
 /* test character attribute routines */
 #define	CHAR_ISSPACETAB(c)	(((c) == ' ') || ((c) == '\t'))
@@ -67,13 +67,13 @@ extern const short		char_dictorder[] ;
 
 /* my super-fast conversions */
 #define	CHAR_TOBC(c)		((c) & 0xff)
-#define	CHAR_TOLC(c)		(char_tolc[(c) & 0xff])
-#define	CHAR_TOUC(c)		(char_touc[(c) & 0xff])
-#define	CHAR_TOFC(c)		(char_tofc[(c) & 0xff])
+#define	CHAR_TOLC(c)		(chardata_tolc[(c) & 0xff])
+#define	CHAR_TOUC(c)		(chardata_touc[(c) & 0xff])
+#define	CHAR_TOFC(c)		(chardata_tofc[(c) & 0xff])
 #define	CHAR_TOVAL(c)		char_toval(c) ;
 
 /* dictionary-collating-ordinal */
-#define	CHAR_DICTORDER(c)	(char_dictorder[(c) & 0xff])
+#define	CHAR_DICTORDER(c)	(chardata_dictorder[(c) & 0xff])
 
 EXTERNC_begin
 
@@ -85,6 +85,18 @@ static inline bool char_isspacetab(int ch) noex {
 	return CHAR_ISSPACETAB(ch) ;
 }
 
+static inline uchar char_tolc(int ch) noex {
+	return chardata_tolc[ch & 0xff] ;
+}
+static inline uchar char_touc(int ch) noex {
+	return chardata_touc[ch & 0xff] ;
+}
+static inline uchar char_tofc(int ch) noex {
+	return chardata_tofc[ch & 0xff] ;
+}
+static inline short char_dictorder(int ch) noex {
+	return chardata_dictorder[ch & 0xff] ;
+}
 extern int char_toval(int) noex ;
 
 EXTERNC_end
