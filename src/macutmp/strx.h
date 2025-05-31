@@ -21,6 +21,7 @@
 #include	<strsub.h>
 #include	<strxcmp.h>
 #include	<strerrabbr.h>
+#include	<strsigabbr.h>
 
 
 EXTERNC_begin
