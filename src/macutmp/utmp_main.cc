@@ -1,4 +1,4 @@
-/* main SUPPORT (macutmp) */
+/* utmp_main SUPPORT (macutmp) */
 /* encoding=ISO8859-1 */
 /* lang=C++20 */
 
@@ -67,14 +67,15 @@
 #include	<iostream>
 #include	<usystem.h>		/* for |u_fstat(3u)| */
 #include	<getfdfile.h>		/* |FD_STDIN| */
-#include	<snx.h>
-#include	<isoneof.h>
-#include	<isnot.h>
 #include	<localmisc.h>		/* |TIMEBUFLEN| */
 
 import libutil ;
+import umisc ;				/* |snadd(3u)| */
+import ureserve ;			/* |isNot{xx}(3u)| */
 
 /* local defines */
+
+#define	UTMPXHDRLEN	1256		/* 'utmpx' file header length */
 
 #ifndef	HOSTLEN
 #define	HOSTLEN		1024		/* guessed that this is big enough! */
@@ -111,6 +112,9 @@ import libutil ;
 
 /* imported namespaces */
 
+using std::min ;			/* subroutine-template */
+using std::max ;			/* subroutine-template */
+using libu::sncpy ;			/* subroutine */
 using std::min ;			/* subroutine-template */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
@@ -616,9 +620,10 @@ static int utmpwrite(UTMPX *up) noex {
 		cint	mp = (PROT_READ | PROT_WRITE) ;
 		cint	mf = MAP_SHARED ;
 		if (char *md ; (rs = u_mmapbegin(np,ms,mp,mf,fd,0z,&md)) >= 0) {
-		    csize usize = sizeof(utmpx32) ;
-		    cint  n = int(ms / usize) ;
-		    utmpx32	*utp = cast_reinterpret<utmpx32 *>(md + 1256) ;
+		    csize	usize = sizeof(utmpx32) ;
+		    cint	hl = UTMPXHDRLEN ;
+		    cint	n = int(ms / usize) ;
+		    utmpx32	*utp = cast_reinterpret<utmpx32 *>(md + hl) ;
 		    for (int i = 0 ; i < (n-1) ; i += 1) {
 			cint	lid = szof(utp->ut_id) ;
 			cint	lline = szof(utp->ut_line) ;
