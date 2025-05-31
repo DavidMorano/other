@@ -1,0 +1,87 @@
+/* ureserve MODULE (primary-module-interface) */
+/* encoding=ISO8859-1 */
+/* lang=C20 */
+
+/* reserved interfaces */
+/* version %I% last-modified %G% */
+
+
+/* revision history:
+
+	= 1998-03-21, David A­D­ Morano
+	This module was originally written.
+
+	= 2020-05-07, David A-D- Morano
+	I converted this (formerly a header-only file) to a module.
+
+*/
+
+/* Copyright © 1998,2020 David A­D­ Morano.  All rights reserved. */
+
+/*******************************************************************************
+
+  	Module:
+	ureserve
+
+	Description:
+	This module provides miscellaneous UNIX® or other
+	common (library oriented) subroutines.
+
+*******************************************************************************/
+
+module ;
+
+#include	<envstandards.h>	/* ordered first to configure */
+#include	<climits>		/* |INT_MAX| */
+#include	<cstddef>		/* |nullptr_t| */
+#include	<cstdlib>
+#include	<bitset>		/* <- the money shot! */
+#include	<clanguage.h>
+#include	<utypedefs.h>
+#include	<utypealiases.h>
+#include	<usysdefs.h>
+#include	<usysrets.h>
+#include	<ascii.h>
+
+export module ureserve ;
+
+export {
+    bool isoneof(cint *,int) noex ;
+    inline bool isOneOf(cint *rsa,int rs) noex {
+	    return isoneof(rsa,rs) ;
+    }
+} /* end export */
+
+export {
+    bool isNotPresent(int) noex ;
+    bool isNotAccess(int) noex ;
+    bool isNotValid(int) noex ;
+    bool isNotLib(int) noex ;
+    bool isNotTerm(int) noex ;
+    bool isNotSupport(int) noex ;
+    inline bool isInvalid(int rs) noex {
+	return isNotValid(rs) ;
+    }
+} /* end export */
+
+export {
+    bool char_iswhite(int) noex ;
+    bool char_islc(int) noex ;
+    bool char_isuc(int) noex ;
+    inline bool char_isspacetab(int ch) noex {
+	return (ch == ' ') || (ch == '\t') ;
+    }
+    inline bool char_isdig(int ch) noex {
+	return ((ch >= '0') && (ch <= '9')) ;
+    }
+} /* end export */
+
+export {
+    uchar	char_tolc(int) noex ;
+    uchar	char_touc(int) noex ;
+    uchar	char_tofc(int) noex ;
+    ushort	char_dictorder(int) noex ;
+    int		char_toval(int) noex ;
+} /* end export */
+
+
