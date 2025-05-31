@@ -33,15 +33,15 @@ TOUCH		?= touch
 LINT		?= lint
 
 
-DEFS=
+DEFS +=
 
-INCS=
+INCS +=
 
 MODS +=
 
-LIBS= -lu
+LIBS += -lu
 
-ELIBINFO= $(EXTRA)/lib/libu.o -L$(EXTRA)/lib -lmacuser -liconv -lproc
+ELIBINFO= $(EXTRA)/lib/libu.o -L$(EXTRA)/lib -liconv -lproc
 
 
 INCDIRS=
@@ -59,23 +59,36 @@ CXXFLAGS	?= $(MAKECXXFLAGS)
 ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
+DEPMODS += libutil.ccm
+DEPMODS += usigset.ccm usigblock.ccm umisc.ccm ureserve.ccm
+DEPMODS += ureserve.ccm
 
-OBJ00_LIBUO= isx.o snx.o ucx.o
-OBJ01_LIBUO= sbuf.o storebuf.o ctx.o
-OBJ02_LIBUO= sfx.o strdcpy.o strx.o
-OBJ03_LIBUO= calstrs.o char.o
+OBJ00_LUO= isx.o six.o mkx.o snx.o sfx.o 
+OBJ01_LUO= cfx.o ctx.o inetaddrx.o
+OBJ02_LUO= strdcpy.o strwcpy.o strx.o
+OBJ03_LUO= calstrs.o
 
-OBJ04_LIBUO= 
-OBJ05_LIBUO= 
-OBJ06_LIBUO= 
-OBJ07_LIBUO= 
+OBJ04_LUO= strn.o
+OBJ05_LUO= bufsizevar.o
+OBJ06_LUO= ucx.o 
+OBJ07_LUO= char.o fmtstr.o
 
-OBJA_LIBUO= obj00_libuo.o obj01_libuo.o 
-OBJB_LIBUO= obj02_libuo.o obj03_libuo.o
+OBJ08_LUO= sbuf.o storebuf.o 
+OBJ09_LUO= strmgr.o 
+OBJ10_LUO= ids.o 
+OBJ11_LUO= ema.o realname.o
 
-OBJ_LIBUO= obja_libuo.o objb_libuo.o
+OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
+OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
+OBJC_LUO= obj08_luo.o obj09_luo.o obj10_luo.o obj11_luo.o
+OBJD_LUO= 
+OBJE_LUO= 
+OBJF_LUO= 
 
-OBJ_UTMP= utmp_main.o $(OBJ_LIBUO)
+OBJ_LUO= obja_luo.o objb_luo.o objc_luo.o
+#OBJ_LUO= objd_luo.o obje_luo.o objf_luo.o
+
+OBJ_UTMP= utmp_main.o ucx.o
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -138,41 +151,108 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
-obj00_libuo.o:		$(OBJ00_LIBUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ00_LIBUO)
+obj00_luo.o:		$(OBJ00_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ00_LUO)
 
-obj01_libuo.o:		$(OBJ01_LIBUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ01_LIBUO)
+obj01_luo.o:		$(OBJ01_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ01_LUO)
 
-obj02_libuo.o:		$(OBJ02_LIBUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ02_LIBUO)
+obj02_luo.o:		$(OBJ02_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ02_LUO)
 
-obj03_libuo.o:		$(OBJ03_LIBUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ03_LIBUO)
+obj03_luo.o:		$(OBJ03_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ03_LUO)
+
+obj04_luo.o:		$(OBJ04_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ04_LUO)
+
+obj05_luo.o:		$(OBJ05_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ05_LUO)
+
+obj06_luo.o:		$(OBJ06_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ06_LUO)
+
+obj07_luo.o:		$(OBJ07_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ07_LUO)
+
+obj08_luo.o:		$(OBJ08_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ08_LUO)
+
+obj09_luo.o:		$(OBJ09_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ09_LUO)
+
+obj10_luo.o:		$(OBJ10_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ10_LUO)
+
+obj11_luo.o:		$(OBJ11_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ11_LUO)
 
 
-obja_libuo.o:		$(OBJA_LIBUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJA_LIBUO)
+obja_luo.o:		$(OBJA_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJA_LUO)
 
-objb_libuo.o:		$(LIBB_LIBUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJB_LIBUO)
+objb_luo.o:		$(OBJB_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJB_LUO)
+
+objc_luo.o:		$(OBJC_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJC_LUO)
+
+objd_luo.o:		$(OBJD_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJD_LUO)
+
+obje_luo.o:		$(OBJE_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJC_LUO)
+
+objf_luo.o:		$(OBJF_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJF_LUO)
 
 
-utmp_main.o:		utmp_main.cc
+utmp_main.o:		utmp_main.cc $(DEPMODS)
+	makemodule libutil
+	makemodule usigset
+	makemodule usigblock
+	makemodule umisc
+	makemodule ureserve
+	$(COMPILE.cc) $<
 
-libuo.o:		$(OBJ_LIBUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ_LIBUO)
+
+libutil.ccm:
+	ln mod/lbutil.ccm .
+
+usigset.ccm:
+	ln mod/usigset.ccm .
+
+usigblock.ccm:
+	ln mod/usigblock.ccm .
+
+umisc.ccm:
+	ln mod/umisc.ccm .
+
+ureserve.ccm:
+	ln mod/ureserve.ccm .
+
+
+obj_luo.o:		$(OBJ_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ_LUO)
+
+six.o:			six.dir
+six.dir:
+	makesubdir $@
 
 isx.o:			isx.dir
 isx.dir:
+	makesubdir $@
+
+mkx.o:			mkx.dir
+mkx.dir:
 	makesubdir $@
 
 snx.o:			snx.dir
 snx.dir:
 	makesubdir $@
 
-sbuf.o:			sbuf.dir
-sbuf.dir:
+cfx.o:			cfx.dir
+cfx.dir:
 	makesubdir $@
 
 ctx.o:			ctx.dir
@@ -187,12 +267,54 @@ strdcpy.o:		strdcpy.dir
 strdcpy.dir:
 	makesubdir $@
 
-strx.o:		strx.dir
+strwcpy.o:		strwcpy.dir
+strwcpy.dir:
+	makesubdir $@
+
+strx.o:			strx.dir
 strx.dir:
 	makesubdir $@
 
-calstrs.o:		calstrs.cc calstrs.h
+strn.o:			strn.dir
+strn.dir:
+	makesubdir $@
+
+inetaddrx.o:		inetaddrx.dir
+inetaddrx.dir:
+	makesubdir $@
+
+fmtstr.o:		fmtstr.dir
+fmtstr.dir:
+	makesubdir $@
+
+bufsizevar.o:		bufsizevar.dir
+bufsizevar.dir:
+	makesubdir $@
+
+# Hierarchical Objects
+
+# SBUF
+sbuf.o:			sbuf.dir
+sbuf.dir:
+	makesubdir $@
+
+# EMA
+ema.o:			ema.dir
+ema.dir:
+	makesubdir $@
+
+# REALNAME
+realname.o:		realname.dir
+realname.dir:
+	makesubdir $@
+
+# Flat Objects
 storebuf.o:		storebuf.cc storebuf.h
+strmgr.o:		strmgr.cc strmgr.h
+ids.o:			ids.cc ids.h
+
+# GROUPS
+calstrs.o:		calstrs.cc calstrs.h
 char.o:			char.cc char.h
 
 ucx.o:			uctc.o ucttyname.o
