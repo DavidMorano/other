@@ -65,7 +65,14 @@
 #include	<cstdio>		/* <- for |printf(3c)| */
 #include	<cstring>		/* <- |strncmp(3c)| */
 #include	<iostream>
-#include	<usystem.h>		/* for |u_fstat(3u)| */
+#include	<envstandards.h>	/* ordered first to configure */
+#include	<clanguage.h>
+#include	<utypedefs.h>
+#include	<utypealiases.h>
+#include	<usysdefs.h>
+#include	<usysrets.h>
+#include	<usyscalls.h>
+#include	<ucx.h>			/* |uc_ttyname(3uc)| + |uc_tc(3uc)| */
 #include	<getfdfile.h>		/* |FD_STDIN| */
 #include	<localmisc.h>		/* |TIMEBUFLEN| */
 
@@ -115,6 +122,7 @@ import ureserve ;			/* |isNot{xx}(3u)| */
 using std::min ;			/* subroutine-template */
 using std::max ;			/* subroutine-template */
 using libu::sncpy ;			/* subroutine */
+using libu::snprintf ;			/* subroutine */
 using std::min ;			/* subroutine-template */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
@@ -382,27 +390,70 @@ static int boottime() noex {
 }
 /* end subroutine (boottime) */
 
+static bool conidok(UTMPX* up) noex {
+    	bool		f = false ;
+	cchar		*idp = up->ut_id ;
+	if (strncmp(idp,"co",2) == 0) {
+	    f = f || (idp[2] == '\0') ;
+	    f = f || (isdigitlatin(idp[2]) && isdigitlatin(idp[3])) ;
+	}
+	return f ;
+}
+/* end subroutine (conidok) */
+
+static void wrid(UTMPX *up,int c) noex {
+    	cint	lid = szof(up->ut_id) ;
+    	cint	idlen = 10 ;
+    	char	idbuf[10 + 1] ;
+	snprintf(idbuf,idlen,"co%02d",c) ;
+	strncpy(up->ut_id,idbuf,lid) ;
+} /* end subroutine (wrid) */
+
+static int consoleid_utx(vecstr *) noex ;
+
 static int consoleid() noex {
+	int		rs ;
+	int		rs1 ;
+	int		f = false ; /* return-value */
+	if (vecstr cos ; (rs = cos.start) >= 0) {
+	    {
+	        rs = consoleid_utx(&cos) ;
+	        f = rs ;
+	    }
+	    rs1 = cos.finish ;
+	    if (rs >= 0) rs = rs1 ;
+	} /* end if (vecstr) */
+	return (rs >= 0) ? f : rs ;
+}
+/* end subroutine (consoleid) */
+
+static int consoleid_utx(vecstr *cosp) noex {
     	const uid_t	uid = getuid() ;
 	cnullptr	np{} ;
-	int		rs = SR_OK ;
-	int		f = false ; /* return-value */
+	int		rs ;
+	int		c = 0 ;
+	int		f = false ;
+	(void) cosp ;
 	setutxent() ;
 	for (UTMPX *up ; (up = getutxent()) != nullptr ; ) {
 	    if (isourtype(up)) {
 		cint	lid = szof(up->ut_id) ;
 		cint	lline = szof(up->ut_line) ;
 	        if (strncmp(up->ut_line,"console",lline) == 0) {
-		    if (strncmp(up->ut_id,"co",lid) != 0) {
+		    if (conidok(up)) {
+			rs = cosp->add(up->ut_id,4) ;
+	    		c += 1 ;
+		    } else {
 			auto getpw = getpwnam ;
 			if (PASSWD *pwp ; (pwp = getpw(up->ut_user)) != np) {
 			    if ((uid == pwp->pw_uid) || (uid == 0)) {
-			        strncpy(up->ut_id,"co",4) ;
+				(void) lid ;
+				wrid(up,c) ;
 				rs = utmpwrite(up) ;
 				f = true ;
 			    }
 			} /* end if (getpw) */
-		    }
+		    } /* end if (console ID not OK) */
 		}
 	    } /* end if (type match) */
 	    if ((rs < 0) || f) break ;
@@ -410,7 +461,7 @@ static int consoleid() noex {
 	endutxent() ;
 	return (rs >= 0) ? f : rs ;
 }
-/* end subroutine (consoleid) */
+/* end subroutine (consoleid_utx) */
 
 static int findsid(int pm) noex {
 	cint		sid = getsid(0) ;	/* get our SID */
@@ -631,7 +682,8 @@ static int utmpwrite(UTMPX *up) noex {
 			    if (strncmp(utp[i].ut_line,"console",lline) == 0) {
 				if (utp[i].ut_pid == up->ut_pid) {
 				    if (utp[i].ut_id[0] == '/') {
-				        strncpy((utp+i)->ut_id,"co",lid) ;
+					cchar *id = up->ut_id ;
+				        strncpy((utp+i)->ut_id,id,lid) ;
 				        f = true ;
 				    }
 				}

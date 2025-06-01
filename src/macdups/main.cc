@@ -59,7 +59,6 @@
 #include	<strnul.hh>
 #include	<sncpyx.h>
 #include	<getourenv.h>
-#include	<mapblock.hh>
 #include	<readln.hh>
 #include	<rmx.h>
 #include	<isnot.h>
@@ -67,6 +66,7 @@
 #include	<exitcodes.h>
 #include	<localmisc.h>
 
+import mapblock ;
 
 /* local defines */
 

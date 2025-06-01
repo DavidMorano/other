@@ -46,7 +46,6 @@ LIBDIRS= -L$(LIBDIR)
 
 
 RUNINFO= -rpath $(RUNDIR)
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -110,6 +109,7 @@ install:		$(T).x
 
 
 files_main.o:		mods.o files_main.cc fonce.hh		$(INCS)
+
 fonce.o:		fonce.cc fonce.hh
 
 mods.o:			argmgr.o

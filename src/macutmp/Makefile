@@ -41,7 +41,9 @@ MODS +=
 
 LIBS += -lu
 
-ELIBINFO= $(EXTRA)/lib/libu.o -L$(EXTRA)/lib -liconv -lproc
+ELIBS += -lproc -liconv
+
+ELIBINFO= $(EXTRA)/lib/libu.o -L$(EXTRA)/lib $(ELIBS)
 
 
 INCDIRS=
@@ -121,13 +123,13 @@ all:			$(ALL)
 	makemodule $(*)
 
 
-consoleid.x:		$(OBJ_UTMP)
+consoleid.x:		$(OBJ_UTMP) Makefile
 	$(LD) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_UTMP) $(ELIBINFO)
 
-$(T).x:			$(OBJ_UTMP)
+$(T).x:			$(OBJ_UTMP) Makefile
 	$(LD) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_UTMP) $(LIBINFO)
 
-$(T).o:			$(OBJ_UTMP)
+$(T).o:			$(OBJ_UTMP) Makefile
 	$(LD) -r $(LDFLAGS) -o $@ $(OBJ_UTMP)
 
 $(T).nm:		$(T).o
@@ -207,7 +209,7 @@ objf_luo.o:		$(OBJF_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $(OBJF_LUO)
 
 
-utmp_main.o:		utmp_main.cc $(DEPMODS)
+utmp_main.o:		utmp_main.cc $(DEPMODS) ucx.h
 	makemodule libutil
 	makemodule usigset
 	makemodule usigblock
@@ -318,10 +320,10 @@ calstrs.o:		calstrs.cc calstrs.h
 char.o:			char.cc char.h
 
 ucx.o:			uctc.o ucttyname.o
-	$(LD) -r $(LDFLAGS) -o $@ uctc.o ucttyname.o
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
-uctc.o:			uctc.cc
-ucttyname.o:		ucttyname.cc
-ucmemalloc.o:		ucmemalloc.cc ucmemalloc.h
+uctc.o:			uctc.cc		uctc.h		$(INCS)
+ucttyname.o:		ucttyname.cc	ucttyname.h	$(INCS)
+ucmemalloc.o:		ucmemalloc.cc	ucmemalloc.h	$(INCS)
 
 

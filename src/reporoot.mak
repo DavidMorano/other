@@ -1,6 +1,6 @@
-# MAKEFILE (macfiles)
+# MAKEFILE (reporoot)
 
-T= macfiles
+T= reporoot
 
 ALL= $(T).x
 
@@ -37,7 +37,7 @@ INCS=
 
 MODS += argmgr.ccm
 
-LIBS= -lmacuser -lu
+LIBS= -lu
 
 
 INCDIRS= -I$(INCDIR)
@@ -56,7 +56,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACFU= files_main.o fonce.o
+OBJ_MACFU= reporoot_main.o fonce.o
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -108,7 +108,7 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
-files_main.o:		mods.o files_main.cc fonce.hh		$(INCS)
+reporoot_main.o:	reporoot_main.cc fonce.hh	$(INCS)
 
 fonce.o:		fonce.cc fonce.hh
 
