@@ -1,0 +1,137 @@
+/* argmgr MODULE (primary-module-interface) */
+/* encoding=ISO8859-1 */
+/* lang=C++20 (conformance reviewed) */
+
+/* manage program arguments */
+/* version %I% last-modified %G% */
+
+
+/* revision history:
+
+	= 1998-09-10, David A­D­ Morano
+	This subroutine was written for Rightcore Network Services.
+
+	= 2020-08-13, David A­D­ Morano
+	This code has been modularized (w/ C++20 modules).
+
+*/
+
+/* Copyright © 1998,2020 David A­D­ Morano.  All rights reserved. */
+
+/*******************************************************************************
+
+	Object:
+	argmgr
+
+	Description:
+	This object manages program arguments.
+
+*******************************************************************************/
+
+module ;
+
+#include	<envstandards.h>	/* MUST be first to configure */
+#include	<cstddef>		/* |nullptr_t| */
+#include	<cstdlib>
+#include	<new>			/* |nothrow(3c++)| */
+#include	<clanguage.h>
+#include	<utypedefs.h>
+#include	<utypealiases.h>
+#include	<usysdefs.h>
+#include	<usysrets.h>
+#include	<localmisc.h>
+
+export module argmgr ;
+
+import vecbool ;
+
+/* local defines */
+
+
+/* imported namespaces */
+
+using std::nullptr_t ;			/* type */
+using std::nothrow ;			/* constant */
+
+
+/* local typedefs */
+
+
+/* external subroutines */
+
+
+/* external variables */
+
+
+/* forwards references */
+
+
+/* local variables */
+
+
+/* exported variables */
+
+
+/* exported subroutines */
+
+export {
+    enum argmgrmems {
+	argmgrmem_start,
+	argmgrmem_finish,
+	argmgrmem_arg,
+	argmgrmem_posarg,
+	argmgrmem_count,
+	argmgrmem_overlast
+    } ;
+    struct argmgr ;
+    struct argmgr_iter {
+    } ; /* end struct (argmgr_iter) */
+    struct argmgr_co {
+	argmgr		*op = nullptr ;
+	int		w = -1 ;
+	void operator () (argmgr *p,int m) noex {
+	    op = p ;
+	    w = m ;
+	} ;
+	operator int () noex ;
+	int operator () (int) noex ;
+    } ; /* end struct (argmgr_co) */
+    struct argmgr {
+	typedef argmgr_iter	iterator ;
+	friend 		argmgr_co ;
+	friend 		argmgr_iter ;
+	argmgr_co	start ;
+	argmgr_co	finish ;
+	argmgr_co	arg ;
+	argmgr_co	posarg ;
+	argmgr_co	count ;
+	vecbool		amap ;
+	mainv		argv ;
+	int		argc ;
+	int		ai ;
+	int		cpos ;
+	argmgr(int ac = 0,mainv av = nullptr) noex : argc(ac), argv(av) {
+	    start(this,argmgrmem_start) ;
+	    finish(this,argmgrmem_finish) ;
+	    arg(this,argmgrmem_arg) ;
+	    posarg(this,argmgrmem_posarg) ;
+	    count(this,argmgrmem_count) ;
+	    ai = 0 ;
+	    cpos = 0 ;
+	} ;
+	void load(int ac,mainv av) noex {
+	    argc = ac ;
+	    argv = av ;
+	} ;
+	int keyword(cchar *) noex ;
+	int keylong(cchar *) noex ;
+	int keychar(cchar *) noex ;
+	argmgr_iter begin() noex ;
+	argmgr_iter end() noex ;
+	operator int () noex {
+	    return cpos ;
+	} ;
+    } ; /* end struct (argmgr) */
+} /* end export */
+
+
