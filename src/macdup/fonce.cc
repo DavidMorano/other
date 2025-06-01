@@ -35,14 +35,17 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<sys/types.h>
+#include	<sys/types.h>		/* |dev_t| + |ino_t| */
 #include	<unistd.h>
 #include	<fcntl.h>
+#include	<cstddef>		/* |nullptr_t| */
+#include	<cstdlib>
+#include	<cstring>
 #include	<new>
 #include	<utility>		/* |pair(3c++)| */
 #include	<unordered_set>
-#include	<cstring>
 #include	<usystem.h>
+#include	<localmisc.h>
 
 #include	"fonce.hh"
 
@@ -61,8 +64,6 @@ using std::nothrow ;			/* constant */
 
 
 /* local typedefs */
-
-typedef decltype(std::nothrow)	nothrow_t ;
 
 typedef fonce::stype::iterator	setiter ;
 
@@ -137,7 +138,7 @@ int fonce::checkin(CUSTAT *sbp) noex {
 int fonce::icount() noex {
 	int		rs = SR_BUGCHECK ;
 	if (setp) {
-	    rs = setp->size() ;
+	    rs = intconv(setp->size()) ;
 	} /* end if (non-null) */
 	return rs ;
 }

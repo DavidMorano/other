@@ -144,7 +144,7 @@ namespace {
 	    return operator int () ;
 	} ;
     } ; /* end struct (ucmemalloc_co) */
-    typedef int (ucmemalloc::*ucmemalloc_m)(cvoid *,int,void *) noex ;
+    typedef int (ucmemalloc::*ucmemalloc_m)(void *,int,void *) noex ;
     struct ucmemalloc {
 	typedef ucmemalloc_stats	statblock ;
 	ptm		mx ;			/* object mutex */
@@ -163,21 +163,21 @@ namespace {
 	int trackstart(int) noex ;
 	int trackstarter(int) noex ;
 	int trackfinish() noex ;
-	int trackcall(cvoid *,int = 0,void * = nullptr) noex ;
+	int trackcall(void *,int = 0,void * = nullptr) noex ;
 	int trackmalloc(int,void *) noex ;
 	int trackvalloc(int,void *) noex ;
-	int trackrealloc(cvoid *,int,void *) noex ;
-	int trackfree(cvoid *) noex ;
+	int trackrealloc(void *,int,void *) noex ;
+	int trackfree(void *) noex ;
 	int trackpresent(cvoid *) noex ;	/* track-present */
 	int trackcurenum(ucmallreg_cur *,ucmallreg_ent *) noex ;
 	int trackreg(cvoid *,int) noex ;	/* track-register */
 	int trackrel(cvoid *) noex ;		/* track-release */
 	int trackout(ulong *) noex ;
 	int mallstats(ucmemalloc_stats *) noex ;
-	int callxalloc(cvoid *,int,void *) noex ;
-	int callrealloc(cvoid *,int,void *) noex ;
-	int callfree(cvoid *,int,void *) noex ;
-	int callpresent(cvoid *,int,void *) noex ;
+	int callxalloc(void *,int,void *) noex ;
+	int callrealloc(void *,int,void *) noex ;
+	int callfree(void *,int,void *) noex ;
+	int callpresent(void *,int,void *) noex ;
 	int callcurenum(ucmallreg_cur *,ucmallreg_ent *) noex ;
 	int iinit() noex ; 
 	int ifini() noex ;
@@ -281,7 +281,7 @@ int uc_valloc(int sz,void *vp) noex {
 }
 /* end subroutine (uc_valloc) */
 
-int uc_realloc(cvoid *cp,int sz,void *vp) noex {
+int uc_realloc(void *cp,int sz,void *vp) noex {
 	ucmemalloc	*uip = &ucmemalloc_data ;
 	int		rs ;
 	if (uip->ftrack) {
@@ -293,7 +293,7 @@ int uc_realloc(cvoid *cp,int sz,void *vp) noex {
 }
 /* end subroutine (uc_realloc) */
 
-int uc_free(cvoid *vp) noex {
+int uc_free(void *vp) noex {
 	ucmemalloc	*uip = &ucmemalloc_data ;
 	int		rs ;
 	if (uip->ftrack) {
@@ -412,13 +412,13 @@ int ucmemalloc::iinit() noex {
 	    } else if (! finitdone) {
 	        timewatch	tw(to) ;
 	        auto lamb = [this] () -> int {
-	            int		rs = SR_OK ;
+	            int		rsl = SR_OK ;
 	            if (!finit) {
-		        rs = SR_LOCKLOST ;		/* <- failure */
+		        rsl = SR_LOCKLOST ;		/* <- failure */
 	            } else if (finitdone) {
-		        rs = 1 ;			/* <- OK ready */
+		        rsl = 1 ;			/* <- OK ready */
 	            }
-	            return rs ;
+	            return rsl ;
 	        } ; /* end lambda (lamb) */
 	        rs = tw(lamb) ;		/* <- time-watching occurs in there */
 	    } /* end if (initialization) */
@@ -526,7 +526,7 @@ int ucmemalloc::trackfinish() noex {
 }
 /* end subroutine (ucmemalloc::trackfinish) */
 
-int ucmemalloc::trackcall(cvoid *cp,int sz,void *vp) noex {
+int ucmemalloc::trackcall(void *cp,int sz,void *vp) noex {
 	int		rs ;
 	int		rs1 ;
 	int		rv = 0 ;
@@ -560,20 +560,21 @@ int ucmemalloc::trackvalloc(int sz,void *vp) noex {
 	return trackcall(nullptr,sz,vp) ;
 }
 
-int ucmemalloc::trackrealloc(cvoid *cp,int sz,void *vp) noex {
+int ucmemalloc::trackrealloc(void *cp,int sz,void *vp) noex {
 	m = &ucmemalloc::callrealloc ;
 	return trackcall(cp,sz,vp) ;
 }
 
-int ucmemalloc::trackfree(cvoid *cp) noex {
+int ucmemalloc::trackfree(void *cp) noex {
 	m = &ucmemalloc::callfree ;
 	return trackcall(cp) ;
 }
 
 /* track-present (address-size) */
 int ucmemalloc::trackpresent(cvoid *cp) noex {
+    	void	*vp = cast_const<voidp>(cp) ;
 	m = &ucmemalloc::callpresent ;
-	return trackcall(cp) ;
+	return trackcall(vp) ;
 }
 /* end subroutine (ucmemalloc::trackpresent) */
 
@@ -599,7 +600,7 @@ int ucmemalloc::trackcurenum(ucmallreg_cur *curp,ucmallreg_ent *rp) noex {
 }
 /* end method (ucmemalloc::trackcurenum) */
 
-int ucmemalloc::callxalloc(cvoid *,int sz,void *vp) noex {
+int ucmemalloc::callxalloc(void *,int sz,void *vp) noex {
 	int		rs ;
 	int		rv = 0 ;
 	if ((rs = pagesize) >= 0) {
@@ -608,7 +609,7 @@ int ucmemalloc::callxalloc(cvoid *,int sz,void *vp) noex {
 	    rs = SR_BADFMT ;
 	    if (ma >= ps) {		/* <- page-zero check */
 	        if ((rs = af(sz,vp)) >= 0) {
-		    const caddr_t	a = *((caddr_t *)vp) ;
+		    const caddr_t	a = *((caddr_t *) vp) ;
 		    rv = rs ;
 		    rs = trackreg(a,sz) ;
 		}
@@ -618,7 +619,7 @@ int ucmemalloc::callxalloc(cvoid *,int sz,void *vp) noex {
 }
 /* end subroutine (ucmemalloc::trackmalloc) */
 
-int ucmemalloc::callrealloc(cvoid *cp,int sz,void *vp) noex {
+int ucmemalloc::callrealloc(void *cp,int sz,void *vp) noex {
 	int		rs ;
 	int		rs1 ;
 	int		rv = 0 ;
@@ -636,7 +637,7 @@ int ucmemalloc::callrealloc(cvoid *cp,int sz,void *vp) noex {
 }
 /* end subroutine (ucmemalloc::callrealloc) */
 
-int ucmemalloc::callfree(cvoid *cp,int,void *) noex {
+int ucmemalloc::callfree(void *cp,int,void *) noex {
 	int		rs ;
 	int		rv = 0 ;
 	if ((rs = trackrel(cp)) >= 0) {
@@ -648,7 +649,7 @@ int ucmemalloc::callfree(cvoid *cp,int,void *) noex {
 /* end subroutine (ucmemalloc::callfree) */
 
 /* track-present (address-size) */
-int ucmemalloc::callpresent(cvoid *cp,int,void *) noex {
+int ucmemalloc::callpresent(void *cp,int,void *) noex {
 	int		rs = SR_NOTOPEN ;
 	int		sz = 0 ;
 	if (ftrack) {

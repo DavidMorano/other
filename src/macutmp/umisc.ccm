@@ -42,9 +42,6 @@ module ;
 
 export module umisc ;
 
-export import usigset ;
-export import usigblock ;
-
 export {
     int mknpathx(char *,int,int,...) noex ;
     int mknpath1(char *,int,cc *) noex ;
@@ -68,7 +65,7 @@ export {
     int mknpath4w(char *,int,cc *,cc *,cc *,cc *,int) noex ;
     int mknpath5w(char *,int,cc *,cc *,cc *,cc *,cc *,int) noex ;
     int mknpath6w(char *,int,cc *,cc *,cc *,cc *,cc *,cc *,int) noex ;
-}
+} /* end export */
 
 export {
     int mknpathw(char *pp,int pl,cc *s1,int sl) noex {
@@ -119,6 +116,6 @@ export {
 
 export {
     cchar *strbasename(cchar *) noex ;
-}
+} /* end export */
 
 

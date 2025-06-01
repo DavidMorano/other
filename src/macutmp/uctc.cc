@@ -23,8 +23,9 @@
 #include	<fcntl.h>
 #include	<poll.h>
 #include	<cerrno>
+#include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
-#include	<usystem.h>
+#include	<usyscalls.h>
 #include	<localmisc.h>
 
 #include	"uctc.h"
@@ -56,6 +57,9 @@ namespace {
 	uctc(int a) noex : cmd(a) { } ;
 	uctc(WINSIZE *p) noex : wsp(p) { } ;
 	uctc(TERMIOS *p,int c = 0) noex : tip(p), cmd(c) { } ;
+	uctc(const TERMIOS *p,int c = 0) noex : cmd(c) { 
+	    	tip = cast_const<TERMIOS *>(p) ;
+	} ;
 	int operator () (int) noex ;
 	int drain(int) noex ;
 	int flow(int) noex ;
@@ -120,7 +124,7 @@ int uc_tcgetsid(int fd) noex {
 	return to(fd) ;
 }
 
-int uc_tcattrset(int fd,int cmd,TERMIOS *tip) noex {
+int uc_tcattrset(int fd,int cmd,const TERMIOS *tip) noex {
 	int		rs = SR_FAULT ;
 	if (tip) {
 	    uctc	to(tip,cmd) ;
@@ -218,8 +222,9 @@ int uctc::attrget(int fd) noex {
 /* end method (uctc::attrget) */
 
 int uctc::attrset(int fd) noex {
+    	const TERMIOS	*cp = cast_const<const TERMIOS *>(tip) ;
 	int		rs ;
-	if ((rs = tcsetattr(fd,cmd,tip)) < 0) {
+	if ((rs = tcsetattr(fd,cmd,cp)) < 0) {
 	    rs = (- errno) ;
 	}
 	return rs ;
