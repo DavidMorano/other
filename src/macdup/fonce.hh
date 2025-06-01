@@ -44,7 +44,7 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<sys/types.h>
+#include	<sys/types.h>		/* |dev_t| + |ino_t| */
 #include	<unistd.h>
 #include	<fcntl.h>
 #include	<utility>

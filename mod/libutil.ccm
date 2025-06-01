@@ -35,7 +35,7 @@ export {
     }
     constexpr inline int cstrnlen(cchar *sp,int sl = -1) noex {
     	cchar		*cp = sp ;
-	while (*cp++ && sl) {
+	while (sl && *cp++) {
 	    sl -= 1 ;
 	}
 	return int(cp - sp) ;

@@ -2,7 +2,7 @@
 
 T= libuo
 
-ALL= $(T).o $(T).so
+ALL= $(T).o $(T).a
 EXTRA ?= /usr/extra
 
 
@@ -80,7 +80,8 @@ OBJD_LUO=
 OBJE_LUO= 
 OBJF_LUO= 
 
-OBJ_LUO= obja_luo.o objb_luo.o objc_luo.o
+OBJ_LUO= ucx.o
+#OBJ_LUO= obja_luo.o objb_luo.o objc_luo.o
 #OBJ_LUO= objd_luo.o obje_luo.o objf_luo.o
 
 
@@ -90,6 +91,10 @@ OBJ_LUO= obja_luo.o objb_luo.o objc_luo.o
 default:		$(T).o
 
 all:			$(ALL)
+
+so:			$(T).so
+
+a:			$(T).a
 
 
 .c.i:
@@ -114,13 +119,14 @@ all:			$(ALL)
 	makemodule $(*)
 
 
-so:			$(T).so
-
 $(T).so:		$(T).o
 	$(LD) -shared -o $@ $(LDFLAGS) $(OBJ_LUO) $(LIBINFO)
 
 $(T).o:			$(OBJ_LUO)
 	$(LD) -r -o $@ $(LDFLAGS) $(OBJ_LUO)
+
+$(T).a:			$(OBJ_LUO)
+	$(AR) -rc $@ $?
 
 $(T).nm:		$(T).o
 	$(NM) $(NMFLAGS) $(T).o > $(T).nm
