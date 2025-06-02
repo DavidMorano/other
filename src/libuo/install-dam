@@ -1,0 +1,40 @@
+#!/usr/extra/bin/ksh
+# INSTALL-DAM
+
+
+: ${EXTRA:=/usr/extra}
+: ${USRLCOAL:=/usr/local}
+
+ma all
+
+LIBS="libuo.o "
+
+TDIRS+=" ${HOME}/github/system/lib"
+TDIRS+=" ${HOME}/github/other/lib"
+TDIRS+=" ${HOME}/lib "
+TDIRS+=" ${EXTRA}/lib "
+TDIRS+=" ${USRLOCAL}/lib "
+
+if [[ -r libu.so ]] ; then
+  if [[ libu.so -ef libu.dylib ]] ; then
+    print EQUAL
+  else
+    print LN
+    ln -f libu.so libu.dylib
+  fi
+fi
+
+for LIB in ${LIBS} ; do
+  if [[ -r "${LIB}" ]] ; then
+    for TD in ${TDIRS} ; do
+      if [[ -d "${TD}" ]] ; then
+        M=0664
+	if [[ ${LIB} == *.so ]] ; then
+	  M=0775
+        fi
+        ln -f ${LIB} ${TD}
+      fi
+    done
+  fi
+done
+
