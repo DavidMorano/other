@@ -63,6 +63,7 @@ export {
     int usigmask(int how,sigset_t *setp,sigset_t *osetp) noex {
 	int		rs = SR_INVALID ;
 	if (how >= 0) {
+	    rs = SR_OK ;
 	    if (errno_t ec ; (ec = pthread_sigmask(how,setp,osetp)) > 0) {
 	        rs = (- ec) ;
 	    }

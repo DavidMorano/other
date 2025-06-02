@@ -37,16 +37,19 @@ module ;
 #include	<cstdlib>
 #include	<vector>
 #include	<string>
+#include	<iostream>
 #include	<clanguage.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
 #include	<usysdefs.h>
 #include	<usysrets.h>
+#include	<localmisc.h>
 
 export module ureserve ;
 
 using std::vector ;			/* type */
 using std::string ;			/* type */
+using std::cerr ;			/* variable */
 
 export {
     bool isoneof(cint *,int) noex ;
@@ -173,12 +176,14 @@ export {
 	vecstr &operator = (const vecstr &) = delete ;
 	vecstr(const vecstr &) = delete ;
 	vecstr() noex {
+	    cerr << "vecstr: ctor" << eol ;
 	    start(this,vecstrmem_start) ;
 	    finish(this,vecstrmem_finish) ;
 	    count(this,vecstrmem_count) ;
 	    delall(this,vecstrmem_delall) ;
 	} ; /* end ctor */
 	int add(cchar *,int = -1) noex ;
+	int adduniq(cchar *,int = -1) noex ;
 	int find(cchar *,int = -1) noex ;
 	int del(int) noex ;
 	int curbegin(vecstr_cur *) noex ;
@@ -199,6 +204,25 @@ export {
     struct vecstr_cur {
 	vecstr::iterator	it ;
     } ; /* end struct (vestr_cur) */
+} /* end export */
+
+export {
+    struct utest {
+	utest() noex {
+	    cerr << "utest-ctor" << eol ;
+	} ;
+	int start() noex {
+	    cerr << "utest-start" << eol ;
+	    return 0 ;
+	} ;
+	void dtor() noex {
+	    cerr << "utest-dtor" << eol ;
+	} ;
+	destruct utest() {
+	    cerr << "utest-destruct" << eol ;
+	    dtor() ;
+	} ;
+    } ; /* end struct (utest) */
 } /* end export */
 
 
