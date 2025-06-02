@@ -1,0 +1,15 @@
+#!/usr/extra/bin/ksh
+# RUNGDB
+
+export DYLD_PRINT_TO_FILE=${PWD}/dyld.err
+export DYLD_PRINT_LIBRARIES=true
+export DYLD_PRINT_STATISTICS=true
+export DYLD_PRINT_STATISTICS_DETAILS=true
+export DYLD_PRINT_INITIALIZERS=true
+export DYLD_PRINT_APIS=true
+export DYLD_PRINT_SEGMENTS=true
+export DYLD_PRINT_BINDINGS=true
+export DYLD_PRINT_RPATHS=true
+gdb consoleid 
+
+
