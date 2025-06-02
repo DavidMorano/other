@@ -5,6 +5,8 @@
 /* print out the UTMP entry 'line' field if terminal session is registered */
 /* version %I% last-modified %G% */
 
+#define	CF_CONSOLEID	1		/* enable CONSOLEID */
+#define	CF_UTMPWRITE	1		/* enable UTMP writing */
 
 /* revision history:
 
@@ -65,6 +67,7 @@
 #include	<cstdio>		/* <- for |printf(3c)| */
 #include	<cstring>		/* <- |strncmp(3c)| */
 #include	<iostream>
+#include	<string_view>
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<clanguage.h>
 #include	<utypedefs.h>
@@ -99,8 +102,8 @@ import ureserve ;			/* |isNot{xx}(3u)| */
 #ifndef	UT_IDSIZE
 #define	UT_IDSIZE	4
 #endif
-#ifndef	UT_NAMESIZE
-#define	UT_NAMESIZE	8
+#ifndef	UT_USERSIZE
+#define	UT_USERSIZE	8
 #endif
 #ifndef	UT_LINESIZE
 #define	UT_LINESIZE	8
@@ -116,19 +119,27 @@ import ureserve ;			/* |isNot{xx}(3u)| */
 #define	VARLOGLINE	"LOGLINE"
 #endif
 
+#ifndef	CF_CONSOLEID
+#define	CF_CONSOLEID	0		/* enable CONSOLEID */
+#endif
+#ifndef	CF_UTMPWRITE
+#define	CF_UTMPWRITE	0		/* enable UTMP writing */
+#endif
+
 
 /* imported namespaces */
 
+using std::string_view ;		/* type */
+using libu::sncpy ;			/* subroutine (LIBU) */
+using libu::snprintf ;			/* subroutine (LIBU) */
 using std::min ;			/* subroutine-template */
 using std::max ;			/* subroutine-template */
-using libu::sncpy ;			/* subroutine */
-using libu::snprintf ;			/* subroutine */
-using std::min ;			/* subroutine-template */
 using std::cout ;			/* variable */
-using std::cerr ;			/* variable */
 
 
 /* local typedefs */
+
+typedef string_view		strview ;
 
 
 /* external subroutines */
@@ -232,12 +243,15 @@ constexpr cpcchar	utmpvars[] = {
 } ;
 
 constexpr int		utl_id		= UT_IDSIZE ;
-constexpr int		utl_user	= UT_NAMESIZE ;
+constexpr int		utl_user	= UT_USERSIZE ;
 constexpr int		utl_line	= UT_LINESIZE ;
 constexpr int		utl_host	= UT_HOSTSIZE ;
 constexpr int		tlen		= TIMEBUFLEN ;
 
 constexpr cchar		utmpxfname[]	= UTMPXFNAME ;
+
+constexpr cbool		f_consoleid	= CF_CONSOLEID ;
+constexpr cbool		f_utmpwrite	= CF_UTMPWRITE ;
 
 
 /* exported variables */
@@ -401,39 +415,55 @@ static bool conidok(UTMPX* up) noex {
 }
 /* end subroutine (conidok) */
 
-static void wrid(UTMPX *up,int c) noex {
+static int consoleid_wrid(UTMPX *up,vecstr *cosp,int c) noex {
     	cint	lid = szof(up->ut_id) ;
     	cint	idlen = 10 ;
-    	char	idbuf[10 + 1] ;
-	snprintf(idbuf,idlen,"co%02d",c) ;
-	strncpy(up->ut_id,idbuf,lid) ;
-} /* end subroutine (wrid) */
+	int	rs = SR_OK ;
+	{
+    	    char	idbuf[idlen + 1] ;
+	    bool	f = false ;
+	    while ((rs >= 0) && (! f)) {
+	        if ((rs = snprintf(idbuf,idlen,"co%02d",c)) >= 0) {
+		    if ((rs = cosp->find(idbuf,rs)) >= 0) {
+			c += 1 ;
+		    } else {
+			rs = SR_OK ;
+	    		strncpy(up->ut_id,idbuf,lid) ;
+			f = true ;
+		    }
+		} /* end if (snprintf) */
+	    } /* end while */
+	} /* end block */
+	return rs ;
+} /* end subroutine (consoleid_wrid) */
 
 static int consoleid_utx(vecstr *) noex ;
+static int consoleid_load(vecstr *) noex ;
 
 static int consoleid() noex {
 	int		rs ;
 	int		rs1 ;
 	int		f = false ; /* return-value */
-	if (vecstr cos ; (rs = cos.start) >= 0) {
-	    {
+	if_constexpr (f_consoleid) {
+	vecstr cos ; 
+	if ((rs = cos.start) >= 0) {
+	    if ((rs = consoleid_load(&cos)) >= 0) {
 	        rs = consoleid_utx(&cos) ;
 	        f = rs ;
 	    }
 	    rs1 = cos.finish ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (vecstr) */
+	} else {
+	    utest to ;
+	    rs = to.start() ;
+	} /* end if_consoleid (f_consoleid) */
 	return (rs >= 0) ? f : rs ;
-}
-/* end subroutine (consoleid) */
+} /* end subroutine (consoleid) */
 
-static int consoleid_utx(vecstr *cosp) noex {
-    	const uid_t	uid = getuid() ;
-	cnullptr	np{} ;
-	int		rs ;
+static int consoleid_load(vecstr *cosp) noex {
+    	int		rs = SR_OK ;
 	int		c = 0 ;
-	int		f = false ;
-	(void) cosp ;
 	setutxent() ;
 	for (UTMPX *up ; (up = getutxent()) != nullptr ; ) {
 	    if (isourtype(up)) {
@@ -441,16 +471,45 @@ static int consoleid_utx(vecstr *cosp) noex {
 		cint	lline = szof(up->ut_line) ;
 	        if (strncmp(up->ut_line,"console",lline) == 0) {
 		    if (conidok(up)) {
-			rs = cosp->add(up->ut_id,4) ;
+			rs = cosp->add(up->ut_id,lid) ;
+			c += 1 ;
+		    } /* end if (console ID not OK) */
+		}
+	    } /* end if (type match) */
+	    if (rs < 0) break ;
+	} /* end for */
+	endutxent() ;
+	return (rs >= 0) ? c : rs ;
+} /* end subroutine (consoleid_load) */
+
+static int consoleid_utx(vecstr *cosp) noex {
+    	const uid_t	uid = getuid() ;
+	cnullptr	np{} ;
+	int		rs = SR_OK ;
+	int		c = 0 ;
+	int		f = false ;
+	setutxent() ;
+	for (UTMPX *up ; (up = getutxent()) != nullptr ; ) {
+	    if (isourtype(up)) {
+		cint	lid = szof(up->ut_id) ;
+		cint	lline = szof(up->ut_line) ;
+	        if (strncmp(up->ut_line,"console",lline) == 0) {
+		    [[maybe_unused]] strview sv1(up->ut_id,lid) ;
+		    [[maybe_unused]] strview sv2(up->ut_user,utl_user) ;
+		    if (conidok(up)) {
 	    		c += 1 ;
 		    } else {
 			auto getpw = getpwnam ;
 			if (PASSWD *pwp ; (pwp = getpw(up->ut_user)) != np) {
 			    if ((uid == pwp->pw_uid) || (uid == 0)) {
+				[[maybe_unused]] strview us(up->ut_id,lid) ;
 				(void) lid ;
-				wrid(up,c) ;
-				rs = utmpwrite(up) ;
-				f = true ;
+				if ((rs = consoleid_wrid(up,cosp,c)) >= 0) {
+				    if_constexpr (f_utmpwrite) {
+				        rs = utmpwrite(up) ;
+				    }
+				    f = true ;
+				}
 			    }
 			} /* end if (getpw) */
 		    } /* end if (console ID not OK) */

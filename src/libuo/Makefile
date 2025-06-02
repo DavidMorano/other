@@ -2,7 +2,7 @@
 
 T= libuo
 
-ALL= $(T).o $(T).a
+ALL= $(T).o
 EXTRA ?= /usr/extra
 
 
@@ -15,7 +15,6 @@ HELPDIR		?= $(REPOROOT)/share/help
 CRTDIR		?= $(CGS_CRTDIR)
 VALDIR		?= $(CGS_VALDIR)
 RUNDIR		?= $(CGS_RUNDIR)
-
 
 CPP		?= cpp
 CC		?= gcc
@@ -80,7 +79,13 @@ OBJD_LUO=
 OBJE_LUO= 
 OBJF_LUO= 
 
-OBJ_LUO= ucx.o
+OBJ_LUO += ucx.o sfx.o matxstr.o char.o mapex.o
+OBJ_LUO += isx.o six.o rmx.o nleadx.o
+OBJ_LUO += strn.o strnxcmp.o strw.o strkeyx.o
+OBJ_LUO += dictdiff.o
+OBJ_LUO += inetconv.o inetaddrx.o 
+OBJ_LUO += strcpyxc.o strwcpy.o
+
 #OBJ_LUO= obja_luo.o objb_luo.o objc_luo.o
 #OBJ_LUO= objd_luo.o obje_luo.o objf_luo.o
 
@@ -276,6 +281,36 @@ realname.o:		realname.dir
 realname.dir:
 	makesubdir $@
 
+# MATXSTR
+matxstr.o:		matxstr.dir
+matxstr.dir:
+	makesubdir $@
+
+# NLEADX
+nleadx.o:		nleadx.dir
+nleadx.dir:
+	makesubdir $@
+
+# UCX
+ucx.o:			ucx.dir
+ucx.dir:
+	makesubdir $@
+
+# STRW
+strw.o:			strw.dir
+strw.dir:
+	makesubdir $@
+
+# STRNXCMP
+strnxcmp.o:		strnxcmp.dir
+strnxcmp.dir:
+	makesubdir $@
+
+# STRKEYX
+strkeyx.o:		strkeyx.dir
+strkeyx.dir:
+	makesubdir $@
+
 # Flat Objects
 storebuf.o:		storebuf.cc storebuf.h
 strmgr.o:		strmgr.cc strmgr.h
@@ -285,11 +320,12 @@ ids.o:			ids.cc ids.h
 calstrs.o:		calstrs.cc calstrs.h
 char.o:			char.cc char.h
 
-ucx.o:			uctc.o ucttyname.o
-	$(LD) -r $(LDFLAGS) -o $@ uctc.o ucttyname.o
-
-uctc.o:			uctc.cc
-ucttyname.o:		ucttyname.cc
-ucmemalloc.o:		ucmemalloc.cc ucmemalloc.h
+# SINGLES
+mapex.o:		mapex.cc mapex.h
+inet4int.o:		inet4int.cc inet4int.h
+inetconv.o:		inetconv.cc inetconv.h
+rmx.o:			rmx.cc rmx.h
+strcpyxc.o:		strcpyxc.cc strcpyxc.h strcpy.h strcpyx.h
+dictdiff.o:		dictdiff.cc dictdiff.h
 
 

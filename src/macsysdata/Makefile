@@ -15,7 +15,6 @@ CRTDIR		?= $(CGS_CRTDIR)
 VALDIR		?= $(CGS_VALDIR)
 RUNDIR		?= $(CGS_RUNDIR)
 
-
 CPP		?= cpp
 CC		?= gcc
 CXX		?= gxx
@@ -38,7 +37,7 @@ INCS=
 
 MODS += 
 
-LIBS= -lmacuser -lu
+LIBS= -lu
 
 
 INCDIRS= -I$(INCDIR)
@@ -47,8 +46,7 @@ LIBDIRS= -L$(LIBDIR)
 
 
 RUNINFO= -rpath $(RUNDIR)
-
-LIBINFO= $(LIBDIRS) $(LIBS)
+LIBINFO= $(LIBDIR)/libuo.o $(LIBDIRS) $(LIBS)
 
 # flag setting
 CPPFLAGS	?= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
@@ -58,7 +56,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACFU= main.o
+OBJ_MACFU= sysdata_main.o
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -67,6 +65,7 @@ OBJ_MACFU= main.o
 default:		$(T).x
 
 all:			$(ALL)
+
 
 .c.i:
 	$(CPP) $(CPPFLAGS) $< > $(*).i
@@ -109,6 +108,6 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
-main.o:			main.cc $(INCS)
+sysdata_main.o:		sysdata_main.cc $(INCS)
 
 

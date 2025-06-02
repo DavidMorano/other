@@ -197,7 +197,7 @@ constexpr MAPEX		mapexs[] = {
 	{ SR_NOMSG,	EX_OSERR },
 	{ SR_NOSYS,	EX_OSFILE },
 	{ 0, 0 }
-} ;
+} ; /* end array (mapex) */
 
 constexpr int		maxpathlen = MAXPATHLEN ;
 constexpr int		maxlinelen = MAXLINELEN ;
