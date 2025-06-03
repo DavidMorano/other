@@ -1,12 +1,19 @@
 #!/usr/extra/bin/ksh
 # MAKEIT
 
-: ${REPOROOT:=${HOME}/github/system}
-export REPOROOT
-
 BUILDTYPE=develop
 #BUILDTYPE=deliver
 
+
+export REPOROOT=$( reporoot )
+
+PN=${0##/*}
+ex=0
+if [[ -z "${REPOROOT}" ]] ; then
+  print -u 2 -- "${PN}: no REPO root"
+  ex=1
+  return ${ex}
+fi
 
 : ${ARCHITECTURE:=$( architecture )}
 : ${SYSNAME:=$( sysname )}
@@ -115,14 +122,16 @@ function getflags {
 case ${OSNAME}:${OSNUM} in
 Darwin:*)
   : ${CO_GCCALL:=""}
-  : ${CO_GCCDEB:="-Wall -Wextra"}
+  : ${CO_GCCDEB:="-Wall -Wextra -Wshadow -Wconversion"}
   : ${CO_GCCOPT:=""}
   : ${CO_GCCLIB:="-fpic"}
   : ${CO_GXXALL:=""}
-  : ${CO_GXXDEB:="-Wall -Wextra"}
+  : ${CO_GXXDEB:="-Wall -Wextra -Wshadow -Wconversion"}
   : ${CO_GXXOPT:=""}
   : ${CO_GXXLIB:="-fpic"}
   case ${BUILDTYPE} in
+  develop)
+    ;;
   debug)
     CO_GCCOPT="-g"
     CO_GXXOPT="-g"
@@ -176,12 +185,20 @@ export CO_GXXOPT
 export CO_GXXLIB
 
 
-export BINDIR=${REPOROOT}/bin
-export INCDIR=${REPOROOT}/include
-export LIBDIR=${REPOROOT}/lib
-export MANDIR=${REPOROOT}/man
-export INFODIR=${REPOROOT}/info
-export HELPDIR=${REPOROOT}/share/help
+: ${BINDIR:=${REPOROOT}/bin}
+: ${INCDIR:=${REPOROOT}/include}
+: ${LIBDIR:=${REPOROOT}/lib}
+: ${MANDIR:=${REPOROOT}/man}
+: ${INFODIR:=${REPOROOT}/info}
+: ${HELPDIR:=${REPOROOT}/share/help}
+
+export BINDIR
+export INCDIR
+export LIBDIR
+export MANDIR
+export INFODIR
+export HELPDIR
+
 export CRTDIR=${CGS_CRTDIR}
 export VALDIR=${CGS_VALDIR}
 export RUNDIR=${CGS_RUNDIR}
@@ -213,7 +230,7 @@ develop|debug)
   MAKECPPFLAGS=
   MAKECFLAGS="${CO_GCCALL} ${CO_GCCDEB} ${CO_GCCOPT} ${CO_GCCLIB}"
   MAKECXXFLAGS="${CO_GXXALL} ${CO_GXXDEB} ${CO_GXXOPT} ${CO_GXXLIB}"
-  MAKELDFLAGS=
+  MAKELDFLAGS="${CO_GXXLIB}"
   ;;
 test)
   ;;
@@ -225,8 +242,7 @@ deliver)
   MAKECPPFLAGS=
   MAKECFLAGS="${CO_GCCALL} ${CO_GCCOPT} ${CO_GCCLIB}"
   MAKECXXFLAGS="${CO_GXXALL} ${CO_GXXOPT} ${CO_GXXLIB}"
-  MAKELDFLAGS=
-  MAKELDFLAGS=
+  MAKELDFLAGS="${CO_GXXLIB}"
   ;;
 esac
 
@@ -240,6 +256,8 @@ export MAKELDFLAGS
 #print -- CGS_CC=${CGS_CC}
 #print -- CGS_GXX=${CGS_GXX}
 #print -- REPOROOT=${REPOROOT}
+#print -- INCDIR=${INCDIR}
+#print -- LIBDIR=${LIBDIR}
 
 export PATH=${REPOROOT}/bin:${PATH}
 make "${@}"

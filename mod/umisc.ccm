@@ -92,6 +92,22 @@ export {
 } /* end export */
 
 export {
+	int pathnaddw(char *,int,int,cchar *,int) noex ;
+	int pathnaddx(char *,int,int,int,cchar *,...) noex ;
+	inline int pathnadd(char *pbuf,int plen,int pl,cchar *sp) noex {
+		return pathnaddw(pbuf,plen,pl,sp,-1) ;
+	}
+	inline int pathnadd(char *pbuf,int plen,int pl,cchar *sp,int sl) noex {
+		return pathnaddw(pbuf,plen,pl,sp,sl) ;
+	}
+	template<typename ... Args>
+	inline int pathnadd(char *dbuf,int dl,Args ... args) noex {
+		cint		na = npack(Args) ;
+		return pathnaddx(dbuf,dl,na,args ...) ;
+	}
+} /* end export */
+
+export {
     int snaddw(char *,int,int,cchar *,int) noex ;
     inline int snaddw(char *dbuf,int dlen,int dl,cchar *sp) noex {
 	return snaddw(dbuf,dlen,dl,sp,-1) ;

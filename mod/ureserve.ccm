@@ -83,6 +83,7 @@ export {
 } /* end export */
 
 export {
+    uchar	char_tobc(int) noex ;
     uchar	char_tolc(int) noex ;
     uchar	char_touc(int) noex ;
     uchar	char_tofc(int) noex ;
@@ -176,7 +177,6 @@ export {
 	vecstr &operator = (const vecstr &) = delete ;
 	vecstr(const vecstr &) = delete ;
 	vecstr() noex {
-	    cerr << "vecstr: ctor" << eol ;
 	    start(this,vecstrmem_start) ;
 	    finish(this,vecstrmem_finish) ;
 	    count(this,vecstrmem_count) ;
