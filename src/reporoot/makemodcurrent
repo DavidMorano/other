@@ -1,0 +1,28 @@
+#!/usr/extra/bin/ksh
+# MAKEMODCURRENT
+PN=${0##*/}
+if [[ -d mod ]] ; then
+  for M in "${@}" ; do
+    case ${M} in
+    *.ccm)
+      ;;
+    *.o)
+      R=${M%.*}
+      M="${R}.ccm"
+      ;;
+    *)
+      M="${M}.ccm"
+      ;;
+    esac
+    if [[ ! -r ${M} ]] ; then
+      if [[ -r mod/${M} ]] ; then
+        ln mod/${M} .
+      else
+        print -u 2 -- "${PN}: requested module not in repository"
+      fi
+    fi
+  done
+else
+  print -u 2 -- "${PN}: no module directory present"
+fi
+
