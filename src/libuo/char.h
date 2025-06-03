@@ -53,55 +53,57 @@
 
 
 /* support tables; not accessed directly by callers  */
-extern const unsigned char	char_tolc[] ;
-extern const unsigned char	char_touc[] ;
-extern const unsigned char	char_tofc[] ;
-extern const short		char_dictorder[] ;
+extern const short		chardata_dictorder[] ;
+extern const unsigned char	chardata_tolc[] ;
+extern const unsigned char	chardata_touc[] ;
+extern const unsigned char	chardata_tofc[] ;
 
 /* test character attribute routines */
-#define	CHAR_ISSPACETAB(c)	(((c) == ' ') || ((c) == '\t'))
 #define	CHAR_ISWHITE(c)		char_iswhite(c)
 #define	CHAR_ISLC(c)		char_islc(c)
 #define	CHAR_ISUC(c)		char_isuc(c)
 #define	CHAR_ISDIG(c)		char_isdig(c)
+#define	CHAR_ISSPACETAB(c)	(((c) == ' ') || ((c) == '\t'))
+
+/* dictionary-collating-ordinal */
+#define	CHAR_DICTORDER(c)	(chardata_dictorder[(c) & 0xff])
 
 /* my super-fast conversions */
 #define	CHAR_TOBC(c)		((c) & 0xff)
-#define	CHAR_TOLC(c)		(char_tolc[(c) & 0xff])
-#define	CHAR_TOUC(c)		(char_touc[(c) & 0xff])
-#define	CHAR_TOFC(c)		(char_tofc[(c) & 0xff])
+#define	CHAR_TOLC(c)		(chardata_tolc[(c) & 0xff])
+#define	CHAR_TOUC(c)		(chardata_touc[(c) & 0xff])
+#define	CHAR_TOFC(c)		(chardata_tofc[(c) & 0xff])
 #define	CHAR_TOVAL(c)		char_toval(c) ;
-
-/* dictionary-collating-ordinal */
-#define	CHAR_DICTORDER(c)	(char_dictorder[(c) & 0xff])
 
 EXTERNC_begin
 
 extern bool char_iswhite(int) noex ;
 extern bool char_islc(int) noex ;
 extern bool char_isuc(int) noex ;
-
-static inline bool char_isspacetab(int ch) noex {
-	return CHAR_ISSPACETAB(ch) ;
-}
-
-extern int char_toval(int) noex ;
-
-EXTERNC_end
-
-#ifdef	__cplusplus
-
-inline bool char_isdig(int ch) noex {
-	return ((ch >= '0') && (ch <= '9')) ;
-}
-
-#else /* __cplusplus */
-
 static inline bool char_isdig(int ch) noex {
 	return ((ch >= '0') && (ch <= '9')) ;
 }
+static inline bool char_isspacetab(int ch) noex {
+	return CHAR_ISSPACETAB(ch) ;
+}
+static inline short char_dictorder(int ch) noex {
+	return chardata_dictorder[ch & 0xff] ;
+}
+static inline uchar char_tobc(int ch) noex {
+	return uchar(ch & 0xff) ;
+}
+static inline uchar char_tolc(int ch) noex {
+	return chardata_tolc[ch & 0xff] ;
+}
+static inline uchar char_touc(int ch) noex {
+	return chardata_touc[ch & 0xff] ;
+}
+static inline uchar char_tofc(int ch) noex {
+	return chardata_tofc[ch & 0xff] ;
+}
+extern int char_toval(int) noex ;
 
-#endif /* __cplusplus */
+EXTERNC_end
 
 
 #endif /* CHAR_INCLUDE */
