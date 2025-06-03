@@ -1,0 +1,71 @@
+/* usysbasic MODULE (System-Basic-Library) */
+/* encoding=ISO8859-1 */
+/* lang=C++20 (conformance reviewed) */
+
+/* some basic system calls */
+/* version %I% last-modified %G% */
+
+
+/* revision history:
+
+	= 1998-11-01, David A­D­ Morano
+	This subroutine was written for Rightcore Network Services.
+
+	= 2025-05-17, David A­D­ Morano
+	I modularized this code w/ C++20 modules.  Yes, after all
+	of this time.
+
+*/
+
+/* Copyright © 1998,2025 David A­D­ Morano.  All rights reserved. */
+
+/*******************************************************************************
+
+  	Names:
+	uatfork
+	uatæxit
+
+	Description:
+	I am providing a few basic library calls for use in these
+	other low-level subroutines.  Unlike some other middleware
+	calls to the C-language library system, these are quite
+	straight-forward.
+
+*******************************************************************************/
+
+module ;
+
+#include	<envstandards.h>	/* ordered first to configure */
+#include	<sys/param.h>		/* |statfs| */
+#include	<sys/mount.h>		/* |statfs| */
+#include	<sys/statvfs.h>		/* |statvfs| */
+#include	<sys/stat.h>		/* |ustat| */
+#include	<clanguage.h>
+#include	<utypedefs.h>
+#include	<utypealiases.h>
+#include	<usysdefs.h>
+#include	<usysrets.h>
+
+export module usysbasic ;
+
+export {
+    extern int uatfork(void_f,void_f,void_f) noex ;
+    extern int uatexit(void_f) noex ;
+    extern int ustatfile(cchar *,ustat *) noex ;
+    extern int ustatfilefs(cchar *,ustatfs *) noex ;
+    extern int ustatfilevfs(cchar *,ustatvfs *) noex ;
+    extern int ugetcwd(char *,int) noex ;
+    extern int uaccess(cchar *,int) noex ;
+    extern int udiraccess(cchar *,int) noex ;
+    static inline int ugetstat(cchar *fn,ustat *sp) noex {
+	return ustatfile(fn,sp) ;
+    }
+    static inline int ugetstatfs(cchar *fn,ustatfs *sp) noex {
+	return ustatfilefs(fn,sp) ;
+    }
+    static inline int ugetstatvfs(cchar *fn,ustatvfs *sp) noex {
+	return ustatfilevfs(fn,sp) ;
+    }
+} /* end export */
+
+
