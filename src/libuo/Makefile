@@ -2,7 +2,7 @@
 
 T= libuo
 
-ALL= $(T).o
+ALL= $(T).o ${T}.so $(T).a
 EXTRA ?= /usr/extra
 
 
@@ -57,8 +57,8 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ00_LUO= isx.o six.o mkx.o snx.o sfx.o 
-OBJ01_LUO= cfx.o ctx.o inetaddrx.o
+OBJ00_LUO= isx.o six.o mkx.o snx.o snwcpy.o
+OBJ01_LUO= sfx.o cfx.o ctx.o inetaddrx.o
 OBJ02_LUO= strdcpy.o strwcpy.o strx.o
 OBJ03_LUO= calstrs.o
 
@@ -81,10 +81,13 @@ OBJF_LUO=
 
 OBJ_LUO += ucx.o sfx.o matxstr.o char.o mapex.o
 OBJ_LUO += isx.o six.o rmx.o nleadx.o
-OBJ_LUO += strn.o strnxcmp.o strw.o strkeyx.o
 OBJ_LUO += dictdiff.o
 OBJ_LUO += inetconv.o inetaddrx.o 
+OBJ_LUO += strn.o strnxcmp.o strw.o strkeyx.o
 OBJ_LUO += strcpyxc.o strwcpy.o
+OBJ_LUO += fonce.o ccfile.o strmgr.o
+OBJ_LUP += readln.o
+OBJ_LUO += 
 
 #OBJ_LUO= obja_luo.o objb_luo.o objc_luo.o
 #OBJ_LUO= objd_luo.o obje_luo.o objf_luo.o
@@ -224,6 +227,10 @@ snx.o:			snx.dir
 snx.dir:
 	makesubdir $@
 
+snwcpy.o:		snwcpy.dir
+snwcpy.dir:
+	makesubdir $@
+
 cfx.o:			cfx.dir
 cfx.dir:
 	makesubdir $@
@@ -250,6 +257,11 @@ strx.dir:
 
 strn.o:			strn.dir
 strn.dir:
+	makesubdir $@
+
+# STRW
+strw.o:			strw.dir
+strw.dir:
 	makesubdir $@
 
 inetaddrx.o:		inetaddrx.dir
@@ -296,11 +308,6 @@ ucx.o:			ucx.dir
 ucx.dir:
 	makesubdir $@
 
-# STRW
-strw.o:			strw.dir
-strw.dir:
-	makesubdir $@
-
 # STRNXCMP
 strnxcmp.o:		strnxcmp.dir
 strnxcmp.dir:
@@ -315,17 +322,20 @@ strkeyx.dir:
 storebuf.o:		storebuf.cc storebuf.h
 strmgr.o:		strmgr.cc strmgr.h
 ids.o:			ids.cc ids.h
+ccfile.o:		ccfile.cc ccfile.hh
+fonce.o:		fonce.cc fonce.hh
 
 # GROUPS
 calstrs.o:		calstrs.cc calstrs.h
 char.o:			char.cc char.h
-
-# SINGLES
-mapex.o:		mapex.cc mapex.h
-inet4int.o:		inet4int.cc inet4int.h
 inetconv.o:		inetconv.cc inetconv.h
 rmx.o:			rmx.cc rmx.h
 strcpyxc.o:		strcpyxc.cc strcpyxc.h strcpy.h strcpyx.h
+
+# SINGLES
+mapex.o:		mapex.cc mapex.h
 dictdiff.o:		dictdiff.cc dictdiff.h
+inet4int.o:		inet4int.cc inet4int.h
+readln.o:		readln.cc readln.hh
 
 

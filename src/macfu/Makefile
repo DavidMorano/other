@@ -37,7 +37,7 @@ INCS=
 
 MODS +=
 
-LIBS= -lmacuser -lu
+LIBS= -luo -lu
 
 
 INCDIRS= -I$(INCDIR)
@@ -57,7 +57,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACFU= main.o fonce.o
+OBJ_MACFU= fu_main.o
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -90,7 +90,7 @@ all:			$(ALL)
 	makemodule $(*)
 
 
-$(T).x:			$(OBJ_MACFU)
+$(T).x:			$(OBJ_MACFU) Makefile
 	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACFU) $(LIBINFO)
 
 $(T).nm:		$(T).x
@@ -109,7 +109,9 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
-main.o:			main.cc fonce.hh	$(INCS)
+fu_main.o:		fu_main.cc fonce.hh	$(INCS)
+
 fonce.o:		fonce.cc fonce.hh
+ccfile.o:		ccfile.cc ccfile.hh
 
 

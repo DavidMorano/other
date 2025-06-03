@@ -7,7 +7,7 @@
 
 ma all
 
-LIBS="libuo.o "
+LIBS="libuo.o libuo.a "
 
 TDIRS+=" ${HOME}/github/system/lib"
 TDIRS+=" ${HOME}/github/other/lib"

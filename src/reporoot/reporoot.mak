@@ -37,7 +37,7 @@ INCS=
 
 MODS += argmgr.ccm
 
-LIBS= -lu
+LIBS= -luo -lu
 
 
 INCDIRS= -I$(INCDIR)
@@ -56,7 +56,9 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACFU= reporoot_main.o fonce.o
+OBJ_MACFU= reporoot_main.o
+
+DEPS_MAIN += usysbasic.o ulibvals.o umisc.o
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -93,7 +95,7 @@ $(T).x:			$(OBJ_MACFU)
 	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACFU) $(LIBINFO)
 
 $(T).nm:		$(T).x
-	$(NM) $(NMFLAGS) $(T).so > $(T).nm
+	$(NM) $(NMFLAGS) $(T).x > $(T).nm
 
 again:
 	rm -f $(T).x
@@ -108,9 +110,7 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
-reporoot_main.o:	reporoot_main.cc fonce.hh	$(INCS)
-
-fonce.o:		fonce.cc fonce.hh
+reporoot_main.o:	reporoot_main.cc $(DEPS_MAIN) 		$(INCS)
 
 mods.o:			argmgr.o
 	$(CXX) -r -o  $@ $(LDFLAGS) argmgr.o
@@ -125,5 +125,17 @@ argmgr0.o:		argmgr.ccm
 argmgr1.o:		argmgr.ccm argmgr1.cc
 	makemodule argmgr
 	$(COMPILE.cc) argmgr1.cc
+
+# USYSBASIC
+usysbasic.ccm:
+	makemodcurrent $@
+ulibvals.ccm:
+	makemodcurrent $@
+umisc.ccm:
+	makemodcurrent $@
+
+sysbasic.o:		usysbasic.ccm
+ulibvals.o:		ulibvals.ccm
+umisc.o:		umisc.ccm
 
 
