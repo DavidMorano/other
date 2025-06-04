@@ -67,8 +67,8 @@
 #include	<exitcodes.h>
 #include	<localmisc.h>
 
-#include	"fonce.hh"
-
+import fonce ;
+import ulibvals ;
 
 /* local defines */
 
@@ -172,7 +172,7 @@ namespace {
 	int iflistbegin() noex ;
 	int iflistend() noex ;
     } ; /* end struct (proginfo) */
-}
+} /* end namespace */
 
 
 /* forward references */
@@ -208,8 +208,8 @@ constexpr MAPEX		mapexs[] = {
 	{ 0, 0 }
 } ;
 
-constexpr int		maxpathlen = MAXPATHLEN ;
-constexpr int		maxlinelen = MAXLINELEN ;
+static cint		maxpathlen = ulibval.maxpathlen ;
+static cint		maxlinelen = ulibval.maxline ;
 constexpr int		nents = NENTS ;
 
 
@@ -414,11 +414,10 @@ int proginfo::readin() noex {
 /* end method (proginfo::readin) */
 
 int proginfo::fileproc(cchar *sp,int sl) noex {
-	USTAT		sb ;
 	strnul		s(sp,sl) ;
 	int		rs ;
 	int		c = 0 ;
-	if ((rs = u_stat(s,&sb)) >= 0) {
+	if (USTAT sb ; (rs = u_stat(s,&sb)) >= 0) {
 	    if ((rs = filecheck(&sb)) > 0) {
 		rs = (this->*m)(&sb,sp,sl) ;
 		c += rs ;

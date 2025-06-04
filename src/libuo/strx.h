@@ -22,6 +22,7 @@
 #include	<strxcmp.h>
 #include	<strerrabbr.h>
 #include	<strsigabbr.h>
+#include	<straltwchar.h>
 
 
 EXTERNC_begin
