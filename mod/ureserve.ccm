@@ -83,11 +83,13 @@ export {
 } /* end export */
 
 export {
-    uchar	char_tobc(int) noex ;
+    short	char_dictorder(int) noex ;
+    inline uchar char_tobc(int ch) noex {
+    	return uchar(ch & UCHAR_MAX) ;
+    }
     uchar	char_tolc(int) noex ;
     uchar	char_touc(int) noex ;
     uchar	char_tofc(int) noex ;
-    short	char_dictorder(int) noex ;
     int		char_toval(int) noex ;
 } /* end export */
 
@@ -104,14 +106,14 @@ export {
     bool	isprintterm(int) noex ;
     bool	iscmdstart(int) noex ;
     bool	ishdrkey(int) noex ;
+    inline bool	isoctlatin(int ch) noex {
+	    return (ch >= '0') && (ch <= '7') ;
+    }
     inline bool	isdigitlatin(int ch) noex {
 	    return (ch >= '0') && (ch <= '9') ;
     }
     inline bool	isdeclatin(int ch) noex {
     	    return isdigitlatin(ch) ;
-    }
-    inline bool	isoctlatin(int ch) noex {
-	    return (ch >= '0') && (ch <= '7') ;
     }
     inline bool	isnumlatin(int ch) noex {
     	    return ishexlatin(ch) || (ch == '\\') || (ch == 'x') ;
@@ -126,7 +128,7 @@ export {
 	    return (ch == '0') ;
     }
     inline bool	isplusminus(int ch) noex {
-	    return (ch == '+') || (ch == '-') ;
+	    return isnumsign(ch) ;
     }
     inline bool	isabbr(int ch) noex {
 	    ch &= UCHAR_MAX ;
