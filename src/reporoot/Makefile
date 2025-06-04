@@ -58,7 +58,7 @@ LDFLAGS		?= $(MAKELDFLAGS)
 
 OBJ_MACFU= reporoot_main.o
 
-DEPS_MAIN += usysbasic.o ulibvals.o umisc.o
+DEPS_MAIN += usysbasic.o ulibvals.o umisc.o fonce.o
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -126,13 +126,25 @@ argmgr1.o:		argmgr.ccm argmgr1.cc
 	makemodule argmgr
 	$(COMPILE.cc) argmgr1.cc
 
-# USYSBASIC
+# MODS
 usysbasic.ccm:
 	makemodcurrent $@
 ulibvals.ccm:
 	makemodcurrent $@
 umisc.ccm:
 	makemodcurrent $@
+fonce.ccm:	
+	makemodcurrent $@
+
+# FONCE
+fonce.o:		fonce0.o fonce1.o		$(INCS)
+	makemodule fonce
+	$(LD) -r -o $@ $(LDFLAGS) fonce0.o fonce1.o
+fonce0.o:		fonce.ccm			$(INCS)
+	makemodule fonce
+fonce1.o:		fonce1.cc fonce.ccm		$(INCS)
+	makemodule fonce
+	$(COMPILE.cc) fonce1.cc
 
 sysbasic.o:		usysbasic.ccm
 ulibvals.o:		ulibvals.ccm

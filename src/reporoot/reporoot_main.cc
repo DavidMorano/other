@@ -61,10 +61,9 @@
 #include	<exitcodes.h>
 #include	<localmisc.h>
 
-#include	"fonce.hh"
-
 import ulibvals ;
 import umisc ;
+import fonce ;
 
 /* local defines */
 
@@ -263,10 +262,8 @@ int proginfo::getpn(mainv names) noex {
 		cchar	*arg0 = argv[0] ;
 	        cchar	*bp{} ;
 	        if (int bl ; (bl = sfbasename(arg0,-1,&bp)) > 0) {
-		    int		pl = rmchr(bp,bl,'.') ;
-		    cchar	*pp = bp ;
-		    if (pl > 0) {
-	                if ((pm = matstr(names,pp,pl)) >= 0) {
+		    if (int pl = rmchr(bp,bl,'.') ; pl > 0) {
+	                if ((pm = matstr(names,bp,pl)) >= 0) {
 			    pn = names[pm] ;
 		            rs = pm ;
 	                }
@@ -361,7 +358,7 @@ int proginfo::process_print(cchar *sp,int sl) noex {
 	    {
 		cchar *cp ;
 	        if (int cl ; (cl = sfbasename(sp,sl,&cp)) > 0) {
-		     strview n(cp,cl) ;
+		    strview n(cp,cl) ;
 		    cout << n << eol ;
 		}
 	    }
