@@ -37,7 +37,7 @@ INCS=
 
 MODS +=
 
-LIBS= -lu
+LIBS= -luo -lu
 
 
 INCDIRS= -I$(INCDIR)
@@ -46,7 +46,6 @@ LIBDIRS= -L$(LIBDIR)
 
 
 RUNINFO= -rpath $(RUNDIR)
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -57,7 +56,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACFU= main.o
+OBJ_MACFU= motd_main.o
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -94,7 +93,7 @@ $(T).x:			$(OBJ_MACFU)
 	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACFU) $(LIBINFO)
 
 $(T).nm:		$(T).x
-	$(NM) $(NMFLAGS) $(T).so > $(T).nm
+	$(NM) $(NMFLAGS) $(T).x > $(T).nm
 
 again:
 	rm -f $(T).x

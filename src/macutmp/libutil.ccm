@@ -117,7 +117,7 @@ export {
 	return voidp(rp) ;
     }
     template<typename T>
-    constexpr inline T *resumelife(void *vp) noex {
+    constexpr inline T *resumelife<T *>(void *vp) noex {
     	T *rp = cast_reinterpret<T *>(vp) ;
     	return rp ;
     }
