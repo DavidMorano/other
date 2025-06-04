@@ -66,8 +66,7 @@
 #include	<exitcodes.h>
 #include	<localmisc.h>
 
-#include	"fonce.hh"
-
+import fonce ;
 
 /* local defines */
 

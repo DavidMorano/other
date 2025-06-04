@@ -1,6 +1,6 @@
-# MAKEFILE (macfiles)
+# MAKEFILE (files)
 
-T= macfiles
+T= files
 
 ALL= $(T).x
 
@@ -35,9 +35,9 @@ DEFS=
 
 INCS=
 
-MODS += argmgr.ccm
+MODS += vecbool.ccm fonce.ccm argmgr.ccm
 
-LIBS= -lmacuser -lu
+LIBS= -luo -lu
 
 
 INCDIRS= -I$(INCDIR)
@@ -56,7 +56,9 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACFU= files_main.o fonce.o
+DEPS_MAIN += fonce.o vecbool.o
+
+OBJ_MACFU= files_main.o
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -108,22 +110,49 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
-files_main.o:		mods.o files_main.cc fonce.hh		$(INCS)
+files_main.o:		files_main.cc $(DEPS_MAIN)		$(INCS)
 
-fonce.o:		fonce.cc fonce.hh
+# MODS
+mods.o:			$(DEPS_MAIN)
+	$(CXX) -r -o $@ $(LDFLAGS) $^
 
-mods.o:			argmgr.o
-	$(CXX) -r -o  $@ $(LDFLAGS) argmgr.o
+vecbool.ccm:
+	makemodcurrent
+argmgr.ccm:
+	makemodcurrent
+fonce.ccm:
+	makemodcurrent
+
+# VECBOOL
+vecbool.o:		vecbool0.o vecbool1.o
+	$(CXX) -r -o $@ $(LDFLAGS) vecbool0.o vecbool1.o
+
+vecbool0.o:		vecbool.ccm
+	makemodule vecbool
+
+vecbool1.o:		vecbool1.cc vecbool.ccm
+	makemodule vecbool
+	$(COMPILE.cc) $<
 
 # ARGMGR
 argmgr.o:		argmgr0.o argmgr1.o
-	$(CXX) -r -o  $@ $(LDFLAGS) argmgr0.o argmgr1.o
+	$(CXX) -r -o $@ $(LDFLAGS) argmgr0.o argmgr1.o
 
 argmgr0.o:		argmgr.ccm
 	makemodule argmgr
 
-argmgr1.o:		argmgr.ccm argmgr1.cc
+argmgr1.o:		argmgr1.cc argmgr.ccm
 	makemodule argmgr
-	$(COMPILE.cc) argmgr1.cc
+	$(COMPILE.cc) $<
+
+# FONCE
+fonce.o:		fonce0.o fonce1.o		$(INCS)
+	makemodule fonce
+	$(LD) -r -o $@ $(LDFLAGS) fonce0.o fonce1.o
+fonce0.o:		fonce.ccm			$(INCS)
+	makemodule fonce
+fonce1.o:		fonce1.cc fonce.ccm		$(INCS)
+	makemodule fonce
+	$(COMPILE.cc) $<
 
 
