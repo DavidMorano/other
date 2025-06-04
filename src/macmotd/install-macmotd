@@ -1,0 +1,32 @@
+#!/usr/extra/bin/ksh
+# INSTALL-MACMOTD
+
+: ${EXTRA:=/usr/extra}
+: ${USRLCOAL:=/usr/local}
+
+ma all
+
+LIBS="macmotd "
+
+if [[ ! -f  macmotd ]] ; then
+  ln -f macmotd.x macmotd
+fi
+
+TDIRS+=" ${EXTRA}/sbin "
+
+for LIB in ${LIBS} ; do
+  if [[ -r "${LIB}" ]] ; then
+    for TD in ${TDIRS} ; do
+      if [[ -d "${TD}" ]] ; then
+        M=0664
+	case ${LIB} in
+	*.so|*.x)
+	  M=0775
+	  ;;
+	esac
+        install -s -S -p -m ${M} ${LIB} ${TD}
+      fi
+    done
+  fi
+done
+
