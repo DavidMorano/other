@@ -27,5 +27,5 @@ if [[ -d mod ]] ; then
 else
   print -u 2 -- "${PN}: no module directory present"
 fi
-return $(ex)
+return ${ex}
 

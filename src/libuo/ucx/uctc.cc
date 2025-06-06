@@ -55,7 +55,9 @@ namespace {
 	uctc() noex { } ;
 	uctc(int a) noex : cmd(a) { } ;
 	uctc(WINSIZE *p) noex : wsp(p) { } ;
-	uctc(TERMIOS *p,int c = 0) noex : tip(p), cmd(c) { } ;
+	uctc(const TERMIOS *p,int c = 0) noex : cmd(c) { 
+	    tip = cast_const<TERMIOS *>(p) ;
+	} ;
 	int operator () (int) noex ;
 	int drain(int) noex ;
 	int flow(int) noex ;
@@ -120,7 +122,7 @@ int uc_tcgetsid(int fd) noex {
 	return to(fd) ;
 }
 
-int uc_tcattrset(int fd,int cmd,TERMIOS *tip) noex {
+int uc_tcattrset(int fd,int cmd,const TERMIOS *tip) noex {
 	int		rs = SR_FAULT ;
 	if (tip) {
 	    uctc	to(tip,cmd) ;

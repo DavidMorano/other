@@ -36,6 +36,11 @@
 	==0		for normal operation success
 	!=0		some error
 
+	Notes:
+	1. The use of |u_getvwd(3u)| always returns a "resolved" 
+	file-path.  So there is no need to call something like
+	|u_resolvepath(3u)| to resolve the returned path.
+
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
@@ -292,7 +297,7 @@ int proginfo::process() noex {
 	if ((rs = process_pmbegin()) >= 0) {
 	    if ((rs = maxpathlen) >= 0) {
 	        cint plen = rs ;
-	        if (char *pbuf ; (rs = umalloc((plen+1),&pbuf)) >= 0) {
+	        if (char *pbuf ; (rs = umalloc((plen + 1),&pbuf)) >= 0) {
 	            if ((rs = u_getcwd(pbuf,plen)) >= 0) {
 			rs = process_loop(pbuf,plen,rs) ;
 			c = rs ;
@@ -318,7 +323,7 @@ int proginfo::process_loop(char *pbuf,int plen,int pl) noex {
 	    } else if (rs == 0) {
 		cchar *sp ;
 		if (int sl ; (sl = sfdirname(pbuf,pl,&sp)) > 0) {
-		    rs = pbuf[sl] = '\0' ;
+		    pbuf[sl] = '\0' ;
 		    pl = sl ;
 		}
 	    } /* end if */

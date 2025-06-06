@@ -1,9 +1,10 @@
 INSTALL
  
 Synopsis:
-$ install -S -p -m 0664 ${LIB} ${TARDIR}
+$ install -s -S -p -m 0775 ${LIB} ${TARDIR}
 
 Arguments:
+-s		'strip' (of symbols) the executable file first
 -S		use safe mode; rename target file into place
 -p		preserve permissions on installed file
 -m 0775		mode of installed file after installation

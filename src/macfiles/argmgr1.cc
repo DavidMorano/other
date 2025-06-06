@@ -100,34 +100,4 @@ argmgr_co::operator int () noex {
 	return rs ;
 } /* end method (argmgr_co) */
 
-int argmgr_co::operator () (int idx) noex {
-    	int		rs = SR_BUGCHECK ;
-	if (op) {
-	    rs = SR_INVALID ;
-	    if (idx >= 0) {
-                    switch (w) {
-                    case argmgrmem_start:
-                        rs = SR_OK ;
-                        break ;
-                    case argmgrmem_finish:
-                        rs = SR_OK ;
-                        break ;
-                    case argmgrmem_arg:
-                        rs = SR_OK ;
-                        break ;
-                    case argmgrmem_posarg:
-                        rs = SR_OK ;
-                        break ;
-                    case argmgrmem_count:
-                        rs = SR_OK ;
-                        break ;
-	            default:
-		        rs = SR_INVALID ;
-		        break ;
-                    } /* end switch */
-	    } /* end if (valid) */
-	} /* end if (non-null) */
-	return rs ;
-} /* end method (argmgr_co) */
-
 

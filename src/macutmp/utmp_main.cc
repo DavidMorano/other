@@ -194,8 +194,6 @@ static bool isourtype32(utmpx32 *up) noex {
 
 static UTMPX	*getutxliner(UTMPX *) noex ;
 
-static char	*strtcpy(char *,cchar *,int) noex ;
-
 
 /* local variables */
 
@@ -444,9 +442,7 @@ static int consoleid() noex {
 	int		rs ;
 	int		rs1 ;
 	int		f = false ; /* return-value */
-	if_constexpr (f_consoleid) {
-	vecstr cos ; 
-	if ((rs = cos.start) >= 0) {
+	if (vecstr cos ; (rs = cos.start) >= 0) {
 	    if ((rs = consoleid_load(&cos)) >= 0) {
 	        rs = consoleid_utx(&cos) ;
 	        f = rs ;
@@ -454,16 +450,12 @@ static int consoleid() noex {
 	    rs1 = cos.finish ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (vecstr) */
-	} else {
-	    utest to ;
-	    rs = to.start() ;
-	} /* end if_consoleid (f_consoleid) */
 	return (rs >= 0) ? f : rs ;
 } /* end subroutine (consoleid) */
 
 static int consoleid_load(vecstr *cosp) noex {
     	int		rs = SR_OK ;
-	int		c = 0 ;
+	int		c = 0 ; /* return-value */
 	setutxent() ;
 	for (UTMPX *up ; (up = getutxent()) != nullptr ; ) {
 	    if (isourtype(up)) {
@@ -487,7 +479,7 @@ static int consoleid_utx(vecstr *cosp) noex {
 	cnullptr	np{} ;
 	int		rs = SR_OK ;
 	int		c = 0 ;
-	int		f = false ;
+	int		f = false ; /* return-value */
 	setutxent() ;
 	for (UTMPX *up ; (up = getutxent()) != nullptr ; ) {
 	    if (isourtype(up)) {
@@ -547,7 +539,7 @@ static int findstdin(int pm) noex {
 		cint	n = xstrlen(devprefix) ;
 		if (strncmp(tbuf,devprefix,n) == 0) {
 		    UTMPX	ut{} ;
-		    cchar	*line = (tbuf+n) ;
+		    cchar	*line = (tbuf + n) ;
 		    strncpy(ut.ut_line,line,utl_line) ;
 		    if (UTMPX *up ; (up = getutxliner(&ut)) != nullptr) {
 			f = true ;
@@ -639,25 +631,25 @@ static int printutxval(int pm,UTMPX *up) noex {
 	case progmode_utmpid:
 	    fl = int(sizeof(up->ut_id)) ;
 	    ml = min(olen,fl) ;
-	    strtcpy(obuf,up->ut_id,ml) ;
+	    stpncpy(obuf,up->ut_id,ml) ;
 	    break ;
 	case progmode_utmpname:
 	    fl = int(sizeof(up->ut_user)) ;
 	    ml = min(olen,fl) ;
-	    strtcpy(obuf,up->ut_user,ml) ;
+	    stpncpy(obuf,up->ut_user,ml) ;
 	    break ;
 	case progmode_utmpline:
 	    fl = int(sizeof(up->ut_line)) ;
 	    ml = min(olen,fl) ;
-	    strtcpy(obuf,up->ut_line,ml) ;
+	    stpncpy(obuf,up->ut_line,ml) ;
 	    break ;
 	case progmode_utmphost:
 	    fl = int(sizeof(up->ut_host)) ;
 	    ml = min(olen,fl) ;
-	    strtcpy(obuf,up->ut_host,ml) ;
+	    stpncpy(obuf,up->ut_host,ml) ;
 	    break ;
 	case progmode_utmpsid:
-	    cout << up->ut_pid << '\n' ;
+	    cout << up->ut_pid << eol ;
 	    break ;
 	case progmode_logged:
 	    break ;
@@ -666,7 +658,7 @@ static int printutxval(int pm,UTMPX *up) noex {
 	    break ;
 	} /* end switch */
 	if ((rs >= 0) && fl && (pm != progmode_logged)) {
-	    cout << obuf << '\n' ;
+	    cout << obuf << eol ;
 	}
 	return rs ;
 }
@@ -693,7 +685,7 @@ static UTMPX *getutxliner(UTMPX *sup) noex {
 		cint	ll = utl_line ;
 		cchar	*lp = sup->ut_line ;
 		if (strncmp(up->ut_line,lp,ll) == 0) {
-		    strtcpy(nbuf,up->ut_user,utl_user) ;
+		    stpncpy(nbuf,up->ut_user,utl_user) ;
 		    if ((pwp = getpwnam(nbuf)) != nullptr) {
 		        if (pwp->pw_uid == uid) {
     			    break ;
@@ -705,18 +697,6 @@ static UTMPX *getutxliner(UTMPX *sup) noex {
 	return up ;
 }
 /* end subroutine (getutxliner) */
-
-/* this is similar to |strwcpy(3uc)| */
-static char *strtcpy(char *dp,cchar *sp,int sl) noex {
-	if (sl >= 0) {
-	    dp = strncpy(dp,sp,sl) + sl ;
-	    *dp = '\0' ;
-	} else {
-	    dp = nullptr ;
-	}
-	return dp ;
-}
-/* end subroutine (strtcpy) */
 
 static int utmpwrite(UTMPX *up) noex {
     	cnullptr	np{} ;

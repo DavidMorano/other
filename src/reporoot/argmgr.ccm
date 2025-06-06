@@ -74,7 +74,6 @@ using std::nothrow ;			/* constant */
 
 /* exported subroutines */
 
-export {
     enum argmgrmems {
 	argmgrmem_start,
 	argmgrmem_finish,
@@ -82,7 +81,9 @@ export {
 	argmgrmem_posarg,
 	argmgrmem_count,
 	argmgrmem_overlast
-    } ;
+    } ; /* end enum (argmgrmems) */
+
+export {
     struct argmgr ;
     struct argmgr_iter {
     } ; /* end struct (argmgr_iter) */
@@ -118,7 +119,7 @@ export {
 	    count(this,argmgrmem_count) ;
 	    ai = 0 ;
 	    cpos = 0 ;
-	} ;
+	} ; /* end ctor */
 	void load(int ac,mainv av) noex {
 	    argc = ac ;
 	    argv = av ;

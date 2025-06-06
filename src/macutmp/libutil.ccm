@@ -61,20 +61,24 @@ export {
     constexpr inline int xstrcspn(cchar *sp,cchar *ss) noex {
     	return intconv(strcspn(sp,ss)) ;
     }
-    constexpr inline char *xstrcpy(char *dp,cchar *ss) noex {
-    	return stpcpy(dp,ss) ;
-    }
-    constexpr inline char *xstrcpy(char *dp,cchar *ss,int n) noex {
-    	csize	nsize = size_t(n) ;
-    	return stpncpy(dp,ss,nsize) ;
-    }
-    constexpr inline char *xstpcpy(char *dp,cchar *ss) noex {
-    	return stpcpy(dp,ss) ;
-    }
-    constexpr inline char *xstpncpy(char *dp,cchar *ss,int n) noex {
-    	csize	nsize = size_t(n) ;
-    	return stpncpy(dp,ss,nsize) ;
-    }
+    constexpr inline char *strcpy(char *dp,cchar *ss,int n) noex {
+	char	*rp ;
+	if (n >= 0) {
+	    rp = stpncpy(dp,ss,n) ;
+	} else {
+	    rp = stpcpy(dp,ss) ;
+	}
+    	return rp ;
+    } /* end subroutine (strcpy) */
+    constexpr inline char *stpcpy(char *dp,cchar *ss,int n) noex {
+	char	*rp ;
+	if (n >= 0) {
+	    rp = stpncpy(dp,ss,n) ;
+	} else {
+	    rp = stpcpy(dp,ss) ;
+	}
+    	return rp ;
+    } /* end subroutine (stpcpy) */
 } /* end export */
 
 export {
@@ -84,12 +88,12 @@ export {
 	return sz ;
     }
     template<typename T> constexpr inline int memclear(T *op) noex {
-	int	sz = szof(T) ;
-	return memclear(op,sz) ;
+	cint	osz = szof(T) ;
+	return memclear(op,osz) ;
     }
     template<typename T> constexpr inline void *memcpy(T *dp,cvoid *sp) noex {
-	csize	dsz = sizeof(T) ;
-	return memcpy(dp,sp,dsz) ;
+	csize	dsize = sizeof(T) ;
+	return memcpy(dp,sp,dsize) ;
     }
     template<typename T>
     constexpr inline void *cmemcpy(T *dp,cvoid *sp,size_t dsize = -1) noex {
@@ -97,11 +101,19 @@ export {
     	return memcpy(dp,sp,dsize) ;
     }
     constexpr inline void *memcopy(void *dp,cvoid *sp,int dsz) noex {
-	csize	dsize = size_t(dsz) ;
-	caddr_t	rp = caddr_t(dp) ;
-	memcpy(dp,sp,dsize) ;
-	return voidp(rp + dsz) ;
-    }
+	caddr_t		rp ; /* return-value */
+	if (dsz < 0) {
+	    cchar *cp = ccharp(sp) ;
+	    dsz = strlen(cp) ;
+	}
+	{
+	    csize	dsize = size_t(dsz) ;
+	    caddr_t	dst = caddr_t(dp) ;
+	    memcpy(dp,sp,dsize) ;
+	    rp = (dst + dsz) ;
+	}
+	return voidp(rp) ;
+    } /* end subroutine (memcopy) */
     template<typename T>
     constexpr inline void *memcopy(T *dp,cvoid *sp,int dsz = -1) noex {
     	caddr_t		rp = nullptr ;
@@ -115,9 +127,9 @@ export {
 	    }
 	}
 	return voidp(rp) ;
-    }
+    } /* end subroutine (memcopy) */
     template<typename T>
-    constexpr inline T *resumelife<T *>(void *vp) noex {
+    constexpr inline T *resumelife(void *vp) noex {
     	T *rp = cast_reinterpret<T *>(vp) ;
     	return rp ;
     }
