@@ -5,6 +5,7 @@
 /* small Message-Of-The-Day (MOTD) server for macOS */
 /* version %I% last-modified %G% */
 
+#define	CF_DEBUG	0		/* debugging */
 
 /* revision history:
 
@@ -39,8 +40,8 @@
 #include	<sys/param.h>		/* |MAXPATHLEN| */
 #include	<unistd.h>
 #include	<fcntl.h>
-#include	<climits>
 #include	<ctime>
+#include	<limits>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<cstdio>
@@ -49,6 +50,7 @@
 #include	<string>
 #include	<string_view>
 #include	<unordered_set>
+#include	<fstream>
 #include	<usystem.h>
 #include	<strn.h>
 #include	<sfx.h>
@@ -66,7 +68,12 @@
 
 #define	INTRUN		(30*60)		/* seconds */
 #define	INTUPDATE	9		/* seconds */
+
+#if	defined(CF_DEBUG) && (CF_DEBUG > 0)
+#define	FN_MOTD		"/dev/stdout"
+#else
 #define	FN_MOTD		"/etc/motd"
+#endif
 
 
 /* imported namespaces */
@@ -163,7 +170,7 @@ namespace {
 	int iservbegin() noex ;
 	int iservend() noex ;
     } ; /* end struct (proginfo) */
-}
+} /* end namespace */
 
 
 /* forward references */
@@ -340,7 +347,7 @@ int proginfo::procfile(time_t ti) noex {
 			    wlen = rs ;
 			    rs = u_ftruncate(fd,fo) ;
 			}
-		    }
+		    } /* end if (procline) */
 	    	    rs1 = u_close(fd) ;
 	    	    if (rs >= 0) rs = rs1 ;
 		} /* end if (file) */
@@ -354,7 +361,7 @@ int proginfo::procline(time_t ti) noex {
 	constexpr cchar	sep[] = " - " ;
 	int		rs = SR_OK ;
 	int		wl = 0 ;
-	if (TM ts ; localtime_r(&ti,&ts) != nullptr) {
+	if (tm ts ; localtime_r(&ti,&ts) != nullptr) {
 	    if ((rs = procline_node(wl)) >= 0) {
 	        wl += rs ;
 	        if ((rs = procline_str(wl,sep)) >= 0) {
@@ -389,37 +396,27 @@ int proginfo::procline_node(int i) noex {
 		    cint	nl = rs ;
 		    cint	bl = (llen - i) ;
 		    char	*bp = (lbuf + i) ;
-		    if ((rs = snwcpy(bp,bl,nbuf,nl)) >= 0) {
-			i += rs ;
-		    } /* end if (snwcpy) */
+		    rs = snwcpy(bp,bl,nbuf,nl) ;
 	        } /* end if (u_getnodename) */
 		delete [] nbuf ;
 	    } /* end if (m-a-f) */
 	} /* end if (nodenamelen) */
-	return (rs >= 0) ? i : rs ;
+	return rs ;
 }
 /* end subroutine (proginfo::procline_node) */
 
 int proginfo::procline_str(int i,cchar *s) noex {
 	cint		bl = (llen - i) ;
-	int		rs ;
 	char		*bp = (lbuf + i) ;
-	if ((rs = snwcpy(bp,bl,s)) >= 0) {
-	    i += rs ;
-	}
-	return (rs >= 0) ? i : rs ;
+	return snwcpy(bp,bl,s) ;
 }
 /* end subroutine (proginfo::procline_str) */
 
 int proginfo::procline_date(int i,const tm *tsp) noex {
 	constexpr cchar	fmt[] = "%a %e %b %H:%M" ;
 	cint		bl = (llen - i) ;
-	int		rs ;
 	char		*bp = (lbuf + i) ;
-	if ((rs = ustrftime(bp,bl,fmt,tsp)) >= 0) {
-	    i += rs ;
-	}
-	return (rs >= 0) ? i : rs ;
+	return ustrftime(bp,bl,fmt,tsp) ;
 }
 /* end subroutine (proginfo::procline_date) */
 
@@ -429,11 +426,9 @@ int proginfo::procline_la(int i) noex {
 	char		*bp = (lbuf + i) ;
 	if (double dla[nlas] ; (rs = uloadavgd(dla,nlas)) >= 0) {
 	    cint	prec = 1 ;
-	    if ((rs = snloadavgd(bp,bl,prec,dla,nlas)) >= 0) {
-	        i += rs ;
-	    }
+	    rs = snloadavgd(bp,bl,prec,dla,nlas) ;
 	}
-	return (rs >= 0) ? i : rs ;
+	return rs ;
 }
 /* end subroutine (proginfo::procline_la) */
 
@@ -444,10 +439,9 @@ int proginfo::procline_end(int i) noex {
 	if (bl > 0) {
 	    *bp++ = eol ;
 	    *bp = '\0' ;
-	    i += 1 ;
-	    rs = SR_OK ;
+	    rs = 1 ;
 	}
-	return (rs >= 0) ? i : rs ;
+	return rs ;
 }
 /* end subroutine (proginfo::procline_date) */
 

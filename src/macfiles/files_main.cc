@@ -84,7 +84,6 @@ import ulibvals ;
 using std::nullptr_t ;			/* type */
 using std::string ;			/* type */
 using std::string_view ;		/* type */
-using std::unordered_set ;		/* type */
 using std::istream ;			/* type */
 using std::cin;				/* variable */
 using std::cout ;			/* variable */
@@ -187,9 +186,33 @@ enum progmodes {
 } ;
 
 constexpr cpcchar	prognames[] = {
-	"files",
-	"filelines",
-	nullptr
+	[progmode_files]	= "files",
+	[progmode_filelines]	= "filelines",
+	[progmode_overlast]	= nullptr
+} ;
+
+enum argopts {
+    	argopt_version,
+    	argopt_debug,
+    	argopt_help,
+	argopt_overlast
+} ;
+
+constexpr cpcchar	argopts[] = {
+    	[argopt_version]	= "VERSION",
+    	[argopt_debug]		= "DEBUG",
+    	[argopt_help]		= "HELP",
+	[argopt_overlast]	= nullptr
+} ;
+
+enum arglongs {
+    	arglong_version,
+	arglong_overlast
+} ;
+
+constexpr cpcchar	arglongs[] = {
+    	[arglong_version]	= "version",
+	[arglong_overlast]	= nullptr
 } ;
 
 constexpr MAPEX		mapexs[] = {
@@ -206,7 +229,7 @@ constexpr MAPEX		mapexs[] = {
 	{ SR_NOMSG,	EX_OSERR },
 	{ SR_NOSYS,	EX_OSFILE },
 	{ 0, 0 }
-} ;
+} ; /* end array (mapex) */
 
 static cint		maxpathlen = ulibval.maxpathlen ;
 static cint		maxlinelen = ulibval.maxline ;

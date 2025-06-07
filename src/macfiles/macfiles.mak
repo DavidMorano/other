@@ -40,7 +40,8 @@ MODS += vecbool.ccm fonce.ccm argmgr.ccm
 LIBS= -luo -lu
 
 
-INCDIRS= -I$(INCDIR)
+INCDIRS=
+#INCDIRS= -I$(INCDIR)
 
 LIBDIRS= -L$(LIBDIR)
 
@@ -56,9 +57,10 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-DEPS_MAIN += fonce.o vecbool.o
+DEPS_MAIN += fonce.o vecbool.o argmgr.o
 
-OBJ_MACFU= files_main.o
+OBJ_MACFU += files_main.o 
+OBJ_MACFU += fonce.o vecbool.o argmgr.o
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -125,7 +127,7 @@ fonce.ccm:
 
 # VECBOOL
 vecbool.o:		vecbool0.o vecbool1.o
-	$(CXX) -r -o $@ $(LDFLAGS) vecbool0.o vecbool1.o
+	$(CXX) -r -o $@ $(LDFLAGS) $^
 
 vecbool0.o:		vecbool.ccm
 	makemodule vecbool
@@ -136,7 +138,7 @@ vecbool1.o:		vecbool1.cc vecbool.ccm
 
 # ARGMGR
 argmgr.o:		argmgr0.o argmgr1.o
-	$(CXX) -r -o $@ $(LDFLAGS) argmgr0.o argmgr1.o
+	$(CXX) -r -o $@ $(LDFLAGS) $^
 
 argmgr0.o:		argmgr.ccm
 	makemodule argmgr
@@ -148,7 +150,7 @@ argmgr1.o:		argmgr1.cc argmgr.ccm
 # FONCE
 fonce.o:		fonce0.o fonce1.o		$(INCS)
 	makemodule fonce
-	$(LD) -r -o $@ $(LDFLAGS) fonce0.o fonce1.o
+	$(LD) -r -o $@ $(LDFLAGS) $^
 fonce0.o:		fonce.ccm			$(INCS)
 	makemodule fonce
 fonce1.o:		fonce1.cc fonce.ccm		$(INCS)

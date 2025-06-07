@@ -18,7 +18,7 @@ for LIB in ${LIBS} ; do
   if [[ -r "${LIB}" ]] ; then
     for TD in ${TDIRS} ; do
       if [[ -d "${TD}" ]] ; then
-        M=0664
+        M=0775
 	case ${LIB} in
 	*.so|*.x)
 	  M=0775

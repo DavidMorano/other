@@ -66,6 +66,8 @@ default:		$(T).x
 
 all:			$(ALL)
 
+x:			$(T).x
+
 
 .c.i:
 	$(CPP) $(CPPFLAGS) $< > $(*).i

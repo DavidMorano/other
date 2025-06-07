@@ -46,6 +46,8 @@ module argmgr ;
 
 /* local defines */
 
+#define	ARGMGR_MAGIC		0x97873787
+
 
 /* imported namespaces */
 
@@ -64,6 +66,16 @@ module argmgr ;
 
 /* forward refernces */
 
+template<typename ... Args>
+static inline int argmgr_magic(argmgr *op,Args ... args) noex {
+	int		rs = SR_FAULT ;
+	if (op && (args && ...)) {
+	    rs = (op->magic == ARGMGR_MAGIC) ? SR_OK : SR_NOTOPEN ;
+	}
+	return rs ;
+}
+/* end subroutine (argmgr_magic) */
+
 
 /* local variables */
 
@@ -76,19 +88,100 @@ module argmgr ;
 
 /* local subroutines */
 
+int argmgr::istart() noex {
+    	int		rs = SR_FAULT ;
+	if (argv) {
+	    rs = SR_INVALID ;
+	    if (argc >= 0) {
+	        if ((rs = amap.start) >= 0) {
+	            magic = ARGMGR_MAGIC ;
+	        }
+	    } /* end if (valid) */
+	} /* end if (non-null) */
+	return rs ;
+} /* end method (argmgr::istart) */
+
+int argmgr::ifinish() noex {
+    	int		rs ;
+	int		rs1 ;
+	if ((rs = argmgr_magic(this)) >= 0) {
+	    {
+	        rs1 = amap.finish ;
+	        if (rs >= 0) rs = rs1 ;
+	    }
+	    {
+		argv = nullptr ;
+		argc = 0 ;
+	    }
+	    magic = 0 ;
+	} /* end if (magic) */
+	return rs ;
+} /* end method (argmgr::ifinish) */
+
+int argmgr::iarg() noex {
+    	int		rs ;
+	if ((rs = argmgr_magic(this)) >= 0) {
+	    rs = int(ai < argc) ;
+	} /* end if (magic) */
+	return rs ;
+} /* end method (argmgr::iarg) */
+
+int argmgr::argkey(cchar **rpp) noex {
+    	int		rs = SR_OK ;
+	(void) rpp ;
+	return rs ;
+}
+
+int argmgr::arglong(cchar **rpp) noex {
+    	int		rs = SR_OK ;
+	(void) rpp ;
+	return rs ;
+} 
+
+int argmgr::iargchar() noex {
+    	int		rs = SR_OK ;
+	return rs ;
+}
+
+int argmgr::ipositional() noex {
+    	int		rs = SR_OK ;
+	return rs ;
+}
+
+argmgr::operator int () noex {
+    	int		rs ;
+	if ((rs = argmgr_magic(this)) >= 0) {
+	    rs = argc ;
+	}
+	return rs ;
+} /* end method (argmgr::operator) */
+
+void argmgr::dtor() noex {
+	if (cint rs = finish ; rs < 0) {
+	    ulogerror("argmgr",rs,"fini-finish") ;
+	}
+}
+
 argmgr_co::operator int () noex {
 	int		rs = SR_BUGCHECK ;
 	if (op) {
 	    switch (w) {
 	    case argmgrmem_start:
-	        rs = SR_OK ;
+	        rs = op->istart() ;
 	        break ;
 	    case argmgrmem_finish:
-	        rs = SR_OK ;
+	        rs = op->ifinish() ;
 	        break ;
 	    case argmgrmem_arg:
-	        rs = SR_OK ;
+	        rs = op->iarg() ;
 	        break ;
+	    case argmgrmem_argchar:
+		rs = op->iargchar() ;
+		break ;
+	    case argmgrmem_posarg:
+	    case argmgrmem_positional:
+		rs = op->ipositional() ;
+		break ;
 	    case argmgrmem_count:
 	        rs = op->cpos ;
 	        break ;
