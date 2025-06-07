@@ -66,10 +66,11 @@ export {
 	static const int	maxpathlen ;
 	static const int	nodenamelen ;
 	static const int	hostnamelen ;
-	static const int	binbflen ;	/* for |int256_t| */
-	static const int	octbflen ;	/* for |int256_t| */
-	static const int	decbflen ;	/* for |int256_t| */
-	static const int	hexbflen ;	/* for |int256_t| */
+	static const int	binbuflen ;	/* for |int256_t| */
+	static const int	octbuflen ;	/* for |int256_t| */
+	static const int	decbuflen ;	/* for |int256_t| */
+	static const int	hexbuflen ;	/* for |int256_t| */
+	static const int	digbuflen ;	/* for |int256_t| */
     } ; /* end struct (ulibvals) */
 } /* end export */
 

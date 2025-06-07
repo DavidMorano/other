@@ -88,6 +88,9 @@ using std::nothrow ;			/* constant */
     } ; /* end enum (vecvoolmems) */
 
 export {
+    struct vecbool_fl {
+	uint		open:1 ;
+    } ;
     struct vecbool ;
     struct vecbool_co {
 	vecbool		*op = nullptr ;
@@ -108,6 +111,7 @@ export {
 	vecbool_co	set ;
 	vecbool_co	clr ;
 	vecbool_co	tst ;
+	vecbool_fl	fl{} ;
 	vecbool() noex {
 	    start(this,vecboolmem_start) ;
 	    finish(this,vecboolmem_finish) ;
@@ -120,6 +124,10 @@ export {
 	int resize(int n) noex ;
 	operator int () noex {
 	    return int(size()) ;
+	} ;
+	void dtor() noex ;
+	destruct vecbool() {
+	    if (fl.open) dtor() ;
 	} ;
     private:
 	int adj(int) noex ;

@@ -1,4 +1,4 @@
-ARGMGE
+ARGMGR
 
 Example use:
 
@@ -8,24 +8,40 @@ Example use:
 	int	rs1 ;
 	if ((ra = am.start) >= 0) {
 	    while ((rs = am.arg) >= 0) {
-		int	cl ;
-
-		if ((rs = am.keyword(&sp)) > 0) {
-		    cl = rs ;
-
-		} else if ((rs >= 0) && ((rs = am.keylong(&cp)) > 0)) {
-		    cl = rs ;
-
-		} else if ((rs >= 0) && ((rs = am.keychar(&cp)) > 0)) {
-		    cl = rs ;
-
+		cchar	*sp ;
+		if (int sl ; (rs = am.argkey(&sp)) > 0) {
+		    if (int wi ; (wi = matostr(argopts,2,sp,rs)) >= 0) {
+			switch (wi) {
+			case argopt_a:
+			    fl.a = true ;
+			    break ;
+			} /* end switch */
+		    } else {
+			while (sl-- && *sp) {
+			    cint key = mkchar(*sp++) ;
+			    switch (key) {
+			    case 'a':
+				if (am.fl.plus) fl.a = true ;
+				break ;
+			    } /* end switch */
+			} /* end while */
+		    } /* end if (matostr) */
+		} else if ((rs >= 0) && ((rs = am.arglong(&sp)) > 0)) {
+		    sl = rs ;
+		    if (int wi ; (wi = matostr(arglongs,2,sp,rs)) >= 0) {
+			rs = 0 ;
+		    } else {
+			rs = SR_INVALID ;
+		    } /* end if (matostr) */
+		} else if ((rs >= 0) && ((rs = am.keychar) > 0)) {
+		    switch (rs) {
+		    case 'a':
+			fl.a = true ;
+			break ;
+		    } /* end switch */
 		} else if (rs >= 0) {
-
-		    /* positional argument */
-
+		    rs = am.positional ;
 		}
-
-
 		if (rs < 0) break ;
 	    } /* end while */
 
