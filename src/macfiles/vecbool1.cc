@@ -102,14 +102,22 @@ int vecbool::adj(int idx) noex {
 	return rs ;
 } /* end method (vecbool::adj) */
 
+void vecbool::dtor() noex {
+	if (cint rs = finish ; rs < 0) {
+	    ulogerror("fonce",rs,"fini-finish") ;
+	}
+}
+
 vecbool_co::operator int () noex {
 	int		rs = SR_BUGCHECK ;
 	if (op) {
 	    switch (w) {
 	    case vecboolmem_start:
+		op->fl.open = true ;
 	        rs = SR_OK ;
 	        break ;
 	    case vecboolmem_finish:
+		op->fl.open = false ;
 	        rs = SR_OK ;
 	        break ;
 	    case vecboolmem_extent:

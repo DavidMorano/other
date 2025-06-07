@@ -124,8 +124,8 @@ export {
 	    count(this,foncemem_count) ;
 	} ; /* end ctor) */
 	void dtor() noex ;
-	~fonce() noex {
-	    dtor() ;
+	destruct fonce() noex {
+	    if (setp) dtor() ;
 	} ; /* end dtor */
 	int		checkin(CUSTAT *) noex ;
     private:

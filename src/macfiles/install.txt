@@ -8,8 +8,8 @@ Arguments:
 -S		use safe mode; rename target file into place
 -p		preserve permissions on installed file
 -m 0775		mode of installed file after installation
-${LIB}		library (file-name) to install
-${TARDIR}	target directory to receive installation
+<file(s)>	file(s) to install
+<tardir>	target directory to receive installation
 
 More-help:
 Type: man install

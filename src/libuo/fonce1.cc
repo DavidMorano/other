@@ -51,6 +51,9 @@ module ;
 #include	<cstdlib>
 #include	<cstring>
 #include	<usystem.h>
+#include	<ulogerror.h>
+#include	<localmisc.h>
+
 
 /* local defines */
 
@@ -114,7 +117,7 @@ int fonce::istart(int n) noex {
 /* end method (fonce::istart) */
 
 int fonce::ifinish() noex {
-	int		rs = SR_BUGCHECK ;
+	int		rs = SR_NOTOPEN ;
 	if (setp) {
 	    delete setp ;
 	    setp = nullptr ;
