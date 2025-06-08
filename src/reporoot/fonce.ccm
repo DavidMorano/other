@@ -119,9 +119,9 @@ export {
 	fonce_co	finish ;
 	fonce_co	count ;
 	fonce() noex {
-	    start(this,foncemem_start) ;
-	    finish(this,foncemem_finish) ;
-	    count(this,foncemem_count) ;
+	    start	(this,foncemem_start) ;
+	    finish	(this,foncemem_finish) ;
+	    count	(this,foncemem_count) ;
 	} ; /* end ctor) */
 	void dtor() noex ;
 	destruct fonce() noex {

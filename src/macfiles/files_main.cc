@@ -143,10 +143,10 @@ namespace {
 	int		llen = 0 ;
 	int		lines = 0 ;
 	proginfo(int c,mainv a,mainv e) noex : argc(c), argv(a), envv(e) { 
-	    start(this,proginfomem_start) ;
-	    finish(this,proginfomem_finish) ;
-	    flistbegin(this,proginfomem_flistbegin) ;
-	    flistend(this,proginfomem_flistend) ;
+	    start	(this,proginfomem_start) ;
+	    finish	(this,proginfomem_finish) ;
+	    flistbegin	(this,proginfomem_flistbegin) ;
+	    flistend	(this,proginfomem_flistend) ;
 	} ;
 	proginfo() noex : proginfo(0,nullptr,nullptr) { } ;
 	void operator () (int c,mainv a,mainv e) noex {

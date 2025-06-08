@@ -1,4 +1,5 @@
 /* main (makewhatis) */
+/* encoding=ISO8859-1 */
 /* lang=C++20 */
 
 #define	CF_TURNOFFREFUSAL	1	/* turn OFF refusal to follow links */

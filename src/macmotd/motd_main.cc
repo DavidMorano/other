@@ -1,15 +1,14 @@
-/* main SUPPORT (macmotd) */
+/* motd_main SUPPORT (macmotd) */
 /* encoding=ISO8859-1 */
 /* lang=C++20 */
 
 /* small Message-Of-The-Day (MOTD) server for macOS */
 /* version %I% last-modified %G% */
 
-#define	CF_DEBUG	0		/* debugging */
 
 /* revision history:
 
-	= 1989-03-01, David A.D. Morano
+	= 1989-03-01, David A-D- Morano
 	This subroutine was originally written.
 
 */
@@ -19,7 +18,7 @@
 /*******************************************************************************
 
 	Name:
-	macmotd
+	main
 
 	Description:
 	This is a small Message-Of-The-Day (MOTD) server for macOS.
@@ -41,24 +40,15 @@
 #include	<unistd.h>
 #include	<fcntl.h>
 #include	<ctime>
-#include	<limits>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
-#include	<cstdio>
 #include	<new>			/* |nothrow(3c++)| */
 #include	<utility>		/* |unreachable(3c++)| */
-#include	<string>
-#include	<string_view>
-#include	<unordered_set>
 #include	<fstream>
 #include	<usystem.h>
-#include	<strn.h>
 #include	<sfx.h>
 #include	<rmx.h>			/* |rmchr(3uc)| */
-#include	<strwcpy.h>
-#include	<sncpyx.h>
 #include	<matstr.h>
-#include	<isnot.h>
 #include	<mapex.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>		/* system constants */
@@ -69,20 +59,12 @@
 #define	INTRUN		(30*60)		/* seconds */
 #define	INTUPDATE	9		/* seconds */
 
-#if	defined(CF_DEBUG) && (CF_DEBUG > 0)
-#define	FN_MOTD		"/dev/stdout"
-#else
 #define	FN_MOTD		"/etc/motd"
-#endif
 
 
 /* imported namespaces */
 
 using std::nullptr_t ;			/* type */
-using std::string ;			/* type */
-using std::string_view ;		/* type */
-using std::unordered_set ;		/* type */
-using std::istream ;			/* type */
 using libu::uloadavgd ;			/* subroutine (libu) */
 using libu::ustrftime ;			/* subroutine (libu) */
 using libu::snprintf ;			/* subroutine (libu) */
@@ -92,8 +74,6 @@ using std::nothrow ;			/* constant */
 
 
 /* local typedefs */
-
-typedef string_view	strview ;
 
 
 /* external subroutines */
@@ -125,14 +105,12 @@ namespace {
 	    return operator () (0) ;
 	} ;
     } ; /* end struct (proginfo_co) */
-    typedef int (proginfo::*proginfo_m)(CUSTAT *,cchar *,int) noex ;
     struct proginfo {
 	friend		proginfo_co ;
 	proginfo_co	start ;
 	proginfo_co	finish ;
 	proginfo_co	servbegin ;
 	proginfo_co	servend ;
-	proginfo_m	m ;
 	mainv		argv ;
 	mainv		envv ;
 	cchar		*pn = nullptr ;
@@ -142,10 +120,10 @@ namespace {
 	int		pm = 0 ;
 	int		llen = 0 ;
 	proginfo(int c,mainv a,mainv e) noex : argc(c), argv(a), envv(e) { 
-	    start(this,proginfomem_start) ;
-	    finish(this,proginfomem_finish) ;
-	    servbegin(this,proginfomem_servbegin) ;
-	    servend(this,proginfomem_servend) ;
+	    start	(this,proginfomem_start) ;
+	    finish	(this,proginfomem_finish) ;
+	    servbegin	(this,proginfomem_servbegin) ;
+	    servend	(this,proginfomem_servend) ;
 	} ;
 	proginfo() noex : proginfo(0,nullptr,nullptr) { } ;
 	void operator () (int c,mainv a,mainv e) noex {
@@ -162,7 +140,7 @@ namespace {
 	int procline_str(int,cchar *) noex ;
 	int procline_date(int,const tm *) noex ;
 	int procline_la(int) noex ;
-	int procline_end(int) noex ;
+	int procline_eol(int) noex ;
     private:
 	int istart() noex ;
 	int ifinish() noex ;
@@ -202,7 +180,7 @@ static constexpr MAPEX	mapexs[] = {
 	{ SR_NOMSG,	EX_OSERR },
 	{ SR_NOSYS,	EX_OSFILE },
 	{ 0, 0 }
-} ;
+} ; /* end array (mapex) */
 
 constexpr int		maxlinelen = MAXLINELEN ;
 constexpr int		nodenamelen = NODENAMELEN ;
@@ -215,11 +193,10 @@ constexpr int		nlas = 3 ;	/* max is fixed by convention */
 /* exported subroutines */
 
 int main(int argc,mainv argv,mainv envv) noex {
-	proginfo	pi(argc,argv,envv) ;
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;
-	if ((rs = pi.start) >= 0) {
+	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
 	    if ((rs = pi.servbegin) >= 0) {
                 switch (pi.pm) {
                 case progmode_macmotd:
@@ -289,7 +266,7 @@ int proginfo::iservbegin() noex {
 		llen = maxline ;
 		rs = SR_OK ;
 	    }
-	} /* end if (maclinelen) */
+	} /* end if (maxlinelen) */
 	return rs ;
 }
 /* end method (proginfo::iservbegin) */
@@ -312,7 +289,7 @@ int proginfo::process() noex {
 	int		c = 0 ;
 	if ((rs = process_pmbegin()) >= 0) {
 	    ustime	ticur = tistart ;
-	    cauto lamb = [&] () noex {
+	    cauto lamb = [this,tistart,&ticur] () noex {
 		int	rsl = SR_OK ;
 	        if ((ticur - tistart) < INTRUN) {
 	    	    rsl = procfile(ticur) ;
@@ -372,7 +349,7 @@ int proginfo::procline(time_t ti) noex {
 	                    wl += rs ;
 	                    if ((rs = procline_la(wl)) >= 0) {
 	                        wl += rs ;
-	                        if ((rs = procline_end(wl)) >= 0) {
+	                        if ((rs = procline_eol(wl)) >= 0) {
 	                            wl += rs ;
 				}
 			    }
@@ -432,7 +409,7 @@ int proginfo::procline_la(int i) noex {
 }
 /* end subroutine (proginfo::procline_la) */
 
-int proginfo::procline_end(int i) noex {
+int proginfo::procline_eol(int i) noex {
 	cint		bl = (llen - i) ;
 	int		rs = SR_OVERFLOW ;
 	char		*bp = (lbuf + i) ;

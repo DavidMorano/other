@@ -123,13 +123,13 @@ export {
 	int		ai ;
 	int		cpos ;
 	argmgr(int ac = 0,mainv av = nullptr) noex : argc(ac), argv(av) {
-	    start(this,argmgrmem_start) ;
-	    finish(this,argmgrmem_finish) ;
-	    arg(this,argmgrmem_arg) ;
-	    posarg(this,argmgrmem_posarg) ;
-	    positional(this,argmgrmem_positional) ;
-	    argchar(this,argmgrmem_argchar) ;
-	    count(this,argmgrmem_count) ;
+	    start	(this,argmgrmem_start) ;
+	    finish	(this,argmgrmem_finish) ;
+	    arg		(this,argmgrmem_arg) ;
+	    posarg	(this,argmgrmem_posarg) ;
+	    positional	(this,argmgrmem_positional) ;
+	    argchar	(this,argmgrmem_argchar) ;
+	    count	(this,argmgrmem_count) ;
 	    ai = 0 ;
 	    cpos = 0 ;
 	} ; /* end ctor */
