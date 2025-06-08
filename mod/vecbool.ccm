@@ -113,13 +113,13 @@ export {
 	vecbool_co	tst ;
 	vecbool_fl	fl{} ;
 	vecbool() noex {
-	    start(this,vecboolmem_start) ;
-	    finish(this,vecboolmem_finish) ;
-	    extent(this,vecboolmem_extent) ;
-	    count(this,vecboolmem_count) ;
-	    set(this,vecboolmem_set) ;
-	    clr(this,vecboolmem_clr) ;
-	    tst(this,vecboolmem_tst) ;
+	    start	(this,vecboolmem_start) ;
+	    finish	(this,vecboolmem_finish) ;
+	    extent	(this,vecboolmem_extent) ;
+	    count	(this,vecboolmem_count) ;
+	    set		(this,vecboolmem_set) ;
+	    clr		(this,vecboolmem_clr) ;
+	    tst		(this,vecboolmem_tst) ;
 	} ;
 	int resize(int n) noex ;
 	operator int () noex {

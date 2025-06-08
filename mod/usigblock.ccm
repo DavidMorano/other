@@ -74,8 +74,8 @@ export {
 	usigblock_fl	fl{} ;
 	sigset_t	osm ;
 	usigblock() noex {
-	    start(this,usigblockmem_start) ;
-	    finish(this,usigblockmem_finish) ;
+	    start	(this,usigblockmem_start) ;
+	    finish	(this,usigblockmem_finish) ;
 	} ;
 	void dtor() noex ;
 	destruct usigblock() {

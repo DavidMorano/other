@@ -191,11 +191,11 @@ export {
 	    return it ;
 	} ;
 	constexpr mapblock() noex {
-	    start(this,mapblockmem_start) ;
-	    finish(this,mapblockmem_finish) ;
-	    count(this,mapblockmem_count) ;
+	    start	(this,mapblockmem_start) ;
+	    finish	(this,mapblockmem_finish) ;
+	    count	(this,mapblockmem_count) ;
 	} ; /* end ctor) */
-	~mapblock() {
+	destruct mapblock() {
 	    if (mp) {
 	        delete mp ;
 		mp = nullptr ;
