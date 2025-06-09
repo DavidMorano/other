@@ -130,6 +130,7 @@ export {
 	    if (fl.open) dtor() ;
 	} ;
     private:
+	int icount() noex ;
 	int adj(int) noex ;
     } ; /* end struct (vecbool) */
 } /* end export */

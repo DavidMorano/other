@@ -7,7 +7,7 @@
 
 /* revision history:
 
-	= 2023-12-15, David A.D. Morano
+	= 2023-12-15, David A-D- Morano
 	This is originally written.
 
 */

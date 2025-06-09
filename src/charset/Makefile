@@ -15,7 +15,6 @@ CRTDIR		?= $(CGS_CRTDIR)
 VALDIR		?= $(CGS_VALDIR)
 RUNDIR		?= $(CGS_RUNDIR)
 
-
 CPP		?= cpp
 CC		?= gcc
 CXX		?= gxx
@@ -36,9 +35,9 @@ DEFS=
 
 INCS=
 
-MODS +=
+MODS += fonce.ccm ulibvals.ccm
 
-LIBS= -lmacuser -lu
+LIBS= -luo -lu
 
 
 INCDIRS=
@@ -47,7 +46,6 @@ LIBDIRS= -L$(LIBDIR)
 
 
 RUNINFO= -rpath $(RUNDIR)
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -58,7 +56,9 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACFU= main.o fonce.o
+OBJ_MACFU= charset_main.o
+
+DEPS_MAIN += fonce.o ulibvals.o
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -95,7 +95,7 @@ $(T).x:			$(OBJ_MACFU)
 	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACFU) $(LIBINFO)
 
 $(T).nm:		$(T).x
-	$(NM) $(NMFLAGS) $(T).so > $(T).nm
+	$(NM) $(NMFLAGS) $(T).x > $(T).nm
 
 again:
 	rm -f $(T).x
@@ -107,7 +107,15 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc fonce.hh	$(INCS)
-fonce.o:		fonce.cc fonce.hh
+charset_main.o:		charset_main.cc $(DEPS_MAIN)		$(INCS)
+
+fonce.ccm:
+	makemodcurrent $@
+
+ulibvals.ccm:
+	makemodcurrent $@
+
+fonce.o:		fonce.ccm
+ulibvals.o:		ulibvals.ccm
 
 

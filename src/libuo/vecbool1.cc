@@ -41,6 +41,7 @@ module ;
 #include	<usysdefs.h>
 #include	<usysrets.h>
 #include	<ulogerror.h>
+#include	<intsat.h>
 #include	<localmisc.h>
 
 module vecbool ;
@@ -91,6 +92,12 @@ int vecbool::resize(int n) noex {
 	    return rs ;
 } /* end method (vecbool::resize) */
 
+
+int vecbool::icount() noex {
+    	csize	cnt = size() ;
+    	return intsat(cnt) ;
+}
+
 int vecbool::adj(int idx) noex {
 	int		rs = SR_OK ;
 	try {
@@ -136,27 +143,31 @@ vecbool_co::operator int () noex {
 
 int vecbool_co::operator [] (int idx) noex {
     	int		rs = SR_BUGCHECK ;
-	bool		f = false ;
 	if (op) {
 	    rs = SR_INVALID ;
 	    if (idx >= 0) {
-	        if ((rs = op->adj(idx)) >= 0) {
-                    switch (w) {
-                    case vecboolmem_set:
+		bool	f = false ;
+                switch (w) {
+                case vecboolmem_set:
+	            if ((rs = op->adj(idx)) >= 0) {
                         (*op)[idx] = true ;
-                        break ;
-                    case vecboolmem_clr:
+		    }
+                    break ;
+                case vecboolmem_clr:
+		    if (idx < op->icount()) {
                         (*op)[idx] = false ;
-                        break ;
-                    case vecboolmem_tst:
+		    }
+                    break ;
+                case vecboolmem_tst:
+		    if (idx < op->icount()) {
                         f = (*op)[idx] ;
-                        break ;
-	            default:
-		        rs = SR_INVALID ;
-		        break ;
-                    } /* end switch */
-		    if (rs >= 0) rs = int(f) ;
-	        } /* end if (adj) */
+		    }
+                    break ;
+	        default:
+		    rs = SR_INVALID ;
+		    break ;
+                } /* end switch */
+		if (rs >= 0) rs = int(f) ;
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return rs ;

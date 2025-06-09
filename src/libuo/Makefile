@@ -86,8 +86,8 @@ OBJ_LUO += inetconv.o inetaddrx.o
 OBJ_LUO += strn.o strnxcmp.o strw.o strkeyx.o
 OBJ_LUO += strcpyxc.o strwcpy.o
 OBJ_LUO += fonce.o ccfile.o strmgr.o
-OBJ_LUP += readln.o
-OBJ_LUO += 
+OBJ_LUO += readln.o
+OBJ_LUO += getourenv.o
 
 #OBJ_LUO= obja_luo.o objb_luo.o objc_luo.o
 #OBJ_LUO= objd_luo.o obje_luo.o objf_luo.o
@@ -349,5 +349,6 @@ mapex.o:		mapex.cc mapex.h
 dictdiff.o:		dictdiff.cc dictdiff.h
 inet4int.o:		inet4int.cc inet4int.h
 readln.o:		readln.cc readln.hh
+getourenv.o:		getourenv.cc getourenv.h
 
 
