@@ -35,16 +35,17 @@ DEFS +=
 
 INCS +=
 
-LIBS += -lmacuser -lu
+MODS += umisc.ccm usysconf.ccm ulibvals.ccm
+
+LIBS += -luo -lu
 
 
-INCDIRS += -I$(INCDIR)
+INCDIRS +=
 
 LIBDIRS += -L$(LIBDIR)
 
 
 RUNINFO= -rpath $(RUNDIR)
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -55,16 +56,18 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-#OBJ= main.o snadd.o snaddw.o libu.a
-OBJ= main.o snadd.o snaddw.o
+DEPS_MAIN += umisc.o usysconf.o ulibvals.o
+
+OBJ= tmpusers_main.o
 
 
-.SUFFIXES:		.hh .ii
+.SUFFIXES:		.hh .ii .ccm
 
 
-default:		$(T).o
+default:		$(T).x
 
 all:			$(ALL)
+
 
 .c.i:
 	$(CPP) $(CPPFLAGS) $< > $(*).i
@@ -84,6 +87,9 @@ all:			$(ALL)
 .cc.o:
 	$(COMPILE.cc) $<
 
+.ccm.o:
+	makemodule $(*)
+
 
 $(T).x:			$(OBJ)
 	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ) $(LIBINFO)
@@ -92,7 +98,7 @@ $(T).o:			$(OBJ)
 	$(LD) -r -o $@ $(LDFLAGS) $(OBJ)
 
 $(T).nm:		$(T).x
-	$(NM) $(NMFLAGS) $(T).so > $(T).nm
+	$(NM) $(NMFLAGS) $(T).x > $(T).nm
 
 again:
 	rm -f $(T).x
@@ -104,9 +110,19 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc			$(INCS)
+tmpusers_main.o:	tmpusers_main.cc $(DEPS_MAIN)		$(INCS)
 
-snadd.o:		snadd.cc snadd.h snaddw.h
-snaddw.o:		snaddw.cc snaddw.h
+umisc.ccm:
+	makemodcurrent $@
+
+usysconf.ccm:
+	makemodcurrent $@
+
+ulibvals.ccm:
+	makemodcurrent $@
+
+umisc.o:		umisc.ccm
+usysconf.o:		usysconf.ccm
+ulibvals.o:		ulibvals.ccm
 
 

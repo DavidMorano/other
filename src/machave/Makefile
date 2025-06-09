@@ -15,7 +15,6 @@ CRTDIR		?= $(CGS_CRTDIR)
 VALDIR		?= $(CGS_VALDIR)
 RUNDIR		?= $(CGS_RUNDIR)
 
-
 CPP		?= cpp
 CC		?= gcc
 CXX		?= gxx
@@ -36,7 +35,9 @@ DEFS +=
 
 INCS += usyscalls.h localmisc.h
 
-LIBS += -lmacuser -lu
+MODS += libutil.ccm umisc.ccm ulibvals.ccm
+
+LIBS += -luo -lu
 
 
 INCDIRS=
@@ -56,15 +57,18 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACHAVE= main.o
+OBJ_MACHAVE= have_main.o
+
+DEPS_MAIN += libutil.o umisc.o ulibvals.o
 
 
-.SUFFIXES:		.hh .ii
+.SUFFIXES:		.hh .ii .ccm
 
 
 default:		$(T).x
 
 all:			$(ALL)
+
 
 .c.i:
 	$(CPP) $(CPPFLAGS) $< > $(*).i
@@ -84,12 +88,15 @@ all:			$(ALL)
 .cc.o:
 	$(COMPILE.cc) $<
 
+.ccm.o:
+	makemodule $(*)
+
 
 $(T).x:			$(OBJ_MACHAVE)
 	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACHAVE) $(LIBINFO)
 
 $(T).nm:		$(T).x
-	$(NM) $(NMFLAGS) $(T).so > $(T).nm
+	$(NM) $(NMFLAGS) $(T).x > $(T).nm
 
 again:
 	rm -f $(T).x
@@ -101,6 +108,19 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc
+have_main.o:		have_main.cc $(DEPS_MAIN)
+
+libutil.ccm:
+	makemodcurrent $@
+
+umisc.ccm:
+	makemodcurrent $@
+
+ulibvals.ccm:
+	makemodcurrent $@
+
+libutil.o:		libutil.ccm
+umisc.o:		umisc.ccm
+ulibvals.o:		ulibvals.ccm
 
 

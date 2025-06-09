@@ -23,12 +23,12 @@
 ***************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<unistd.h>		/* <- for |gethostid(3c)| */
+#include	<unistd.h>		/* |gethostid(3c)| */
+#include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
-#include	<iostream>		/* for |cout(3c++)| */
-#include	<cstring>
+#include	<iostream>		/* |cout(3c++)| */
 #include	<usystem.h>
-#include	<localmisc.h>		/* <- for |eol(3dam)| */
+#include	<localmisc.h>		/* |eol(3dam)| */
 
 
 /* local defines */

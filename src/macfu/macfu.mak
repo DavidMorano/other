@@ -35,7 +35,7 @@ DEFS=
 
 INCS=
 
-MODS +=
+MODS += fonce.ccm ulibvals.ccm
 
 LIBS= -luo -lu
 
@@ -46,7 +46,6 @@ LIBDIRS= -L$(LIBDIR)
 
 
 RUNINFO= -rpath $(RUNDIR)
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -58,6 +57,8 @@ LDFLAGS		?= $(MAKELDFLAGS)
 
 
 OBJ_MACFU= fu_main.o
+
+DEPS_MAIN= fonce.o ulibvals.o
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -94,7 +95,7 @@ $(T).x:			$(OBJ_MACFU) Makefile
 	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACFU) $(LIBINFO)
 
 $(T).nm:		$(T).x
-	$(NM) $(NMFLAGS) $(T).so > $(T).nm
+	$(NM) $(NMFLAGS) $(T).x > $(T).nm
 
 again:
 	rm -f $(T).x
@@ -109,9 +110,15 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
-fu_main.o:		fu_main.cc fonce.hh	$(INCS)
+fu_main.o:		fu_main.cc $(DEPS_MAIN) 		$(INCS)
 
-fonce.o:		fonce.cc fonce.hh
-ccfile.o:		ccfile.cc ccfile.hh
+fonce.ccm:
+	makemodcurrent $@
+
+ulibvals.ccm:
+	makemodcurrent $@
+
+fonce.o:		fonce.ccm
+ulibvals.o:		ulibvals.ccm
 
 

@@ -162,8 +162,8 @@ enum progmodes {
 } ;
 
 static constexpr cpcchar	prognames[] = {
-	"macmotd",
-	nullptr
+	[progmode_macmotd]	= "macmotd",
+	[progmode_overlast]	= nullptr
 } ;
 
 static constexpr MAPEX	mapexs[] = {

@@ -18,7 +18,7 @@
 USERS=/Users
 
 
-: ${SYSNAME:=$( uname -s )}
+: ${SYSNAME:=$( sysname )}
 export SYSNAME
 
 
