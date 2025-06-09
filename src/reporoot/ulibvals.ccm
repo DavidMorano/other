@@ -64,6 +64,8 @@ export {
 	static const int	maxlogin ;
 	static const int	maxnamelen ;
 	static const int	maxpathlen ;
+	static const int	usernamelen ;
+	static const int	groupnamelen ;
 	static const int	nodenamelen ;
 	static const int	hostnamelen ;
 	static const int	binbuflen ;	/* for |int256_t| */

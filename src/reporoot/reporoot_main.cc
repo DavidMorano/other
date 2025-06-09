@@ -74,6 +74,7 @@ import fonce ;
 
 #define	NENTS		1000
 
+
 /* imported namespaces */
 
 using std::nullptr_t ;			/* type */
@@ -136,10 +137,10 @@ namespace {
 	int		pm = 0 ;
 	int		llen = 0 ;
 	proginfo(int c,mainv a,mainv e) noex : argc(c), argv(a), envv(e) { 
-	    start(this,proginfomem_start) ;
-	    finish(this,proginfomem_finish) ;
-	    flistbegin(this,proginfomem_flistbegin) ;
-	    flistend(this,proginfomem_flistend) ;
+	    start	(this,proginfomem_start) ;
+	    finish	(this,proginfomem_finish) ;
+	    flistbegin	(this,proginfomem_flistbegin) ;
+	    flistend	(this,proginfomem_flistend) ;
 	} ;
 	proginfo() noex : proginfo(0,nullptr,nullptr) { } ;
 	void operator () (int c,mainv a,mainv e) noex {
@@ -175,15 +176,15 @@ enum progmodes {
 } ;
 
 constexpr cpcchar	prognames[] = {
-	"reporoot",
-	"reponame",
-	nullptr
+	[progmode_reporoot]	= "reporoot",
+	[progmode_reponame]	= "reponame",
+	[progmode_overlast]	= nullptr
 } ;
 
 constexpr cpcchar	repomarks[] = {
     	".git",
 	".repo",
-	".reporoot",
+	".reporoot"
 } ;
 
 constexpr MAPEX		mapexs[] = {
