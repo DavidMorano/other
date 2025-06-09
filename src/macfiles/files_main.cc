@@ -2,7 +2,7 @@
 /* encoding=ISO8859-1 */
 /* lang=C++20 */
 
-/* filter filenames */
+/* enumerate filenames */
 /* version %I% last-modified %G% */
 
 
@@ -18,7 +18,7 @@
 /*******************************************************************************
 
 	Names:
-	files
+	files_main
 
 	Description:
 	This program enumerates directories and files.
@@ -38,30 +38,28 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<sys/param.h>		/* |MAXPATHLEN| */
 #include	<unistd.h>
 #include	<fcntl.h>
 #include	<climits>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<cstdio>
-#include	<cstring>		/* <- for |strlen(3c)| */
+#include	<new>			/* |nothrow(3c++)| */
 #include	<string>
 #include	<string_view>
 #include	<vector>
 #include	<iostream>
 #include	<usystem.h>
+#include	<getourenv.h>
 #include	<varnames.hh>
 #include	<strn.h>
 #include	<sfx.h>
-#include	<matstr.h>
+#include	<rmx.h>
 #include	<strwcpy.h>
 #include	<strnul.hh>
-#include	<sncpyx.h>
-#include	<getourenv.h>
 #include	<readln.hh>
 #include	<ccfile.hh>
-#include	<rmx.h>
+#include	<matstr.h>
 #include	<isnot.h>
 #include	<mapex.h>
 #include	<exitcodes.h>
@@ -73,10 +71,6 @@ import ulibvals ;
 /* local defines */
 
 #define	NENTS		1000
-
-#ifndef	MAXPATHLEN
-#define	MAXPATHLEN	4096
-#endif
 
 
 /* imported namespaces */
@@ -132,8 +126,8 @@ namespace {
 	proginfo_co	finish ;
 	proginfo_co	flistbegin ;
 	proginfo_co	flistend ;
-	fonce		seen ;
 	proginfo_m	m ;
+	fonce		seen ;
 	mainv		argv ;
 	mainv		envv ;
 	cchar		*pn = nullptr ;
@@ -242,11 +236,10 @@ constexpr int		nents = NENTS ;
 /* exported subroutines */
 
 int main(int argc,mainv argv,mainv envv) noex {
-	proginfo	pi(argc,argv,envv) ;
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;
-	if ((rs = pi.start) >= 0) {
+	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
 	    if ((rs = pi.flistbegin) >= 0) {
                 switch (pi.pm) {
                 case progmode_files:
@@ -295,10 +288,8 @@ int proginfo::getpn(mainv names) noex {
 		cchar	*arg0 = argv[0] ;
 	        cchar	*bp{} ;
 	        if (int bl ; (bl = sfbasename(arg0,-1,&bp)) > 0) {
-		    int		pl = rmchr(bp,bl,'.') ;
-		    cchar	*pp = bp ;
-		    if (pl > 0) {
-	                if ((pm = matstr(names,pp,pl)) >= 0) {
+		    if (cint pl = rmchr(bp,bl,'.') ; pl > 0) {
+	                if ((pm = matstr(names,bp,pl)) >= 0) {
 			    pn = names[pm] ;
 		            rs = pm ;
 	                }
@@ -352,7 +343,7 @@ int proginfo::process() noex {
 
 int proginfo::process_stdin() noex {
 	int		rs = SR_OK ;
-	int		c = 0 ;
+	int		c = 0 ; /* return-value */
 	switch (pm) {
 	case progmode_files:
 	case progmode_filelines:
@@ -413,17 +404,15 @@ int proginfo::process_pmend() noex {
 
 int proginfo::readin() noex {
 	istream		*isp = &cin ;
+	cnullptr	np{} ;
 	int		rs ;
 	int		c = 0 ;
 	if ((rs = maxpathlen) >= 0) {
 	    cint	plen = rs ;
-	    char	*pbuf ;
 	    rs = SR_NOMEM ;
-	    if ((pbuf = new(nothrow) char[plen + 1]) != nullptr) {
+	    if (char *pbuf ; (pbuf = new(nothrow) char[plen + 1]) != np) {
 	        while ((rs = readln(isp,pbuf,plen)) > 0) {
-		    int		pl = rs ;
-		    if ((pl > 0) && (pbuf[pl - 1] == eol)) pl -= 1 ;
-		    if (pl > 0) {
+		    if (cint pl = rmeol(pbuf,rs) ; pl > 0) {
 		        rs = fileproc(pbuf,pl) ;
 			c += rs ;
 		    }

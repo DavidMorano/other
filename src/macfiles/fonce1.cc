@@ -44,12 +44,11 @@ module ;
 #include	<sys/stat.h>
 #include	<unistd.h>
 #include	<fcntl.h>
+#include	<cstddef>		/* |nullptr_t| */
+#include	<cstdlib>
 #include	<new>
 #include	<utility>		/* |pair(3c++)| */
 #include	<unordered_set>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<cstring>
 #include	<usystem.h>
 #include	<ulogerror.h>
 #include	<localmisc.h>
@@ -99,11 +98,11 @@ typedef fonce::stype::iterator	setiter ;
 /* local subroutines (methods) */
 
 int fonce::istart(int n) noex {
+	cnullptr	np{} ;
 	int		rs = SR_INVALID ;
 	if (n >= 0) {
 	    if (n == 0) n = FONCE_DEFTABLEN ;
 	    try {
-		cnullptr	np{} ;
 	        rs = SR_NOMEM ;
 	        if ((setp = new(nothrow) stype(n)) != np) {
 	            rs = SR_OK ;
@@ -130,9 +129,9 @@ int fonce::checkin(CUSTAT *sbp) noex {
 	int		rs = SR_FAULT ;
 	int		f = false ;
 	if (sbp) {
-	    fonce_devino	k(sbp->st_dev,sbp->st_ino) ;
 	    rs = SR_BUGCHECK ;
 	    if (setp) {
+	        fonce_devino	k(sbp->st_dev,sbp->st_ino) ;
 		try {
 	            pair<setiter,bool>	ret = setp->insert(k) ;
 		    rs = SR_OK ;
@@ -148,7 +147,8 @@ int fonce::checkin(CUSTAT *sbp) noex {
 int fonce::icount() noex {
 	int		rs = SR_BUGCHECK ;
 	if (setp) {
-	    rs = intconv(setp->size()) ;
+	    csize cnt = setp->size() ;
+	    rs = intconv(cnt) ;
 	} /* end if (non-null) */
 	return rs ;
 }

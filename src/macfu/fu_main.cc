@@ -1,4 +1,4 @@
-/* main SUPPORT (fu) */
+/* fu_main SUPPORT (fu) */
 /* encoding=ISO8859-1 */
 /* lang=C++20 */
 
@@ -37,44 +37,39 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<sys/param.h>		/* |MAXPATHLEN| */
 #include	<unistd.h>
 #include	<fcntl.h>
 #include	<climits>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<cstdio>
-#include	<cstring>		/* <- for |strlen(3c)| */
 #include	<string>
 #include	<string_view>
 #include	<vector>
 #include	<iostream>
 #include	<usystem.h>
 #include	<varnames.hh>
+#include	<getourenv.h>
 #include	<strn.h>
 #include	<sfx.h>
-#include	<matstr.h>
+#include	<rmx.h>
+#include	<sncpyx.h>
 #include	<strwcpy.h>
 #include	<strnul.hh>
-#include	<sncpyx.h>
-#include	<getourenv.h>
-#include	<readln.hh>
 #include	<ccfile.hh>
-#include	<rmx.h>
+#include	<readln.hh>
+#include	<matstr.h>
 #include	<isnot.h>
 #include	<mapex.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>
 
 import fonce ;
+import ulibvals ;
 
 /* local defines */
 
 #define	NENTS		1000
-
-#ifndef	MAXPATHLEN
-#define	MAXPATHLEN	4096
-#endif
 
 
 /* imported namespaces */
@@ -82,11 +77,9 @@ import fonce ;
 using std::nullptr_t ;			/* type */
 using std::string ;			/* type */
 using std::string_view ;		/* type */
-using std::unordered_set ;		/* type */
 using std::istream ;			/* type */
 using std::cin;				/* variable */
 using std::cout ;			/* variable */
-using std::cerr ;			/* variable */
 using std::nothrow ;			/* constant */
 
 
@@ -131,8 +124,8 @@ namespace {
 	proginfo_co	finish ;
 	proginfo_co	flistbegin ;
 	proginfo_co	flistend ;
-	fonce		seen ;
 	proginfo_m	m ;
+	fonce		seen ;
 	mainv		argv ;
 	mainv		envv ;
 	cchar		*pn = nullptr ;
@@ -142,10 +135,10 @@ namespace {
 	int		llen = 0 ;
 	int		lines = 0 ;
 	proginfo(int c,mainv a,mainv e) noex : argc(c), argv(a), envv(e) { 
-	    start(this,proginfomem_start) ;
-	    finish(this,proginfomem_finish) ;
-	    flistbegin(this,proginfomem_flistbegin) ;
-	    flistend(this,proginfomem_flistend) ;
+	    start	(this,proginfomem_start) ;
+	    finish	(this,proginfomem_finish) ;
+	    flistbegin	(this,proginfomem_flistbegin) ;
+	    flistend	(this,proginfomem_flistend) ;
 	} ;
 	proginfo() noex : proginfo(0,nullptr,nullptr) { } ;
 	void operator () (int c,mainv a,mainv e) noex {
@@ -170,7 +163,7 @@ namespace {
 	int iflistbegin() noex ;
 	int iflistend() noex ;
     } ; /* end struct (proginfo) */
-}
+} /* end namespace */
 
 
 /* forward references */
@@ -187,11 +180,11 @@ enum progmodes {
 } ;
 
 constexpr cpcchar	prognames[] = {
-	"fileuniq",
-	"fu",
-	"lc",
-	"charset",
-	nullptr
+	[progmode_fileuniq]	= "fileuniq",
+	[progmode_fu]		= "fu",
+	[progmode_lc]		= "lc",
+	[progmode_charset]	= "charset",
+	[progmode_overlast]	= nullptr
 } ;
 
 constexpr MAPEX		mapexs[] = {
@@ -210,8 +203,9 @@ constexpr MAPEX		mapexs[] = {
 	{ 0, 0 }
 } ;
 
-constexpr int		maxpathlen = MAXPATHLEN ;
-constexpr int		maxlinelen = MAXLINELEN ;
+static cint		maxpathlen = ulibval.maxpathlen ;
+static cint		maxlinelen = ulibval.maxline ;
+
 constexpr int		nents = NENTS ;
 
 
@@ -221,11 +215,10 @@ constexpr int		nents = NENTS ;
 /* exported subroutines */
 
 int main(int argc,mainv argv,mainv envv) noex {
-	proginfo	pi(argc,argv,envv) ;
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;
-	if ((rs = pi.start) >= 0) {
+	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
 	    if ((rs = pi.flistbegin) >= 0) {
                 switch (pi.pm) {
                 case progmode_fileuniq:
@@ -275,10 +268,8 @@ int proginfo::getpn(mainv names) noex {
 		cchar	*arg0 = argv[0] ;
 	        cchar	*bp{} ;
 	        if (int bl ; (bl = sfbasename(arg0,-1,&bp)) > 0) {
-		    int		pl = rmchr(bp,bl,'.') ;
-		    cchar	*pp = bp ;
-		    if (pl > 0) {
-	                if ((pm = matstr(names,pp,pl)) >= 0) {
+		    if (cint pl = rmchr(bp,bl,'.') ; pl > 0) {
+	                if ((pm = matstr(names,bp,pl)) >= 0) {
 			    pn = names[pm] ;
 		            rs = pm ;
 	                }

@@ -57,10 +57,9 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-DEPS_MAIN += fonce.o vecbool.o argmgr.o
+OBJ_FILES += files_main.o 
 
-OBJ_MACFU += files_main.o 
-OBJ_MACFU += fonce.o vecbool.o argmgr.o
+DEPS_MAIN += fonce.o vecbool.o
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -93,11 +92,11 @@ all:			$(ALL)
 	makemodule $(*)
 
 
-$(T).x:			$(OBJ_MACFU)
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACFU) $(LIBINFO)
+$(T).x:			$(OBJ_FILES)
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_FILES) $(LIBINFO)
 
 $(T).nm:		$(T).x
-	$(NM) $(NMFLAGS) $(T).so > $(T).nm
+	$(NM) $(NMFLAGS) $(T).x > $(T).nm
 
 again:
 	rm -f $(T).x
