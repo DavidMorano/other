@@ -1,0 +1,137 @@
+/* umisc MODULE (primary-module-interface) */
+/* encoding=ISO8859-1 */
+/* lang=C20 */
+
+/* UNIX® Miscellaneous support */
+/* version %I% last-modified %G% */
+
+
+/* revision history:
+
+	= 1998-03-21, David A­D­ Morano
+	This module was originally written.
+
+	= 2020-05-07, David A-D- Morano
+	I converted this (formerly a header-only file) to a module.
+
+*/
+
+/* Copyright © 1998,2020 David A­D­ Morano.  All rights reserved. */
+
+/*******************************************************************************
+
+  	Module:
+	umisc
+
+	Description:
+	This module provides miscellaneous UNIX® or other
+	common (library oriented) subroutines.
+
+*******************************************************************************/
+
+module ;
+
+#include	<envstandards.h>	/* ordered first to configure */
+#include	<cstddef>		/* |nullptr_t| */
+#include	<cstdlib>
+#include	<clanguage.h>
+#include	<utypedefs.h>
+#include	<utypealiases.h>
+#include	<usysdefs.h>
+#include	<usysrets.h>
+
+export module umisc ;
+
+export {
+    int mknpathx(char *,int,int,...) noex ;
+    int mknpath1(char *,int,cc *) noex ;
+    int mknpath2(char *,int,cc *,cc *) noex ;
+    int mknpath3(char *,int,cc *,cc *,cc *) noex ;
+    int mknpath4(char *,int,cc *,cc *,cc *,cc *) noex ;
+    int mknpath5(char *,int,cc *,cc *,cc *,cc *,cc *) noex ;
+    int mknpath6(char *,int,cc *,cc *,cc *,cc *,cc *,cc *) noex ;
+    template<typename ... Args>
+    inline int mknpath(char *dp,int dl,Args ... args) noex {
+	cint	na = npack(Args) ;
+	return mknpathx(dp,dl,na,args ...) ;
+   }
+} /* end export */
+
+export {
+    int mknpathxw(char *,int,int,...) noex ;
+    int mknpath1w(char *,int,cc *,int) noex ;
+    int mknpath2w(char *,int,cc *,cc *,int) noex ;
+    int mknpath3w(char *,int,cc *,cc *,cc *,int) noex ;
+    int mknpath4w(char *,int,cc *,cc *,cc *,cc *,int) noex ;
+    int mknpath5w(char *,int,cc *,cc *,cc *,cc *,cc *,int) noex ;
+    int mknpath6w(char *,int,cc *,cc *,cc *,cc *,cc *,cc *,int) noex ;
+} /* end export */
+
+export {
+    int mknpathw(char *pp,int pl,cc *s1,int sl) noex {
+	return mknpathxw(pp,pl,1,s1,sl) ;
+    }
+    int mknpathw(char *pp,int pl,cc *s1,cc *s2,int sl) noex {
+	return mknpathxw(pp,pl,2,s1,s2,sl) ;
+    }
+    int mknpathw(char *pp,int pl,cc *s1,cc *s2,cc *s3,int sl) noex {
+	return mknpathxw(pp,pl,3,s1,s2,s3,sl) ;
+    }
+    int mknpathw(char *pp,int pl,cc *s1,cc *s2,cc *s3,
+	    cc *s4,int sl) noex {
+	return mknpathxw(pp,pl,4,s1,s2,s3,s4,sl) ;
+    }
+    int mknpathw(char *pp,int pl,cc *s1,cc *s2,cc *s3,cc *s4,
+		cc *s5,int sl) noex {
+	return mknpathxw(pp,pl,5,s1,s2,s3,s4,s5,sl) ;
+    }
+    int mknpathw(char *pp,int pl,cc *s1,cc *s2,cc *s3,cc *s4,
+		cc *s5,cc *s6,int sl) noex {
+	return mknpathxw(pp,pl,6,s1,s2,s3,s4,s5,s6,sl) ;
+    }
+} /* end export */
+
+export {
+	int pathnaddw(char *,int,int,cchar *,int) noex ;
+	int pathnaddx(char *,int,int,int,cchar *,...) noex ;
+	inline int pathnadd(char *pbuf,int plen,int pl,cchar *sp) noex {
+		return pathnaddw(pbuf,plen,pl,sp,-1) ;
+	}
+	inline int pathnadd(char *pbuf,int plen,int pl,cchar *sp,int sl) noex {
+		return pathnaddw(pbuf,plen,pl,sp,sl) ;
+	}
+	template<typename ... Args>
+	inline int pathnadd(char *dbuf,int dl,Args ... args) noex {
+		cint		na = npack(Args) ;
+		return pathnaddx(dbuf,dl,na,args ...) ;
+	}
+} /* end export */
+
+export {
+    int snaddw(char *,int,int,cchar *,int) noex ;
+    inline int snaddw(char *dbuf,int dlen,int dl,cchar *sp) noex {
+	return snaddw(dbuf,dlen,dl,sp,-1) ;
+    }
+} /* end export */
+
+export {
+    int snaddx(char *,int,int,int,...) noex ;
+    inline int snadd(char *dbuf,int dlen,int dl,cchar *sp) noex {
+	return snaddw(dbuf,dlen,dl,sp,-1) ;
+    }
+    template<typename ... Args>
+    inline int snadd(char *dbuf,int dlen,int dl,Args ... args) noex {
+	cint		na = npack(Args) ;
+	return snaddx(dbuf,dlen,dl,na,args ...) ;
+    }
+} /* end export */
+
+export {
+    int snaddslash(char *,int,int) noex ;
+} /* end export */
+
+export {
+    cchar *strbasename(cchar *) noex ;
+} /* end export */
+
+
