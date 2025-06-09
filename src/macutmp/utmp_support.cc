@@ -8,12 +8,12 @@
 
 /* revision history:
 
-	= 2023-12-15, David A.D. Morano
+	= 2023-12-15, David A-D- Morano
 	This is originally written.
 
 */
 
-/* Copyright © 2023 David A­D­ Morano.  All rights reserved. */
+/* Copyright © 2023 David A-D- Morano.  All rights reserved. */
 /* Use is subject to license terms. */
 
 /*******************************************************************************

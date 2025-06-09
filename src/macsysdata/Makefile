@@ -37,7 +37,7 @@ INCS=
 
 MODS += 
 
-LIBS= -lu
+LIBS= -luo -lu
 
 
 INCDIRS= -I$(INCDIR)
@@ -46,7 +46,7 @@ LIBDIRS= -L$(LIBDIR)
 
 
 RUNINFO= -rpath $(RUNDIR)
-LIBINFO= $(LIBDIR)/libuo.o $(LIBDIRS) $(LIBS)
+LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
 CPPFLAGS	?= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
@@ -93,7 +93,7 @@ $(T).x:			$(OBJ_MACFU)
 	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACFU) $(LIBINFO)
 
 $(T).nm:		$(T).x
-	$(NM) $(NMFLAGS) $(T).so > $(T).nm
+	$(NM) $(NMFLAGS) $(T).x > $(T).nm
 
 again:
 	rm -f $(T).x

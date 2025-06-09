@@ -8,12 +8,13 @@
 
 /* revision history:
 
-	= 1989-03-01, David A.D. Morano
-	This subroutine was originally written.
+	= 2000-03-01, David A-D- Morano
+	This subroutine was originally written.  This program is a
+	hack for use on MacOS.
 
 */
 
-/* Copyright © 1989 David A­D­ Morano.  All rights reserved. */
+/* Copyright © 2000 David A-D- Morano.  All rights reserved. */
 
 /*******************************************************************************
 
@@ -37,33 +38,29 @@
 
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<sys/types.h>
-#include	<sys/param.h>		/* |MAXPATHLEN| */
-#include	<sys/sysctl.h>
+#include	<sys/sysctl.h>		/* "macOS" specific */
 #include	<unistd.h>
 #include	<fcntl.h>
 #include	<climits>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
-#include	<cstring>		/* <- for |strlen(3c)| + |strchr(3c)| */
+#include	<cstring>		/* |strchr(3c)| */
 #include	<string>
 #include	<string_view>
 #include	<iostream>
 #include	<iomanip>
 #include	<usystem.h>
 #include	<sfx.h>
+#include	<rmx.h>			/* |rmchr(3uc)| */
 #include	<matstr.h>
 #include	<strnul.hh>
-#include	<rmx.h>			/* |rmchr(3uc)| */
 #include	<mapex.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>		/* |DIGBUFLEN| + |REALNAMELEN| */
 
+import ulibvals ;
 
 /* local defines */
-
-#ifndef	MAXPATHLEN
-#define	MAXPATHLEN	4096
-#endif
 
 
 /* imported namespaces */
@@ -72,13 +69,10 @@ using std::nullptr_t ;			/* type */
 using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::istream ;			/* type */
+using std::hex ;			/* subroutine */
 using libu::uloadavgd ;			/* subroutine */
 using libu::snloadavgd ;		/* subroutine */
-using std::hex ;			/* subroutine */
-using std::cin ;			/* variable */
 using std::cout ;			/* variable */
-using std::cerr ;			/* variable */
-using std::hex ;			/* subroutine */
 using std::nothrow ;			/* constant */
 
 
@@ -127,8 +121,8 @@ namespace {
 	int		pm = 0 ;
 	bool		ffound = false ;
 	proginfo(int c,mainv a,mainv e) noex : argc(c), argv(a), envv(e) { 
-	    start(this,proginfomem_start) ;
-	    finish(this,proginfomem_finish) ;
+	    start	(this,proginfomem_start) ;
+	    finish	(this,proginfomem_finish) ;
 	} ;
 	proginfo() noex : proginfo(0,nullptr,nullptr) { } ;
 	void operator () (int c,mainv a,mainv e) noex {
@@ -172,22 +166,22 @@ enum progmodes {
 } ; /* end enum (progmodes) */
 
 static constexpr cpcchar	prognames[] = {
-	"sysname",
-	"release",
-	"nodename",
-	"version",
-	"architecture",
-	"machine",
-	"platform",
-	"systype",
-	"nisdomain",
-	"sysuuid",
-	"symfile",
-	"hostid",
-	"lax",
-	"systime",
-	"unixtime",
-	nullptr
+	[progmode_sysname]	= "sysname",
+	[progmode_release]	= "release",
+	[progmode_nodename]	= "nodename",
+	[progmode_version]	= "version",
+	[progmode_architecture]	= "architecture",
+	[progmode_machine]	= "machine",
+	[progmode_platform]	= "platform",
+	[progmode_systype]	= "systype",
+	[progmode_nisdomain]	= "nisdomain",
+	[progmode_sysuuid]	= "sysuuid",
+	[progmode_symfile]	= "symfile",
+	[progmode_hostid]	= "hostid",
+	[progmode_lax]		= "lax",
+	[progmode_systime]	= "systime",
+	[progmode_unixtime]	= "unixtime",
+	[progmode_overlast]	= nullptr
 } ; /* end array (prognames) */
 
 static constexpr MAPEX	mapexs[] = {
@@ -206,7 +200,8 @@ static constexpr MAPEX	mapexs[] = {
 	{ 0, 0 }
 } ; /* end array (mapexs) */
 
-constexpr int		maxpathlen = MAXPATHLEN ;
+static cint		maxpathlen = ulibval.maxpathlen ;
+
 constexpr int		nlas = 3 ;	/* by long convention */
 
 
@@ -216,11 +211,10 @@ constexpr int		nlas = 3 ;	/* by long convention */
 /* exported subroutines */
 
 int main(int argc,mainv argv,mainv envv) noex {
-	proginfo	pi(argc,argv,envv) ;
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;
-	if ((rs = pi.start) >= 0) {
+	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
             switch (pi.pm) {
             case progmode_sysname:
             case progmode_release:
@@ -293,10 +287,8 @@ int proginfo::getpn(mainv names) noex {
 		cchar	*arg0 = argv[0] ;
 	        cchar	*bp{} ;
 	        if (int bl ; (bl = sfbasename(arg0,-1,&bp)) > 0) {
-		    int		pl = rmchr(bp,bl,'.') ;
-		    cchar	*pp = bp ;
-		    if (pl > 0) {
-	                if ((pm = matstr(names,pp,pl)) >= 0) {
+		    if (cint pl = rmchr(bp,bl,'.') ; pl > 0) {
+	                if ((pm = matstr(names,bp,pl)) >= 0) {
 			    pn = names[pm] ;
 		            rs = pm ;
 	                }
@@ -396,15 +388,14 @@ int proginfo::output() noex {
 
 int proginfo::lax() noex {
 	int		rs ;
-	double		dla[nlas] ;
-	if ((rs = uloadavgd(dla,nlas)) >= 0) {
+	if (double dla[nlas] ; (rs = uloadavgd(dla,nlas)) >= 0) {
 	    cint	prec = 1 ;
 	    cint	dlen = DIGBUFLEN ;
 	    char	dbuf[DIGBUFLEN + 1] ;
 	    if ((rs = snloadavgd(dbuf,dlen,prec,dla,nlas)) >= 0) {
 		cout << dbuf << eol ;
 	    }
-	}
+	} /* end if (uloadavgd) */
 	return rs ;
 }
 /* end subroutine (proginfo::lax) */

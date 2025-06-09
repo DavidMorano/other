@@ -35,9 +35,9 @@ DEFS +=
 
 INCS +=
 
-MODS +=
+MODS += libutil.ccm umisc.ccm
 
-LIBS += -lmacuser -lu
+LIBS += -luo -lu
 
 
 INCDIRS +=
@@ -46,7 +46,6 @@ LIBDIRS += -L$(LIBDIR)
 
 
 RUNINFO= -rpath $(RUNDIR)
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -57,7 +56,9 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACUSER= main.o
+DEPS_MAIN += libutil.ccm umisc.ccm
+
+OBJ_MACUSER= user_main.o
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -94,7 +95,7 @@ $(T).x:			$(OBJ_MACUSER)
 	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACUSER) $(LIBINFO)
 
 $(T).nm:		$(T).x
-	$(NM) $(NMFLAGS) $(T).so > $(T).nm
+	$(NM) $(NMFLAGS) $(T).x > $(T).nm
 
 again:
 	rm -f $(T).x
@@ -109,6 +110,12 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
-main.o:			main.cc			$(INCS)
+user_main.o:		user_main.cc			$(INCS)
+
+libutil.ccm:
+	makemodcurrent $@
+
+umisc.ccm:
+	makemodcurrent $@
 
 
