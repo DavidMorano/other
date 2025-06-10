@@ -52,6 +52,9 @@ EXTERNC_end
 constexpr inline bool	isdigitlatin(int ch) noex {
 	return (ch >= '0') && (ch <= '9') ;
 }
+constexpr inline bool	isxdigitlatin(int ch) noex {
+	return ishexlatin(ch) ;
+}
 constexpr inline bool	isdeclatin(int ch) noex {
     	return isdigitlatin(ch) ;
 }
@@ -77,14 +80,20 @@ constexpr inline bool	isabbr(int ch) noex {
 	ch &= UCHAR_MAX ;
 	return (ch == '.') || (ch == ('­' & UCHAR_MAX)) || (ch == '-') ;
 }
-constexpr inline bool	isspacetab(int ch) noex {
+constexpr inline bool	isblanklatin(int ch) noex {
 	return (ch == ' ') || (ch == '\t') ;
+}
+constexpr inline bool	isspacetab(int ch) noex {
+	return isblanklatin(ch) ;
 }
 
 #else /* __cplusplus */
 
 static inline bool	isdigitlatin(int ch) noex {
 	return (ch >= '0') && (ch <= '9') ;
+}
+static inline bool	isxdigitlatin(int ch) noex {
+	return ishexlatin(ch) ;
 }
 static inline bool	isdeclatin(int ch) noex {
     	return isdigitlatin(ch) ;
@@ -111,8 +120,11 @@ static inline bool	isabbr(int ch) noex {
 	ch &= UCHAR_MAX ;
 	return (ch == '.') || (ch == ('­' & UCHAR_MAX)) || (ch == '-') ;
 }
-static inline bool	isspacetab(int ch) noex {
+constexpr inline bool	isblanklatin(int ch) noex {
 	return (ch == ' ') || (ch == '\t') ;
+}
+constexpr inline bool	isspacetab(int ch) noex {
+	return isblanklatin(ch) ;
 }
 
 #endif /* __cplusplus */
