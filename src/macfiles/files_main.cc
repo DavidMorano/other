@@ -8,12 +8,12 @@
 
 /* revision history:
 
-	= 1998-03-01, David A-D- Morano
+	= 2017-03-21, David A-D- Morano
 	This subroutine was originally written.
 
 */
 
-/* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
+/* Copyright © 2017 David A­D­ Morano.  All rights reserved. */
 
 /*******************************************************************************
 
@@ -24,16 +24,13 @@
 	This program enumerates directories and files.
 
 	Synopsis:
-	$ files [<dir(s)>|<file(s)>] [-]
+	main(int,argv,argv)
 
 	Arguments:
-	<fit(s)>	directories to enumerate
-	<file(s)>	file(s) to process
-	-		read standard-input for file(s) to process
 
 	Returns:
-	==0		for normal operation success
-	!=0		some error
+	==0		for normal operation success (EX_OK)
+	!=0		some error (! EX_OK)
 
 *******************************************************************************/
 
@@ -47,7 +44,7 @@
 #include	<new>			/* |nothrow(3c++)| */
 #include	<string>
 #include	<string_view>
-#include	<vector>
+#include	<filesystem>
 #include	<iostream>
 #include	<usystem.h>
 #include	<getourenv.h>
@@ -57,14 +54,16 @@
 #include	<rmx.h>
 #include	<strwcpy.h>
 #include	<strnul.hh>
-#include	<readln.hh>
 #include	<ccfile.hh>
+#include	<readln.hh>
+#include	<filetype.h>
 #include	<matstr.h>
 #include	<isnot.h>
 #include	<mapex.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>
 
+import libutil ;			/* |xstrlen(3u)| */
 import fonce ;
 import ulibvals ;
 
@@ -75,7 +74,10 @@ import ulibvals ;
 
 /* imported namespaces */
 
+namespace fs = std::filesystem ;
+
 using std::nullptr_t ;			/* type */
+using fs::recursive_directory_iterator ;	/* type */
 using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::istream ;			/* type */
@@ -87,7 +89,8 @@ using std::nothrow ;			/* constant */
 
 /* local typedefs */
 
-typedef string_view	strview ;
+typedef string_view			strview ;
+typedef recursive_directory_iterator	rdi ;
 
 
 /* external subroutines */
@@ -107,6 +110,12 @@ namespace {
 	proginfomem_overlast
     } ;
     struct proginfo ;
+    struct proginfo_fl {
+	uint		uniqfile:1 ;		/* 'u' arg-opt */
+	uint		uniqdir:1 ;		/* 'ud' arg-opt */
+	uint		followarg:1 ;		/* 'H' arg-opt */
+	uint		followall:1 ;		/* 'L' arg-opt */
+    } ;
     struct proginfo_co {
 	proginfo	*op = nullptr ;
 	int		w = -1 ;
@@ -119,14 +128,13 @@ namespace {
 	    return operator () (0) ;
 	} ;
     } ; /* end struct (proginfo_co) */
-    typedef int (proginfo::*proginfo_m)(CUSTAT *,cchar *,int) noex ;
     struct proginfo {
 	friend		proginfo_co ;
 	proginfo_co	start ;
 	proginfo_co	finish ;
 	proginfo_co	flistbegin ;
 	proginfo_co	flistend ;
-	proginfo_m	m ;
+	proginfo_fl	fl{} ;
 	fonce		seen ;
 	mainv		argv ;
 	mainv		envv ;
@@ -148,16 +156,17 @@ namespace {
 	    argv = a ;
 	    envv = e ;
 	} ;
-	int filecheck(CUSTAT *) noex ;
+	int fileuniq(custat *) noex ;
 	int process() noex ;
 	int process_pmbegin() noex ;
 	int process_pmend() noex ;
-	int process_stdin() noex ;
 	int readin() noex ;
-	int fileproc(cchar *,int = -1) noex ;
-	int fileproc_fu(CUSTAT *,cchar *,int = -1) noex ;
-	int fileproc_lc(CUSTAT *,cchar *,int = -1) noex ;
-	int fileproc_lines() noex ;
+	int procname(cchar *,int = -1) noex ;
+	int procfile_list(custat *,cchar *,int = -1) noex ;
+	int procfile_lc(custat *,cchar *,int = -1) noex ;
+	int procdir(custat *,cchar *,int = -1) noex ;
+	int procent(custat *,cchar *,int = -1) noex ;
+	int procfile(custat *,cchar *,int = -1) noex ;
     private:
 	int istart() noex ;
 	int ifinish() noex ;
@@ -320,20 +329,19 @@ int proginfo::process() noex {
 	        for (int ai = 1 ; (ai < argc) && argv[ai] ; ai += 1) {
 	            cchar	*fn = argv[ai] ;
 	            if (fn[0]) {
-		        if ((fn[0] == '-') && (fn[1] == '\0')) {
-		            rs = readin() ;
-		            c += rs ;
+		        if (fn[0] == '-') {
+			    if (fn[1] == '\0') {
+		                rs = readin() ;
+		                c += rs ;
+			    }
 		        } else {
-	                    rs = fileproc(fn) ;
+	                    rs = procname(fn) ;
 		            c += rs ;
 		        }
 	            }
 	            if (rs < 0) break ;
 	        } /* end for */
-	    } else {
-		rs = process_stdin() ;
-	        c += rs ;
-	    }
+	    } /* end if (have argument) */
 	    rs1 = process_pmend() ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (process_pm) */
@@ -341,36 +349,12 @@ int proginfo::process() noex {
 }
 /* end subroutine (proginfo::process) */
 
-int proginfo::process_stdin() noex {
-	int		rs = SR_OK ;
-	int		c = 0 ; /* return-value */
-	switch (pm) {
-	case progmode_files:
-	case progmode_filelines:
-	    {
-		rs = fileproc_lines() ;
-		c += rs ;
-	    }
-	    break ;
-	default:
-	    {
-	        rs = readin() ;
-	        c += rs ;
-	    }
-	    break ;
-	} /* end switch */
-	return (rs >= 0) ? c : rs ;
-}
-/* end subroutine (proginfo::process_stdin) */
-
 int proginfo::process_pmbegin() noex {
 	int		rs = SR_OK ;
 	switch (pm) {
         case progmode_files:
-	    m = &proginfo::fileproc_fu ;
 	    break ;
         case progmode_filelines:
-	    m = &proginfo::fileproc_lc ;
 	    if ((rs = maxlinelen) >= 0) {
 	        llen = rs ;
 		rs = SR_NOMEM ;
@@ -403,7 +387,6 @@ int proginfo::process_pmend() noex {
 /* end subroutine (proginfo::process_pmend) */
 
 int proginfo::readin() noex {
-	istream		*isp = &cin ;
 	cnullptr	np{} ;
 	int		rs ;
 	int		c = 0 ;
@@ -411,9 +394,9 @@ int proginfo::readin() noex {
 	    cint	plen = rs ;
 	    rs = SR_NOMEM ;
 	    if (char *pbuf ; (pbuf = new(nothrow) char[plen + 1]) != np) {
-	        while ((rs = readln(isp,pbuf,plen)) > 0) {
+	        while ((rs = readln(&cin,pbuf,plen)) > 0) {
 		    if (cint pl = rmeol(pbuf,rs) ; pl > 0) {
-		        rs = fileproc(pbuf,pl) ;
+		        rs = procname(pbuf,pl) ;
 			c += rs ;
 		    }
 		    if (rs < 0) break ;
@@ -425,41 +408,109 @@ int proginfo::readin() noex {
 }
 /* end method (proginfo::readin) */
 
-int proginfo::fileproc(cchar *sp,int sl) noex {
+int proginfo::procname(cchar *sp,int sl) noex {
 	strnul		s(sp,sl) ;
 	int		rs ;
 	int		c = 0 ;
-	if (USTAT sb ; (rs = u_stat(s,&sb)) >= 0) {
-	    if ((rs = filecheck(&sb)) > 0) {
-		rs = (this->*m)(&sb,sp,sl) ;
-		c += rs ;
-	    } /* end if (filecheck) */
+	if (USTAT sb ; (rs = u_lstat(s,&sb)) >= 0) {
+	    cint ft = filetype(sb.st_mode) ;
+	    switch (ft) {
+	    case filetype_dir:
+		rs = procdir(&sb,sp,sl) ;
+		c = rs ;
+		break ;
+	    case filetype_reg:
+		rs = procfile(&sb,sp,sl) ;
+		c = rs ;
+		break ;
+	    } /* end switch */
 	} else if (isNotAccess(rs)) {
 	    rs = SR_OK ;
 	}
 	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::fileproc) */
+} /* end method (proginfo::procname) */
 
-int proginfo::fileproc_fu(CUSTAT *,cchar *sp,int sl) noex {
+int proginfo::procdir(custat *sbp,cchar *sp,int sl) noex {
+    	using enum	fs::path::format ;
+    	using enum	fs::directory_options ;
+    	int		rs = SR_OK ;
+	int		c = 0 ;
+	(void) sbp ;
+	if (sl && sp[0]) {
+	    if (sl < 0) sl = xstrlen(sp) ;
+	    try {
+	        fs::path p(sp,(sp + sl),native_format) ;
+    	        fs::directory_options dopt = skip_permission_denied ;
+		std::error_code ec ;
+		{
+		    rdi it(p,dopt,ec) ;
+		    for (cauto &de : it) {
+			const fs::path depath = de ;
+			{
+			    cchar *fn = depath.c_str() ;
+			    if (ustat sb ; (rs = u_lstat(fn,&sb)) >= 0) {
+				rs = procent(&sb,fn,-1) ;
+			        c = rs ;
+			    }
+			}
+		    } /* end for */
+		}
+	    } catch (...) {
+		rs = SR_NOMEM ;
+	    }
+	} /* end if (non-empty) */
+	return (rs >= 0) ? c : rs ;
+} /* end method (proginfo::procdir) */
+
+int proginfo::procent(custat *sbp,cchar *sp,int sl) noex {
+	cint		ft = filetype(sbp->st_mode) ;
+    	int		rs = SR_OK ;
+	int		c = 0 ;
+	switch (ft) {
+	case filetype_reg:
+	    rs = procfile(sbp,sp,sl) ;
+	    c = rs ;
+	} /* end switch */
+	return (rs >= 0) ? c : rs ;
+} /* end method (proginfo::procent) */
+
+int proginfo::procfile(custat *sbp,cchar *sp,int sl) noex {
+    	int		rs ;
+	int		c = 0 ;
+	if ((rs = fileuniq(sbp)) > 0) {
+	    switch (pm) {
+	    case progmode_files:
+		rs = procfile_list(sbp,sp,sl) ;
+		c = rs ;
+	        break ;
+	    case progmode_filelines:
+		rs = procfile_lc(sbp,sp,sl) ;
+		c = rs ;
+	        break ;
+	    } /* end switch */
+	} /* end if (fileuniq) */
+	return (rs >= 0) ? c : rs ;
+} /* end method (proginfo::procfile) */
+
+int proginfo::procfile_list(custat *,cchar *sp,int sl) noex {
 	int		rs = SR_OK ;
 	int		c = 0 ;
 	if (sp) {
-	    strview	fn(sp,sl) ;
+	    strnul	fn(sp,sl) ;
 	    cout << fn << eol ;
 	    c += 1 ;
 	}
 	return (rs >= 0) ? c : rs ;
 }
-/* end method (proginfo::fileproc_fu) */
+/* end method (proginfo::procfile_list) */
 
-int proginfo::fileproc_lc(CUSTAT *sbp,cchar *sp,int sl) noex {
+int proginfo::procfile_lc(custat *sbp,cchar *sp,int sl) noex {
 	int		rs = SR_OK ;
 	int		rs1 ;
 	int		c = 0 ;
 	if (sbp && sp && sl) {
-	    strview	fn(sp,sl) ;
 	    if (S_ISREG(sbp->st_mode)) {
+	        strnul fn(sp,sl) ;
 		c += 1 ;
 	        if (ccfile rf ; (rs = rf.open(fn,"r",0)) >= 0) {
 		    int		nl = 0 ;
@@ -474,25 +525,16 @@ int proginfo::fileproc_lc(CUSTAT *sbp,cchar *sp,int sl) noex {
 	} /* end if (non-null) */
 	return (rs >= 0) ? c : rs ;
 }
-/* end method (proginfo::fileproc_lc) */
+/* end method (proginfo::procfile_lc) */
 
-int proginfo::fileproc_lines() noex {
-	istream		*isp = &cin ;
-	int		rs ;
-	int		c = 1 ;
-	int		nl = 0 ;
-	while ((rs = readln(isp,lbuf,llen)) > 0) {
-	    nl += 1 ;
-	} /* end if (reading lines) */
-	lines += nl ;
-	return (rs >= 0) ? c : rs ;
+int proginfo::fileuniq(custat *sbp)  noex {
+    	int		rs = 1 ; /* default indicates "uniq" */
+	if (fl.uniqfile) {
+	    rs = seen.checkin(sbp) ;
+	}
+	return rs ;
 }
-/* end method (proginfo::fileproc_lines) */
-
-int proginfo::filecheck(CUSTAT *sbp)  noex {
-	return seen.checkin(sbp) ;
-}
-/* end method (proginfo::filecheck) */
+/* end method (proginfo::fileuniq) */
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
