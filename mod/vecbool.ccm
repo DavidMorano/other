@@ -122,7 +122,7 @@ export {
 	    tst		(this,vecboolmem_tst) ;
 	} ;
 	int resize(int n) noex ;
-	operator int () noex {
+	operator int () const noex {
 	    return int(size()) ;
 	} ;
 	void dtor() noex ;
