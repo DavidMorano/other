@@ -40,9 +40,13 @@ module ;
 #include	<usysdefs.h>
 #include	<usysrets.h>
 #include	<ulogerror.h>
+#include	<mkchar.h>
+#include	<ischarx.h>
 #include	<localmisc.h>
 
 module argmgr ;
+
+import libutil ;
 
 /* local defines */
 
@@ -121,22 +125,53 @@ int argmgr::ifinish() noex {
 int argmgr::iarg() noex {
     	int		rs ;
 	if ((rs = argmgr_magic(this)) >= 0) {
-	    rs = int(ai < argc) ;
+	    rs = int(++ai < argc) ;
 	} /* end if (magic) */
 	return rs ;
 } /* end method (argmgr::iarg) */
 
-int argmgr::argkey(cchar **rpp) noex {
+int argmgr::argopt(cchar **rpp) noex {
     	int		rs = SR_OK ;
-	(void) rpp ;
+	if (ai < argc) {
+	    cchar	*ap = argv[ai] ;
+	    if (isplusminus(ap[0])) {
+		fl.plus = (ap[0] == '+') ;
+		if (cint ch = mkchar(ap[1]) ; ch) {
+		    if (isalphalatin(ch)) {
+			if ((rs = amap.set[ai]) >= 0) {
+		            if (rpp) *rpp = (ap + 1) ;
+		            rs = xstrlen(ap + 1) ;
+			}
+		    }
+		}
+	    }
+	}
 	return rs ;
-}
+} /* end method (argmgr::argopt) */
 
-int argmgr::arglong(cchar **rpp) noex {
+int argmgr::argoptlong(cchar **rpp) noex {
     	int		rs = SR_OK ;
-	(void) rpp ;
+	if (ai < argc) {
+	    cchar	*ap = argv[ai] ;
+	    if ((ap[0] == '-') && (ap[1] == '-')) {
+		if (cint ch = mkchar(ap[2]) ; ch) {
+		    if (isalphalatin(ch)) {
+			if ((rs = amap.set[ai]) >= 0) {
+		            if (rpp) *rpp = (ap + 1) ;
+		            rs = xstrlen(ap + 1) ;
+			}
+		    } else {
+		        argoptdone = true ;
+		        aie = ai ;
+		    }
+		} else {
+		        argoptdone = true ;
+		        aie = ai ;
+		}
+	    }
+	}
 	return rs ;
-} 
+} /* end method (argmgr::argoptlong) */
 
 int argmgr::iargchar() noex {
     	int		rs = SR_OK ;
@@ -147,6 +182,11 @@ int argmgr::ipositional() noex {
     	int		rs = SR_OK ;
 	return rs ;
 }
+
+int argmgr::icount() noex {
+    	int		rs = SR_OK ;
+	return rs ;
+} /* end method (argmgr::icount) */
 
 argmgr::operator int () noex {
     	int		rs ;
@@ -183,7 +223,7 @@ argmgr_co::operator int () noex {
 		rs = op->ipositional() ;
 		break ;
 	    case argmgrmem_count:
-	        rs = op->cpos ;
+	        rs = op->icount() ;
 	        break ;
 	    default:
 		rs = SR_INVALID ;
