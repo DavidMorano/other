@@ -5,7 +5,7 @@ CMDS=
 CMDS+=" reporoot reponame "
 
 LOCPROG=reporoot.x
-TDIRS=" /usr/local /opt/local "
+TDIRS=" /usr/extra /usr/local /opt/local "
 
 function linkdir {
   typeset TDIR=${1}
@@ -26,5 +26,4 @@ if [[ -x "${LOCPROG}" ]] ; then
 else
   print -u 2 -- "program not made"
 fi
-
 

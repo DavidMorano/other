@@ -20,7 +20,11 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<usystem.h>
+#include	<clanguage.h>
+#include	<utypedefs.h>
+#include	<utypealiases.h>
+#include	<usysdefs.h>
+#include	<usysrets.h>
 #include	<vechand.h>
 
 
@@ -129,8 +133,8 @@ struct ema : ema_head {
 	int haveaddr(cchar *,int = -1) noex ;
 	int first(cchar **) noex ;
 	void dtor() noex ;
-	~ema() {
-	    dtor() ;
+	destruct ema() {
+	    if (elp) dtor() ;
 	} ;
 } ; /* end struct (ema) */
 #else	/* __cplusplus */
