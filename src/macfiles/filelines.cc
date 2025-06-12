@@ -47,7 +47,6 @@
 #include	<cstdlib>
 #include	<cstring>		/* <- for |memchr(3c)| */
 #include	<usystem.h>
-#include	<intsat.h>
 #include	<localmisc.h>
 
 #include	"filelines.h"

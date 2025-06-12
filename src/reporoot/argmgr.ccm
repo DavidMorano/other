@@ -100,9 +100,10 @@ export {
 	    ai = o.ai ;
 	    return *this ;
 	} ;
-	bool operator != (argmgr_iter &o) noex ;
-	bool operator < (argmgr_iter &o) noex ;
+	bool operator != (const argmgr_iter &o) noex ;
+	bool operator < (const argmgr_iter &o) noex ;
 	ccharp operator * () noex ;
+	operator ccharp () noex ;
     } ; /* end struct (argmgr_iter) */
     struct argmgr_co {
 	argmgr		*op = nullptr ;
@@ -152,6 +153,7 @@ export {
 	} ;
 	int argopt(ccharpp) noex ;
 	int argoptlong(ccharpp) noex ;
+	int get(int,ccharpp) noex ;
 	argmgr_iter begin() noex ;
 	argmgr_iter end() noex ;
 	operator int () noex ;

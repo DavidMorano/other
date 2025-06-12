@@ -15,7 +15,6 @@ CRTDIR		?= $(CGS_CRTDIR)
 VALDIR		?= $(CGS_VALDIR)
 RUNDIR		?= $(CGS_RUNDIR)
 
-
 CPP		?= cpp
 CC		?= gcc
 CXX		?= gxx
@@ -36,7 +35,9 @@ DEFS=
 
 INCS=
 
-LIBS= -lmacuser -lu
+MODS +=
+
+LIBS= -luo -lu
 
 
 INCDIRS=
@@ -45,7 +46,6 @@ LIBDIRS= -L$(LIBDIR)
 
 
 RUNINFO= -rpath $(RUNDIR)
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -56,15 +56,16 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_SAMEFILE= main.o
+OBJ_SAMEFILE= samefile_main.o
 
 
-.SUFFIXES:		.hh .ii
+.SUFFIXES:		.hh .ii .ccm
 
 
 default:		$(T).x
 
 all:			$(ALL)
+
 
 .c.i:
 	$(CPP) $(CPPFLAGS) $< > $(*).i
@@ -84,12 +85,15 @@ all:			$(ALL)
 .cc.o:
 	$(COMPILE.cc) $<
 
+.ccm.o:
+	makemodule $(*)
+
 
 $(T).x:			$(OBJ_SAMEFILE)
 	$(CXX) $(LDFLAGS) -o $@ $(RUNINFO) $(OBJ_SAMEFILE) $(LIBINFO)
 
 $(T).nm:		$(T).x
-	$(NM) $(NMFLAGS) $(T).so > $(T).nm
+	$(NM) $(NMFLAGS) $(T).x > $(T).nm
 
 again:
 	rm -f $(TALL)
@@ -101,6 +105,6 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc $(INCS)
+samefile_main.o:	samefile_main.cc $(INCS)
 
 

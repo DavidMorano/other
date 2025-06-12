@@ -173,6 +173,17 @@ int argmgr::argoptlong(cchar **rpp) noex {
 	return rs ;
 } /* end method (argmgr::argoptlong) */
 
+int argmgr::get(int i,ccharpp rpp) noex {
+    	int		rs = SR_OK ;
+	(void) i ;
+	(void) rpp ;
+	if (i < argc) {
+	    if ((aie == 0) || (i < aie) || ((rs = amap.tst[i])
+	    }
+	}
+	return rs ;
+}
+
 int argmgr::iargchar() noex {
     	int		rs = SR_OK ;
 	return rs ;
@@ -187,6 +198,8 @@ int argmgr::icount() noex {
     	int		rs = SR_OK ;
 	return rs ;
 } /* end method (argmgr::icount) */
+
+
 
 argmgr::operator int () noex {
     	int		rs ;
