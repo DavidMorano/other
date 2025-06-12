@@ -11,14 +11,14 @@ int proginfo::argproc() noex {
 	    while ((rs = am.arg) > 0) {
 		if (cc *sp ; (rs = am.argopt(&sp)) > 1) {
 		    if (int wi ; (wi = matostr(argopts,2,sp,rs)) >= 0) {
-			rs = pi.argoptstr(&am,wi) ;
+			rs = argoptstr(&am,wi) ;
 		    } else {
-			rs = pi.argoptchr(&am,sp,rs) ;
+			rs = argoptchr(&am,sp,rs) ;
 		    } /* end if (matostr) */
 		} else if (rs == 1) {
-		    rs = pi.argoptchr(&am,sp,rs) ;
+		    rs = argoptchr(&am,sp,rs) ;
 		} else if ((rs >= 0) && ((rs = am.argoptlong(&sp)) > 0)) {
-		    rs = pi.argoptlong(&am,sp,rs) ;
+		    rs = argoptlong(&am,sp,rs) ;
 		}
 		if ((rs < 0) || am.argoptdone) break ;
 	    } /* end while */

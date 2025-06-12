@@ -122,6 +122,7 @@ struct ema : ema_head {
 	    start(this,emamem_start) ;
 	    count(this,emamem_count) ;
 	    finish(this,emamem_finish) ;
+	    magic = 0 ;
 	} ;
 	ema(const ema &) = delete ;
 	ema &operator = (const ema &) = delete ;
@@ -134,7 +135,7 @@ struct ema : ema_head {
 	int first(cchar **) noex ;
 	void dtor() noex ;
 	destruct ema() {
-	    if (elp) dtor() ;
+	    if (magic) dtor() ;
 	} ;
 } ; /* end struct (ema) */
 #else	/* __cplusplus */
