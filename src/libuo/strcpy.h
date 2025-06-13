@@ -1,5 +1,5 @@
 /* strcpy HEADER */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C20 */
 
 /* copy a c-string to destination buffer (ad other functions) */

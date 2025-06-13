@@ -1,5 +1,5 @@
 /* snx HEADER */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C20 */
 
 /* counted c-string operations */
