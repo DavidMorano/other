@@ -1,5 +1,5 @@
 /* proginfo_setpiv */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C++20 (conformance reviewed) */
 
 /* utility for KSH built-in commands */

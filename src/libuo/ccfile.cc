@@ -1,5 +1,5 @@
 /* ccfile SUPPORT */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C++20 */
 
 /* C++ file I-O operations */
@@ -110,10 +110,10 @@ namespace {
     struct devnames {
 	cchar	*name[stdfile_overlast] ;
 	constexpr devnames() noex {
-	    name[stdfile_in] = "/dev/fd/0" ;
-	    name[stdfile_out] = "/dev/fd/1" ;
-	    name[stdfile_err] = "/dev/fd/2" ;
-	    name[stdfile_log] = "/dev/fd/3" ;
+	    name[stdfile_in]	= "/dev/fd/0" ;
+	    name[stdfile_out]	= "/dev/fd/1" ;
+	    name[stdfile_err]	= "/dev/fd/2" ;
+	    name[stdfile_log]	= "/dev/fd/3" ;
 	} ; /* end ctor */
     } ; /* end struct (devnames) */
 } /* end namespace */

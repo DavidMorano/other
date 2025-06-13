@@ -1,5 +1,5 @@
 /* sha1 HEADER */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C20 */
 
 /* NIST Secure Hash Algorithm (SHA) */

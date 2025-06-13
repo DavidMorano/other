@@ -1,5 +1,5 @@
 /* main (FMT) */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C++20 (conformance reviewed) */
 
 #pragma ident "@(#)fmt.c 1.18	97/05/05 SMI" /* from UCB 2.1 07/01/81 */
