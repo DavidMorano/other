@@ -1,5 +1,5 @@
 /* rmx HEADER */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C20 */
 
 /* remove EOL (End-Of-Line) characters from the given string */

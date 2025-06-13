@@ -1,5 +1,5 @@
 /* rmx SUPPORT */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C++20 */
 
 /* remove characters from the end of the given c-string */
