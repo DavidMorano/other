@@ -1,5 +1,5 @@
 /* fonce1 SUPPORT */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C++20 */
 
 /* implement a map container of blocks (of a given structure) */
@@ -27,10 +27,10 @@
 	structure).
 
 	Symopsis:
-	int fonce_start<typename K,typename Block>(int n = 0) noex
+	int fonce_start(int n = 0) noex
 
 	Arguments:
-	n		suggested starting size
+	n		suggested starting length
 
 	Returns:
 	>=0		ok
@@ -53,13 +53,12 @@ module ;
 #include	<ulogerror.h>
 #include	<localmisc.h>
 
+module fonce ;
 
 /* local defines */
 
 #define	FONCE_DEFTABLEN		100
 
-
-module fonce ;
 
 /* imported namespaces */
 
@@ -110,10 +109,9 @@ int fonce::istart(int n) noex {
 	    } catch (...) {
 		rs = SR_NOMEM ;
 	    }
-	}
+	} /* end if (valid) */
 	return rs ;
-}
-/* end method (fonce::istart) */
+} /* end method (fonce::istart) */
 
 int fonce::ifinish() noex {
 	int		rs = SR_NOTOPEN ;
@@ -123,7 +121,7 @@ int fonce::ifinish() noex {
 	    rs = SR_OK ;
 	}
 	return rs ;
-}
+} /* end method (fonce::ifinish) */
 
 int fonce::checkin(CUSTAT *sbp) noex {
 	int		rs = SR_FAULT ;
@@ -142,7 +140,7 @@ int fonce::checkin(CUSTAT *sbp) noex {
 	    } /* end if (initialize) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? f : rs ;
-}
+} /* end method (fonce::checkin) */
 
 int fonce::icount() noex {
 	int		rs = SR_BUGCHECK ;
@@ -151,8 +149,7 @@ int fonce::icount() noex {
 	    rs = intconv(cnt) ;
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (fonce::icount) */
+} /* end method (fonce::icount) */
 
 void fonce::dtor() noex {
 	if (cint rs = finish ; rs < 0) {
@@ -176,7 +173,6 @@ int fonce_co::operator () (int a) noex {
 	    } /* end switch */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (fonce_co::operator) */
+} /* end method (fonce_co::operator) */
 
 

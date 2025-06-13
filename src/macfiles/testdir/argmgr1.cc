@@ -1,5 +1,5 @@
 /* argmgr1 MODULE */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C++20 */
 
 /* manage program arguments */
@@ -175,14 +175,25 @@ int argmgr::argoptlong(cchar **rpp) noex {
 
 int argmgr::get(int i,ccharpp rpp) noex {
     	int		rs = SR_OK ;
-	(void) i ;
-	(void) rpp ;
-	if (i < argc) {
-	    if ((aie == 0) || (i < aie) || ((rs = amap.tst[i])
+	bool		f = false ;
+	while ((rs >= 0) && (i < argc) && (! f)) {
+	    if (i < aie) {
+		if ((rs = amap.tst[i]) > 0) {
+		    i += 1 ;
+		} else if (rs == 0) {
+		    f = true ;
+		}
+	    } else if (i == aie) {
+		i += 1 ;
+	    } else {
+		f = true ;
 	    }
+	} /* end while */
+	if (rs >= 0) {
+	    if (rpp) *rpp = (f) ? argv[i] : nullptr ;
 	}
-	return rs ;
-}
+	return (rs >= 0) ? i : rs ;
+} /* end method (argmgr::get) */
 
 int argmgr::iargchar() noex {
     	int		rs = SR_OK ;

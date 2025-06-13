@@ -35,7 +35,7 @@ DEFS=
 
 INCS=
 
-MODS += vecbool.ccm fonce.ccm
+MODS +=
 
 LIBS= -luo -lu
 
@@ -57,10 +57,10 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
+DEPS_MAIN +=
+
 OBJ_FILES += files_main.o 
 OBJ_FILES += argmgr.o
-
-DEPS_MAIN += fonce.o vecbool.o
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -118,34 +118,8 @@ files_main.o:		files_main.cc $(DEPS_MAIN)		$(INCS)
 mods.o:			$(DEPS_MAIN)
 	$(CXX) -r -o $@ $(LDFLAGS) $^
 
-vecbool.ccm:
-	makemodcurrent
-fonce.ccm:
-	makemodcurrent
-
-# VECBOOL
-vecbool.o:		vecbool0.o vecbool1.o
-	$(CXX) -r -o $@ $(LDFLAGS) $^
-
-vecbool0.o:		vecbool.ccm
-	makemodule vecbool
-
-vecbool1.o:		vecbool1.cc vecbool.ccm
-	makemodule vecbool
-	$(COMPILE.cc) $<
-
-# FONCE
-fonce.o:		fonce0.o fonce1.o		$(INCS)
-	makemodule fonce
-	$(LD) -r -o $@ $(LDFLAGS) $^
-fonce0.o:		fonce.ccm			$(INCS)
-	makemodule fonce
-fonce1.o:		fonce1.cc fonce.ccm		$(INCS)
-	makemodule fonce
-	$(COMPILE.cc) $<
-
 # ARGMGR
-argmgr.o:		argmgr,dir
+argmgr.o:		argmgr.dir
 argmgr.dir:
 	makesubdir $@
 
