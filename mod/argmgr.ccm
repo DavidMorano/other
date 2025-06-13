@@ -1,5 +1,5 @@
 /* argmgr MODULE (primary-module-interface) */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C++20 (conformance reviewed) */
 
 /* manage program arguments */
@@ -104,6 +104,12 @@ export {
 	bool operator < (const argmgr_iter &o) noex ;
 	ccharp operator * () noex ;
 	operator ccharp () noex ;
+	argmgr_iter operator + (int) const noex ;
+	argmgr_iter &operator += (int) noex ;
+	argmgr_iter operator ++ () noex ; /* pre */
+	argmgr_iter operator ++ (int) noex ; /* post */
+    private:
+	int increment(int = 1) noex ;
     } ; /* end struct (argmgr_iter) */
     struct argmgr_co {
 	argmgr		*op = nullptr ;
