@@ -11,6 +11,7 @@ LIBS="libuo.o libuo.a "
 
 TDIRS+=" ${HOME}/github/system/lib"
 TDIRS+=" ${HOME}/github/other/lib"
+TDIRS+=" ${HOME}/github/test/lib"
 TDIRS+=" ${HOME}/lib "
 TDIRS+=" ${EXTRA}/lib "
 TDIRS+=" ${USRLOCAL}/lib "

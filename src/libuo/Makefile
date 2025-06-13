@@ -319,17 +319,9 @@ strkeyx.dir:
 	makesubdir $@
 
 # FONCE
-fonce.ccm:	
-	makemodcurrent $<
-
-fonce.o:		fonce0.o fonce1.o		$(INCS)
-	makemodule fonce
-	$(LD) -r -o $@ $(LDFLAGS) fonce0.o fonce1.o
-fonce0.o:		fonce.ccm			$(INCS)
-	makemodule fonce
-fonce1.o:		fonce1.cc fonce.ccm		$(INCS)
-	makemodule fonce
-	$(COMPILE.cc) fonce1.cc
+fonce.o:		fonce.dir
+fonce.dir:
+	makesubdir $@
 
 # Flat Objects
 storebuf.o:		storebuf.cc storebuf.h

@@ -1,5 +1,5 @@
 /* isx HEADER */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C20 */
 
 /* return a boolean on some condition */
