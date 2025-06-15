@@ -1,5 +1,5 @@
 /* vecbool1 MODULE */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C++20 */
 
 /* manage a variable length bit-array */
@@ -79,19 +79,18 @@ module vecbool ;
 /* local subroutines */
 
 int vecbool::resize(int n) noex {
-	    int		rs = SR_INVALID ;
-	    if (n >= 0) {
-		try {
-	            csize nsize = size_t(n) ;
-	            vector<bool>::resize(nsize,false) ;
-	            rs = SR_OK ;
-		} catch (...) {
-		    rs = SR_NOMEM ;
-		}
+	int		rs = SR_INVALID ;
+	if (n >= 0) {
+	    try {
+	        csize nsize = size_t(n) ;
+	        vector<bool>::resize(nsize,false) ;
+	        rs = SR_OK ;
+	    } catch (...) {
+		rs = SR_NOMEM ;
 	    }
-	    return rs ;
+	} /* end if (valid) */
+	return rs ;
 } /* end method (vecbool::resize) */
-
 
 int vecbool::icount() noex {
     	csize	cnt = size() ;
@@ -111,7 +110,7 @@ int vecbool::adj(int idx) noex {
 
 void vecbool::dtor() noex {
 	if (cint rs = finish ; rs < 0) {
-	    ulogerror("fonce",rs,"fini-finish") ;
+	    ulogerror("vecbool",rs,"fini-finish") ;
 	}
 }
 
@@ -133,9 +132,6 @@ vecbool_co::operator int () noex {
 	    case vecboolmem_count:
 	        rs = int(op->size()) ;
 	        break ;
-	    default:
-		rs = SR_INVALID ;
-		break ;
 	    } /* end switch */
 	} /* end if (non-null) */
 	return rs ;
@@ -154,18 +150,17 @@ int vecbool_co::operator [] (int idx) noex {
 		    }
                     break ;
                 case vecboolmem_clr:
+		    rs = SR_OK ;
 		    if (idx < op->icount()) {
                         (*op)[idx] = false ;
 		    }
                     break ;
                 case vecboolmem_tst:
+		    rs = SR_OK ;
 		    if (idx < op->icount()) {
                         f = (*op)[idx] ;
 		    }
                     break ;
-	        default:
-		    rs = SR_INVALID ;
-		    break ;
                 } /* end switch */
 		if (rs >= 0) rs = int(f) ;
 	    } /* end if (valid) */

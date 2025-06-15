@@ -65,6 +65,7 @@
 module ;
 
 #include	<envstandards.h>	/* MUST be first to configure */
+#include	<sys/utsname.h>		/* |uname(2)| */
 #include	<unistd.h>		/* |sysconf| stuff */
 #include	<cerrno>
 #include	<climits>
@@ -113,6 +114,7 @@ enum dataitems {
 	dataitem_maxlogin,
 	dataitem_maxusername,
 	dataitem_maxgroupname,
+	dataitem_maxprojectname,
 	dataitem_maxnode,
 	dataitem_maxhost,
 	dataitem_maxtzname,
@@ -138,21 +140,19 @@ namespace {
 	int mconfstr(int) noex ;
 	int getval(int) noex ;
 	int getstr(int) noex ;
+	int getsys(int) noex ;
 	int synthetic(int) noex ;
 	int cache(int) noex ;
 	int callstd(int) noex ;
-	int getzoneinfo() noex ;
+	int getdefzoneinfo() noex ;
+	int getdefacctname() noex ;
+	int getdefnodename() noex ;
+	int getdefmailaddr() noex ;
     } ; /* end struct (usysconf) */
 } /* end namespace */
 
 
 /* forward references */
-
-static constexpr int getmaxmailaddr() noex {
-    	cint	nnm = mailvalue.nodenamemult ;
-    	cint	hnm = mailvalue.hostnamemult ;
-    	return ((nnm * HNBUFLEN) + (hnm * NNBUFLEN)) ;
-}
 
 
 /* local variables */
@@ -169,26 +169,11 @@ constexpr size_t	minusone = -1uz ;
 
 export {
     int usysconfval(int req,long *rp = nullptr) noex {
-	int		rs = SR_NOSYS ;
+	int		rs = SR_INVALID ;
 	if (req >= 0) {
 	    usysconf	sco(rp) ;
 	    sco.m = &usysconf::mconfval ;
-	    switch (req) {
-	    case _SC_ARG_MAX:
-	    case _SC_LINE_MAX:
-	    case _SC_LOGIN_NAME_MAX:
-	    case _SC_USERNAME_MAX:
-	    case _SC_GROUPNAME_MAX:
-	    case _SC_HOSTNAME_MAX:
-	    case _SC_TZNAME_MAX:
-	    case _SC_NGROUPS_MAX:
-	    case _SC_CLK_TCK:
-	        rs = sco.cache(req) ;
-	        break ;
-	    default:
-	        rs = sco.getval(req) ;
-	        break ;
-	    } /* end switch */
+	    rs = sco.getval(req) ;
 	} /* end if (valid) */
 	return rs ;
     } /* end subroutine (usysconfval) */
@@ -205,7 +190,7 @@ export {
 
 /* local subroutines */
 
-int usysconf::getval(int req) noex {
+int usysconf::getsys(int req) noex {
     	int		rs ;
 	if (req >= sysconfcmd_synthetic) {
 	    rs = synthetic(req) ;
@@ -214,12 +199,35 @@ int usysconf::getval(int req) noex {
 	}
     	return rs ;
 }
-/* end subroutine (usysconf::getval) */
+/* end subroutine (usysconf::getsys) */
 
 int usysconf::getstr(int req) noex {
     	return callstd(req) ;
 }
 /* end subroutine (usysconf::getstr) */
+
+int usysconf::getval(int req) noex {
+    	int		rs = SR_OK ;
+	    switch (req) {
+	    case _SC_ARG_MAX:
+	    case _SC_LINE_MAX:
+	    case _SC_LOGIN_NAME_MAX:
+	    case _SC_USERNAME_MAX:
+	    case _SC_GROUPNAME_MAX:
+	    case _SC_PROJECTNAME_MAX:
+	    case _SC_NODENAME_MAX:
+	    case _SC_HOSTNAME_MAX:
+	    case _SC_TZNAME_MAX:
+	    case _SC_NGROUPS_MAX:
+	    case _SC_CLK_TCK:
+	        rs = cache(req) ;
+	        break ;
+	    default:
+	        rs = getsys(req) ;
+	        break ;
+	    } /* end switch */
+	return rs ;
+} /* end method (usysconf::getval) */
 
 int usysconf::synthetic(int req) noex {
     	long		val = -1 ;
@@ -238,7 +246,7 @@ int usysconf::synthetic(int req) noex {
 	    val = ZNBUFLEN ;
 	    break ;
         case sysconfcmd_maxzoneinfo:
-	    rs = getzoneinfo() ;
+	    rs = getdefzoneinfo() ;
 	    break ;
         case sysconfcmd_maxname:
 	    val = MNBUFLEN ;
@@ -247,13 +255,16 @@ int usysconf::synthetic(int req) noex {
 	    val = MPBUFLEN ;
 	    break ;
         case sysconfcmd_maxusername:
-	    val = UNBUFLEN ;
+	    rs = getdefacctname() ;
 	    break ;
         case sysconfcmd_maxgroupname:
-	    val = GNBUFLEN ;
+	    rs = getdefacctname() ;
+	    break ;
+        case sysconfcmd_maxprojectname:
+	    rs = getdefacctname() ;
 	    break ;
         case sysconfcmd_maxnodename:
-	    val = NNBUFLEN ;
+	    rs = getdefnodename() ;
 	    break ;
         case sysconfcmd_maxhostname:
 	    val = HNBUFLEN ;
@@ -274,7 +285,7 @@ int usysconf::synthetic(int req) noex {
 	    val = FSBUFLEN ;
 	    break ;
         case sysconfcmd_maxmailaddr:
-	    val = getmaxmailaddr() ;
+	    rs = getdefmailaddr() ;
 	    break ;
 	default:
 	    rs = SR_NOSYS ;
@@ -382,6 +393,9 @@ int usysconf::cache(int req) noex {
 	case _SC_ARG_MAX:		ii = dataitem_maxarg ; break ;
 	case _SC_LINE_MAX:		ii = dataitem_maxline ; break ;
 	case _SC_LOGIN_NAME_MAX:	ii = dataitem_maxlogin ; break ;
+	case _SC_USERNAME_MAX:		ii = dataitem_maxusername ; break ;
+	case _SC_GROUPNAME_MAX:		ii = dataitem_maxgroupname ; break ;
+	case _SC_PROJECTNAME_MAX:	ii = dataitem_maxprojectname ; break ;
 	case _SC_NODENAME_MAX:		ii = dataitem_maxnode ; break ;
 	case _SC_HOSTNAME_MAX:		ii = dataitem_maxhost ; break ;
 	case _SC_TZNAME_MAX:		ii = dataitem_maxtzname ; break ;
@@ -394,7 +408,7 @@ int usysconf::cache(int req) noex {
 	} /* end switch */
 	if ((rs >= 0) && (ii >= 0)) {
 	    if ((rs = udata.d[ii].load(memord_relaxed)) == 0) {
-		if ((rs = getval(req)) > 0) {
+		if ((rs = getsys(req)) > 0) {
 		    udata.d[ii].store(rs,memord_relaxed) ;
 		}
 	    } else if (rs > 0) {
@@ -405,9 +419,43 @@ int usysconf::cache(int req) noex {
 }
 /* end subroutine (usysconf::cache) */
 
-int usysconf::getzoneinfo() noex {
-	return getval(sysconfcmd_maxname) ;
+int usysconf::getdefzoneinfo() noex {
+	cint		cmdname = _SC_NAME_MAX ;
+	return getval(cmdname) ;
 }
-/* end method (usysconf::getzoneinfo) */
+/* end method (usysconf::getdefzoneinfo) */
+
+int usysconf::getdefacctname() noex {
+	cint		cmdlogin = _SC_LOGIN_NAME_MAX ;
+	return getval(cmdlogin) ;
+}
+/* end method (usysconf::getdefacctname) */
+
+int usysconf::getdefnodename() noex {
+    	struct utsname	ut ;
+	int		rs ;
+	{
+	    rs = (szof(ut.nodename) - 1) ;
+	}
+	return rs ;
+}
+/* end method (usysconf::getdefnodename) */
+
+int usysconf::getdefmailaddr() noex {
+	cint		cmdnode = _SC_NODENAME_MAX ;
+	cint		cmdhost = _SC_HOSTNAME_MAX ;
+    	cint		nnm = mailvalue.nodenamemult ;
+    	cint		hnm = mailvalue.hostnamemult ;
+	int		rs ;
+	int		len = 0 ; /* return-value */
+	if ((rs = getval(cmdnode)) >= 0) {
+	    len += (rs * nnm) ;
+	    if ((rs = getval(cmdhost)) >= 0) {
+    		len += (rs * hnm) ;
+	    }
+	}
+    	return (rs >= 0) ? len : rs ;
+}
+/* end method (usysconf::getdefmailaddr) */
 
 

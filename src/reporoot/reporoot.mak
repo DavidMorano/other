@@ -35,7 +35,7 @@ DEFS=
 
 INCS=
 
-MODS += argmgr.ccm
+MODS +=
 
 LIBS= -luo -lu
 
@@ -56,9 +56,9 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACFU= reporoot_main.o
+DEPS_MAIN += usysbasic.o ulibvals.o umisc.o
 
-DEPS_MAIN += usysbasic.o ulibvals.o umisc.o fonce.o
+OBJ_MACFU= reporoot_main.o
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -112,20 +112,6 @@ install:		$(T).x
 
 reporoot_main.o:	reporoot_main.cc $(DEPS_MAIN) 		$(INCS)
 
-mods.o:			argmgr.o
-	$(CXX) -r -o  $@ $(LDFLAGS) argmgr.o
-
-# ARGMGR
-argmgr.o:		argmgr0.o argmgr1.o
-	$(CXX) -r -o  $@ $(LDFLAGS) argmgr0.o argmgr1.o
-
-argmgr0.o:		argmgr.ccm
-	makemodule argmgr
-
-argmgr1.o:		argmgr.ccm argmgr1.cc
-	makemodule argmgr
-	$(COMPILE.cc) argmgr1.cc
-
 # MODS
 usysbasic.ccm:
 	makemodcurrent $@
@@ -133,18 +119,6 @@ ulibvals.ccm:
 	makemodcurrent $@
 umisc.ccm:
 	makemodcurrent $@
-fonce.ccm:	
-	makemodcurrent $@
-
-# FONCE
-fonce.o:		fonce0.o fonce1.o		$(INCS)
-	makemodule fonce
-	$(LD) -r -o $@ $(LDFLAGS) fonce0.o fonce1.o
-fonce0.o:		fonce.ccm			$(INCS)
-	makemodule fonce
-fonce1.o:		fonce1.cc fonce.ccm		$(INCS)
-	makemodule fonce
-	$(COMPILE.cc) fonce1.cc
 
 sysbasic.o:		usysbasic.ccm
 ulibvals.o:		ulibvals.ccm

@@ -47,8 +47,6 @@ module ;
 #include	<utypedefs.h>
 #include	<utypealiases.h>
 #include	<usysdefs.h>
-#include	<ulogerror.h>
-#include	<sysconfcmds.h>
 #include	<localmisc.h>		/* |{xxx}BUFLEN| */
 
 export module ulibvals ;
@@ -56,9 +54,9 @@ export module ulibvals ;
 export {
     struct ulibvals {
 	static const int	endianval ;
-	static const int	maxbase ;
 	static const int	pagesz ;
 	static const int	clktck ;
+	static const int	maxbase ;
 	static const int	maxarg ;
 	static const int	maxline ;
 	static const int	maxlogin ;
@@ -66,6 +64,7 @@ export {
 	static const int	maxpathlen ;
 	static const int	usernamelen ;
 	static const int	groupnamelen ;
+	static const int	projnamelen ;
 	static const int	nodenamelen ;
 	static const int	hostnamelen ;
 	static const int	binbuflen ;	/* for |int256_t| */

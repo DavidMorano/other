@@ -1,5 +1,5 @@
 /* motd_main SUPPORT (macmotd) */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C++20 */
 
 /* small Message-Of-The-Day (MOTD) server for macOS */

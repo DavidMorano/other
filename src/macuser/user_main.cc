@@ -1,5 +1,5 @@
 /* main (userhome) */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C++20 */
 
 /* generic front-end for SHELL built-ins */

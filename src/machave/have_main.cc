@@ -1,5 +1,5 @@
 /* have_main SUPPORT (haveprogram) */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C++20 */
 
 /* determine if a given name is an executable program */

@@ -35,7 +35,7 @@ DEFS=
 
 INCS=
 
-MODS +=
+MODS += vecbool.cc argmgr.ccm
 
 LIBS= -luo -lu
 
@@ -57,10 +57,9 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-DEPS_MAIN +=
+DEPS_MAIN += vecbool.o argmgr.o
 
-OBJ_FILES += files_main.o 
-OBJ_FILES += argmgr.o
+OBJ_FILES += files_main.o $(DEPS_MAIN)
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -91,6 +90,7 @@ all:			$(ALL)
 
 .ccm.o:
 	makemodule $(*)
+	echo "upper default-rule"
 
 
 $(T).x:			$(OBJ_FILES)
@@ -117,6 +117,11 @@ files_main.o:		files_main.cc $(DEPS_MAIN)		$(INCS)
 # MODS
 mods.o:			$(DEPS_MAIN)
 	$(CXX) -r -o $@ $(LDFLAGS) $^
+
+# VECBOOL
+vecbool.o:		vecbool.dir
+vecbool.dir:
+	makesubdir $@
 
 # ARGMGR
 argmgr.o:		argmgr.dir

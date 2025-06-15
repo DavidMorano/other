@@ -36,7 +36,7 @@ DEFS=
 
 INCS=
 
-MODS +=
+MODS += libutil.ccm fonce.ccm argmgr.ccm
 
 LIBS= -lu
 
@@ -57,20 +57,21 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ00_LUO= isx.o six.o mkx.o snx.o snwcpy.o
-OBJ01_LUO= sfx.o cfx.o ctx.o inetaddrx.o
-OBJ02_LUO= strdcpy.o strwcpy.o strx.o
-OBJ03_LUO= calstrs.o
+OBJ00_LUO= ucx.o
+OBJ01_LUO= sfx.o six.o rmx.o isx.o
+OBJ02_LUO= strn.o strdcpy.o strx.o strkeyx.o
+OBJ03_LUO= strw.o strwcpy.o
 
-OBJ04_LUO= strn.o
-OBJ05_LUO= bufsizevar.o
-OBJ06_LUO= ucx.o 
-OBJ07_LUO= char.o fmtstr.o
+OBJ04_LUO= fonce.o ccfile.o strmgr.o 
+#OBJ04_LUO= fonce.o ccfile.o strmgr.o argmgr.o
+OBJ05_LUO= matxstr.o char.o mapex.o
+OBJ06_LUO= nleadx.o
+OBJ07_LUO= strnxcmp.o
 
-OBJ08_LUO= sbuf.o storebuf.o 
-OBJ09_LUO= strmgr.o 
-OBJ10_LUO= ids.o 
-OBJ11_LUO= ema.o realname.o
+OBJ08_LUO= strcpyxc.o
+OBJ09_LUO= readln.o
+OBJ10_LUO= getourenv.o dictdiff.o
+OBJ11_LUO= inetconv.o inetaddrx.o 
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
@@ -79,17 +80,7 @@ OBJD_LUO=
 OBJE_LUO= 
 OBJF_LUO= 
 
-OBJ_LUO += ucx.o sfx.o matxstr.o char.o mapex.o
-OBJ_LUO += isx.o six.o rmx.o nleadx.o
-OBJ_LUO += dictdiff.o
-OBJ_LUO += inetconv.o inetaddrx.o 
-OBJ_LUO += strn.o strnxcmp.o strw.o strkeyx.o
-OBJ_LUO += strcpyxc.o strwcpy.o
-OBJ_LUO += fonce.o ccfile.o strmgr.o
-OBJ_LUO += readln.o
-OBJ_LUO += getourenv.o
-
-#OBJ_LUO= obja_luo.o objb_luo.o objc_luo.o
+OBJ_LUO= obja_luo.o objb_luo.o objc_luo.o
 #OBJ_LUO= objd_luo.o obje_luo.o objf_luo.o
 
 
@@ -321,6 +312,11 @@ strkeyx.dir:
 # FONCE
 fonce.o:		fonce.dir
 fonce.dir:
+	makesubdir $@
+
+# ARGMGR
+argmgr.o:		argmgr.dir
+argmgr.dir:
 	makesubdir $@
 
 # Flat Objects

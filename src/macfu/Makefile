@@ -56,9 +56,9 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACFU= fu_main.o
-
 DEPS_MAIN= fonce.o ulibvals.o
+
+OBJ_MACFU= fu_main.o
 
 
 .SUFFIXES:		.hh .ii .ccm

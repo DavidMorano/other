@@ -1,5 +1,5 @@
 /* reporoot_main SUPPORT (files) */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C++20 */
 
 /* filter filenames */
@@ -80,8 +80,8 @@ import fonce ;
 using std::nullptr_t ;			/* type */
 using std::string_view ;		/* type */
 using std::istream ;			/* type */
-using libu::umalloc ;			/* subroutine (LIBU) */
-using libu::ufree ;			/* subroutine (LIBU) */
+using libu::umemalloc ;			/* subroutine (LIBU) */
+using libu::umemfree ;			/* subroutine (LIBU) */
 using libu::snwcpy ;			/* subroutine (LIBU) */
 using std::cout ;			/* variable */
 using std::nothrow ;			/* constant */
@@ -298,12 +298,12 @@ int proginfo::process() noex {
 	if ((rs = process_pmbegin()) >= 0) {
 	    if ((rs = maxpathlen) >= 0) {
 	        cint plen = rs ;
-	        if (char *pbuf ; (rs = umalloc((plen + 1),&pbuf)) >= 0) {
+	        if (char *pbuf ; (rs = umemalloc((plen + 1),&pbuf)) >= 0) {
 	            if ((rs = u_getcwd(pbuf,plen)) >= 0) {
 			rs = process_loop(pbuf,plen,rs) ;
 			c = rs ;
 		    } /* end if (u_getcwd) */
-	            rs1 = ufree(pbuf) ;
+	            rs1 = umemfree(pbuf) ;
 		    if (rs >= 0) rs = rs1 ;
 	        } /* end if (m-a-f) */
 	    } /* end if (maxpathlen) */

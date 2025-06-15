@@ -33,6 +33,7 @@ module ;
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
+#include	<cstdio>
 #include	<new>			/* |nothrow(3c++)| */
 #include	<clanguage.h>
 #include	<utypedefs.h>
@@ -132,6 +133,7 @@ int argmgr::iarg() noex {
 
 int argmgr::argopt(cchar **rpp) noex {
     	int		rs = SR_OK ;
+	fprintf(stderr,"argopt: ent ai=%d c=%d\n",ai,cntpos) ;
 	if (ai < argc) {
 	    cchar	*ap = argv[ai] ;
 	    if (isplusminus(ap[0])) {
@@ -139,6 +141,7 @@ int argmgr::argopt(cchar **rpp) noex {
 		if (cint ch = mkchar(ap[1]) ; ch) {
 		    if (isalphalatin(ch)) {
 			if ((rs = amap.set[ai]) >= 0) {
+			    cntpos -= 1 ;
 		            if (rpp) *rpp = (ap + 1) ;
 		            rs = xstrlen(ap + 1) ;
 			}
@@ -146,6 +149,7 @@ int argmgr::argopt(cchar **rpp) noex {
 		}
 	    }
 	}
+	fprintf(stderr,"argopt: ret rs=%d ai=%d c=%d\n",rs,ai,cntpos) ;
 	return rs ;
 } /* end method (argmgr::argopt) */
 
@@ -157,8 +161,9 @@ int argmgr::argoptlong(cchar **rpp) noex {
 		if (cint ch = mkchar(ap[2]) ; ch) {
 		    if (isalphalatin(ch)) {
 			if ((rs = amap.set[ai]) >= 0) {
-		            if (rpp) *rpp = (ap + 1) ;
-		            rs = xstrlen(ap + 1) ;
+			    cntpos -= 1 ;
+		            if (rpp) *rpp = (ap + 2) ;
+		            rs = xstrlen(ap + 2) ;
 			}
 		    } else {
 		        argoptdone = true ;
@@ -167,6 +172,7 @@ int argmgr::argoptlong(cchar **rpp) noex {
 		} else {
 		        argoptdone = true ;
 		        aie = ai ;
+			cntpos -= 1 ;
 		}
 	    }
 	}
@@ -176,24 +182,55 @@ int argmgr::argoptlong(cchar **rpp) noex {
 int argmgr::get(int i,ccharpp rpp) noex {
     	int		rs = SR_OK ;
 	bool		f = false ;
+	fprintf(stderr,"get: ent i=%d\n",i) ;
 	while ((rs >= 0) && (i < argc) && (! f)) {
-	    if (i < aie) {
-		if ((rs = amap.tst[i]) > 0) {
-		    i += 1 ;
-		} else if (rs == 0) {
+	    if (aie > 0) {
+		if (i < aie) {
+		    if ((rs = amap.tst[i]) > 0) {
+		        i += 1 ;
+		    } else if (rs == 0) {
+		        f = true ;
+		    }
+		} else if (i > aie) {
 		    f = true ;
 		}
-	    } else if (i == aie) {
-		i += 1 ;
 	    } else {
-		f = true ;
+	fprintf(stderr,"get: reg i=%d\n",i) ;
+		    if ((rs = amap.tst[i]) > 0) {
+		        i += 1 ;
+		    } else if (rs == 0) {
+		        f = true ;
+		    }
+	fprintf(stderr,"get: reg rs=%d\n",rs) ;
 	    }
 	} /* end while */
 	if (rs >= 0) {
 	    if (rpp) *rpp = (f) ? argv[i] : nullptr ;
 	}
+	fprintf(stderr,"get: rs=%d i=%d f=%u\n",rs,i,f) ;
 	return (rs >= 0) ? i : rs ;
 } /* end method (argmgr::get) */
+
+int argmgr::present(int i) noex {
+    	int		rs = SR_OK ;
+	int		f = false ; /* return-value */
+	if ((i > 0) && (i < argc)) {
+	    if (aie > 0) {
+		if (i < aie) {
+		    if ((rs = amap.tst[i]) == 0) {
+		        f = true ;
+		    }
+		} else if (i > aie) {
+		    f = true ;
+		}
+	    } else {
+		    if ((rs = amap.tst[i]) == 0) {
+		        f = true ;
+		    }
+	    }
+	}
+	return (rs >= 0) ? f : rs ;
+} /* end method (argmgr::present) */
 
 int argmgr::iargchar() noex {
     	int		rs = SR_OK ;
@@ -206,11 +243,32 @@ int argmgr::ipositional() noex {
 }
 
 int argmgr::icount() noex {
-    	int		rs = SR_OK ;
-	return rs ;
+    	return cntpos ;
 } /* end method (argmgr::icount) */
 
+argmgr_iter argmgr::begin() noex {
+    	argmgr_iter	res(this,0) ;
+	cchar		*ap = nullptr ;
+	if (cint rs = get(1,&ap) ; rs > 0) {
+	    {
+		cchar *fmt = "begin: rs=%d ap=%s\n" ;
+	        fprintf(stderr,fmt,rs,((ap) ? "ok" : "null")) ;
+	    }
+	    if (ap) res.ai = rs ;
+	}
+	return res ;
+}
 
+argmgr_iter argmgr::end() noex {
+    	argmgr_iter	res(this,argc) ;
+	return res ;
+}
+
+void argmgr::dtor() noex {
+	if (cint rs = finish ; rs < 0) {
+	    ulogerror("argmgr",rs,"fini-finish") ;
+	}
+}
 
 argmgr::operator int () noex {
     	int		rs ;
@@ -219,12 +277,6 @@ argmgr::operator int () noex {
 	}
 	return rs ;
 } /* end method (argmgr::operator) */
-
-void argmgr::dtor() noex {
-	if (cint rs = finish ; rs < 0) {
-	    ulogerror("argmgr",rs,"fini-finish") ;
-	}
-}
 
 argmgr_co::operator int () noex {
 	int		rs = SR_BUGCHECK ;
@@ -249,9 +301,6 @@ argmgr_co::operator int () noex {
 	    case argmgrmem_count:
 	        rs = op->icount() ;
 	        break ;
-	    default:
-		rs = SR_INVALID ;
-		break ;
 	    } /* end switch */
 	} /* end if (non-null) */
 	return rs ;

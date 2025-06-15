@@ -1,5 +1,5 @@
 /* utmp_main SUPPORT (macutmp) */
-/* encoding=ISO8859-1 */
+/* charset=ISO8859-1 */
 /* lang=C++20 */
 
 /* print out the UTMP entry 'line' field if terminal session is registered */

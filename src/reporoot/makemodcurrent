@@ -3,21 +3,23 @@
 PN=${0##*/}
 ex=1
 if [[ -d mod ]] ; then
-  for M in "${@}" ; do
-    case ${M} in
+  typeset MF=
+  for MX in "${@}" ; do
+    case ${MX} in
     *.ccm)
+      MF=${MX}
       ;;
     *.o)
-      R=${M%.*}
-      M="${R}.ccm"
+      R=${MX%.*}
+      MF="${R}.ccm"
       ;;
     *)
-      M="${M}.ccm"
+      MF="${MX%.*}.ccm"
       ;;
     esac
-    if [[ ! -r ${M} ]] ; then
-      if [[ -r mod/${M} ]] ; then
-        ln mod/${M} .
+    if [[ ! -r ${MF} ]] ; then
+      if [[ -r mod/${MF} ]] ; then
+        ln -f mod/${MF} .
 	ex=${?}
       else
         print -u 2 -- "${PN}: requested module not in repository"
