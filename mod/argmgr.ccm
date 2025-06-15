@@ -94,14 +94,11 @@ export {
 	argmgr		*op = nullptr ;
 	int		ai = 0 ;
 	argmgr_iter() = default ;
-	argmgr_iter(const argmgr_iter &o) noex : op(o.op), ai(o.ai) { } ;
-	argmgr_iter &operator = (const argmgr_iter &o) noex {
-	    op = o.op ;
-	    ai = o.ai ;
-	    return *this ;
-	} ;
-	bool operator != (const argmgr_iter &o) noex ;
-	bool operator < (const argmgr_iter &o) noex ;
+	argmgr_iter(argmgr *p,int i) noex : op(p), ai(i) { } ;
+	argmgr_iter(const argmgr_iter &o) noex = default ;
+	argmgr_iter &operator = (const argmgr_iter &) = default ;
+	bool operator != (const argmgr_iter &) noex ;
+	bool operator < (const argmgr_iter &) noex ;
 	ccharp operator * () noex ;
 	operator ccharp () noex ;
 	argmgr_iter operator + (int) const noex ;
@@ -141,6 +138,7 @@ export {
 	int		argc ;
 	int		ai ;		/* argument-index */
 	int		aie ;		/* end of options */
+	int		cntpos ;
 	bool		argoptdone{} ;
 	argmgr(int ac = 0,mainv av = nullptr) noex : argc(ac), argv(av) {
 	    start	(this,argmgrmem_start) ;
@@ -152,14 +150,17 @@ export {
 	    count	(this,argmgrmem_count) ;
 	    ai = 0 ;
 	    aie = 0 ;
+	    cntpos = ((ac > 0) ? (ac - 1) : 0) ;
 	} ; /* end ctor */
 	void load(int ac,mainv av) noex {
 	    argc = ac ;
 	    argv = av ;
+	    cntpos = ((ac > 0) ? (ac - 1) : 0) ;
 	} ;
 	int argopt(ccharpp) noex ;
 	int argoptlong(ccharpp) noex ;
 	int get(int,ccharpp) noex ;
+	int present(int) noex ;
 	argmgr_iter begin() noex ;
 	argmgr_iter end() noex ;
 	operator int () noex ;

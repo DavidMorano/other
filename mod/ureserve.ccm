@@ -1,6 +1,6 @@
 /* ureserve MODULE (primary-module-interface) */
 /* charset=ISO8859-1 */
-/* lang=C20 */
+/* lang=C++20 */
 
 /* reserved interfaces */
 /* version %I% last-modified %G% */
@@ -152,12 +152,14 @@ enum vecstrmems {
     	vecstrmem_start,
     	vecstrmem_finish,
     	vecstrmem_count,
+    	vecstrmem_sort,
     	vecstrmem_delall,
     	vecstrmem_overlast
 } ; /* end enum (vecstrmems) */
 
 struct vecstr_fl {
     	uint		open:1 ;
+	uint		sorted:1 ;
 } ;
 
 export {
@@ -180,23 +182,27 @@ export {
 	vecstr_co	start ;
 	vecstr_co	finish;
 	vecstr_co	count ;
+	vecstr_co	sort ;
 	vecstr_co	delall ;
 	vecstr_fl	fl{} ;
 	vecstr &operator = (const vecstr &) = delete ;
 	vecstr(const vecstr &) = delete ;
 	vecstr() noex {
-	    start(this,vecstrmem_start) ;
-	    finish(this,vecstrmem_finish) ;
-	    count(this,vecstrmem_count) ;
-	    delall(this,vecstrmem_delall) ;
+	    start	(this,vecstrmem_start) ;
+	    finish	(this,vecstrmem_finish) ;
+	    count	(this,vecstrmem_count) ;
+	    sort	(this,vecstrmem_sort) ;
+	    delall	(this,vecstrmem_delall) ;
 	} ; /* end ctor */
 	int add(cchar *,int = -1) noex ;
 	int adduniq(cchar *,int = -1) noex ;
 	int find(cchar *,int = -1) noex ;
+	int search(cchar *,int = -1) noex ;
 	int del(int) noex ;
 	int curbegin(vecstr_cur *) noex ;
 	int curend(vecstr_cur *) noex ;
 	int curenum(vecstr_cur *,cchar **) noex ;
+	int icount() const noex ;
 	operator int () noex ;
 	destruct vecstr() {
 	    if (fl.open) dtor() ;
@@ -205,8 +211,8 @@ export {
 	int istart(int = 0) noex ;
 	int ifinish() noex ;
 	int idelall() noex ;
-	int iadd(cchar *,int = -1) noex ;
-	int idel(int) noex ;
+	int ifind(cchar *,int) noex ;
+	int isort() noex ;
 	void dtor() noex ;
     } ; /* end struct (vecstr) */
     struct vecstr_cur {
