@@ -58,10 +58,10 @@ struct sif {
 	sif_co		isspanchr ;
 	sif_co		isspanstr ;
 	void sif_init() noex {
-	    iswhitechr(this,sifmem_iswhitechr) ;
-	    iswhitestr(this,sifmem_iswhitestr) ;
-	    isspanchr(this,sifmem_isspanchr) ;
-	    isspanstr(this,sifmem_isspanstr) ;
+	    iswhitechr	(this,sifmem_iswhitechr) ;
+	    iswhitestr	(this,sifmem_iswhitestr) ;
+	    isspanchr	(this,sifmem_isspanchr) ;
+	    isspanstr	(this,sifmem_isspanstr) ;
 	} ;
 	sif(cchar *p,int l = -1,int c = 0) noex : sp(p), sl(l), sch(c) { 
 	    sif_init() ;

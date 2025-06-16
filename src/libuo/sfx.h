@@ -28,6 +28,7 @@
 
 EXTERNC_begin
 
+extern int sfext(cchar *,int,cchar **) noex ;
 extern int sfbasename(cchar *,int,cchar **) noex ;
 extern int sfbaselib(cchar *,int,cchar **) noex ;
 extern int sfbracketval(cchar *,int,cchar **) noex ;
@@ -66,22 +67,11 @@ static inline int sfchr(cchar *sp,int sl,int sch,cchar **rpp) noex {
 static inline int sfbrk(cchar *sp,int sl,cchar *ss,cchar **rpp) noex {
 	return sfnextbrk(sp,sl,ss,rpp) ;
 }
-
-EXTERNC_end
-
-#ifdef	__cplusplus
-
-inline int nextfield(cchar *sp,int sl,cchar **rpp) noex {
-	return sfnext(sp,sl,rpp) ;
-}
-
-#else /* __cplusplus */
-
 static inline int nextfield(cchar *sp,int sl,cchar **rpp) noex {
 	return sfnext(sp,sl,rpp) ;
 }
 
-#endif /* __cplusplus */
+EXTERNC_end
 
 
 #endif /* SFX_INCLUDE */

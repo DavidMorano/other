@@ -58,7 +58,7 @@ LDFLAGS		?= $(MAKELDFLAGS)
 
 
 OBJ00_LUO= ucx.o
-OBJ01_LUO= sfx.o six.o rmx.o isx.o
+OBJ01_LUO= sfx.o six.o rmx.o isx.o sif.o
 OBJ02_LUO= strn.o strdcpy.o strx.o strkeyx.o
 OBJ03_LUO= strw.o strwcpy.o
 
@@ -69,7 +69,7 @@ OBJ06_LUO= nleadx.o
 OBJ07_LUO= strnxcmp.o
 
 OBJ08_LUO= strcpyxc.o
-OBJ09_LUO= readln.o
+OBJ09_LUO= readln.o debug.o
 OBJ10_LUO= getourenv.o dictdiff.o
 OBJ11_LUO= inetconv.o inetaddrx.o 
 
@@ -338,5 +338,9 @@ dictdiff.o:		dictdiff.cc dictdiff.h
 inet4int.o:		inet4int.cc inet4int.h
 readln.o:		readln.cc readln.hh
 getourenv.o:		getourenv.cc getourenv.h
+sif.o:			sif.cc sif.hh
+
+debug.o:		debug.ccm
+
 
 

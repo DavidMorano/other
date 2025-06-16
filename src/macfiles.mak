@@ -35,7 +35,7 @@ DEFS=
 
 INCS=
 
-MODS += vecbool.cc argmgr.ccm
+MODS += vecbool.cc argmgr.ccm strfilter.ccm
 
 LIBS= -luo -lu
 
@@ -57,7 +57,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-DEPS_MAIN += vecbool.o argmgr.o
+DEPS_MAIN += vecbool.o argmgr.o strfilter.o
 
 OBJ_FILES += files_main.o $(DEPS_MAIN)
 
@@ -90,7 +90,6 @@ all:			$(ALL)
 
 .ccm.o:
 	makemodule $(*)
-	echo "upper default-rule"
 
 
 $(T).x:			$(OBJ_FILES)
@@ -127,5 +126,8 @@ vecbool.dir:
 argmgr.o:		argmgr.dir
 argmgr.dir:
 	makesubdir $@
+
+# STRFILTER
+strfilter.o:		strfilter.ccm
 
 

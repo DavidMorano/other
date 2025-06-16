@@ -44,6 +44,12 @@
 	==0		did not get a field, or got a zero-length field
 	<0		did not get a field delimited by specified delimiters
 
+	Notes:
+	"next" versions	allow white-space around delimiter characters
+	"chr" version	use given character exactly
+	"brk" verion	use given characters exactly
+	oper version	like 'next' versions but allow for just white-space
+
 *******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be first to configure */
