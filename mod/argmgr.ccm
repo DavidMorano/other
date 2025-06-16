@@ -133,7 +133,7 @@ export {
 	argmgr_fl	fl ;
 	vecbool		amap ;		/* argument-map */
 	mainv		argv ;
-	ccharp		argval ;
+	ccharp		valp ;		/* value-pointer */
 	uint		magic{} ;
 	int		argc ;
 	int		ai ;		/* argument-index */
@@ -159,6 +159,7 @@ export {
 	} ;
 	int argopt(ccharpp) noex ;
 	int argoptlong(ccharpp) noex ;
+	int argval(ccharpp) noex ;
 	int get(int,ccharpp) noex ;
 	int present(int) noex ;
 	argmgr_iter begin() noex ;
