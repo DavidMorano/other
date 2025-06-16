@@ -34,13 +34,18 @@ module ;
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<cstdio>
+#include	<cstring>		/* |strchr(3c)| */
 #include	<new>			/* |nothrow(3c++)| */
+#include	<string_view>
+#include	<iostream>
 #include	<clanguage.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
 #include	<usysdefs.h>
 #include	<usysrets.h>
 #include	<ulogerror.h>
+#include	<sfx.h>
+#include	<strn.h>
 #include	<mkchar.h>
 #include	<ischarx.h>
 #include	<localmisc.h>
@@ -56,8 +61,15 @@ import libutil ;
 
 /* imported namespaces */
 
+using std::nullptr_t ;			/* type */
+using std::string_view ;		/* type */
+using std::cerr ;			/* variable */
+using std::nothrow ;			/* constant */
+
 
 /* local typedefs */
+
+typedef string_view		strview ;
 
 
 /* external subroutines */
@@ -132,6 +144,7 @@ int argmgr::iarg() noex {
 } /* end method (argmgr::iarg) */
 
 int argmgr::argopt(cchar **rpp) noex {
+    	cnullptr	np{} ;
     	int		rs = SR_OK ;
 	fprintf(stderr,"argopt: ent ai=%d c=%d\n",ai,cntpos) ;
 	if (ai < argc) {
@@ -141,15 +154,32 @@ int argmgr::argopt(cchar **rpp) noex {
 		if (cint ch = mkchar(ap[1]) ; ch) {
 		    if (isalphalatin(ch)) {
 			if ((rs = amap.set[ai]) >= 0) {
-			    cntpos -= 1 ;
 		            if (rpp) *rpp = (ap + 1) ;
-		            rs = xstrlen(ap + 1) ;
-			}
+			    cntpos -= 1 ;
+			    if (cc *tp ; (tp = strchr((ap + 1),'=')) != np) {
+				valp = (tp + 1) ;
+				rs = intconv(tp - (ap + 1)) ;
+			    } else {
+				valp = nullptr ;
+		                rs = xstrlen(ap + 1) ;
+			    }
+			} /* end if (amap,set) */
 		    }
-		}
+		} /* end if (have option) */
 	    }
 	}
-	fprintf(stderr,"argopt: ret rs=%d ai=%d c=%d\n",rs,ai,cntpos) ;
+	{
+	    if (rs >= 0) {
+		strview sk(*rpp,rs) ;
+		fprintf(stderr,"argopt: kp=>") ; cerr << sk << "<" << eol ;
+		if (valp) {
+		    cint vall= xstrlen(valp) ;
+		    strview sv (valp,vall) ;
+		    fprintf(stderr,"argopt: vp=>") ; cerr << sv << "<" << eol ;
+		}
+	    }
+	    fprintf(stderr,"argopt: ret rs=%d ai=%d c=%d\n",rs,ai,cntpos) ;
+	}
 	return rs ;
 } /* end method (argmgr::argopt) */
 
@@ -179,6 +209,25 @@ int argmgr::argoptlong(cchar **rpp) noex {
 	return rs ;
 } /* end method (argmgr::argoptlong) */
 
+int argmgr::argval(cchar **rpp) noex {
+    	int		rs = SR_OK ;
+	fprintf(stderr,"argval: ent\n") ;
+	(void) rpp ;
+	if (ai < argc) {
+	    cchar *rp = nullptr ;
+	    if (valp) {
+		rp = valp ;
+		rs = xstrlen(valp) ;
+		valp = nullptr ;
+	    } else {
+	        rs = SR_OK ;
+	    }
+	    if (rpp) *rpp = rp ;
+	}
+	fprintf(stderr,"argval: ret rs=%d\n",rs) ;
+	return rs ;
+} /* end method (argmgr::argval) */
+
 int argmgr::get(int i,ccharpp rpp) noex {
     	int		rs = SR_OK ;
 	bool		f = false ;
@@ -196,13 +245,13 @@ int argmgr::get(int i,ccharpp rpp) noex {
 		}
 	    } else {
 	fprintf(stderr,"get: reg i=%d\n",i) ;
-		    if ((rs = amap.tst[i]) > 0) {
-		        i += 1 ;
-		    } else if (rs == 0) {
-		        f = true ;
-		    }
+		if ((rs = amap.tst[i]) > 0) {
+		    i += 1 ;
+		} else if (rs == 0) {
+		    f = true ;
+		}
 	fprintf(stderr,"get: reg rs=%d\n",rs) ;
-	    }
+	    } /* end if */
 	} /* end while */
 	if (rs >= 0) {
 	    if (rpp) *rpp = (f) ? argv[i] : nullptr ;
