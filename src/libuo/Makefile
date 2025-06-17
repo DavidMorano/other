@@ -57,19 +57,18 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ00_LUO= ucx.o
+OBJ00_LUO= ucx.o debug.o
 OBJ01_LUO= sfx.o six.o rmx.o isx.o sif.o
 OBJ02_LUO= strn.o strdcpy.o strx.o strkeyx.o
 OBJ03_LUO= strw.o strwcpy.o
 
-OBJ04_LUO= fonce.o ccfile.o strmgr.o 
-#OBJ04_LUO= fonce.o ccfile.o strmgr.o argmgr.o
+OBJ04_LUO= fonce.o ccfile.o strmgr.o strfilter.o
 OBJ05_LUO= matxstr.o char.o mapex.o
 OBJ06_LUO= nleadx.o
 OBJ07_LUO= strnxcmp.o
 
 OBJ08_LUO= strcpyxc.o
-OBJ09_LUO= readln.o debug.o
+OBJ09_LUO= readln.o
 OBJ10_LUO= getourenv.o dictdiff.o
 OBJ11_LUO= inetconv.o inetaddrx.o 
 
@@ -341,6 +340,6 @@ getourenv.o:		getourenv.cc getourenv.h
 sif.o:			sif.cc sif.hh
 
 debug.o:		debug.ccm
-
+strfilter.o:		strfilter.ccm
 
 

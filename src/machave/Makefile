@@ -46,7 +46,6 @@ LIBDIRS= -L$(LIBDIR)
 
 
 RUBNINFO= -rpath $(RUNDIR)
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -57,9 +56,9 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACHAVE= have_main.o
-
 DEPS_MAIN += libutil.o umisc.o ulibvals.o
+
+OBJ_MACHAVE= have_main.o
 
 
 .SUFFIXES:		.hh .ii .ccm

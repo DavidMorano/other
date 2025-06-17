@@ -35,7 +35,7 @@ DEFS=
 
 INCS=
 
-MODS += vecbool.cc argmgr.ccm strfilter.ccm
+MODS += argmgr.ccm
 
 LIBS= -luo -lu
 
@@ -57,7 +57,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-DEPS_MAIN += vecbool.o argmgr.o strfilter.o
+DEPS_MAIN += argmgr.o
 
 OBJ_FILES += files_main.o $(DEPS_MAIN)
 
@@ -116,11 +116,6 @@ files_main.o:		files_main.cc $(DEPS_MAIN)		$(INCS)
 # MODS
 mods.o:			$(DEPS_MAIN)
 	$(CXX) -r -o $@ $(LDFLAGS) $^
-
-# VECBOOL
-vecbool.o:		vecbool.dir
-vecbool.dir:
-	makesubdir $@
 
 # ARGMGR
 argmgr.o:		argmgr.dir

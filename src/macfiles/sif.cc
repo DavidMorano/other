@@ -142,7 +142,7 @@ int sif::nextchr(cchar **rpp) noex {
 	    rs = SR_OK ;
 	    if (sl < 0) sl = xstrlen(sp) ;
 	    while ((sl > 0) && (rl <= 0)) {
-	        if (cchar *tp ; (tp = strnchr(sp,sl,sch)) != nullptr) {
+	        if (cchar *tp ; (tp = strnwhtchr(sp,sl,sch)) != nullptr) {
 		    cint tl = intconv(tp - sp) ;
 		    rl = sfshrink(sp,tl,&rp) ;
 		    sl -= intconv((tp + 1) - sp) ;
@@ -167,7 +167,7 @@ int sif::nextbrk(cchar **rpp) noex {
 	    rs = SR_OK ;
 	    if (sl < 0) sl = xstrlen(sp) ;
 	    while ((sl > 0) && (rl <= 0)) {
-	        if (cchar *tp ; (tp = strnpbrk(sp,sl,sstr)) != nullptr) {
+	        if (cchar *tp ; (tp = strnwhtbrk(sp,sl,sstr)) != nullptr) {
 		    cint tl = intconv(tp - sp) ;
 		    rl = sfshrink(sp,tl,&rp) ;
 		    rp = sp ;
@@ -183,6 +183,56 @@ int sif::nextbrk(cchar **rpp) noex {
 	return (rs >= 0) ? rl : rs ;
 }
 /* end method (sif::nextbrk) */
+
+int sif::spchr(cchar **rpp) noex {
+	int		rs = SR_FAULT ;
+	int		rl = 0 ;		/* <- indicate zero result */
+	cchar		*rp = nullptr ;
+	if (sp && rpp) {
+	    rs = SR_OK ;
+	    if (sl < 0) sl = xstrlen(sp) ;
+	    while ((sl > 0) && (rl <= 0)) {
+	        if (cchar *tp ; (tp = strnchr(sp,sl,sch)) != nullptr) {
+		    cint tl = intconv(tp - sp) ;
+		    rl = sfshrink(sp,tl,&rp) ;
+		    sl -= intconv((tp + 1) - sp) ;
+		    sp = (tp + 1) ;
+		} else {
+		    rl = sfshrink(sp,sl,&rp) ;
+		    sp += sl ;
+		    sl = 0 ;
+	        } /* end if */
+	    } /* end while */
+	    *rpp = (rl > 0) ? rp : nullptr ;
+	} /* end if (non-null) */
+	return (rs >= 0) ? rl : rs ;
+}
+/* end method (sif::spchr) */
+
+int sif::spbrk(cchar **rpp) noex {
+	int		rs = SR_FAULT ;
+	int		rl = 0 ;		/* <- indicate zero result */
+	cchar		*rp = nullptr ;
+	if (sp && sstr && rpp) {
+	    rs = SR_OK ;
+	    if (sl < 0) sl = xstrlen(sp) ;
+	    while ((sl > 0) && (rl <= 0)) {
+	        if (cchar *tp ; (tp = strnpbrk(sp,sl,sstr)) != nullptr) {
+		    cint tl = intconv(tp - sp) ;
+		    rl = sfshrink(sp,tl,&rp) ;
+		    rp = sp ;
+		    sp = (tp + 1) ;
+		} else {
+		    rl = sfshrink(sp,sl,&rp) ;
+		    sp += sl ;
+		    sl = 0 ;
+	        } /* end if */
+	    } /* end while */
+	    *rpp = (rl > 0) ? rp : nullptr ;
+	} /* end if (non-null) */
+	return (rs >= 0) ? rl : rs ;
+}
+/* end method (sif::spbrk) */
 
 int sif::chr(cchar **rpp) noex {
 	int		rs = SR_FAULT ;
@@ -236,10 +286,10 @@ int sif::brk(cchar **rpp) noex {
 /* local subroutines */
 
 sif_co::operator bool () noex {
-	cint		ch = mkchar(op->sp[0]) ;
 	bool		f = false ;
 	if (op) {
 	    cnullptr	np{} ;
+	    cint	ch = mkchar(op->sp[0]) ;
 	    switch (w) {
 	    case sifmem_iswhitechr:
 	        f = CHAR_ISWHITE(ch) && (ch != op->sch) ;

@@ -27,6 +27,7 @@
 #include	<usysrets.h>
 
 #include	<sifext.h>
+#include	<siwht.h>
 
 
 EXTERNC_begin

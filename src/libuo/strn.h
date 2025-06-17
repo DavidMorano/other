@@ -29,8 +29,9 @@
 #include	<strnxchr.h>		/* find */
 #include	<strnxpbrk.h>		/* find */
 #include	<strnxsub.h>		/* find */
+#include	<strnwht.h>		/* find */
 #include	<strncpyxc.h>		/* copy */
-#include	<strnwcpyxc.h>		/* copy (special) */
+#include	<strnwcpyxc.h>		/* copy (case changing) */
 
 
 EXTERNC_begin

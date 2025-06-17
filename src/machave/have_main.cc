@@ -442,8 +442,7 @@ int proginfo::pathenumone(cchar *vn) noex {
 
 int proginfo::pathtox() noex {
 	int		rs ;
-	cchar		*vn{} ;
-	if ((rs = getvn(&vn)) >= 0) {
+	if (cchar *vn ; (rs = getvn(&vn)) >= 0) {
 	    rs = pathto(vn) ;
 	} /* end if (getvn) */
 	return rs ;

@@ -33,11 +33,9 @@ module ;
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
-#include	<cstdio>
 #include	<cstring>		/* |strchr(3c)| */
 #include	<new>			/* |nothrow(3c++)| */
 #include	<string_view>
-#include	<iostream>
 #include	<clanguage.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
@@ -46,6 +44,7 @@ module ;
 #include	<ulogerror.h>
 #include	<sfx.h>
 #include	<strn.h>
+#include	<strnul.hh>
 #include	<mkchar.h>
 #include	<ischarx.h>
 #include	<localmisc.h>
@@ -53,6 +52,7 @@ module ;
 module argmgr ;
 
 import libutil ;
+import debug ;
 
 /* local defines */
 
@@ -63,7 +63,6 @@ import libutil ;
 
 using std::nullptr_t ;			/* type */
 using std::string_view ;		/* type */
-using std::cerr ;			/* variable */
 using std::nothrow ;			/* constant */
 
 
@@ -144,94 +143,120 @@ int argmgr::iarg() noex {
 } /* end method (argmgr::iarg) */
 
 int argmgr::argopt(cchar **rpp) noex {
-    	cnullptr	np{} ;
-    	int		rs = SR_OK ;
-	fprintf(stderr,"argopt: ent ai=%d c=%d\n",ai,cntpos) ;
-	if (ai < argc) {
-	    cchar	*ap = argv[ai] ;
-	    if (isplusminus(ap[0])) {
-		fl.plus = (ap[0] == '+') ;
-		if (cint ch = mkchar(ap[1]) ; ch) {
-		    if (isalphalatin(ch)) {
-			if ((rs = amap.set[ai]) >= 0) {
-		            if (rpp) *rpp = (ap + 1) ;
-			    cntpos -= 1 ;
-			    if (cc *tp ; (tp = strchr((ap + 1),'=')) != np) {
-				valp = (tp + 1) ;
-				rs = intconv(tp - (ap + 1)) ;
-			    } else {
-				valp = nullptr ;
-		                rs = xstrlen(ap + 1) ;
-			    }
-			} /* end if (amap,set) */
+    	int		rs ;
+	if ((rs = argmgr_magic(this)) >= 0) {
+	    debprintf(__func__,"ent ai=%d c=%d\n",ai,cntpos) ;
+	    if (ai < argc) {
+	        cchar	*ap = argv[ai] ;
+	        if (isplusminus(ap[0])) {
+		    fl.plus = (ap[0] == '+') ;
+		    if (cint ch = mkchar(ap[1]) ; ch) {
+		        rs = iargopt(ap,ch,rpp) ;
+		    } /* end if (have option) */
+	        }
+	        if (rs > 0) {
+		    strnul sk((ap+1),rs) ;
+		    debprintf(__func__,"kp=>%s<\n",ccp(sk)) ;
+		    if (valp) {
+		        cint vall= xstrlen(valp) ;
+		        strnul sv (valp,vall) ;
+		        debprintf(__func__,"vp=>%s<\n",ccp(sv)) ;
 		    }
-		} /* end if (have option) */
-	    }
-	}
-	{
-	    if (rs >= 0) {
-		strview sk(*rpp,rs) ;
-		fprintf(stderr,"argopt: kp=>") ; cerr << sk << "<" << eol ;
-		if (valp) {
-		    cint vall= xstrlen(valp) ;
-		    strview sv (valp,vall) ;
-		    fprintf(stderr,"argopt: vp=>") ; cerr << sv << "<" << eol ;
-		}
-	    }
-	    fprintf(stderr,"argopt: ret rs=%d ai=%d c=%d\n",rs,ai,cntpos) ;
-	}
+	        }
+	        debprintf(__func__,"ret rs=%d ai=%d c=%d\n",rs,ai,cntpos) ;
+	    } /* end if (valid) */
+	} /* end if (magic) */
 	return rs ;
 } /* end method (argmgr::argopt) */
 
-int argmgr::argoptlong(cchar **rpp) noex {
+int argmgr::iargopt(cchar *ap,int ch,cchar **rpp) noex {
+    	cnullptr	np{} ;
     	int		rs = SR_OK ;
-	if (ai < argc) {
-	    cchar	*ap = argv[ai] ;
-	    if ((ap[0] == '-') && (ap[1] == '-')) {
-		if (cint ch = mkchar(ap[2]) ; ch) {
-		    if (isalphalatin(ch)) {
-			if ((rs = amap.set[ai]) >= 0) {
-			    cntpos -= 1 ;
-		            if (rpp) *rpp = (ap + 2) ;
-		            rs = xstrlen(ap + 2) ;
-			}
-		    } else {
-		        argoptdone = true ;
-		        aie = ai ;
-		    }
+	if (isalphalatin(ch)) {
+	    if ((rs = amap.set[ai]) >= 0) {
+		if (rpp) *rpp = (ap + 1) ;
+		cntpos -= 1 ;
+		if (cc *tp ; (tp = strchr((ap + 1),'=')) != np) {
+		    valp = (tp + 1) ;
+		    rs = intconv(tp - (ap + 1)) ;
 		} else {
-		        argoptdone = true ;
-		        aie = ai ;
-			cntpos -= 1 ;
+		    valp = nullptr ;
+		    rs = xstrlen(ap + 1) ;
 		}
-	    }
-	}
+	    } /* end if (amap,set) */
+	} else if (isdigitlatin(ch)) {
+	    digvalp = (ap + 1) ;
+	} /* end if (isalphalatin) */
+	return rs ;
+} /* end method (argmgr::iargopt) */
+
+int argmgr::argoptlong(cchar **rpp) noex {
+    	int		rs ;
+	if ((rs = argmgr_magic(this)) >= 0) {
+	    if (ai < argc) {
+	        cchar	*ap = argv[ai] ;
+	        if ((ap[0] == '-') && (ap[1] == '-')) {
+		    if (cint ch = mkchar(ap[2]) ; ch) {
+		        if (isalphalatin(ch)) {
+			    if ((rs = amap.set[ai]) >= 0) {
+			        cntpos -= 1 ;
+		                if (rpp) *rpp = (ap + 2) ;
+		                rs = xstrlen(ap + 2) ;
+			    }
+		        } else {
+		            argoptdone = true ;
+		            aie = ai ;
+		        }
+		    } else {
+		            argoptdone = true ;
+		            aie = ai ;
+			    cntpos -= 1 ;
+		    }
+	        }
+	    } /* end if (valid) */
+	} /* end if (magic) */
 	return rs ;
 } /* end method (argmgr::argoptlong) */
 
 int argmgr::argval(cchar **rpp) noex {
-    	int		rs = SR_OK ;
-	fprintf(stderr,"argval: ent\n") ;
-	(void) rpp ;
-	if (ai < argc) {
-	    cchar *rp = nullptr ;
-	    if (valp) {
-		rp = valp ;
-		rs = xstrlen(valp) ;
-		valp = nullptr ;
-	    } else {
-	        rs = SR_OK ;
-	    }
-	    if (rpp) *rpp = rp ;
-	}
-	fprintf(stderr,"argval: ret rs=%d\n",rs) ;
-	return rs ;
+    	int		rs ;
+	int		al = 0 ; /* return-value */
+	debprintf(__func__,"ent\n") ;
+	if ((rs =  argmgr_magic(this)) >= 0) {
+    	    rs = SR_INVALID ;
+	    if (ai < argc) {
+	        cchar *rp = nullptr ;
+	        if (valp) {
+		    rs = SR_OK ;
+		    rp = valp ;
+		    al = xstrlen(valp) ;
+		    valp = nullptr ;
+	        } else {
+	            if ((rs = get((ai + 1),&rp)) > 0) {
+		        ai = rs ;
+		        if (rp) {
+			    if ((rs = amap.set[ai]) >= 0) {
+			        cntpos -= 1 ;
+		                al = xstrlen(rp) ;
+			    }
+		        } else {
+			    rs = SR_INVALID ;
+		        }
+		    } else if (rs == 0) {
+		        rs = SR_INVALID ;
+		    }
+	        } /* end if */
+	        if (rpp) *rpp = rp ;
+	    } /* end if (within possible range) */
+	} /* end if (magic) */
+	debprintf(__func__,"rs=%d al=%d\n",rs,al) ;
+	return (rs >= 0) ? al : rs ;
 } /* end method (argmgr::argval) */
 
 int argmgr::get(int i,ccharpp rpp) noex {
     	int		rs = SR_OK ;
 	bool		f = false ;
-	fprintf(stderr,"get: ent i=%d\n",i) ;
+	debprintf(__func__,"ent i=%d\n",i) ;
 	while ((rs >= 0) && (i < argc) && (! f)) {
 	    if (aie > 0) {
 		if (i < aie) {
@@ -244,40 +269,42 @@ int argmgr::get(int i,ccharpp rpp) noex {
 		    f = true ;
 		}
 	    } else {
-	fprintf(stderr,"get: reg i=%d\n",i) ;
+	debprintf(__func__,"reg i=%d\n",i) ;
 		if ((rs = amap.tst[i]) > 0) {
 		    i += 1 ;
 		} else if (rs == 0) {
 		    f = true ;
 		}
-	fprintf(stderr,"get: reg rs=%d\n",rs) ;
+	debprintf(__func__,"reg rs=%d\n",rs) ;
 	    } /* end if */
 	} /* end while */
 	if (rs >= 0) {
 	    if (rpp) *rpp = (f) ? argv[i] : nullptr ;
 	}
-	fprintf(stderr,"get: rs=%d i=%d f=%u\n",rs,i,f) ;
+	debprintf(__func__,"rs=%d i=%d f=%u\n",rs,i,f) ;
 	return (rs >= 0) ? i : rs ;
 } /* end method (argmgr::get) */
 
 int argmgr::present(int i) noex {
     	int		rs = SR_OK ;
 	int		f = false ; /* return-value */
-	if ((i > 0) && (i < argc)) {
-	    if (aie > 0) {
-		if (i < aie) {
+	if ((rs =  argmgr_magic(this)) >= 0) {
+	    if ((i > 0) && (i < argc)) {
+	        if (aie > 0) {
+		    if (i < aie) {
+		        if ((rs = amap.tst[i]) == 0) {
+		            f = true ;
+		        }
+		    } else if (i > aie) {
+		        f = true ;
+		    }
+	        } else {
 		    if ((rs = amap.tst[i]) == 0) {
 		        f = true ;
 		    }
-		} else if (i > aie) {
-		    f = true ;
-		}
-	    } else {
-		    if ((rs = amap.tst[i]) == 0) {
-		        f = true ;
-		    }
-	    }
-	}
+	        }
+	    } /* end if (valid) */
+	} /* end if (magic) */
 	return (rs >= 0) ? f : rs ;
 } /* end method (argmgr::present) */
 
@@ -292,7 +319,11 @@ int argmgr::ipositional() noex {
 }
 
 int argmgr::icount() noex {
-    	return cntpos ;
+    	int		rs ;
+	if ((rs = argmgr_magic(this)) >= 0) {
+    	    rs = cntpos ;
+	} /* end if (magic) */
+    	return rs ;
 } /* end method (argmgr::icount) */
 
 argmgr_iter argmgr::begin() noex {
@@ -300,8 +331,8 @@ argmgr_iter argmgr::begin() noex {
 	cchar		*ap = nullptr ;
 	if (cint rs = get(1,&ap) ; rs > 0) {
 	    {
-		cchar *fmt = "begin: rs=%d ap=%s\n" ;
-	        fprintf(stderr,fmt,rs,((ap) ? "ok" : "null")) ;
+		cchar *fmt = "rs=%d ap=%s\n" ;
+	        debprintf(__func__,fmt,rs,((ap) ? "ok" : "null")) ;
 	    }
 	    if (ap) res.ai = rs ;
 	}
