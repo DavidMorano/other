@@ -73,6 +73,8 @@ struct sif {
 	int next(cchar **) noex ;
 	int nextchr(cchar **) noex ;
 	int nextbrk(cchar **) noex ;
+	int spchr(cchar **) noex ;
+	int spbrk(cchar **) noex ;
 	int chr(cchar **) noex ;
 	int brk(cchar **) noex ;
 	int operator () (cchar **) noex ;

@@ -134,6 +134,7 @@ export {
 	vecbool		amap ;		/* argument-map */
 	mainv		argv ;
 	ccharp		valp ;		/* value-pointer */
+	ccharp		digvalp{} ;
 	uint		magic{} ;
 	int		argc ;
 	int		ai ;		/* argument-index */
@@ -173,6 +174,7 @@ export {
 	int istart() noex ;
 	int ifinish() noex ;
 	int iarg() noex ;
+	int iargopt(cchar *,int,cchar **) noex ;
 	int iargchar() noex ;
 	int ipositional() noex ;
 	int icount() noex ;

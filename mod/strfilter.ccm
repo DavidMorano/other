@@ -5,6 +5,7 @@
 /* manage a variable length bit-array */
 /* version %I% last-modified %G% */
 
+#define	CF_BINSEARCH	1		/* binary-search */
 
 /* revision history:
 
@@ -68,7 +69,6 @@ export module strfilter ;
 
 import libutil ;
 import ureserve ;			/* |vecstr(3u)| */
-import debug ;				/* |debprintf(3uo)| */
 
 /* local defines */
 
@@ -83,6 +83,7 @@ using std::string_view ;		/* type */
 using std::min ;			/* subroutine */
 using std::max ;			/* subroutine */
 using std::sort ;			/* subroutine (niebloid) */
+using std::binary_search ;		/* subroutine */
 using libu::umemallocstrw ;		/* subroutine */
 using libu::umemalloc ;			/* subroutine */
 using libu::umemvalloc ;		/* subroutine */
@@ -147,6 +148,7 @@ export {
 	uint		magic{} ;
 	int		idx{} ;		/* highest index */
 	int		ext{} ;		/* extent */
+	int		nents ;
 	strfilter() noex {
 	    start	(this,strfiltermem_start) ;
 	    finish	(this,strfiltermem_finish) ;
@@ -156,8 +158,9 @@ export {
 	} ;
 	int add(cchar *,int = -1) noex ;
 	int have(cchar *,int = -1) noex ;
-	operator int () const noex ;
+	int ents() noex ;
 	void dtor() noex ;
+	operator int () const noex ;
 	destruct strfilter() {
 	    if (fl.open || magic) dtor() ;
 	} ;
@@ -190,7 +193,9 @@ static ulong mksw(cchar *sp,int sl) noex {
 
 /* local variables */
 
-constexpr int		defents = 8 ;	/* defualt entries */
+constexpr int		defents = 15 ;	/* defualt entries */
+
+constexpr bool		f_binsearch = CF_BINSEARCH ;
 
 
 /* exported variables */
@@ -200,6 +205,7 @@ constexpr int		defents = 8 ;	/* defualt entries */
 
 int strfilter::istart() noex {
     	int		rs ;
+	nents = defents ;
 	if ((rs = vecstr::start) >= 0) {
 	    fl.open = true ;
 	    magic = STRFILTER_MAGIC ;
@@ -232,10 +238,6 @@ int strfilter::add(cchar *sp,int sl) noex {
 	int		c = 0 ;
 	if (sp) {
 	    if (sl < 0) sl = xstrlen(sp) ;
-	    {
-		strnul s(sp,sl) ;
-		debprintf("strfilter吧dd: ent sl=%d s=>%s<\n",sl,ccp(s)) ;
-	    }
 	    rs = SR_INVALID ;
 	    if (sl > 0) {
     	        rs = SR_NOTOPEN ;
@@ -251,7 +253,6 @@ int strfilter::add(cchar *sp,int sl) noex {
 	        } /* end if (magic) */
 	    } /* end if (valid) */
 	} /* end if (non-null) */
-	debprintf("strfilter吧dd: ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (strfilter::add) */
 
@@ -267,6 +268,13 @@ int strfilter::have(cchar *sp,int sl) noex {
 	return rs ;
 } /* end method (strfilter::have) */
 
+int strfilter::ents() noex {
+	int		rs = SR_NOTOPEN ;
+	if (magic == STRFILTER_MAGIC) {
+    	    rs = nents ;
+	} /* end if (non-null) */
+    	return rs ;
+} /* end method (strfilter::ents) */
 
 int strfilter::icount() const noex {
 	int		rs = SR_NOTOPEN ;
@@ -278,31 +286,22 @@ int strfilter::icount() const noex {
 
 int strfilter::iready() noex {
 	int		rs = SR_NOTOPEN ;
-	debprintf("strfilter告ready: ent\n") ;
 	if (magic == STRFILTER_MAGIC) {
-	debprintf("strfilter告ready: vecstr::sort\n") ;
 	    if ((rs = vecstr::sort) >= 0) {
-	debprintf("strfilter告ready: std::sort\n") ;
 	        std::sort(filtarr,(filtarr+idx)) ;
 	    }
 	} /* end if (magic) */
-	debprintf("strfilter告ready: ret rs=%d\n",rs) ;
 	return rs ;
 } /* end method (strfilter::iready) */
 
 int strfilter::iaddone(cchar *cp,int cl) noex {
     	int		rs ;
 	if (cl < 0) cl = xstrlen(cp) ;
-	    {
-		strnul s(cp,cl) ;
-		debprintf("strfilter告addone: ent=>%s<\n",ccp(s)) ;
-	    }
 	if ((rs = ihave(cp,cl)) == 0) {
 	    if ((rs = inschrs(cp,cl)) >= 0) {
 		rs = vecstr::add(cp,cl) ;
 	    }
 	}
-	debprintf("strfilter告addone: ret rs=%d\n",rs) ;
 	return rs ;
 } /* end method (strfilter::iaddone) */
 
@@ -311,20 +310,21 @@ int strfilter::ihave(cchar *sp,int sl) noex {
     	cint		ch = mkchar(*sp) ;
     	int		rs = SR_OK ;
 	int		f = false ;
-	debprintf("strfilter告have: ent idx=%d\n",idx) ;
 	if (bool(filtchr[ch])) {
 	    ulong	sw = mksw(sp,sl) ;
 	    cint	rl = (sl - sz) ;
-	    for (int i = 0 ; i < idx ; i += 1) {
-		if ((f = (filtarr[i] == sw))) break ;
-	    }
-	debprintf("strfilter告have: mid rs=%d f=%d\n",rs,f) ;
+	    if (fl.ready) {
+		f = binary_search(filtarr,(filtarr + idx),sw) ;
+	    } else {
+	        for (int i = 0 ; i < idx ; i += 1) {
+		    if ((f = (filtarr[i] == sw))) break ;
+	        }
+	    } /* end if (fl.ready) */
 	    if (f && (rl > 0)) {
 		rs = vecstr::search(sp,sl) ;
 		f = rs ;
 	    }
-	}
-	debprintf("strfilter告have: ret=%d f=%d\n",rs,f) ;
+	} /* end if (had in character bit-array) */
 	return (rs >= 0) ? f : rs ;
 } /* end method (strfilter::ihave) */
 
@@ -334,8 +334,15 @@ int strfilter::inschrs(cchar *sp,int sl) noex {
 	filtchr[ch] = true ;
 	if ((rs = extend()) >= 0) {
 	    ulong	sw = mksw(sp,sl) ;
-	    filtarr[idx++] = sw ;
-	}
+	    bool	f = false ;
+	    for (int i = 0 ; i < idx ; i += 1) {
+		if ((f = (filtarr[i] == sw))) break ;
+	    }
+	    if (! f) {
+		filtarr[idx++] = sw ;
+		filtarr[idx] = 0UL ;
+	    }
+	} /* end if (extend) */
 	return rs ;
 } /* end method (strfilter::inschrs) */
 
@@ -346,17 +353,16 @@ int strfilter::extend(int n) noex {
 	    int		sz ;
 	    voidp	na{} ;
 	    if (filtarr == nullptr) {
-	        ne = (n > 0) ? n : defents ;
-	        sz = (ne + 1) * szof(ulongp) ;
+	        ne = max((n + 1),defents) ;
+	        sz = (ne + 1) * szof(ulong) ;
 	        rs = umemalloc(sz,&na) ;
 	    } else {
-	        ne = (n + 1) * 2 ;
-	        sz = (ne + 1) * szof(ulongp) ;
+	        ne = (ext * 2) ;
+	        sz = (ne + 1) * szof(ulong) ;
 	        rs = umemrealloc(filtarr,sz,&na) ;
 	    }
 	    if (rs >= 0) {
 	        filtarr = ulongp(na) ;
-		memclear((filtarr + idx),((ne + 1 - ext) * szof(ulong))) ;
 	        ext = ne ;
 	    }
 	} /* end if (extension needed) */

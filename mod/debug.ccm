@@ -6,7 +6,43 @@
 /* version %I% last-modified %G% */
 
 
-/* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
+/* revision history:
+
+	= 1998-09-10, David A­D­ Morano
+	This subroutine was written for Rightcore Network Services.
+
+	= 2020-02-23, David A­D­ Morano
+	Modulatized.
+
+*/
+
+/* Copyright © 1998,2020 David A­D­ Morano.  All rights reserved. */
+
+/*******************************************************************************
+
+	Group:
+	debfd
+	debprintf
+
+	Description:
+	These subroutines are a hack for debug-printfs where the normal
+	debugging facilities are not available (for whatever reason).
+
+	Synopsis:
+	int debfd(int dfd) noex
+	int debprintf(cchar *func,cchar *fmt,...) noex
+
+	Arguments:
+	dfd		file-description to use for debug output
+	func		c-string function-name pointer
+	fmt		c-string formatting specification pointer
+	...		|printf|-like arguments
+
+	Returns:
+	>=0		OK
+	<0		error (system-return)
+
+*******************************************************************************/
 
 module ;
 
@@ -24,6 +60,7 @@ module ;
 #include	<utypealiases.h>
 #include	<usysdefs.h>
 #include	<usysrets.h>
+#include	<usupport.h>		/* |sncpy(3u)| */
 #include	<usysutility.hh>	/* |snvprintf(3u)| */
 #include	<getfdfile.h>		/* |FD_STDERR| */
 #include	<localmisc.h>
@@ -31,6 +68,7 @@ module ;
 export module debug ;
 
 using std::nullptr_t ;			/* type */
+using libu::sncpy ;
 using libu::snprintf ;			/* subroutine */
 using libu::snvprintf ;			/* subroutine */
 using std::nothrow ;			/* constant */
@@ -41,7 +79,7 @@ static int		dfd = -1 ;
 
 export {
     int debfd(int) noex ;
-    int debprintf(cchar *fmt,...) noex ;
+    int debprintf(cchar *,cchar *,...) noex ;
 } /* end export */
 
 int debfd(int fd) noex {
@@ -49,24 +87,31 @@ int debfd(int fd) noex {
 	return SR_OK ;
 } /* end subroutine (debfd) */
 
-int debprintf(cchar *fmt,...) noex {
+int debprintf(cchar *func,cchar *fmt,...) noex {
     	va_list		ap ;
 	cnullptr	np{} ;
     	int		rs = SR_FAULT ;
-	if (fmt) {
+	int		len = 0 ; /* return-value */
+	if (func && fmt) {
 	    va_begin(ap,fmt) ;
     	    rs = SR_NOMEM ;
 	    if (char *fbuf ; (fbuf = new(nothrow) char[flen + 1]) != np) {
-	        if ((rs = snvprintf(fbuf,flen,fmt,ap)) >= 0) {
-		    if ((rs = write(dfd,fbuf,rs)) < 0) {
-			rs = (- errno) ;
-		    }
-	        } /* end if (snvprintf) */
+		if ((rs = sncpy(fbuf,flen,func,": ")) >= 0) {
+		    cint	bl = (flen - rs) ;
+		    char	*bp = (fbuf + rs) ;
+		    len += rs ;
+	            if ((rs = snvprintf(bp,bl,fmt,ap)) >= 0) {
+			len += rs ;
+		        if ((rs = write(dfd,fbuf,len)) < 0) {
+			    rs = (- errno) ;
+		        }
+	            } /* end if (snvprintf) */
+		} /* end if (sncpy) */
 		delete [] fbuf ;
 	    } /* end if (m-a-f) */
 	    va_end(ap) ;
 	} /* end if (non-null) */
-	return rs ;
+	return (rs >= 0) ? len : rs ;
 } /* end subroutine (debprintf) */
 
 
