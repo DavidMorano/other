@@ -60,7 +60,6 @@ module ;
 #include	<usysutility.hh>	/* |snprintf(3u)| */
 #include	<ulogerror.h>
 #include	<umemalloc.hh>
-#include	<sif.hh>
 #include	<strnul.hh>
 #include	<mkchar.h>
 #include	<localmisc.h>
@@ -69,6 +68,7 @@ export module strfilter ;
 
 import libutil ;
 import ureserve ;			/* |vecstr(3u)| */
+import sif ;
 
 /* local defines */
 
