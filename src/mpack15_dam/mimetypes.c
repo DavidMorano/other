@@ -33,12 +33,7 @@
 	to piece together a content type from pieces separated by white
 	space (we can't do everything!).
 
-
 *******************************************************************************/
-
-
-#define	MIMETYPES_MASTER	1
-
 
 #include	<envstandards.h>	/* MUST be first to configure */
 
@@ -51,6 +46,8 @@
 #include	<bfile.h>
 #include	<hdb.h>
 #include	<field.h>
+#include	<strn.h>
+#include	<strwcpy.h>
 #include	<char.h>
 #include	<localmisc.h>
 
@@ -67,11 +64,8 @@
 
 /* external subroutines */
 
-extern int	snwcpy(char *,int,const char *,int) ;
-extern int	sncpy1(char *,int,const char *) ;
-
-extern char	*strwcpy(char *,const char *,int) ;
-extern char	*strnpbrk(const char *,int,const char *) ;
+extern int	snwcpy(char *,int,cchar *,int) ;
+extern int	sncpy1(char *,int,cchar *) ;
 
 
 /* external variables */
@@ -82,10 +76,10 @@ extern char	*strnpbrk(const char *,int,const char *) ;
 
 /* forward references */
 
-static int	exttypespec(const char *,int,const char **) ;
+static int	exttypespec(cchar *,int,cchar **) ;
 
 #ifdef	COMMENT
-static int	cmpentry(const char *,const char *,int) ;
+static int	cmpentry(cchar *,cchar *,int) ;
 #endif
 
 
@@ -144,7 +138,7 @@ MIMETYPES	*dbp ;
 /* read a whole file into the database */
 int mimetypes_file(dbp,fname)
 MIMETYPES	*dbp ;
-const char	fname[] ;
+cchar	fname[] ;
 {
 	bfile		mfile, *mfp = &mfile ;
 
@@ -156,9 +150,9 @@ const char	fname[] ;
 
 	uchar	terms[32] ;
 
-	const char	*fp ;
-	const char	*cp ;
-	const char	*ctp ;
+	cchar	*fp ;
+	cchar	*cp ;
+	cchar	*ctp ;
 
 #if	CF_DEBUGS
 	debugprintf("mimetypes_file: ent\n") ;
@@ -288,12 +282,12 @@ const char	fname[] ;
 int mimetypes_find(dbp,typespec,ext)
 MIMETYPES	*dbp ;
 char		typespec[] ;
-const char	ext[] ;
+cchar	ext[] ;
 {
 	int	rs = SR_OK ;
 	int	len = 0 ;
 
-	const char	*tp ;
+	cchar	*tp ;
 
 
 #if	CF_DEBUGS
@@ -415,7 +409,7 @@ char		typespec[] ;
 	typespec[0] = '\0' ;
 	if ((rs = hdb_fetch(dbp,key,curp,&val)) >= 0) {
 	    const int	ml = MIN(val.len,MIMETYPES_TYPELEN) ;
-	    const char	*mp = (const char *) val.buf ;
+	    cchar	*mp = (cchar *) val.buf ;
 	    rs = (strwcpy(typespec,mp,ml) - typespec) ;
 	}
 
@@ -428,7 +422,7 @@ char		typespec[] ;
 int mimetypes_get(dbp,typespec,ext)
 MIMETYPES	*dbp ;
 char		typespec[] ;
-const char	ext[] ;
+cchar	ext[] ;
 {
 
 
@@ -442,13 +436,13 @@ const char	ext[] ;
 
 /* extract the typespec from this buffer */
 static int exttypespec(tbuf,tlen,rpp)
-const char	tbuf[] ;
+cchar	tbuf[] ;
 int		tlen ;
-const char	**rpp ;
+cchar	**rpp ;
 {
 	int	cl ;
 
-	const char	*sp, *cp ;
+	cchar	*sp, *cp ;
 
 
 	cp = tbuf ;
@@ -476,8 +470,8 @@ const char	**rpp ;
 #ifdef	COMMENT
 
 static int cmpentry(s1,s2,len)
-const char	s1[] ;
-const char	s2[] ;
+cchar	s1[] ;
+cchar	s2[] ;
 int		len ;
 {
 	int	rc = 0 ;

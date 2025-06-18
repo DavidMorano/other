@@ -54,7 +54,6 @@
 #include	<strn.h>
 #include	<sfx.h>			/* |sfext(3uc)| */
 #include	<six.h>			/* |sisub(3uc)| */
-#include	<sif.hh>
 #include	<rmx.h>
 #include	<strwcpy.h>
 #include	<strnul.hh>
@@ -74,6 +73,7 @@ import ulibvals ;
 import argmgr ;
 import strfilter ;
 import bitop ;
+import sif ;
 import debug ;
 
 /* local defines */
