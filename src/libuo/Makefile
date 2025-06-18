@@ -36,7 +36,7 @@ DEFS=
 
 INCS=
 
-MODS += libutil.ccm fonce.ccm argmgr.ccm
+MODS += libutil.ccm fonce.ccm argmgr.ccm strfilter.ccm sif.ccm
 
 LIBS= -lu
 
@@ -313,6 +313,11 @@ fonce.o:		fonce.dir
 fonce.dir:
 	makesubdir $@
 
+# SIF
+sif.o:			sif.dir
+sif.dir:
+	makesubdir $@
+
 # ARGMGR
 argmgr.o:		argmgr.dir
 argmgr.dir:
@@ -337,7 +342,6 @@ dictdiff.o:		dictdiff.cc dictdiff.h
 inet4int.o:		inet4int.cc inet4int.h
 readln.o:		readln.cc readln.hh
 getourenv.o:		getourenv.cc getourenv.h
-sif.o:			sif.cc sif.hh
 
 debug.o:		debug.ccm
 strfilter.o:		strfilter.ccm

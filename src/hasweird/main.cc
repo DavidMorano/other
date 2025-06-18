@@ -58,7 +58,6 @@
 #include	<strnul.hh>
 #include	<sncpyx.h>
 #include	<getourenv.h>
-#include	<mapblock.hh>
 #include	<readln.hh>
 #include	<ccfile.hh>
 #include	<rmx.h>

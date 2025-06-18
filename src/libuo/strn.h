@@ -27,7 +27,7 @@
 
 #include	<strnxcmp.h>		/* compare */
 #include	<strnxchr.h>		/* find */
-#include	<strnxpbrk.h>		/* find */
+#include	<strnxbrk.h>		/* find */
 #include	<strnxsub.h>		/* find */
 #include	<strnwht.h>		/* find */
 #include	<strncpyxc.h>		/* copy */

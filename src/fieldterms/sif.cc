@@ -67,7 +67,6 @@
 #include	<mkchar.h>
 #include	<localmisc.h>
 
-#include	"sif.hh"
 
 import libutil ;
 
@@ -217,7 +216,7 @@ int sif::spbrk(cchar **rpp) noex {
 	    rs = SR_OK ;
 	    if (sl < 0) sl = xstrlen(sp) ;
 	    while ((sl > 0) && (rl <= 0)) {
-	        if (cchar *tp ; (tp = strnpbrk(sp,sl,sstr)) != nullptr) {
+	        if (cchar *tp ; (tp = strnbrk(sp,sl,sstr)) != nullptr) {
 		    cint tl = intconv(tp - sp) ;
 		    rl = sfshrink(sp,tl,&rp) ;
 		    rp = sp ;
@@ -265,7 +264,7 @@ int sif::brk(cchar **rpp) noex {
 	if (sp && sstr && rpp) {
 	    rs = SR_OK ;
 	    if (sl < 0) sl = xstrlen(sp) ;
-	    if (cchar *tp ; (tp = strnpbrk(sp,sl,sstr)) != nullptr) {
+	    if (cchar *tp ; (tp = strnbrk(sp,sl,sstr)) != nullptr) {
 		rp = sp ;
 		rl = intconv(tp - sp) ;
 		sl -= intconv((tp + 1) - sp) ;

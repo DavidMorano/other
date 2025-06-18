@@ -122,7 +122,4 @@ argmgr.o:		argmgr.dir
 argmgr.dir:
 	makesubdir $@
 
-# STRFILTER
-strfilter.o:		strfilter.ccm
-
 

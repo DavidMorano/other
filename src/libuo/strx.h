@@ -29,7 +29,17 @@ EXTERNC_begin
 
 extern int	strwildsub(cchar *,cchar *) noex ;
 
-extern char	*strrpbrk(cchar *,cchar *) noex ;
+extern char	*strobrk(cchar *,cchar *) noex ;
+extern char	*strrbrk(cchar *,cchar *) noex ;
+
+static inline char *strbrk(cchar *sp,cchar *ss) noex {
+    	return strobrk(sp,ss) ;
+}
+
+static inline char *strrpbrk(cchar *sp,cchar *ss) noex {
+    	return strrbrk(sp,ss) ;
+}
+
 extern char	*strwhite(cchar *) noex ;
 
 /* deprecated (can give erroneous result) */

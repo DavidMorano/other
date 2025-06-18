@@ -36,7 +36,6 @@
 #include	<baops.h>
 #include	<strn.h>
 #include	<sfx.h>
-#include	<sif.hh>
 #include	<ccfile.hh>
 #include	<strnul.hh>
 #include	<cfdec.h>
@@ -44,6 +43,7 @@
 #include	<hasx.h>
 #include	<localmisc.h>		/* |MAXLINELEN| */
 
+import sif ;
 
 /* local defines */
 

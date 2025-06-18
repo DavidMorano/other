@@ -47,7 +47,6 @@
 #include	<mkdisplayable.h>
 #include	<mknpath.h>
 #include	<mkpath.h>
-#include	<mkchar.h>
 #include	<mkaddr.h>
 #include	<mkpr.h>
 
