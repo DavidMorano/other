@@ -219,7 +219,7 @@ ascandir(dirname, namelist, select, dcomp)
 	struct dirent *d, *p, **names;
 	int nitems;
 	char *cp1, *cp2;
-	struct ustat stb;
+	ustat stb;
 	long arraysz;
 	DIR *dirp;
 

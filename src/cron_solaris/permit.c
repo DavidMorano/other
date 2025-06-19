@@ -38,7 +38,7 @@
 #include <pwd.h>
 #include "cron.h"
 
-struct ustat globstat;
+ustat globstat;
 #define	exists(file)	(stat(file, &globstat) == 0)
 #define	ROOT	"root"
 

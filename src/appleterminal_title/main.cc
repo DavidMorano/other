@@ -1,4 +1,5 @@
-/* main (appleterminal_title) */
+/* appleterminal_main (appleterminal_title) */
+/* charset=ISO8859-1 */
 /* lang=C++20 */
 
 /* print out a character sequence to send a command to Apple-Terminal */
@@ -14,6 +15,7 @@
 
 /*******************************************************************************
 
+  	Description:
 	See the assciated README file ('README.txt') for why and what
 	this program does.
 
@@ -24,7 +26,7 @@
 #include	<unistd.h>		/* <- for |ttyname_r(3c)| */
 #include	<utmpx.h>		/* <- for |getutxline(3c)| */
 #include	<cstdlib>		/* <- for |EXIT_SUCCESS| */
-#include	<cstring>		/* <- for |strpbrk(3c)| */
+#include	<cstring>		/* |strchr(3c)| */
 #include	<cctype>
 #include	<algorithm>
 #include	<string>

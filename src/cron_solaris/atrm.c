@@ -73,7 +73,7 @@ main(int argc, char **argv)
 	char *pp;
 	char *getuser();
 	struct dirent **namelist;	/* names of jobs in spooling area */
-	struct ustat **statlist;
+	ustat **statlist;
 	struct passwd *pwd;
 
 	/*
@@ -241,7 +241,7 @@ usage(void)
  * it is removed.  Return TRUE if file removed, else FALSE.
  */
 int
-removentry(char *filename, struct ustat *statptr, uid_t user)
+removentry(char *filename, ustat *statptr, uid_t user)
 {
 	struct passwd *pwd;
 	char *pp;
@@ -303,7 +303,7 @@ removentry(char *filename, struct ustat *statptr, uid_t user)
 static void
 powner(char *file)
 {
-	struct ustat statb;
+	ustat statb;
 	char *getname();
 
 	if (stat(file, &statb) < 0) {
@@ -318,14 +318,14 @@ powner(char *file)
 
 
 int
-getjoblist(struct dirent ***namelistp, struct ustat ***statlistp,
+getjoblist(struct dirent ***namelistp, ustat ***statlistp,
     int (*sortfunc)())
 {
 	int numjobs;
 	struct dirent **namelist;
 	int i;
-	struct ustat *statptr;	/* pointer to file stat structure */
-	struct ustat **statlist;
+	ustat *statptr;	/* pointer to file stat structure */
+	ustat **statlist;
 	extern int alphasort();		/* sort jobs by date of execution */
 	extern int filewanted();	/* should a file be listed in queue? */
 
@@ -339,7 +339,7 @@ getjoblist(struct dirent ***namelistp, struct ustat ***statlistp,
 		atabortperror(NOREADDIR);
 
 	if ((statlist =
-	    (struct ustat **)malloc(numjobs * sizeof (struct ustat ***)))
+	    (ustat **)malloc(numjobs * sizeof (ustat ***)))
 	    == NULL)
 		atabort("Out of memory");
 
@@ -350,7 +350,7 @@ getjoblist(struct dirent ***namelistp, struct ustat ***statlistp,
 	 * the spooling area.
 	 */
 	for (i = 0; i < numjobs; ++i) {
-		statptr = (struct ustat *)malloc(sizeof (struct ustat));
+		statptr = (ustat *)malloc(sizeof (ustat));
 		if (statptr == NULL)
 			atabort("Out of memory");
 		if (stat(namelist[i]->d_name, statptr) < 0) {

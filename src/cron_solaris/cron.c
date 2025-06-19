@@ -426,7 +426,7 @@ main(int argc, char *argv[])
 	time_t newtime, lastmtime = 0L;
 	struct usr *u;
 	struct event *e, *e2, *eprev;
-	struct ustat buf;
+	ustat buf;
 	pid_t rfork;
 	struct sigaction act;
 
@@ -1958,7 +1958,7 @@ ex(struct event *e)
 	FILE *atcmdfp;
 	char mailvar[4];
 	char *at_cmdfile = NULL;
-	struct ustat buf;
+	ustat buf;
 	struct queue *qp;
 	struct runinfo *rp;
 	struct project proj, *pproj = NULL;
