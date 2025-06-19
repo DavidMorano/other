@@ -21,6 +21,7 @@
 /*******************************************************************************
 
 	Group:
+	debon
 	debfd
 	debprintf
 
@@ -73,14 +74,33 @@ using libu::snprintf ;			/* subroutine */
 using libu::snvprintf ;			/* subroutine */
 using std::nothrow ;			/* constant */
 
-constexpr int		flen = MAXPATHLEN ;
-
-static int		dfd = -1 ;
+constexpr int	flen = MAXPATHLEN ;
 
 export {
+    struct debon_mgr {
+	operator int () noex ;
+    } ; /* end struct (debon) */
     int debfd(int) noex ;
     int debprintf(cchar *,cchar *,...) noex ;
+    extern debon_mgr debon ;
 } /* end export */
+
+
+/* local variables */
+
+int		dfd = -1 ;
+
+
+/* exported variables */
+
+debon_mgr	debon ;
+
+
+/* exported subroutines */
+
+debon_mgr::operator int () noex {
+	return (dfd >= 0) ;
+}
 
 int debfd(int fd) noex {
     	dfd = fd ;
@@ -89,13 +109,14 @@ int debfd(int fd) noex {
 
 int debprintf(cchar *func,cchar *fmt,...) noex {
     	va_list		ap ;
+	cnothrow	nt{} ;
 	cnullptr	np{} ;
     	int		rs = SR_FAULT ;
 	int		len = 0 ; /* return-value */
 	if (func && fmt) {
 	    va_begin(ap,fmt) ;
     	    rs = SR_NOMEM ;
-	    if (char *fbuf ; (fbuf = new(nothrow) char[flen + 1]) != np) {
+	    if (char *fbuf ; (fbuf = new(nt) char[flen + 1]) != np) {
 		if ((rs = sncpy(fbuf,flen,func,": ")) >= 0) {
 		    cint	bl = (flen - rs) ;
 		    char	*bp = (fbuf + rs) ;

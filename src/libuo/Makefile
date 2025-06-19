@@ -318,6 +318,11 @@ sif.o:			sif.dir
 sif.dir:
 	makesubdir $@
 
+# STRFILTER
+strfilter.o:		strfilter.dir
+strfilter.dir:
+	makesubdir $@
+
 # ARGMGR
 argmgr.o:		argmgr.dir
 argmgr.dir:
@@ -343,7 +348,7 @@ inet4int.o:		inet4int.cc inet4int.h
 readln.o:		readln.cc readln.hh
 getourenv.o:		getourenv.cc getourenv.h
 
+# MODULES (sinfles)
 debug.o:		debug.ccm
-strfilter.o:		strfilter.ccm
 
 

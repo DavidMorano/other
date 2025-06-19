@@ -113,6 +113,15 @@ install:		$(T).x
 
 files_main.o:		files_main.cc $(DEPS_MAIN)		$(INCS)
 
+files_tardir.o:		files_tardir0.o files_tardir1.o		$(INCS)
+	$(CXX) -r -o $@ $(LDFLAGS) $^
+
+files_tardir0.o:	files_tardir.ccm			$(INCS)
+
+files_tardir1.o:	files_tardir1.cc files_tardir.ccm	$(INCS)
+	makemodule files_tardir
+	$(COMPILE.cc) $<
+
 # MODS
 mods.o:			$(DEPS_MAIN)
 	$(CXX) -r -o $@ $(LDFLAGS) $^
@@ -121,5 +130,7 @@ mods.o:			$(DEPS_MAIN)
 argmgr.o:		argmgr.dir
 argmgr.dir:
 	makesubdir $@
+
+debug.o:		debug.ccm
 
 

@@ -13,6 +13,7 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
+#include	<string.h>		/* |strchr(3c)| + |strpbrk(3c)| */
 #include	<clanguage.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
@@ -32,8 +33,12 @@ extern int	strwildsub(cchar *,cchar *) noex ;
 extern char	*strobrk(cchar *,cchar *) noex ;
 extern char	*strrbrk(cchar *,cchar *) noex ;
 
+static inline char *strochr(cchar *sp,int sch) noex {
+    	return strchr(sp,sch) ;
+}
+
 static inline char *strbrk(cchar *sp,cchar *ss) noex {
-    	return strobrk(sp,ss) ;
+    	return strpbrk(sp,ss) ;
 }
 
 static inline char *strrpbrk(cchar *sp,cchar *ss) noex {
