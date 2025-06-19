@@ -58,6 +58,9 @@ export {
     constexpr inline int xstrlen(cchar *sp) noex {
     	return intconv(strlen(sp)) ;
     }
+    constexpr inline int xstrspn(cchar *sp,cchar *ss) noex {
+    	return intconv(strspn(sp,ss)) ;
+    }
     constexpr inline int xstrcspn(cchar *sp,cchar *ss) noex {
     	return intconv(strcspn(sp,ss)) ;
     }
