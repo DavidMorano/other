@@ -1,6 +1,6 @@
 /* files_main SUPPORT (files) */
 /* charset=ISO8859-1 */
-/* lang=C++20 */
+/* lang=C++20 (conformance reviewed) */
 
 /* enumerate filenames */
 /* version %I% last-modified %G% */
@@ -68,12 +68,12 @@
 #include	<localmisc.h>
 
 import libutil ;			/* |xstrlen(3u)| */
-import fonce ;
 import ulibvals ;
-import argmgr ;
 import strfilter ;
-import bitop ;
+import argmgr ;
+import fonce ;
 import sif ;
+import bitop ;
 import debug ;
 
 /* local defines */
@@ -157,6 +157,7 @@ namespace {
 	proginfo_co	flistend ;
 	proginfo_fl	fl{} ;
 	strfilter	exts ;
+	int		tardirs ;
 	fonce		seen ;
 	mainv		argv ;
 	mainv		envv ;
@@ -188,7 +189,8 @@ namespace {
 	int argoptlong(argmgr *,cchar *,int) noex ;
 	int argoptchr(argmgr *,cchar *,int) noex ;
 	int argsuf(argmgr *) noex ;
-	int argmode(argmgr *amp) noex ;
+	int argmode(argmgr *) noex ;
+	int argtardir(argmgr *) noex ;
 	int preamble() noex ;
 	int process(argmgr *) noex ;
 	int process_pmbegin() noex ;
@@ -205,6 +207,9 @@ namespace {
 	int sufhave(cchar *,int) noex ;
 	int modeadd(cchar *,int) noex ;
 	int modehave(custat *) noex ;
+	int tardirbegin() noex ;
+	int tardirend() noex ;
+	int tardiradd(cchar *,int) noex ;
     private:
 	int istart() noex ;
 	int ifinish() noex ;
@@ -223,12 +228,16 @@ namespace {
 enum progmodes {
 	progmode_files,
 	progmode_filelines,
+	progmode_filesyner,
+	progmode_filelinker,
 	progmode_overlast
 } ;
 
 constexpr cpcchar	prognames[] = {
 	[progmode_files]	= "files",
 	[progmode_filelines]	= "filelines",
+	[progmode_filesyner]	= "filesyncer",
+	[progmode_filelinker]	= "filelinker",
 	[progmode_overlast]	= nullptr
 } ;
 
@@ -299,6 +308,7 @@ int main(int argc,mainv argv,mainv envv) noex {
 	int		rs ;
 	int		rs1 ;
 	debfd(dfd) ;
+	debprintf(__func__,"ent\n") ;
 	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
 	    if ((rs = pi.flistbegin) >= 0) {
                 switch (pi.pm) {
@@ -469,6 +479,9 @@ int proginfo::argoptchr(argmgr *amp,cchar *sp,int sl) noex {
 	    case 'L':
 		fl.followall = true ;
 		break ;
+	    case 'd':
+		rs = argtardir(amp) ;
+		break ;
 	    case 's':
 	    case 'x':
 		rs = argsuf(amp) ;
@@ -502,6 +515,19 @@ int proginfo::argmode(argmgr *amp) noex {
 	} /* end if (argval) */
 	return rs ;
 } /* end method (proginfo::argmode) */
+
+int proginfo::argtardir(argmgr *amp) noex {
+    	int		rs ;
+	if (cc *cp ; (rs = amp->argval(&cp)) >= 0) {
+	    switch (pm) {
+	    case progmode_filesyner:
+	    case progmode_filelinker:
+	        rs = tardiradd(cp,rs) ;
+	        break ;
+	    } /* end switch */
+	} /* end if (argval) */
+	return rs ;
+} /* end method (proginfo::argtardir) */
 
 int proginfo::preamble() noex {
     	int		rs = SR_OK ;
@@ -616,6 +642,7 @@ int proginfo::procname(cchar *sp,int sl) noex {
 	    case filetype_reg:
 	    case filetype_blk:
 	    case filetype_chr:
+	    case filetype_lnk:
 	    case filetype_fifo:
 	    case filetype_name:
 	    case filetype_sock:
@@ -636,10 +663,13 @@ int proginfo::procdir(custat *sbp,cchar *sp,int sl) noex {
 	int		c = 0 ;
 	(void) sbp ;
 	if (sl && sp[0] && (sp[0] != '.')) {
+    	    fs::directory_options dopt = skip_permission_denied ;
 	    if (sl < 0) sl = xstrlen(sp) ;
 	    try {
 	        fs::path p(sp,(sp + sl),native_format) ;
-    	        fs::directory_options dopt = skip_permission_denied ;
+		if (fl.followall) {
+    	            dopt |= follow_directory_symlink ;
+		}
 		std::error_code ec ;
 		{
 		    rdi it(p,dopt,ec) ;
@@ -662,19 +692,17 @@ int proginfo::procdir(custat *sbp,cchar *sp,int sl) noex {
 } /* end method (proginfo::procdir) */
 
 int proginfo::procent(custat *sbp,cchar *sp,int sl) noex {
-    	int		rs = SR_OK ;
-	int		c = 0 ;
-	switch (cint ft = filetype(sbp->st_mode) ; ft) {
-	case filetype_reg:
-	    rs = procfile(sbp,sp,sl) ;
-	    c = rs ;
-	} /* end switch */
-	return (rs >= 0) ? c : rs ;
+	if (sl < 0) sl = xstrlen(sp) ;
+	return procfile(sbp,sp,sl) ;
 } /* end method (proginfo::procent) */
 
 int proginfo::procfile(custat *sbp,cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
 	int		c = 0 ;
+	if_constexpr (f_debug) {
+	    strnul s(sp,sl) ;
+	    debprintf(__func__,"ent s=>%s< fmodes=%u\n",ccp(s),fl.modes) ;
+	}
 	if (sisub(sp,sl,".git") < 0) {
 	    if ((! fl.modes) || (rs = modehave(sbp)) > 0) {
 	        if ((! fl.suffix) || ((rs = sufhave(sp,sl)) > 0)) {
@@ -736,12 +764,23 @@ int proginfo::sufadd(cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
 	int		c = 0 ;
 	cchar		*cp ;
+	if (f_debug && debon) {
+	    strnul se(sp,sl) ;
+	    debprintf(__func__,"ent sl=%d s=>%s<\n",sl,ccp(se)) ;
+	}
 	for (int cl ; (rs >= 0) && ((cl = so(&cp)) > 0) ; ) {
+	    if (f_debug && debon) {
+	        strnul sone(cp,cl) ;
+	        debprintf(__func__,"cl=%d c=>%s<\n",cl,ccp(sone)) ;
+	    }
 	    if ((rs = exts.add(cp,cl)) > 0) {
 		c += 1 ;
 		fl.suffix = true ;
 	    }
 	} /* end for */
+	if_constexpr (f_debug) {
+	    debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
+	}
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::sufadd) */
 
@@ -760,11 +799,18 @@ int proginfo::sufhave(cchar *sp,int sl) noex {
 	if (fl.suffix) {
 	    f = false ;
 	    if (cc *ep ; (rs = sfext(sp,sl,&ep)) > 0) {
+	        if (f_debug && debon) {
+		    strnul sm(ep,rs) ;
+	            debprintf(__func__,"file-suf=>%s<\n",ccp(sm)) ;
+	        }
 	        rs = exts.have(ep,rs) ;
 		f = rs ;
 	    } else if (rs == rsn) {
 		rs = SR_OK ;
 	    }
+	}
+	if_constexpr (f_debug) {
+	    debprintf(__func__,"ret rs=%d f=%u\n",rs,f) ;
 	}
 	return (rs >= 0) ? f : rs ;
 } /* end method (proginfo::sufhave) */
@@ -774,8 +820,16 @@ int proginfo::modeadd(cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
 	int		c = 0 ;
 	cchar		*cp ;
+	if_constexpr (f_debug) {
+	    strnul s(sp,sl) ;
+	    debprintf(__func__,"ent s=>%s<\n",ccp(s)) ;
+	}
 	for (int cl ; (rs >= 0) && ((cl = so(&cp)) > 0) ; ) {
 	    int	dt = -1 ;
+	    if (f_debug && debon) {
+		strnul sm(cp,cl) ;
+	        debprintf(__func__,"cl=%d mode=>%s<\n",cl,ccp(sm)) ;
+	    }
 	    switch (cint ch = mkchar(*cp) ; ch) {
 	    case 'f':
 	    case 'p':
@@ -815,18 +869,32 @@ int proginfo::modeadd(cchar *sp,int sl) noex {
 	        c += 1 ;
 	    }
 	} /* end for */
+	if_constexpr (f_debug) {
+	    debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
+	}
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::modemode) */
 
 int proginfo::modehave(custat *sbp) noex {
-    	cint		ft = filetype(sbp->st_mode) ;
     	int		rs = SR_OK ;
 	int		f = true ;
-	if (ft) {
-	    f = bitop_tst(modes,ft) ;
+	if_constexpr (f_debug) {
+	    debprintf(__func__,"ent fmodes=%u modes=%u\n",fl.modes,modes) ;
+	}
+	if (fl.modes) {
+    	    if (cint ft = filetype(sbp->st_mode) ; ft) {
+	        f = bitop_tst(modes,ft) ;
+	    }
+	}
+	if_constexpr (f_debug) {
+	    debprintf(__func__,"ret rs=%d f=%d\n",rs,f) ;
 	}
     	return (rs >= 0) ? f : rs ;
 } /* end method (proginfo::modehave) */
+
+int proginfo::tardiradd(cchar *,int) noex {
+    	return SR_OK ;
+} /* end method (proginfo::tardiradd) */
 
 int proginfo::fileuniq(custat *sbp)  noex {
     	int		rs = 1 ; /* default indicates "uniq" */
@@ -834,8 +902,7 @@ int proginfo::fileuniq(custat *sbp)  noex {
 	    rs = seen.checkin(sbp) ;
 	}
 	return rs ;
-}
-/* end method (proginfo::fileuniq) */
+} /* end method (proginfo::fileuniq) */
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
