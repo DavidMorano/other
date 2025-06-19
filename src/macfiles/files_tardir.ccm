@@ -1,0 +1,127 @@
+/* files_tardir MODULE (primary-module-interface) */
+/* charset=ISO8859-1 */
+/* lang=C++20 (conformance reviewed) */
+
+/* enumerate filenames */
+/* version %I% last-modified %G% */
+
+
+/* revision history:
+
+	= 2017-03-21, David A-D- Morano
+	This subroutine was originally written.
+
+*/
+
+/* Copyright © 2017 David A­D­ Morano.  All rights reserved. */
+
+/*******************************************************************************
+
+	Names:
+	files_tardir
+
+*******************************************************************************/
+
+module ;
+
+#include	<envstandards.h>	/* ordered first to configure */
+#include	<unistd.h>
+#include	<fcntl.h>
+#include	<cstddef>		/* |nullptr_t| */
+#include	<cstdlib>
+#include	<clanguage.h>
+#include	<utypedefs.h>
+#include	<utypealiases.h>
+#include	<usysdefs.h>
+#include	<usysrets.h>
+#include	<localmisc.h>
+
+export module files_tardir ;
+
+import ureserve ;			/* |vecstr(3u)| */
+import fonce ;
+
+/* local defines */
+
+
+/* imported namespaces */
+
+
+/* local typedefs */
+
+
+/* external subroutines */
+
+
+/* external variables */
+
+
+/* local structures */
+
+export {
+    enum tardirmems {
+	tardirmem_start,
+	tardirmem_finish,
+	tardirmem_count,
+	tardirmem_overlast
+    } ;
+    struct tardir ;
+    struct tardir_fl {
+	uint		open:1 ;
+	uint		debug:1 ;
+    } ;
+    struct tardir_co {
+	tardir		*op = nullptr ;
+	int		w = -1 ;
+	void operator () (tardir *p,int m) noex {
+	    op = p ;
+	    w = m ;
+	} ;
+	int operator () (int = 0) noex ;
+	operator int () noex {
+	    return operator () (0) ;
+	} ;
+    } ; /* end struct (tardir_co) */
+    struct tardir {
+	friend		tardir_co ;
+	tardir_co	start ;
+	tardir_co	finish ;
+	tardir_co	count ;
+	tardir_fl	fl{} ;
+	vecstr		dirs ;
+	fonce		seen ;
+	tardir() noex {
+	    start	(this,tardirmem_start) ;
+	    finish	(this,tardirmem_finish) ;
+	    count	(this,tardirmem_count) ;
+	} ;
+	int add(cchar *,int) noex ;
+	void dtor() noex ;
+	operator int () noex ;
+	destruct tardir() {
+	    if (fl.open) dtor() ;
+	}
+    private:
+	int istart() noex ;
+	int ifinish() noex ;
+	int icount() noex ;
+	int iaddone(cchar *,int) noex ;
+    } ; /* end struct (tardir) */
+} /* end export */
+
+
+/* forward references */
+
+
+/* local variables */
+
+
+/* exported variables */
+
+
+/* exported subroutines */
+
+
+/* local subroutines */
+
+

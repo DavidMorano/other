@@ -1,0 +1,138 @@
+/* debug MODULE */
+/* charset=ISO8859-1 */
+/* lang=C++20 (conformance reviewed) */
+
+/* UNIX® kernel support subroutines */
+/* version %I% last-modified %G% */
+
+
+/* revision history:
+
+	= 1998-09-10, David A­D­ Morano
+	This subroutine was written for Rightcore Network Services.
+
+	= 2020-02-23, David A­D­ Morano
+	Modulatized.
+
+*/
+
+/* Copyright © 1998,2020 David A­D­ Morano.  All rights reserved. */
+
+/*******************************************************************************
+
+	Group:
+	debon
+	debfd
+	debprintf
+
+	Description:
+	These subroutines are a hack for debug-printfs where the normal
+	debugging facilities are not available (for whatever reason).
+
+	Synopsis:
+	int debfd(int dfd) noex
+	int debprintf(cchar *func,cchar *fmt,...) noex
+
+	Arguments:
+	dfd		file-description to use for debug output
+	func		c-string function-name pointer
+	fmt		c-string formatting specification pointer
+	...		|printf|-like arguments
+
+	Returns:
+	>=0		OK
+	<0		error (system-return)
+
+*******************************************************************************/
+
+module ;
+
+#include	<envstandards.h>	/* ordered first to configure */
+#include	<sys/param.h>		/* |MAXPATHLEN| */
+#include	<unistd.h>		/* |write(2)| */
+#include	<cerrno>
+#include	<climits>		/* |INT_MAX| */
+#include	<cstddef>		/* |nullptr_t| */
+#include	<cstdlib>
+#include	<cstdarg>		/* |va_list(3c)| */
+#include	<new>			/* |nullptr_t| */
+#include	<clanguage.h>
+#include	<utypedefs.h>
+#include	<utypealiases.h>
+#include	<usysdefs.h>
+#include	<usysrets.h>
+#include	<usupport.h>		/* |sncpy(3u)| */
+#include	<usysutility.hh>	/* |snvprintf(3u)| */
+#include	<getfdfile.h>		/* |FD_STDERR| */
+#include	<localmisc.h>
+
+export module debug ;
+
+using std::nullptr_t ;			/* type */
+using libu::sncpy ;
+using libu::snprintf ;			/* subroutine */
+using libu::snvprintf ;			/* subroutine */
+using std::nothrow ;			/* constant */
+
+constexpr int	flen = MAXPATHLEN ;
+
+export {
+    struct debon_mgr {
+	operator int () noex ;
+    } ; /* end struct (debon) */
+    int debfd(int) noex ;
+    int debprintf(cchar *,cchar *,...) noex ;
+    extern debon_mgr debon ;
+} /* end export */
+
+
+/* local variables */
+
+int		dfd = -1 ;
+
+
+/* exported variables */
+
+debon_mgr	debon ;
+
+
+/* exported subroutines */
+
+debon_mgr::operator int () noex {
+	return (dfd >= 0) ;
+}
+
+int debfd(int fd) noex {
+    	dfd = fd ;
+	return SR_OK ;
+} /* end subroutine (debfd) */
+
+int debprintf(cchar *func,cchar *fmt,...) noex {
+    	va_list		ap ;
+	cnothrow	nt{} ;
+	cnullptr	np{} ;
+    	int		rs = SR_FAULT ;
+	int		len = 0 ; /* return-value */
+	if (func && fmt) {
+	    va_begin(ap,fmt) ;
+    	    rs = SR_NOMEM ;
+	    if (char *fbuf ; (fbuf = new(nt) char[flen + 1]) != np) {
+		if ((rs = sncpy(fbuf,flen,func,": ")) >= 0) {
+		    cint	bl = (flen - rs) ;
+		    char	*bp = (fbuf + rs) ;
+		    len += rs ;
+	            if ((rs = snvprintf(bp,bl,fmt,ap)) >= 0) {
+			len += rs ;
+		        if ((rs = write(dfd,fbuf,len)) < 0) {
+			    rs = (- errno) ;
+		        }
+	            } /* end if (snvprintf) */
+		} /* end if (sncpy) */
+		delete [] fbuf ;
+	    } /* end if (m-a-f) */
+	    va_end(ap) ;
+	} /* end if (non-null) */
+	return (rs >= 0) ? len : rs ;
+} /* end subroutine (debprintf) */
+
+
