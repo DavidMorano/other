@@ -145,7 +145,9 @@ int argmgr::iarg() noex {
 int argmgr::argopt(cchar **rpp) noex {
     	int		rs ;
 	if ((rs = argmgr_magic(this)) >= 0) {
+	    if_constexpr (f_debug) {
 	    debprintf(__func__,"ent ai=%d c=%d\n",ai,cntpos) ;
+	    }
 	    if (ai < argc) {
 	        cchar	*ap = argv[ai] ;
 	        if (isplusminus(ap[0])) {
@@ -155,15 +157,21 @@ int argmgr::argopt(cchar **rpp) noex {
 		    } /* end if (have option) */
 	        }
 	        if (rs > 0) {
+		    if_constexpr (f_debug) {
 		    strnul sk((ap+1),rs) ;
 		    debprintf(__func__,"kp=>%s<\n",ccp(sk)) ;
+		    }
 		    if (valp) {
 		        cint vall= xstrlen(valp) ;
+			if_constexpr (f_debug) {
 		        strnul sv (valp,vall) ;
 		        debprintf(__func__,"vp=>%s<\n",ccp(sv)) ;
+			}
 		    }
 	        }
+		if_constexpr (f_debug) {
 	        debprintf(__func__,"ret rs=%d ai=%d c=%d\n",rs,ai,cntpos) ;
+		}
 	    } /* end if (valid) */
 	} /* end if (magic) */
 	return rs ;
@@ -221,7 +229,9 @@ int argmgr::argoptlong(cchar **rpp) noex {
 int argmgr::argval(cchar **rpp) noex {
     	int		rs ;
 	int		al = 0 ; /* return-value */
+	if_constexpr (f_debug) {
 	debprintf(__func__,"ent\n") ;
+	}
 	if ((rs =  argmgr_magic(this)) >= 0) {
     	    rs = SR_INVALID ;
 	    if (ai < argc) {
@@ -249,14 +259,18 @@ int argmgr::argval(cchar **rpp) noex {
 	        if (rpp) *rpp = rp ;
 	    } /* end if (within possible range) */
 	} /* end if (magic) */
+	if_constexpr (f_debug) {
 	debprintf(__func__,"rs=%d al=%d\n",rs,al) ;
+	}
 	return (rs >= 0) ? al : rs ;
 } /* end method (argmgr::argval) */
 
 int argmgr::get(int i,ccharpp rpp) noex {
     	int		rs = SR_OK ;
 	bool		f = false ;
+	if_constexpr (f_debug) {
 	debprintf(__func__,"ent i=%d\n",i) ;
+	}
 	while ((rs >= 0) && (i < argc) && (! f)) {
 	    if (aie > 0) {
 		if (i < aie) {
@@ -269,19 +283,25 @@ int argmgr::get(int i,ccharpp rpp) noex {
 		    f = true ;
 		}
 	    } else {
-	debprintf(__func__,"reg i=%d\n",i) ;
+	        if_constexpr (f_debug) {
+		    debprintf(__func__,"reg i=%d\n",i) ;
+	        }
 		if ((rs = amap.tst[i]) > 0) {
 		    i += 1 ;
 		} else if (rs == 0) {
 		    f = true ;
 		}
-	debprintf(__func__,"reg rs=%d\n",rs) ;
+	        if_constexpr (f_debug) {
+	            debprintf(__func__,"reg rs=%d\n",rs) ;
+		}
 	    } /* end if */
 	} /* end while */
 	if (rs >= 0) {
 	    if (rpp) *rpp = (f) ? argv[i] : nullptr ;
 	}
-	debprintf(__func__,"rs=%d i=%d f=%u\n",rs,i,f) ;
+	if_constexpr (f_debug) {
+	    debprintf(__func__,"rs=%d i=%d f=%u\n",rs,i,f) ;
+	}
 	return (rs >= 0) ? i : rs ;
 } /* end method (argmgr::get) */
 
@@ -330,7 +350,7 @@ argmgr_iter argmgr::begin() noex {
     	argmgr_iter	res(this,0) ;
 	cchar		*ap = nullptr ;
 	if (cint rs = get(1,&ap) ; rs > 0) {
-	    {
+	    if_constexpr (f_debug) {
 		cchar *fmt = "rs=%d ap=%s\n" ;
 	        debprintf(__func__,fmt,rs,((ap) ? "ok" : "null")) ;
 	    }

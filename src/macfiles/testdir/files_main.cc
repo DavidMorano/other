@@ -75,6 +75,7 @@ import fonce ;
 import sif ;
 import bitop ;
 import debug ;
+import files_tardir ;
 
 /* local defines */
 
@@ -136,6 +137,7 @@ namespace {
 	uint		debug:1 ;
 	uint		suffix:1 ;		/* have a suffix */
 	uint		modes:1 ;		/* have a file-type */
+	uint		tardirs:1 ;
     } ;
     struct proginfo_co {
 	proginfo	*op = nullptr ;
@@ -157,7 +159,7 @@ namespace {
 	proginfo_co	flistend ;
 	proginfo_fl	fl{} ;
 	strfilter	exts ;
-	int		tardirs ;
+	tardir		dirs ;
 	fonce		seen ;
 	mainv		argv ;
 	mainv		envv ;
@@ -381,12 +383,35 @@ int proginfo::getpn(mainv names) noex {
 /* end method (proginfo::getpn) */
 
 int proginfo::iflistbegin() noex {
-	return seen.start(nents) ;
+    	int		rs ;
+	if ((rs = seen.start(nents)) >= 0) {
+	    switch (pm) {
+	    case progmode_filesyner:
+	    case progmode_filelinker:
+		rs = dirs.start ;
+		break ;
+	    } /* end switch */
+	    if (rs < 0) {
+		seen.finish() ;
+	    }
+	} /* end if (seen.start) */
+	return rs ;
 }
 /* end method (proginfo::iflistbegin) */
 
 int proginfo::iflistend() noex {
-	return seen.finish ;
+    	int		rs = SR_OK ;
+	int		rs1 ;
+	if (fl.tardirs) {
+	    rs1 = dirs.finish ;
+	    if (rs >= 0) rs = rs1 ;
+	    fl.tardirs = false ;
+	}
+	{
+	    rs1 = seen.finish ;
+	    if (rs >= 0) rs = rs1 ;
+	}
+	return rs ;
 }
 /* end method (proginfo::iflistend) */
 
