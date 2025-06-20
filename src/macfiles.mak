@@ -57,7 +57,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-DEPS_MAIN += argmgr.o
+DEPS_MAIN += argmgr.o files_tardir.o
 
 OBJ_FILES += files_main.o $(DEPS_MAIN)
 
@@ -131,6 +131,17 @@ argmgr.o:		argmgr.dir
 argmgr.dir:
 	makesubdir $@
 
+# SIF
+sif.o:			sif.dir
+sif.dir:
+	makesubdir $@
+
+# STRFILER
+strfilter.o:		strfilter.dir
+strfilter.dir:
+	makesubdir $@
+
+# DEBUG
 debug.o:		debug.ccm
 
 

@@ -5,7 +5,6 @@
 /* enumerate filenames */
 /* version %I% last-modified %G% */
 
-#define	CF_DEBUG	0		/* debug */
 
 /* revision history:
 
@@ -28,6 +27,7 @@ module ;
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<unistd.h>
 #include	<fcntl.h>
+#include	<climits>		/* |INT_MAX| */
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<new>			/* |nothrow(3c++)| */
@@ -45,10 +45,6 @@ import sif ;
 import debug ;
 
 /* local defines */
-
-#ifndef	CF_DEBUG
-#define	CF_DEBUG	0		/* debug */
-#endif
 
 
 /* imported namespaces */
@@ -73,8 +69,6 @@ using std::nothrow ;			/* constant */
 
 
 /* local variables */
-
-constexpr bool		f_debug = CF_DEBUG ;
 
 
 /* exported variables */
@@ -128,6 +122,7 @@ int tardir::icount() noex {
 
 int tardir::add(cchar *sp,int sl) noex {
     	int		rs = SR_FAULT ;
+	int		c = 0 ;
 	if (sp) {
 	    rs = SR_NOTOPEN ;
 	    if (fl.open) {
@@ -138,21 +133,77 @@ int tardir::add(cchar *sp,int sl) noex {
 	            if (ustat sb ; (rs = u_stat(dn,&sb)) >= 0) {
 		        rs = SR_NOTDIR ;
 		        if (S_ISDIR(sb.st_mode)) {
-		            rs = iaddone(sp,sl) ;
+		            rs = iaddone(sp,sl,&sb) ;
+			    c += rs ;
 		        }
 	            } /* end if (u_stat) */
 		    if (rs < 0) break ;
 	        } /* end for */
 	    } /* end if (open) */
 	} /* end if (non-null) */
-	return rs ;
+	return (rs >= 0) ? c : rs ;
 }
 
-int tardir::iaddone(cchar *sp,int sl) noex {
-    	int		rs = SR_OK ;
-	(void) sp ;
-	(void) sl ;
+int tardir::get(int idx,ccharpp rpp) noex {
+    	int		rs = SR_NOTOPEN ;
+	if (fl.open) {
+	    rs = dirs.get(idx,rpp) ;
+	}
+	return (rs >= 0) ? idx : rs ;
+}
+
+int tardir::curbegin(tardir_cur *curp) noex {
+    	int		rs = SR_FAULT ;
+	if (curp) {
+	    rs = SR_NOTOPEN ;
+	    if (fl.open) {
+	        curp->i = -1 ;
+	        rs = SR_OK ;
+	    }
+	} /* end if (non-null) */
 	return rs ;
+} /* end method (tardir::curbegin) */
+
+int tardir::curend(tardir_cur *curp) noex {
+    	int		rs = SR_FAULT ;
+	if (curp) {
+	    rs = SR_NOTOPEN ;
+	    if (fl.open) {
+	        curp->i = -1 ;
+	        rs = SR_OK ;
+	    }
+	} /* end if (non-null) */
+	return rs ;
+} /* end method (tardir::curend) */
+
+int tardir::curenum(tardir_cur *curp,ccharpp rpp) noex {
+    	int		rs = SR_FAULT ;
+	if (curp && rpp) {
+	    rs = SR_NOTOPEN ;
+	    if (fl.open) {
+		cint idx = (curp->i >= 0) ? (curp->i + 1) : 0 ;
+	        if ((rs = get(idx,rpp)) >= 0) {
+		    curp->i = idx ;
+		}
+	    } /* end if (open) */
+	} /* end if (non-null) */
+	return rs ;
+} /* end method (tardir::curenum) */
+
+int tardir::iaddone(cchar *sp,int sl,ustat *sbp) noex {
+    	int		rs ;
+	int		c = 0 ;
+	if ((rs = seen.checkin(sbp)) > 0) {
+	    rs = dirs.add(sp,sl) ;
+	    if (rs < INT_MAX) c += rs ;
+	} /* end if (ssen.checkin) */
+	return (rs >= 0) ? c : rs ;
+}
+
+void tardir::dtor() noex {
+	if (cint rs = finish ; rs < 0) {
+	    ulogerror("tardir",rs,"fini-finish") ;
+	}
 }
 
 tardir::operator int () noex {

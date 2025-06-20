@@ -41,10 +41,6 @@ static inline char *strbrk(cchar *sp,cchar *ss) noex {
     	return strpbrk(sp,ss) ;
 }
 
-static inline char *strrpbrk(cchar *sp,cchar *ss) noex {
-    	return strrbrk(sp,ss) ;
-}
-
 extern char	*strwhite(cchar *) noex ;
 
 /* deprecated (can give erroneous result) */

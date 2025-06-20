@@ -28,14 +28,13 @@
 
 #include	<sifext.h>
 #include	<siwht.h>
+#include	<sixbrk.h>
 
 
 EXTERNC_begin
 
 extern int siochr(cchar *,int,int) noex ;
 extern int sirchr(cchar *,int,int) noex ;
-extern int siobrk(cchar *,int,cchar *) noex ;
-extern int sirbrk(cchar *,int,cchar *) noex ;
 extern int sicasechr(cchar *,int,int) noex ;
 extern int sifield(cchar *,int,int) noex ;
 
