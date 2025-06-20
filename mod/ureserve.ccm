@@ -198,6 +198,7 @@ export {
 	int adduniq(cchar *,int = -1) noex ;
 	int find(cchar *,int = -1) noex ;
 	int search(cchar *,int = -1) noex ;
+	int get(int,ccharpp) noex ;
 	int del(int) noex ;
 	int curbegin(vecstr_cur *) noex ;
 	int curend(vecstr_cur *) noex ;

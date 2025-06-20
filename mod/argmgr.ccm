@@ -5,6 +5,7 @@
 /* manage program arguments */
 /* version %I% last-modified %G% */
 
+#define	CF_DEBUG	0		/* debugging */
 
 /* revision history:
 
@@ -47,6 +48,10 @@ import vecbool ;
 
 /* local defines */
 
+#ifndef	CF_DEBUG
+#define	CF_DEBUG	0		/* debugging */
+#endif
+
 
 /* imported namespaces */
 
@@ -67,6 +72,8 @@ using std::nothrow ;			/* constant */
 
 
 /* local variables */
+
+cbool		f_debug = CF_DEBUG ;
 
 
 /* exported variables */
