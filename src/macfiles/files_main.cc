@@ -388,7 +388,9 @@ int proginfo::iflistbegin() noex {
 	    switch (pm) {
 	    case progmode_filesyner:
 	    case progmode_filelinker:
-		rs = dirs.start ;
+		if ((rs = dirs.start) >= 0){
+		    fl.tardirs = true ;
+		}
 		break ;
 	    } /* end switch */
 	    if (rs < 0) {
@@ -917,8 +919,8 @@ int proginfo::modehave(custat *sbp) noex {
     	return (rs >= 0) ? f : rs ;
 } /* end method (proginfo::modehave) */
 
-int proginfo::tardiradd(cchar *,int) noex {
-    	return SR_OK ;
+int proginfo::tardiradd(cchar *dp,int dl) noex {
+    	return dirs.add(dp,dl) ;
 } /* end method (proginfo::tardiradd) */
 
 int proginfo::fileuniq(custat *sbp)  noex {

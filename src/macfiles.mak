@@ -126,9 +126,9 @@ files_tardir1.o:	files_tardir1.cc files_tardir.ccm	$(INCS)
 mods.o:			$(DEPS_MAIN)
 	$(CXX) -r -o $@ $(LDFLAGS) $^
 
-# ARGMGR
-argmgr.o:		argmgr.dir
-argmgr.dir:
+# FONCE
+fonce.o:		fonce.dir
+fonce.dir:
 	makesubdir $@
 
 # SIF
@@ -136,12 +136,17 @@ sif.o:			sif.dir
 sif.dir:
 	makesubdir $@
 
-# STRFILER
+# STRFILTER
 strfilter.o:		strfilter.dir
 strfilter.dir:
 	makesubdir $@
 
 # DEBUG
 debug.o:		debug.ccm
+
+# ARGMGR
+argmgr.o:		argmgr.dir
+argmgr.dir:
+	makesubdir $@
 
 
