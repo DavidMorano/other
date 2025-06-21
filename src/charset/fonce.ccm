@@ -62,8 +62,8 @@ export module fonce ;
 
 export {
     struct fonce_devino {
-	dev_t		dev ;
 	ino_t		ino ;
+	dev_t		dev ;
 	fonce_devino(dev_t d,ino_t i) noex : dev(d), ino(i) { } ;
 	size_t hashval() const noex {
 	    return size_t(dev + ino) ;
