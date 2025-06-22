@@ -36,7 +36,7 @@ DEFS=
 
 INCS=
 
-MODS += libutil.ccm fonce.ccm argmgr.ccm strfilter.ccm sif.ccm
+MODS += libutil.ccm argmgr.ccm strfilter.ccm sif.ccm
 
 LIBS= -lu
 
@@ -62,7 +62,7 @@ OBJ01_LUO= sfx.o six.o rmx.o isx.o sif.o
 OBJ02_LUO= strn.o strdcpy.o strx.o strkeyx.o
 OBJ03_LUO= strw.o strwcpy.o
 
-OBJ04_LUO= fonce.o ccfile.o strmgr.o strfilter.o
+OBJ04_LUO= ccfile.o strmgr.o strfilter.o
 OBJ05_LUO= mapex.o
 OBJ06_LUO= nleadx.o matxstr.o char.o 
 OBJ07_LUO= strnxcmp.o

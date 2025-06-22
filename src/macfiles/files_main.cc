@@ -76,6 +76,7 @@ import sif ;
 import bitop ;
 import debug ;
 import files_tardir ;
+import filerec ;
 
 /* local defines */
 
@@ -138,6 +139,7 @@ namespace {
 	uint		suffix:1 ;		/* have a suffix */
 	uint		modes:1 ;		/* have a file-type */
 	uint		tardirs:1 ;
+	uint		filerecs :1 ;
     } ;
     struct proginfo_co {
 	proginfo	*op = nullptr ;
@@ -161,6 +163,7 @@ namespace {
 	strfilter	exts ;
 	tardir		dirs ;
 	fonce		seen ;
+	filerec		recs ;
 	mainv		argv ;
 	mainv		envv ;
 	cchar		*pn = nullptr ;
@@ -390,7 +393,14 @@ int proginfo::iflistbegin() noex {
 	    case progmode_filelinker:
 		if ((rs = dirs.start) >= 0){
 		    fl.tardirs = true ;
-		}
+		    if ((rs = recs.start) >= 0) {
+			fl.filerecs = true ;
+		    }
+		    if (rs < 0) {
+			fl.tardirs = false ;
+			dirs.finish() ;
+		    }
+		} /* end if (dirs) */
 		break ;
 	    } /* end switch */
 	    if (rs < 0) {
@@ -404,6 +414,11 @@ int proginfo::iflistbegin() noex {
 int proginfo::iflistend() noex {
     	int		rs = SR_OK ;
 	int		rs1 ;
+	if (fl.filerecs) {
+	    rs1 = recs.finish ;
+	    if (rs >= 0) rs = rs1 ;
+	    fl.filerecs = false ;
+	}
 	if (fl.tardirs) {
 	    rs1 = dirs.finish ;
 	    if (rs >= 0) rs = rs1 ;
