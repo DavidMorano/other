@@ -126,14 +126,19 @@ files_tardir1.o:	files_tardir1.cc files_tardir.ccm	$(INCS)
 mods.o:			$(DEPS_MAIN)
 	$(CXX) -r -o $@ $(LDFLAGS) $^
 
+# SIF
+sif.o:			sif.dir
+sif.dir:
+	makesubdir $@
+
 # FONCE
 fonce.o:		fonce.dir
 fonce.dir:
 	makesubdir $@
 
-# SIF
-sif.o:			sif.dir
-sif.dir:
+# FILEREC
+filerec.o:		filerec.dir
+filerec.dir:
 	makesubdir $@
 
 # STRFILTER
