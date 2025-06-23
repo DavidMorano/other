@@ -71,6 +71,10 @@ using std::nothrow ;			/* constant */
 
 /* local typedefs */
 
+#ifndef	CF_BINSEARCH
+#define	CF_BINSEARCH	1		/* binary-search */
+#endif
+
 
 /* external subroutines */
 
@@ -147,5 +151,12 @@ export {
 	int extend(int = 1) noex ;
     } ; /* end struct (strfilter) */
 } /* end export */
+
+
+/* local variables */
+
+constexpr bool		f_binsearch = CF_BINSEARCH ;
+
+
 
 
