@@ -29,7 +29,12 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<usystem.h>		/* |xstrlen(3u)| */
+#include	<clanguage.h>
+#include	<utypedefs.h>
+#include	<utypealiases.h>
+#include	<usysdefs.h>
+#include	<usysrets.h>
+#include	<ulogerror.h>
 #include	<localmisc.h>
 
 #include	"strmgr.h"

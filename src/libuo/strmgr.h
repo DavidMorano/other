@@ -72,7 +72,7 @@ struct strmgr : strmgr_head {
 	int chr(int) noex ;
 	void dtor() noex ;
 	destruct strmgr() {
-	    dtor() ;
+	    if (dp) dtor() ;
 	} ;
 } ; /* end struct (strmgr) */
 #else	/* __cplusplus */
