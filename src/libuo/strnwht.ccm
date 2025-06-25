@@ -1,0 +1,44 @@
+/* strnwht MODULE (primary-module-interface) */
+/* charset=ISO8859-1 */
+/* lang=C20 */
+
+/* search for a possible break-point among possiblw hite-space */
+/* version %I% last-modified %G% */
+
+
+/* revision history:
+
+	= 1999-06-08, David A­D­ Morano
+	This code was originally written for some reason.
+
+	= 2020-03-22, David A­D­ Morano
+	I modularized this.
+
+*/
+
+/* Copyright © 1999,2020 David A­D­ Morano.  All rights reserved. */
+
+module ;
+
+#include	<envstandards.h>	/* MUST be first to configure */
+#include	<clanguage.h>
+#include	<utypedefs.h>
+#include	<utypealiases.h>
+#include	<usysdefs.h>
+
+export module strnwht ;
+
+import chrset ;
+
+export extern "C++" {
+    char *strnwhtbrk(cchar *sp,int sl,const chrset &) noex ;
+    char *strnwhtchr(cchar *sp,int sl,const chrset &) noex ;
+}
+
+export extern "C" {
+    char *strnwht(cchar *,int) noex ;
+    char *strnwhtbrk(cchar *,int,cchar *) noex ;
+    char *strnwhtchr(cchar *,int,int) noex ;
+}
+
+
