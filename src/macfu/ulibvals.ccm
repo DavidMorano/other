@@ -60,6 +60,7 @@ export {
 	static const int	maxarg ;
 	static const int	maxline ;
 	static const int	maxlogin ;
+	static const int	maxgroups ;
 	static const int	maxnamelen ;
 	static const int	maxpathlen ;
 	static const int	usernamelen ;

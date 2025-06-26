@@ -30,15 +30,15 @@ export module strnwht ;
 
 import chrset ;
 
-export extern "C++" {
-    char *strnwhtbrk(cchar *sp,int sl,const chrset &) noex ;
-    char *strnwhtchr(cchar *sp,int sl,const chrset &) noex ;
-}
-
 export extern "C" {
     char *strnwht(cchar *,int) noex ;
     char *strnwhtbrk(cchar *,int,cchar *) noex ;
     char *strnwhtchr(cchar *,int,int) noex ;
+}
+
+export extern "C++" {
+    char *strnwhtbrk(cchar *sp,int sl,const chrset &) noex ;
+    char *strnwhtchr(cchar *sp,int sl,const chrset &) noex ;
 }
 
 

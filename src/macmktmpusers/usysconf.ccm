@@ -112,13 +112,13 @@ enum dataitems {
 	dataitem_maxarg,
 	dataitem_maxline,
 	dataitem_maxlogin,
+	dataitem_maxgroups,
 	dataitem_maxusername,
 	dataitem_maxgroupname,
 	dataitem_maxprojectname,
 	dataitem_maxnode,
 	dataitem_maxhost,
 	dataitem_maxtzname,
-	dataitem_ngroups,
 	dataitem_clk,
 	dataitem_overlast
 } ;
@@ -212,13 +212,13 @@ int usysconf::getval(int req) noex {
 	    case _SC_ARG_MAX:
 	    case _SC_LINE_MAX:
 	    case _SC_LOGIN_NAME_MAX:
+	    case _SC_NGROUPS_MAX:
 	    case _SC_USERNAME_MAX:
 	    case _SC_GROUPNAME_MAX:
 	    case _SC_PROJECTNAME_MAX:
 	    case _SC_NODENAME_MAX:
 	    case _SC_HOSTNAME_MAX:
 	    case _SC_TZNAME_MAX:
-	    case _SC_NGROUPS_MAX:
 	    case _SC_CLK_TCK:
 	        rs = cache(req) ;
 	        break ;
@@ -393,13 +393,13 @@ int usysconf::cache(int req) noex {
 	case _SC_ARG_MAX:		ii = dataitem_maxarg ; break ;
 	case _SC_LINE_MAX:		ii = dataitem_maxline ; break ;
 	case _SC_LOGIN_NAME_MAX:	ii = dataitem_maxlogin ; break ;
+	case _SC_NGROUPS_MAX:		ii = dataitem_maxgroups ; break ;
 	case _SC_USERNAME_MAX:		ii = dataitem_maxusername ; break ;
 	case _SC_GROUPNAME_MAX:		ii = dataitem_maxgroupname ; break ;
 	case _SC_PROJECTNAME_MAX:	ii = dataitem_maxprojectname ; break ;
 	case _SC_NODENAME_MAX:		ii = dataitem_maxnode ; break ;
 	case _SC_HOSTNAME_MAX:		ii = dataitem_maxhost ; break ;
 	case _SC_TZNAME_MAX:		ii = dataitem_maxtzname ; break ;
-	case _SC_NGROUPS_MAX:		ii = dataitem_ngroups ; break ;
 	case _SC_CLK_TCK:		ii = dataitem_clk ; break ;
 	    break ;
 	default:
@@ -432,7 +432,7 @@ int usysconf::getdefacctname() noex {
 /* end method (usysconf::getdefacctname) */
 
 int usysconf::getdefnodename() noex {
-    	struct utsname	ut ;
+    	UTSNAME		ut ;
 	int		rs ;
 	{
 	    rs = (szof(ut.nodename) - 1) ;
