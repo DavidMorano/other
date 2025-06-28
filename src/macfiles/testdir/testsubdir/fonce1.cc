@@ -41,7 +41,7 @@
 module ;
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<sys/stat.h>
+#include	<sys/stat.h>		/* |dev_t| + |ino_t| */
 #include	<unistd.h>
 #include	<fcntl.h>
 #include	<cstddef>		/* |nullptr_t| */

@@ -619,11 +619,11 @@ ulong		trunclen ;
 		fd = rs ;
 
 	} else
-		rs = fperm64(fd,-1,-1,NULL,W_OK) ;
+		rs = permf64(fd,-1,-1,NULL,W_OK) ;
 
 #if	CF_DEBUG
 	if (pip->debuglevel >= 3)
-	    debugprintf("process: u_open()/fperm() rs=%d\n",rs) ;
+	    debugprintf("process: u_open()/permf() rs=%d\n",rs) ;
 #endif
 
 	if (rs < 0)
