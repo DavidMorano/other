@@ -328,6 +328,11 @@ argmgr.o:		argmgr.dir
 argmgr.dir:
 	makesubdir $@
 
+# PERMX
+permx.o:		permx.dir
+permx.dir:
+	makesubdir $@
+
 # Flat Objects
 storebuf.o:		storebuf.cc storebuf.h
 strmgr.o:		strmgr.cc strmgr.h

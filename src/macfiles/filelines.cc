@@ -124,7 +124,7 @@ static int liner(int fd,csize ms) noex {
 	cint		mf = MAP_SHARED ;
 	int		rs ;
 	int		rs1 ;
-	int		lines = 0 ;
+	int		lines = 0 ; /* return-value */
 	cnullptr	np{} ;
 	if (void *md ; (rs = u_mmapbegin(np,ms,mp,mf,fd,0z,&md)) >= 0) {
 	    cint	cmd = MADV_SEQUENTIAL ;

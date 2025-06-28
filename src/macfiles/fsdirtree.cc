@@ -246,7 +246,7 @@ cint	fsdirtreems::uniqdir		= (1 << fsdirtreeo_uniqdir) ;
 cint	fsdirtreems::igndotfile		= (1 << fsdirtreeo_igndotfile) ;
 cint	fsdirtreems::igndotdir		= (1 << fsdirtreeo_igndotdir) ;
 
-constexpr fsdirtreems	fsdirtreem ;	/* FSDIRTRRE mask */
+constexpr fsdirtreems	fsdirtreem ;	/* FSDIRTREE mask */
 
 
 /* exported subroutines */
@@ -375,7 +375,7 @@ int fsdirtree_close(fsdirtree *op) noex {
                 op->lbuf = nullptr ;
                 op->llen = 0 ;
             }
-            {
+            if (op->dqp) {
                 rs1 = fifostr_finish(op->dqp) ;
                 if (rs >= 0) rs = rs1 ;
             }
@@ -666,9 +666,12 @@ static int fsdirtree_dirhave(fsdirtree *op,dev_t d,ui ino,dirid **rpp) noex {
 /* end subroutine (fsdirtree_dirhave) */
 
 static int dirid_start(dirid *dip,dev_t dev,ino_t ino) noex {
-	int		rs = SR_OK ;
-	dip->dev = dev ;
-	dip->ino = ino ;
+	int		rs = SR_FAULT ;
+	if (dip) {
+	    rs = SR_OK ;
+	    dip->dev = dev ;
+	    dip->ino = ino ;
+	}
 	return rs ;
 }
 /* end subroutine (dirid_start) */

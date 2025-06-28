@@ -1,5 +1,5 @@
 template<typename ... Args>
-static int argmgr_ctor(argmgr *op,Args ... args) noex {
+static int issue_ctor(issue *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) {
 	    cnullptr	np{} ;
@@ -8,26 +8,24 @@ static int argmgr_ctor(argmgr *op,Args ... args) noex {
 	} /* end if (non-null) */
 	return rs ;
 }
-/* end subroutine (argmgr_ctor) */
+/* end subroutine (issue_ctor) */
 
-static int argmgr_dtor(argmgr *op) noex {
+static int issue_dtor(issue *op) noex {
 	int		rs = SR_FAULT ;
 	if (op) {
 	    rs = SR_OK ;
 	} /* end if (non-null) */
 	return rs ;
 }
-/* end subroutine (argmgr_dtor) */
+/* end subroutine (issue_dtor) */
 
 template<typename ... Args>
-static inline int argmgr_magic(argmgr *op,Args ... args) noex {
+static inline int issue_magic(issue *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) {
-	    rs = (op->magic == ARGMGR_MAGIC) ? SR_OK : SR_NOTOPEN ;
+	    rs = (op->magic == IS_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
 }
-/* end subroutine (argmgr_magic) */
-
-
+/* end subroutine (issue_magic) */
 
