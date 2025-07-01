@@ -1,5 +1,5 @@
 template<typename ... Args>
-static int motd_ctor(motd *op,Args ... args) noex {
+static int statmsg_ctor(statmsg *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) {
 	    cnullptr	np{} ;
@@ -8,24 +8,24 @@ static int motd_ctor(motd *op,Args ... args) noex {
 	} /* end if (non-null) */
 	return rs ;
 }
-/* end subroutine (motd_ctor) */
+/* end subroutine (statmsg_ctor) */
 
-static int motd_dtor(motd *op) noex {
+static int statmsg_dtor(statmsg *op) noex {
 	int		rs = SR_FAULT ;
 	if (op) {
 	    rs = SR_OK ;
 	} /* end if (non-null) */
 	return rs ;
 }
-/* end subroutine (motd_dtor) */
+/* end subroutine (statmsg_dtor) */
 
 template<typename ... Args>
-static inline int motd_magic(motd *op,Args ... args) noex {
+static inline int statmsg_magic(statmsg *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) {
-	    rs = (op->magic == MOTD_MAGIC) ? SR_OK : SR_NOTOPEN ;
+	    rs = (op->magic == STATMSG_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
 }
-/* end subroutine (motd_magic) */
+/* end subroutine (statmsg_magic) */
 
