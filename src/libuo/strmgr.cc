@@ -68,7 +68,7 @@ int strmgr_start(strmgr *op,char *dbuf,int dlen) noex {
 	int		rs = SR_FAULT ;
 	if (op && dbuf) {
 	    rs = SR_OK ;
-	    if (dlen < 0) dlen = xstrlen(dbuf) ;
+	    if (dlen < 0) dlen = lenstr(dbuf) ;
 	    op->dp = dbuf ;
 	    op->dlen = dlen ;
 	    op->dl = 0 ;

@@ -84,7 +84,7 @@
 
 #include	"ucinetconv.h"
 
-import libutil ;			/* |xstrlen(3u)| */
+import libutil ;			/* |lenstr(3u)| */
 
 /* local defines */
 
@@ -161,7 +161,7 @@ int uc_inetntop(char *rbuf,int rlen,int af,cvoid *binaddr) noex {
 	    rs = SR_INVALID ;
 	    if ((af >= 0) && (rlen > 0)) {
 	        if (cc *rp ; (rp = inet_ntop(af,binaddr,rbuf,rlen)) != np) {
-		    rs = xstrlen(rbuf) ;
+		    rs = lenstr(rbuf) ;
 		} else {
 		    rs = (- errno) ;
 		}

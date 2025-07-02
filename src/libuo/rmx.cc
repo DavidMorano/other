@@ -110,7 +110,7 @@ constexpr cpcchar	exts[] = {
 /* exported subroutines */
 
 int rmeol(cchar *sp,int sl) noex {
-	if (sl < 0) sl = xstrlen(sp) ;
+	if (sl < 0) sl = lenstr(sp) ;
 	while (sl && iseol(sp[sl - 1])) {
 	    sl -= 1 ;
 	}
@@ -119,7 +119,7 @@ int rmeol(cchar *sp,int sl) noex {
 /* end subroutine (rmeol) */
 
 int rmochr(cchar *sp,int sl,int ch) noex {
-	if (sl < 0) sl = xstrlen(sp) ;
+	if (sl < 0) sl = lenstr(sp) ;
 	if (cchar *tp ; (tp = strnochr(sp,sl,ch)) != nullptr) {
 	    sl = intconv(tp - sp) ;
 	} /* end if */
@@ -128,7 +128,7 @@ int rmochr(cchar *sp,int sl,int ch) noex {
 /* end subroutine (rmochr) */
 
 int rmrchr(cchar *sp,int sl,int ch) noex {
-	if (sl < 0) sl = xstrlen(sp) ;
+	if (sl < 0) sl = lenstr(sp) ;
 	if (cchar *tp ; (tp = strnrchr(sp,sl,ch)) != nullptr) {
 	    sl = intconv(tp - sp) ;
 	} /* end if */
@@ -137,7 +137,7 @@ int rmrchr(cchar *sp,int sl,int ch) noex {
 /* end subroutine (rmrchr) */
 
 int rmext(cchar *sp,int sl) noex {
-	if (sl < 0) sl = xstrlen(sp) ;
+	if (sl < 0) sl = lenstr(sp) ;
 	if (cchar *tp ; (tp = strnrchr(sp,sl,'.')) != nullptr) {
 	    cint	el = intconv((sp + sl) - (tp + 1)) ;
 	    cchar	*ep = (tp + 1) ;
@@ -150,7 +150,7 @@ int rmext(cchar *sp,int sl) noex {
 /* end subroutine (rmext) */
 
 int rmtrailchr(cchar *sp,int sl,int sch) noex {
-	if (sl < 0) sl = xstrlen(sp) ;
+	if (sl < 0) sl = lenstr(sp) ;
 	while ((sl > 1) && (sp[sl - 1] == char(sch))) {
 	   sl -= 1 ;
 	}
@@ -160,7 +160,7 @@ int rmtrailchr(cchar *sp,int sl,int sch) noex {
 
 int rmcomment(cchar *lp,int ll) noex {
 	int		rl ;
-	if (ll < 0) ll = xstrlen(lp) ;
+	if (ll < 0) ll = lenstr(lp) ;
 	if ((rl = rmochr(lp,ll,'#')) == ll) {
 	   rl = rmeol(lp,ll) ;
 	}

@@ -162,7 +162,7 @@ int argmgr::argopt(cchar **rpp) noex {
 		    debprintf(__func__,"kp=>%s<\n",ccp(sk)) ;
 		    }
 		    if (valp) {
-		        cint vall= xstrlen(valp) ;
+		        cint vall= lenstr(valp) ;
 			if_constexpr (f_debug) {
 		        strnul sv (valp,vall) ;
 		        debprintf(__func__,"vp=>%s<\n",ccp(sv)) ;
@@ -189,7 +189,7 @@ int argmgr::iargopt(cchar *ap,int ch,cchar **rpp) noex {
 		    rs = intconv(tp - (ap + 1)) ;
 		} else {
 		    valp = nullptr ;
-		    rs = xstrlen(ap + 1) ;
+		    rs = lenstr(ap + 1) ;
 		}
 	    } /* end if (amap,set) */
 	} else if (isdigitlatin(ch)) {
@@ -209,7 +209,7 @@ int argmgr::argoptlong(cchar **rpp) noex {
 			    if ((rs = amap.set[ai]) >= 0) {
 			        cntpos -= 1 ;
 		                if (rpp) *rpp = (ap + 2) ;
-		                rs = xstrlen(ap + 2) ;
+		                rs = lenstr(ap + 2) ;
 			    }
 		        } else {
 		            argoptdone = true ;
@@ -239,7 +239,7 @@ int argmgr::argval(cchar **rpp) noex {
 	        if (valp) {
 		    rs = SR_OK ;
 		    rp = valp ;
-		    al = xstrlen(valp) ;
+		    al = lenstr(valp) ;
 		    valp = nullptr ;
 	        } else {
 	            if ((rs = get((ai + 1),&rp)) > 0) {
@@ -247,7 +247,7 @@ int argmgr::argval(cchar **rpp) noex {
 		        if (rp) {
 			    if ((rs = amap.set[ai]) >= 0) {
 			        cntpos -= 1 ;
-		                al = xstrlen(rp) ;
+		                al = lenstr(rp) ;
 			    }
 		        } else {
 			    rs = SR_INVALID ;
