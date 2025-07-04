@@ -1,5 +1,5 @@
 template<typename ... Args>
-static int statmsg_ctor(statmsg *op,Args ... args) noex {
+static int vsetstr_ctor(vsetstr *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) {
 	    cnullptr	np{} ;
@@ -8,24 +8,24 @@ static int statmsg_ctor(statmsg *op,Args ... args) noex {
 	} /* end if (non-null) */
 	return rs ;
 }
-/* end subroutine (statmsg_ctor) */
+/* end subroutine (vsetstr_ctor) */
 
-static int statmsg_dtor(statmsg *op) noex {
+static int vsetstr_dtor(vsetstr *op) noex {
 	int		rs = SR_FAULT ;
 	if (op) {
 	    rs = SR_OK ;
 	} /* end if (non-null) */
 	return rs ;
 }
-/* end subroutine (statmsg_dtor) */
+/* end subroutine (vsetstr_dtor) */
 
 template<typename ... Args>
-static inline int statmsg_magic(statmsg *op,Args ... args) noex {
+static inline int vsetstr_magic(vsetstr *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) {
-	    rs = (op->magic == STATMSG_MAGIC) ? SR_OK : SR_NOTOPEN ;
+	    rs = (op->magic == VSETSTR_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
 }
-/* end subroutine (statmsg_magic) */
+/* end subroutine (vsetstr_magic) */
 
