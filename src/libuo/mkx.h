@@ -49,6 +49,7 @@
 #include	<mkpath.h>
 #include	<mkaddr.h>
 #include	<mkpr.h>
+#include	<mkxdisp.h>
 
 
 EXTERNC_begin
