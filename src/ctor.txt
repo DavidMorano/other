@@ -1,5 +1,5 @@
 template<typename ... Args>
-static int vsetstr_ctor(vsetstr *op,Args ... args) noex {
+static int conslog_ctor(conslog *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) {
 	    cnullptr	np{} ;
@@ -8,24 +8,24 @@ static int vsetstr_ctor(vsetstr *op,Args ... args) noex {
 	} /* end if (non-null) */
 	return rs ;
 }
-/* end subroutine (vsetstr_ctor) */
+/* end subroutine (conslog_ctor) */
 
-static int vsetstr_dtor(vsetstr *op) noex {
+static int conslog_dtor(conslog *op) noex {
 	int		rs = SR_FAULT ;
 	if (op) {
 	    rs = SR_OK ;
 	} /* end if (non-null) */
 	return rs ;
 }
-/* end subroutine (vsetstr_dtor) */
+/* end subroutine (conslog_dtor) */
 
 template<typename ... Args>
-static inline int vsetstr_magic(vsetstr *op,Args ... args) noex {
+static inline int conslog_magic(conslog *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) {
-	    rs = (op->magic == VSETSTR_MAGIC) ? SR_OK : SR_NOTOPEN ;
+	    rs = (op->magic == CONSLOG_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
 }
-/* end subroutine (vsetstr_magic) */
+/* end subroutine (conslog_magic) */
 
