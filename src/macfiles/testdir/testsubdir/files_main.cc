@@ -297,9 +297,9 @@ constexpr MAPEX		mapexs[] = {
 static cint		maxpathlen = ulibval.maxpathlen ;
 static cint		maxlinelen = ulibval.maxline ;
 
-constexpr cchar		version[] = "1" ;
-constexpr int		nents = NENTS ;
-constexpr bool		f_debug = CF_DEBUG ;
+constexpr cchar		version[]	= "1" ;
+constexpr int		nents		= NENTS ;
+constexpr bool		f_debug		= CF_DEBUG ;
 
 
 /* exported variables */
