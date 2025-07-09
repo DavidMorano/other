@@ -36,7 +36,8 @@ DEFS=
 
 INCS=
 
-MODS += libutil.ccm argmgr.ccm strfilter.ccm sif.ccm
+MODS += libutil.ccm argmgr.ccm strfilter.ccm sif.ccm 
+MODS += tardir.ccm
 
 LIBS= -lu
 
@@ -68,7 +69,7 @@ OBJ06_LUO= nleadx.o matxstr.o char.o
 OBJ07_LUO= strnxcmp.o
 
 OBJ08_LUO= strcpyxc.o
-OBJ09_LUO= readln.o
+OBJ09_LUO= readln.o tardir.o
 OBJ10_LUO= getourenv.o dictdiff.o
 OBJ11_LUO= inetconv.o inetaddrx.o 
 
@@ -331,6 +332,11 @@ argmgr.dir:
 # PERMX
 permx.o:		permx.dir
 permx.dir:
+	makesubdir $@
+
+# TARDIR
+tardir.o:		tardir.dir
+tardir.dir:
 	makesubdir $@
 
 # Flat Objects
