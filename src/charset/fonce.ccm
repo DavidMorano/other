@@ -26,8 +26,8 @@
 	fonce
 
 	Description:
-	This object implements a set with a key consisting of
-	device and inode numbers.
+	This object implements a (un-ordered) set with a key
+	consisting of device and inode numbers.
 
 	Symopsis:
 	int fonce_start(int n = 0) noex
