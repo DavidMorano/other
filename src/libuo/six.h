@@ -29,6 +29,7 @@
 #include	<sifext.h>
 #include	<siwht.h>
 #include	<sixbrk.h>
+#include	<sisub.h>
 
 
 EXTERNC_begin
@@ -57,10 +58,6 @@ extern int sispan(cchar *,int,cchar *) noex ;
 extern int sicite(cchar *,int,cchar *,int) noex ;
 extern int siterm(cchar *,int,cchar *) noex ;
 
-extern int sibasesub(cchar *,int,cchar *) noex ;
-extern int sicasesub(cchar *,int,cchar *) noex ;
-extern int sifoldsub(cchar *,int,cchar *) noex ;
-
 static inline int sichr(cchar *sp,int sl,int sch) noex {
 	return siochr(sp,sl,sch) ;
 }
@@ -69,9 +66,6 @@ static inline int sibrk(cchar *sp,int sl,cchar *ss) noex {
 }
 static inline int sibreak(cchar *sp,int sl,cchar *ss) noex {
 	return sibrk(sp,sl,ss) ;
-}
-static inline int sisub(cchar *sp,int sl,cchar *ss) noex {
-	return sibasesub(sp,sl,ss) ;
 }
 
 EXTERNC_end

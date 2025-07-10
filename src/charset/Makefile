@@ -35,7 +35,7 @@ DEFS=
 
 INCS=
 
-MODS += fonce.ccm ulibvals.ccm
+MODS +=
 
 LIBS= -luo -lu
 
@@ -58,7 +58,7 @@ LDFLAGS		?= $(MAKELDFLAGS)
 
 OBJ_MACFU= charset_main.o
 
-DEPS_MAIN += fonce.o ulibvals.o
+DEPS_MAIN +=
 
 
 .SUFFIXES:		.hh .ii .ccm
