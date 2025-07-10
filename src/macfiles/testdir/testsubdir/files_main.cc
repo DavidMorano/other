@@ -67,7 +67,7 @@
 #include	<exitcodes.h>
 #include	<localmisc.h>
 
-import libutil ;			/* |xstrlen(3u)| */
+import libutil ;			/* |lenstr(3u)| */
 import ulibvals ;
 import strfilter ;
 import argmgr ;
@@ -173,7 +173,7 @@ namespace {
 	int		debuglevel = 0 ;
 	int		llen = 0 ;
 	int		lines = 0 ;
-	ushort		modes = 0 ;
+	ushort		modes = 0 ;	/* file-modes (matched) */
 	bool		fexit = false ;
 	proginfo(int c,mainv a,mainv e) noex : argc(c), argv(a), envv(e) { 
 	    start	(this,proginfomem_start) ;
@@ -706,7 +706,7 @@ int proginfo::procdir(custat *sbp,cchar *sp,int sl) noex {
 	(void) sbp ;
 	if (sl && sp[0] && (sp[0] != '.')) {
     	    fs::directory_options dopt = skip_permission_denied ;
-	    if (sl < 0) sl = xstrlen(sp) ;
+	    if (sl < 0) sl = lenstr(sp) ;
 	    try {
 	        fs::path p(sp,(sp + sl),native_format) ;
 		if (fl.followall) {
@@ -723,9 +723,9 @@ int proginfo::procdir(custat *sbp,cchar *sp,int sl) noex {
 				rs = procent(&sb,fn,-1) ;
 			        c = rs ;
 			    }
-			}
+			} /* end block */
 		    } /* end for */
-		}
+		} /* end block */
 	    } catch (...) {
 		rs = SR_NOMEM ;
 	    }
@@ -734,7 +734,7 @@ int proginfo::procdir(custat *sbp,cchar *sp,int sl) noex {
 } /* end method (proginfo::procdir) */
 
 int proginfo::procent(custat *sbp,cchar *sp,int sl) noex {
-	if (sl < 0) sl = xstrlen(sp) ;
+	if (sl < 0) sl = lenstr(sp) ;
 	return procfile(sbp,sp,sl) ;
 } /* end method (proginfo::procent) */
 
@@ -770,7 +770,7 @@ int proginfo::procfile_list(custat *,cchar *sp,int sl) noex {
 	int		rs = SR_OK ;
 	int		c = 0 ;
 	if (sp) {
-	    strnul	fn(sp,sl) ;
+	    strview fn(sp,sl) ;
 	    cout << fn << eol ;
 	    c += 1 ;
 	}
@@ -915,13 +915,13 @@ int proginfo::modeadd(cchar *sp,int sl) noex {
 	    debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
 	}
 	return (rs >= 0) ? c : rs ;
-} /* end method (proginfo::modemode) */
+} /* end method (proginfo::modeadd) */
 
 int proginfo::modehave(custat *sbp) noex {
     	int		rs = SR_OK ;
 	int		f = true ;
 	if_constexpr (f_debug) {
-	    debprintf(__func__,"ent fmodes=%u modes=%u\n",fl.modes,modes) ;
+	    debprintf(__func__,"ent fmodes=%u modes=%04x\n",fl.modes,modes) ;
 	}
 	if (fl.modes) {
     	    if (cint ft = filetype(sbp->st_mode) ; ft) {
