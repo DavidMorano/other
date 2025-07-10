@@ -28,7 +28,7 @@
 
 *******************************************************************************/
 
-#include	<envstandards.h>	/* must be ordered fist to configure */
+#include	<envstandards.h>	/* must be ordered first to configure */
 #include	<sys/types.h>
 #include	<sys/stat.h>
 #include	<unistd.h>
