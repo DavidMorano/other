@@ -53,7 +53,7 @@
 
 *******************************************************************************/
 
-#include	<envstandards.h>	/* must be ordered fist to configure */
+#include	<envstandards.h>	/* must be ordered first to configure */
 #include	<sys/types.h>
 #include	<sys/param.h>
 #include	<unistd.h>		/* |getusershell(3c)| */
