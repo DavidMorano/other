@@ -196,12 +196,13 @@ namespace {
 	int argsuf(argmgr *) noex ;
 	int argmode(argmgr *) noex ;
 	int argtardir(argmgr *) noex ;
+	int argstat(cchar *,ustat *) noex ;
 	int preamble() noex ;
-	int process(argmgr *) noex ;
+	int argprocer(argmgr *) noex ;
 	int process_pmbegin() noex ;
 	int process_pmend() noex ;
 	int readin() noex ;
-	int procname(cchar *,int = -1) noex ;
+	int argprocname(cchar *,int = -1) noex ;
 	int procfile_list(custat *,cchar *,int = -1) noex ;
 	int procfile_lc(custat *,cchar *,int = -1) noex ;
 	int procdir(custat *,cchar *,int = -1) noex ;
@@ -439,9 +440,9 @@ int proginfo::argproc() noex {
 	if (argmgr am(argc,argv) ; (rs = am.start) >= 0) {
 	    if ((rs = args(&am)) >= 0) {
 		if ((rs = preamble()) > 0) {
-		    rs = process(&am) ;
+		    rs = argprocer(&am) ;
 		    c = rs ;
-	        } /* end if (preamble */
+	        } /* end if (preamble) */
 	    } /* end if (ok) */
 	    rs1 = am.finish ;
 	    if (rs >= 0) rs = rs1 ;
@@ -571,6 +572,16 @@ int proginfo::argtardir(argmgr *amp) noex {
 	return rs ;
 } /* end method (proginfo::argtardir) */
 
+int proginfo::argstat(cchar *fn,ustat *sbp) noex {
+    	int		rs ;
+	if (fl.followarg) {
+	    rs = u_stat(fn,sbp) ;
+	} else {
+	    rs = u_lstat(fn,sbp) ;
+	}
+	return rs ;
+} /* end method (proginfo::argstat) */
+
 int proginfo::preamble() noex {
     	int		rs = SR_OK ;
 	int		fcont = true ;
@@ -581,7 +592,7 @@ int proginfo::preamble() noex {
 	return (rs >= 0) ? fcont : rs ;
 } /* end method (proginfo::preamble) */
 
-int proginfo::process(argmgr *amp) noex {
+int proginfo::argprocer(argmgr *amp) noex {
 	int		rs = SR_OK ;
 	int		rs1 ;
 	int		c = 0 ;
@@ -596,7 +607,7 @@ int proginfo::process(argmgr *amp) noex {
 		                    c += rs ;
 			        }
 		            } else {
-	                        rs = procname(fn) ;
+	                        rs = argprocname(fn) ;
 		                c += rs ;
 		            }
 	                }
@@ -609,7 +620,7 @@ int proginfo::process(argmgr *amp) noex {
 	} /* end if (have argument) */
 	return (rs >= 0) ? c : rs ;
 }
-/* end subroutine (proginfo::process) */
+/* end subroutine (proginfo::argprocer) */
 
 int proginfo::process_pmbegin() noex {
 	int		rs = SR_OK ;
@@ -659,7 +670,7 @@ int proginfo::readin() noex {
 	    if (char *pbuf ; (pbuf = new(nothrow) char[plen + 1]) != np) {
 	        while ((rs = readln(&cin,pbuf,plen)) > 0) {
 		    if (cint pl = rmeol(pbuf,rs) ; pl > 0) {
-		        rs = procname(pbuf,pl) ;
+		        rs = argprocname(pbuf,pl) ;
 			c += rs ;
 		    }
 		    if (rs < 0) break ;
@@ -671,11 +682,11 @@ int proginfo::readin() noex {
 }
 /* end method (proginfo::readin) */
 
-int proginfo::procname(cchar *sp,int sl) noex {
+int proginfo::argprocname(cchar *sp,int sl) noex {
 	strnul		s(sp,sl) ;
 	int		rs ;
 	int		c = 0 ;
-	if (ustat sb ; (rs = u_lstat(s,&sb)) >= 0) {
+	if (ustat sb ; (rs = argstat(s,&sb)) >= 0) {
 	    switch (cint ft = filetype(sb.st_mode) ; ft) {
 	    case filetype_dir:
 		rs = procdir(&sb,sp,sl) ;
@@ -696,7 +707,7 @@ int proginfo::procname(cchar *sp,int sl) noex {
 	    rs = SR_OK ;
 	}
 	return (rs >= 0) ? c : rs ;
-} /* end method (proginfo::procname) */
+} /* end method (proginfo::argprocname) */
 
 int proginfo::procdir(custat *sbp,cchar *sp,int sl) noex {
     	using enum	fs::path::format ;
@@ -708,11 +719,11 @@ int proginfo::procdir(custat *sbp,cchar *sp,int sl) noex {
     	    fs::directory_options dopt = skip_permission_denied ;
 	    if (sl < 0) sl = lenstr(sp) ;
 	    try {
+		std::error_code ec ;
 	        fs::path p(sp,(sp + sl),native_format) ;
 		if (fl.followall) {
     	            dopt |= follow_directory_symlink ;
 		}
-		std::error_code ec ;
 		{
 		    rdi it(p,dopt,ec) ;
 		    for (cauto &de : it) {
@@ -770,8 +781,8 @@ int proginfo::procfile_list(custat *,cchar *sp,int sl) noex {
 	int		rs = SR_OK ;
 	int		c = 0 ;
 	if (sp) {
-	    strview fn(sp,sl) ;
-	    cout << fn << eol ;
+	    strnul fn(sp,sl) ;
+	    cout << ccp(fn) << eol ;
 	    c += 1 ;
 	}
 	return (rs >= 0) ? c : rs ;
@@ -920,16 +931,9 @@ int proginfo::modeadd(cchar *sp,int sl) noex {
 int proginfo::modehave(custat *sbp) noex {
     	int		rs = SR_OK ;
 	int		f = true ;
-	if_constexpr (f_debug) {
-	    debprintf(__func__,"ent fmodes=%u modes=%04x\n",fl.modes,modes) ;
-	}
 	if (fl.modes) {
-    	    if (cint ft = filetype(sbp->st_mode) ; ft) {
-	        f = bitop_tst(modes,ft) ;
-	    }
-	}
-	if_constexpr (f_debug) {
-	    debprintf(__func__,"ret rs=%d f=%d\n",rs,f) ;
+    	    cint ft = filetype(sbp->st_mode) ;
+	    f = bitop_tst(modes,ft) ;
 	}
     	return (rs >= 0) ? f : rs ;
 } /* end method (proginfo::modehave) */
