@@ -35,7 +35,7 @@ DEFS=
 
 INCS=
 
-MODS += argmgr.ccm
+MODS += argmgr.ccm filerec.ccm
 
 LIBS= -luo -lu
 
@@ -57,7 +57,8 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-DEPS_MAIN += argmgr.o files_tardir.o
+DEPS_MAIN += files_tardir.o
+DEPS_MAIN += argmgr.o filerec.o
 
 OBJ_FILES += files_main.o $(DEPS_MAIN)
 
