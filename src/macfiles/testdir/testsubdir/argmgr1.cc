@@ -106,9 +106,9 @@ static inline int argmgr_magic(argmgr *op,Args ... args) noex {
 
 int argmgr::istart() noex {
     	int		rs = SR_FAULT ;
-	if (argv) {
+	if (argv) ylikely {
 	    rs = SR_INVALID ;
-	    if (argc >= 0) {
+	    if (argc >= 0) ylikely {
 	        if ((rs = amap.start) >= 0) {
 	            magic = ARGMGR_MAGIC ;
 	        }
@@ -120,7 +120,7 @@ int argmgr::istart() noex {
 int argmgr::ifinish() noex {
     	int		rs ;
 	int		rs1 ;
-	if ((rs = argmgr_magic(this)) >= 0) {
+	if ((rs = argmgr_magic(this)) >= 0) ylikely {
 	    {
 	        rs1 = amap.finish ;
 	        if (rs >= 0) rs = rs1 ;
@@ -136,7 +136,7 @@ int argmgr::ifinish() noex {
 
 int argmgr::iarg() noex {
     	int		rs ;
-	if ((rs = argmgr_magic(this)) >= 0) {
+	if ((rs = argmgr_magic(this)) >= 0) ylikely {
 	    rs = int(++ai < argc) ;
 	} /* end if (magic) */
 	return rs ;
@@ -144,11 +144,11 @@ int argmgr::iarg() noex {
 
 int argmgr::argopt(cchar **rpp) noex {
     	int		rs ;
-	if ((rs = argmgr_magic(this)) >= 0) {
+	if ((rs = argmgr_magic(this)) >= 0) ylikely {
 	    if_constexpr (f_debug) {
 	    debprintf(__func__,"ent ai=%d c=%d\n",ai,cntpos) ;
 	    }
-	    if (ai < argc) {
+	    if (ai < argc) ylikely {
 	        cchar	*ap = argv[ai] ;
 	        if (isplusminus(ap[0])) {
 		    fl.plus = (ap[0] == '+') ;
@@ -156,7 +156,7 @@ int argmgr::argopt(cchar **rpp) noex {
 		        rs = iargopt(ap,ch,rpp) ;
 		    } /* end if (have option) */
 	        }
-	        if (rs > 0) {
+	        if (rs > 0) ylikely {
 		    if_constexpr (f_debug) {
 		    strnul sk((ap+1),rs) ;
 		    debprintf(__func__,"kp=>%s<\n",ccp(sk)) ;
@@ -180,7 +180,7 @@ int argmgr::argopt(cchar **rpp) noex {
 int argmgr::iargopt(cchar *ap,int ch,cchar **rpp) noex {
     	cnullptr	np{} ;
     	int		rs = SR_OK ;
-	if (isalphalatin(ch)) {
+	if (isalphalatin(ch)) ylikely {
 	    if ((rs = amap.set[ai]) >= 0) {
 		if (rpp) *rpp = (ap + 1) ;
 		cntpos -= 1 ;
@@ -200,12 +200,12 @@ int argmgr::iargopt(cchar *ap,int ch,cchar **rpp) noex {
 
 int argmgr::argoptlong(cchar **rpp) noex {
     	int		rs ;
-	if ((rs = argmgr_magic(this)) >= 0) {
-	    if (ai < argc) {
+	if ((rs = argmgr_magic(this)) >= 0) ylikely {
+	    if (ai < argc) ylikely {
 	        cchar	*ap = argv[ai] ;
 	        if ((ap[0] == '-') && (ap[1] == '-')) {
 		    if (cint ch = mkchar(ap[2]) ; ch) {
-		        if (isalphalatin(ch)) {
+		        if (isalphalatin(ch)) ylikely {
 			    if ((rs = amap.set[ai]) >= 0) {
 			        cntpos -= 1 ;
 		                if (rpp) *rpp = (ap + 2) ;
@@ -220,7 +220,7 @@ int argmgr::argoptlong(cchar **rpp) noex {
 		            aie = ai ;
 			    cntpos -= 1 ;
 		    }
-	        }
+	        } /* end if (ch) */
 	    } /* end if (valid) */
 	} /* end if (magic) */
 	return rs ;
@@ -232,9 +232,9 @@ int argmgr::argval(cchar **rpp) noex {
 	if_constexpr (f_debug) {
 	debprintf(__func__,"ent\n") ;
 	}
-	if ((rs =  argmgr_magic(this)) >= 0) {
+	if ((rs =  argmgr_magic(this)) >= 0) ylikely {
     	    rs = SR_INVALID ;
-	    if (ai < argc) {
+	    if (ai < argc) ylikely {
 	        cchar *rp = nullptr ;
 	        if (valp) {
 		    rs = SR_OK ;
@@ -296,7 +296,7 @@ int argmgr::get(int i,ccharpp rpp) noex {
 		}
 	    } /* end if */
 	} /* end while */
-	if (rs >= 0) {
+	if (rs >= 0) ylikely {
 	    if (rpp) *rpp = (f) ? argv[i] : nullptr ;
 	}
 	if_constexpr (f_debug) {
@@ -308,7 +308,7 @@ int argmgr::get(int i,ccharpp rpp) noex {
 int argmgr::present(int i) noex {
     	int		rs = SR_OK ;
 	int		f = false ; /* return-value */
-	if ((rs =  argmgr_magic(this)) >= 0) {
+	if ((rs =  argmgr_magic(this)) >= 0) ylikely {
 	    if ((i > 0) && (i < argc)) {
 	        if (aie > 0) {
 		    if (i < aie) {
@@ -340,7 +340,7 @@ int argmgr::ipositional() noex {
 
 int argmgr::icount() noex {
     	int		rs ;
-	if ((rs = argmgr_magic(this)) >= 0) {
+	if ((rs = argmgr_magic(this)) >= 0) ylikely {
     	    rs = cntpos ;
 	} /* end if (magic) */
     	return rs ;
@@ -372,7 +372,7 @@ void argmgr::dtor() noex {
 
 argmgr::operator int () noex {
     	int		rs ;
-	if ((rs = argmgr_magic(this)) >= 0) {
+	if ((rs = argmgr_magic(this)) >= 0) ylikely {
 	    rs = argc ;
 	}
 	return rs ;
@@ -380,7 +380,7 @@ argmgr::operator int () noex {
 
 argmgr_co::operator int () noex {
 	int		rs = SR_BUGCHECK ;
-	if (op) {
+	if (op) ylikely {
 	    switch (w) {
 	    case argmgrmem_start:
 	        rs = op->istart() ;
