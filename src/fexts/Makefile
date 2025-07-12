@@ -37,7 +37,7 @@ INCS +=
 
 MODS +=
 
-LIBS += -lmacuser -lu
+LIBS += -lu -lu
 
 
 INCDIRS +=
@@ -46,7 +46,6 @@ LIBDIRS += -L$(LIBDIR)
 
 
 RUNINFO= -rpath $(RUNDIR)
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -57,7 +56,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_CONTERM= main.o
+OBJ_CONTERM= fexts_main.o
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -96,16 +95,8 @@ $(T).x:			$(OBJ_CONTERM)
 $(T).o:			$(OBJ_CONTERM)
 	$(LD) $(LDFLAGS) -r -o $@ $(OBJ_CONTERM)
 
-$(T).a:			$(OBJ_CONTERM)
-	$(AR) $(ARFLAGS) -rc $@ $?
-
 $(T).nm:		$(T).o
 	$(NM) $(NMFLAGS) $(T).o > $(T).nm
-
-$(T).order:		$(OBJ_CONTERM) $(T).a
-	$(LORDER) $(T).a | $(TSORT) > $(T).order
-	$(RM) $(T).a
-	while read O ; do $(AR) $(ARFLAGS) -cr $(T).a $${O} ; done < $(T).order
 
 again:
 	rm -f $(ALL)
@@ -117,6 +108,6 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc
+main.o:			fexts_main.cc
 
 
