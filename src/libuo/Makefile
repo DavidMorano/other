@@ -339,6 +339,11 @@ tardir.o:		tardir.dir
 tardir.dir:
 	makesubdir $@
 
+# DEBUG
+debug.o:		debug.dir
+debug.dir:
+	makesubdir $@
+
 # Flat Objects
 storebuf.o:		storebuf.cc storebuf.h
 strmgr.o:		strmgr.cc strmgr.h
@@ -358,8 +363,5 @@ dictdiff.o:		dictdiff.cc dictdiff.h
 inet4int.o:		inet4int.cc inet4int.h
 readln.o:		readln.cc readln.hh
 getourenv.o:		getourenv.cc getourenv.h
-
-# MODULES (sinfles)
-debug.o:		debug.ccm
 
 
