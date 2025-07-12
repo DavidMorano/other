@@ -99,11 +99,11 @@ typedef fonce::stype::iterator	setiter ;
 int fonce::istart(int n) noex {
 	cnullptr	np{} ;
 	int		rs = SR_INVALID ;
-	if (n >= 0) {
+	if (n >= 0) ylikely {
 	    if (n == 0) n = FONCE_DEFTABLEN ;
 	    try {
 	        rs = SR_NOMEM ;
-	        if ((setp = new(nothrow) stype(n)) != np) {
+	        if ((setp = new(nothrow) stype(n)) != np) ylikely {
 	            rs = SR_OK ;
 	        } /* end if (new-stype) */
 	    } catch (...) {
@@ -115,7 +115,7 @@ int fonce::istart(int n) noex {
 
 int fonce::ifinish() noex {
 	int		rs = SR_NOTOPEN ;
-	if (setp) {
+	if (setp) ylikely {
 	    delete setp ;
 	    setp = nullptr ;
 	    rs = SR_OK ;
@@ -126,9 +126,9 @@ int fonce::ifinish() noex {
 int fonce::checkin(CUSTAT *sbp) noex {
 	int		rs = SR_FAULT ;
 	int		f = false ;
-	if (sbp) {
+	if (sbp) ylikely {
 	    rs = SR_BUGCHECK ;
-	    if (setp) {
+	    if (setp) ylikely {
 	        fonce_devino	k(sbp->st_dev,sbp->st_ino) ;
 		try {
 	            pair<setiter,bool>	ret = setp->insert(k) ;
@@ -144,7 +144,7 @@ int fonce::checkin(CUSTAT *sbp) noex {
 
 int fonce::icount() noex {
 	int		rs = SR_BUGCHECK ;
-	if (setp) {
+	if (setp) ylikely {
 	    csize cnt = setp->size() ;
 	    rs = intconv(cnt) ;
 	} /* end if (non-null) */
@@ -159,7 +159,7 @@ void fonce::dtor() noex {
 
 int fonce_co::operator () (int a) noex {
 	int		rs = SR_BUGCHECK ;
-	if (op) {
+	if (op) ylikely {
 	    switch (w) {
 	    case foncemem_start:
 	        rs = op->istart(a) ;
