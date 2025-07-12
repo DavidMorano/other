@@ -80,7 +80,7 @@ module vecbool ;
 
 int vecbool::resize(int n) noex {
 	int		rs = SR_INVALID ;
-	if (n >= 0) {
+	if (n >= 0) ylikely {
 	    try {
 	        csize nsize = size_t(n) ;
 	        vector<bool>::resize(nsize,false) ;
@@ -116,7 +116,7 @@ void vecbool::dtor() noex {
 
 vecbool_co::operator int () noex {
 	int		rs = SR_BUGCHECK ;
-	if (op) {
+	if (op) ylikely {
 	    switch (w) {
 	    case vecboolmem_start:
 		op->fl.open = true ;
@@ -139,9 +139,9 @@ vecbool_co::operator int () noex {
 
 int vecbool_co::operator [] (int idx) noex {
     	int		rs = SR_BUGCHECK ;
-	if (op) {
+	if (op) ylikely {
 	    rs = SR_INVALID ;
-	    if (idx >= 0) {
+	    if (idx >= 0) ylikely {
 		bool	f = false ;
                 switch (w) {
                 case vecboolmem_set:
