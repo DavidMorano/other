@@ -26,10 +26,11 @@
 #include	<usysdefs.h>
 #include	<usysrets.h>
 
+#include	<siext.h>
 #include	<sifext.h>
+#include	<sisub.h>
 #include	<siwht.h>
 #include	<sixbrk.h>
-#include	<sisub.h>
 
 
 EXTERNC_begin
