@@ -52,8 +52,8 @@
 #include	<getfdfile.h>		/* |FD_STDERR| */
 #include	<varnames.hh>
 #include	<strn.h>
-#include	<sfx.h>			/* |sfext(3uc)| */
-#include	<six.h>			/* |sisub(3uc)| */
+#include	<sfx.h>			/* |sfbasename(3uc)| */
+#include	<six.h>			/* |sisub(3uc)| + |siext(3uc)| */
 #include	<rmx.h>
 #include	<strwcpy.h>
 #include	<strnul.hh>
@@ -837,7 +837,7 @@ int proginfo::procfile_lc(custat *sbp,cchar *sp,int sl) noex {
 	int		rs = SR_OK ;
 	int		rs1 ;
 	int		c = 0 ;
-	if (sbp && sp && sl) {
+	if (sbp && sp && sl) ylikely {
 	    if (S_ISREG(sbp->st_mode)) {
 	        strnul fn(sp,sl) ;
 		c += 1 ;
@@ -890,22 +890,17 @@ int proginfo::sufready() noex {
 } /* end method (proginfo::sufready) */
 
 int proginfo::sufhave(cchar *sp,int sl) noex {
-    	cint		rsn = SR_NOTFOUND ;
     	int		rs = SR_OK ;
 	int		f = true ;
 	if (fl.suffix) {
 	    f = false ;
-	    if (cc *ep ; (rs = sfext(sp,sl,&ep)) > 0) {
-	        if (f_debug && debon) {
-		    strnul sm(ep,rs) ;
-	            debprintf(__func__,"file-suf=>%s<\n",ccp(sm)) ;
-	        }
-	        rs = exts.have(ep,rs) ;
+	    if (int si ; (si = siext(sp,sl)) >= 0) {
+		cint	cl = (sl - si) ;
+		cchar	*cp = (sp + si) ;
+	        rs = exts.have(cp,cl) ;
 		f = rs ;
-	    } else if (rs == rsn) {
-		rs = SR_OK ;
-	    }
-	}
+	    } /* end if (siext) */
+	} /* end if (suffix check) */
 	if_constexpr (f_debug) {
 	    debprintf(__func__,"ret rs=%d f=%u\n",rs,f) ;
 	}
