@@ -25,10 +25,13 @@
 #include	<utypealiases.h>
 #include	<usysdefs.h>
 
+#include	<sfxchr.h>
+#include	<sfxbrk.h>
+#include	<sfxsub.h>
+#include	<sfext.h>
 
 EXTERNC_begin
 
-extern int sfext(cchar *,int,cchar **) noex ;
 extern int sfbasename(cchar *,int,cchar **) noex ;
 extern int sfbaselib(cchar *,int,cchar **) noex ;
 extern int sfbracketval(cchar *,int,cchar **) noex ;
@@ -51,21 +54,21 @@ extern int sfprogname(cchar *,int,cchar **) noex ;
 extern int sfrootname(cchar *,int,cchar **) noex ;
 extern int sfshrink(cchar *,int,cchar **) noex ;
 extern int sfskipwhite(cchar *,int,cchar **) noex ;
-extern int sfsub(cchar *,int,cchar *,cchar **) noex ;
 extern int sfsubstance(cchar *,int,cchar **) noex ;
 extern int sfthing(cchar *,int,cchar *,cchar **) noex ;
 extern int sfwhitedot(cchar *,int,cchar **) noex ;
 extern int sfword(cchar *,int,cchar **) noex ;
 extern int sfsign(cchar *,int,cchar **,bool *) noex ;
 extern int sfcenter(cchar *,int,cchar *,cchar **) noex ;
-extern int sfochr(cchar *,int,int,cchar **) noex ;
-extern int sfrchr(cchar *,int,int,cchar **) noex ;
 
 static inline int sfchr(cchar *sp,int sl,int sch,cchar **rpp) noex {
 	return sfochr(sp,sl,sch,rpp) ;
 }
 static inline int sfbrk(cchar *sp,int sl,cchar *ss,cchar **rpp) noex {
-	return sfnextbrk(sp,sl,ss,rpp) ;
+	return sfobrk(sp,sl,ss,rpp) ;
+}
+static inline int sfsub(cchar *sp,int sl,cchar *ss,cchar **rpp) noex {
+    	return sfosub(sp,sl,ss,rpp) ;
 }
 static inline int nextfield(cchar *sp,int sl,cchar **rpp) noex {
 	return sfnext(sp,sl,rpp) ;
