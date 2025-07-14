@@ -29,6 +29,7 @@
 #include	<sfxbrk.h>
 #include	<sfxsub.h>
 #include	<sfext.h>
+#include	<sfweirdo.h>
 
 EXTERNC_begin
 
