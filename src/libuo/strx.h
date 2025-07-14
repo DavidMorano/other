@@ -20,6 +20,7 @@
 #include	<usysdefs.h>
 
 #include	<strsub.h>
+#include	<strxbrk.h>
 #include	<strxcmp.h>
 #include	<strerrabbr.h>
 #include	<strsigabbr.h>
@@ -30,15 +31,8 @@ EXTERNC_begin
 
 extern int	strwildsub(cchar *,cchar *) noex ;
 
-extern char	*strobrk(cchar *,cchar *) noex ;
-extern char	*strrbrk(cchar *,cchar *) noex ;
-
 static inline char *strochr(cchar *sp,int sch) noex {
     	return strchr(sp,sch) ;
-}
-
-static inline char *strbrk(cchar *sp,cchar *ss) noex {
-    	return strpbrk(sp,ss) ;
 }
 
 extern char	*strwhite(cchar *) noex ;
@@ -54,6 +48,16 @@ extern char *strdirname(char *) noex ;
 #endif /* COMMENT */
 
 EXTERNC_end
+
+
+#ifndef	DECLARATION_STRBRK
+#define	DECLARATION_STRBRK
+EXTERNC_begin
+static inline char *strbrk(cchar *sp,cchar *ss) noex {
+    	return strpbrk(sp,ss) ;
+}
+EXTERNC_end
+#endif /* DECLARATION_STRBRK */
 
 
 #endif /* STRX_INCLUDE */
