@@ -52,7 +52,7 @@
 #include	<getfdfile.h>		/* |FD_STDERR| */
 #include	<varnames.hh>
 #include	<strn.h>
-#include	<sfx.h>			/* |sfbasename(3uc)| */
+#include	<sfx.h>			/* |sfbasename(3uc)| + |sfext(3uc)| */
 #include	<six.h>			/* |sisub(3uc)| + |siext(3uc)| */
 #include	<rmx.h>
 #include	<strwcpy.h>
@@ -891,12 +891,11 @@ int proginfo::sufready() noex {
 
 int proginfo::sufhave(cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
-	int		f = true ;
+	int		f = true ; /* return-value */
 	if (fl.suffix) {
+	    cchar	*cp ;
 	    f = false ;
-	    if (int si ; (si = siext(sp,sl)) >= 0) {
-		cint	cl = (sl - si) ;
-		cchar	*cp = (sp + si) ;
+	    if (int cl ; (cl = sfext(sp,sl,&cp)) > 0) {
 	        rs = exts.have(cp,cl) ;
 		f = rs ;
 	    } /* end if (siext) */
@@ -910,7 +909,7 @@ int proginfo::sufhave(cchar *sp,int sl) noex {
 int proginfo::modeadd(cchar *sp,int sl) noex {
     	sif		so(sp,sl,',') ;
     	int		rs = SR_OK ;
-	int		c = 0 ;
+	int		c = 0 ; /* return-value */
 	cchar		*cp ;
 	if_constexpr (f_debug) {
 	    strnul s(sp,sl) ;
