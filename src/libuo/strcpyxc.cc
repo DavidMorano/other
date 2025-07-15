@@ -82,10 +82,12 @@ extern "C" {
 /* forward references */
 
 static char *strcpyxc(toxc_f toxc,char *dp,cchar *sp) noex {
-	while (*sp) {
-	    *dp++ = char(toxc(*sp++)) ;
-	} /* end while */
-	*dp = '\0' ;
+    	if (dp && sp) ylikely {
+	    while (*sp) {
+	        *dp++ = char(toxc(*sp++)) ;
+	    } /* end while */
+	    *dp = '\0' ;
+	} /* end if (non-null) */
 	return dp ;
 }
 /* end subroutine (strcpyxc) */
@@ -102,12 +104,14 @@ constexpr bool		f_stpcpy = CF_STPCPY ;
 /* exported subroutines */
 
 char *strcpybc(char *dp,cchar *sp) noex {
-	char		*rp ;
-	if_constexpr (f_stpcpy) {
-	    rp = stpcpy(dp,sp) ;
-	} else {
-	    rp = strcpyxc(tobc,dp,sp) ;
-	}
+	char		*rp = nullptr ;
+	if (dp && sp) {
+	    if_constexpr (f_stpcpy) {
+	        rp = stpcpy(dp,sp) ;
+	    } else {
+	        rp = strcpyxc(tobc,dp,sp) ;
+	    }
+	} /* end if (non-null) */
 	return rp ;
 }
 
