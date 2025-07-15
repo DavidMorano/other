@@ -66,7 +66,7 @@ import libutil ;
 
 int strmgr_start(strmgr *op,char *dbuf,int dlen) noex {
 	int		rs = SR_FAULT ;
-	if (op && dbuf) {
+	if (op && dbuf) ylikely {
 	    rs = SR_OK ;
 	    if (dlen < 0) dlen = lenstr(dbuf) ;
 	    op->dp = dbuf ;
@@ -79,7 +79,7 @@ int strmgr_start(strmgr *op,char *dbuf,int dlen) noex {
 
 int strmgr_avail(strmgr *op) noex {
 	int		rs = SR_FAULT ;
-	if (op) {
+	if (op) ylikely {
 	    rs = (op->dlen - op->dl) ;
 	}
 	return rs ;
@@ -94,17 +94,17 @@ int strmgr_rem(strmgr *op) noex {
 int strmgr_str(strmgr *op,cchar *sp,int sl) noex {
 	int		rs = SR_FAULT ;
 	int		tl = 0 ;
-	if (op && sp) {
+	if (op && sp) ylikely {
 	    cint	rlen = (op->dlen - op->dl) ;
 	    rs = SR_OK ;
 	    while ((rs >= 0) && sl-- && *sp) {
-	        if (tl < rlen) {
+	        if (tl < rlen) ylikely {
 	            op->dp[tl++] = *sp++ ;
 	        } else {
 	            rs = SR_OVERFLOW ;
 	        }
 	    } /* end for */
-	    if (rs >= 0) {
+	    if (rs >= 0) ylikely {
 	        op->dp += tl ;
 	        op->dl += tl ;
 	    }
@@ -115,9 +115,9 @@ int strmgr_str(strmgr *op,cchar *sp,int sl) noex {
 
 int strmgr_chr(strmgr *op,int ch) noex {
 	int		rs = SR_FAULT ;
-	if (op) {
+	if (op) ylikely {
 	    rs = SR_OK ;
-	    if (op->dl < op->dlen) {
+	    if (op->dl < op->dlen) ylikely {
 	        *op->dp++ = char(ch) ;
 	        op->dl += 1 ;
 	    } else {
@@ -130,7 +130,7 @@ int strmgr_chr(strmgr *op,int ch) noex {
 
 int strmgr_finish(strmgr *op) noex {
 	int		rs = SR_FAULT ;
-	if (op) {
+	if (op) ylikely {
 	    rs = op->dl ;
 	    op->dp[0] = '\0' ;
 	    op->dp = nullptr ;
@@ -164,7 +164,7 @@ void strmgr::dtor() noex {
 
 strmgr_co::operator int () noex {
 	int		rs = SR_BUGCHECK ;
-	if (op) {
+	if (op) ylikely {
 	    switch (w) {
 	    case strmgrmem_avail:
 	        rs = strmgr_avail(op) ;
