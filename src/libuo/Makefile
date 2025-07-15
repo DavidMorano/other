@@ -339,6 +339,11 @@ tardir.o:		tardir.dir
 tardir.dir:
 	makesubdir $@
 
+# RMX
+rmx.o:			rmx.dir
+rmx.dir:
+	makesubdir $@
+
 # DEBUG
 debug.o:		debug.dir
 debug.dir:
@@ -354,7 +359,6 @@ ccfile.o:		ccfile.cc ccfile.hh
 calstrs.o:		calstrs.cc calstrs.h
 char.o:			char.cc char.h
 inetconv.o:		inetconv.cc inetconv.h
-rmx.o:			rmx.cc rmx.h
 strcpyxc.o:		strcpyxc.cc strcpyxc.h strcpy.h strcpyx.h
 
 # SINGLES
