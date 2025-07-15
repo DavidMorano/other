@@ -54,6 +54,7 @@
 
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<cstddef>		/* |nullptr_t| */
+#include	<cstdlib>
 #include	<string>
 #include	<string_view>
 #include	<fstream>
@@ -138,9 +139,9 @@ static const devnames	dev ;
 
 int ccfile::open(cchar *fn,cchar *ofs,mode_t) noex {
 	int		rs = SR_FAULT ;
-	if (fn) {
+	if (fn) ylikely {
 	    rs = SR_INVALID ;
-	    if (fn[0]) {
+	    if (fn[0]) ylikely {
 		openmode	of{} ;
 		rs = SR_OK ;
 		if (ofs) {
@@ -150,8 +151,9 @@ int ccfile::open(cchar *fn,cchar *ofs,mode_t) noex {
 			of = getopenmode(ofs) ;
 		    }
 		} /* end if (had open-flags) */
-		if (rs >= 0) {
-		    if (int fni ; (fni = matstr(stdfnames,fn,-1)) >= 0) {
+		if (rs >= 0) ylikely {
+		    mainv	sfn = stdfnames ;
+		    if (int fni ; (fni = matstr(sfn,fn,-1)) >= 0) ylikely {
 			fn = dev.name[fni] ;
 			switch (fni) {
 			case stdfile_in:
@@ -188,7 +190,7 @@ int ccfile::open(const strview &sv,cchar *ofs,mode_t om) noex {
 	csize		svz = sv.length() ;
 	cchar		*svp = sv.data() ;
 	int		rs = SR_FAULT ;
-	if (svp && ofs) {
+	if (svp && ofs) ylikely {
 	    cint	svl = int(svz) ;
 	    {
 	        strnul	fn(svp,svl) ;
@@ -203,12 +205,12 @@ int ccfile::readln(char *ibuf,int ilen,int dch) noex {
 	int		rs = SR_FAULT ;
 	int		len = 0 ;
 	if (dch == 0) dch = eol ;
-	if (ibuf) {
+	if (ibuf) ylikely {
 	    ibuf[0] = '\0' ;
-	    if (! fl.fnulling) {
+	    if (! fl.fnulling) ylikely {
 	        try {
 		    rs = SR_BADFMT ;
-	            if (bool(getline(ibuf,(ilen+1),char(dch)))) {
+	            if (bool(getline(ibuf,(ilen+1),char(dch)))) ylikely {
 			cint gcnt = int(gcount()) ;
 		        if ((rs = gcnt) <= ilen) {
 			    len = rs ;
@@ -241,12 +243,16 @@ int ccfile::readln(char *ibuf,int ilen,int dch) noex {
 /* end method (ccfile::readln) */
 
 int ccfile::readln(string &s,int dch) noex {
+    	cnothrow	nt{} ;
+    	cnullptr	np{} ;
 	int		rs = SR_OK ;
-	if (! fl.fnulling) {
+	int		len = 0 ; /* return-value */
+	if (! fl.fnulling) ylikely {
 	    cint	llen = MAXLINE ;
 	    rs = SR_NOMEM ;
-	    if (char *lbuf ; (lbuf = new(nothrow) char[llen+1]) != nullptr) {
-	        if ((rs = readln(lbuf,llen,char(dch))) >= 0) {
+	    if (char *lbuf ; (lbuf = new(nt) char[llen+1]) != np) ylikely {
+	        if ((rs = readln(lbuf,llen,char(dch))) >= 0) ylikely {
+		    len = rs ;
 		    lbuf[rs] = '\0' ;
 		    try {
 		        s = lbuf ;
@@ -257,13 +263,13 @@ int ccfile::readln(string &s,int dch) noex {
 	        delete [] lbuf ;
 	    } /* end if (m-a-f) */
 	} /* end if (not-fnulling) */
-	return rs ;
+	return (rs >= 0) ? len : rs ;
 }
 /* end method (ccfile::readln) */
 
 int ccfile::seek(off_t o,int w) noex {
 	int		rs = SR_OK ;
-	if (! fl.fnulling) {
+	if (! fl.fnulling) ylikely {
 	    seekdir	sv = beg ;
 	    if (w < 0) w = SEEK_SET ;
 	    switch (w) {
@@ -280,7 +286,7 @@ int ccfile::seek(off_t o,int w) noex {
 	        rs = SR_INVALID ;
 	        break ;
 	    } /* end switch */
-	    if (rs >= 0) {
+	    if (rs >= 0) ylikely {
 	        try {
 	            if (fl.freading) {
 		        seekg(o,sv) ;	
@@ -341,7 +347,7 @@ void ccfile::dtor() noex {
 
 int ccfile_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
-	if (op) {
+	if (op) ylikely {
 	    switch (w) {
 	    case ccfilemem_rewind:
 		rs = op->irewind() ;
@@ -360,8 +366,8 @@ static openmode getopenmode(cchar *sp) noex {
 	int		ch ;
 	while ((ch = mkchar(*sp++)) > 0) {
 	    switch (ch) {
-	    case 'r': om |= ios::in ; break ; 
-	    case 'w': om |= ios::out ; break ;
+	    case 'r': om |= ios::in ; break ; 		/* input */
+	    case 'w': om |= ios::out ; break ;		/* output */
 	    case 'a': om |= ios::app ; break ;		/* append */
 	    case 't': om |= ios::trunc ; break ;	/* truncate */
 	    case 'e': om |= ios::noreplace ; break ;	/* exclusive-open */
