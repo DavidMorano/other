@@ -49,6 +49,7 @@ extern int silbrace(cchar *,int) noex ;
 extern int sileader(cchar *,int) noex ;
 extern int sihyphen(cchar *,int) noex ;
 extern int sicite(cchar *,int,cchar *,int) noex ;
+extern int sileadzero(cchar *,int) noex ;
 
 static inline int sichr(cchar *sp,int sl,int sch) noex {
 	return siochr(sp,sl,sch) ;
