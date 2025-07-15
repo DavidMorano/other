@@ -97,14 +97,14 @@ using std::istream ;			/* type */
 
 int readln(istream *isp,char *ibuf,int ilen,int dch) noex {
 	int		rs = SR_FAULT ;
-	int		len = 0 ;
+	int		len = 0 ; /* return-value */
 	if (dch == 0) dch = eol ;
-	if (isp && ibuf) {
+	if (isp && ibuf) ylikely {
 	    try {
 		rs = SR_BADFMT ;
-	        if (bool(isp->getline(ibuf,(ilen+1),char(dch)))) {
+	        if (bool(isp->getline(ibuf,(ilen+1),char(dch)))) ylikely {
 		    csize	qsize = isp->gcount() ;
-		    if ((rs = int(qsize)) <= ilen) {
+		    if ((rs = int(qsize)) <= ilen) ylikely {
 			len = rs ;
 			if (len > 0) {
 			    ibuf[len - 1] = char(dch) ;
