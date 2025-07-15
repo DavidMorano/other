@@ -29,7 +29,9 @@
 #include	<strnxchr.h>		/* find */
 #include	<strnxbrk.h>		/* find */
 #include	<strnxsub.h>		/* find */
+#include	<strnxterm.h>		/* find */
 #include	<strnwht.h>		/* find */
+#include	<strnchar.h>		/* find */
 #include	<strncpyxc.h>		/* copy */
 #include	<strnwcpyxc.h>		/* copy (case changing) */
 
