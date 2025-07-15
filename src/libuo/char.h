@@ -59,6 +59,7 @@ extern const unsigned char	chardata_touc[] ;
 extern const unsigned char	chardata_tofc[] ;
 
 /* test character attribute routines */
+#define	CHAR_ISWHT(c)		char_iswhite(c)
 #define	CHAR_ISWHITE(c)		char_iswhite(c)
 #define	CHAR_ISLC(c)		char_islc(c)
 #define	CHAR_ISUC(c)		char_isuc(c)
