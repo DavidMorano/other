@@ -24,11 +24,13 @@
 #include	<utypedefs.h>
 #include	<utypealiases.h>
 #include	<usysdefs.h>
+#include	<usysrets.h>
 
 #include	<sfxchr.h>
 #include	<sfxbrk.h>
 #include	<sfxsub.h>
 #include	<sfext.h>
+#include	<sfcasesub.h>
 #include	<sfweirdo.h>
 
 EXTERNC_begin
@@ -36,7 +38,6 @@ EXTERNC_begin
 extern int sfbasename(cchar *,int,cchar **) noex ;
 extern int sfbaselib(cchar *,int,cchar **) noex ;
 extern int sfbracketval(cchar *,int,cchar **) noex ;
-extern int sfcasesub(cchar *,int,cchar *,cchar **) noex ;
 extern int sfcontent(cchar *,int,cchar **) noex ;
 extern int sfcookkey(cchar *,int,cchar **) noex ;
 extern int sfdequote(cchar *,int,cchar **) noex ;
