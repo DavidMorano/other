@@ -217,8 +217,6 @@
 #include	<randlc.h>
 #include	<randomvar.h>
 #include	<rmdirs.h>
-#include	<rmeol.h>
-#include	<rmleadzero.h>
 #include	<rmx.h>
 #include	<rpsem.h>
 #include	<rsfree.h>
