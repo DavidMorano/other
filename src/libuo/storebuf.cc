@@ -96,19 +96,19 @@ int storebuf_xxxx(char *rp,int rl,int i,int (*ctxxx)(char *,int,T),T v) noex {
 	cint		dlen = DIGBUFLEN ;
 	int		rs = SR_FAULT ;
 	int		len = 0 ;
-	if (rp) {
+	if (rp) ylikely {
 	    rs = SR_INVALID ;
-	    if (i >= 0) {
+	    if (i >= 0) ylikely {
 	        char	*bp = (rp + i) ;
 		rs = SR_OK ;
 	        *bp = '\0' ;
-	        if ((rl < 0) || ((rl-i) >= dlen)) {
-	            if ((rs = ctxxx(bp,(rl-i),v)) >= 0) {
+	        if ((rl < 0) || ((rl-i) >= dlen)) ylikely {
+	            if ((rs = ctxxx(bp,(rl-i),v)) >= 0) ylikely {
 		        len = rs ;
 	            }
 	        } else {
 	            char	dbuf[dlen+1] ;
-	            if ((rs = ctxxx(dbuf,dlen,v)) >= 0) {
+	            if ((rs = ctxxx(dbuf,dlen,v)) >= 0) ylikely {
 	                len = rs ;
 	                if ((rl < 0) || ((rl - i) >= len)) {
 	                    strwcpy(bp,dbuf,len) ;
@@ -159,12 +159,12 @@ static inline int storebuf_hexx(char *bp,int bl,int i,T v) noex {
 
 int storebuf_chrs(char *rbuf,int rlen,int idx,int ch,int n) noex {
 	int		rs = SR_FAULT ;
-	if (rbuf) {
+	if (rbuf) ylikely {
 	    rs = SR_INVALID ;
-	    if ((idx >= 0) && (n >= 0)) {
+	    if ((idx >= 0) && (n >= 0)) ylikely {
 	        char	*bp = (rbuf + idx) ;
 		rs = SR_OK ;
-	        if ((rlen < 0) || ((rlen - idx) >= n)) {
+	        if ((rlen < 0) || ((rlen - idx) >= n)) ylikely {
 		    for (int i = 0 ; i < n ; i += 1) {
 	                *bp++ = char(ch) ;
 		    }
@@ -180,12 +180,12 @@ int storebuf_chrs(char *rbuf,int rlen,int idx,int ch,int n) noex {
 
 int storebuf_chr(char *rbuf,int rlen,int i,int ch) noex {
 	int		rs = SR_FAULT ;
-	if (rbuf) {
+	if (rbuf) ylikely {
 	    rs = SR_INVALID ;
-	    if (i >= 0) {
+	    if (i >= 0) ylikely {
 	        char	*bp = (rbuf + i) ;
 		rs = SR_OK ;
-	        if ((rlen < 0) || ((rlen - i) >= 1)) {
+	        if ((rlen < 0) || ((rlen - i) >= 1)) ylikely {
 	            *bp++ = char(ch) ;
 	        } else {
 	            rs = SR_OVERFLOW ;
@@ -200,9 +200,9 @@ int storebuf_chr(char *rbuf,int rlen,int i,int ch) noex {
 int storebuf_buf(char *rbuf,int rlen,int i,cchar *sp,int sl) noex {
 	int		rs = SR_FAULT ;
 	int		len = 0 ;
-	if (rbuf && sp) {
+	if (rbuf && sp) ylikely {
 	    rs = SR_INVALID ;
-	    if (i >= 0) {
+	    if (i >= 0) ylikely {
 	        char	*bp = (rbuf + i) ;
 		rs = SR_OK ;
 	        if (rlen < 0) {
