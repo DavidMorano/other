@@ -37,7 +37,7 @@ INCS +=
 
 MODS +=
 
-LIBS += -lu -lu
+LIBS += -luo -lu
 
 
 INCDIRS +=
@@ -108,6 +108,6 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			fexts_main.cc
+fexts_main.o:		fexts_main.cc
 
 
