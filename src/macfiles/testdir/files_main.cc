@@ -138,8 +138,9 @@ namespace {
 	uint		debug:1 ;
 	uint		suffix:1 ;		/* have a suffix */
 	uint		modes:1 ;		/* have a file-type */
-	uint		seens:1 ;
+	uint		afs:1 ;
 	uint		tardirs:1 ;
+	uint		seens:1 ;
 	uint		filerecs :1 ;
     } ;
     struct proginfo_co {
@@ -164,6 +165,7 @@ namespace {
 	strfilter	exts ;
 	tardir		dirs ;
 	fonce		seen ;
+	filerec		afs ;
 	filerec		recs ;
 	string		pnstr ;
 	mainv		argv ;
