@@ -31,13 +31,13 @@ TOUCH		?= touch
 LINT		?= lint
 
 
-DEFS=
+DEFS+=
 
-INCS=
+INCS+=
 
-MODS += argmgr.ccm filerec.ccm
+MODS+= argmgr.ccm filerec.ccm
 
-LIBS= -luo -lu
+LIBS+= -luo -lu
 
 
 INCDIRS=
@@ -60,6 +60,8 @@ LDFLAGS		?= $(MAKELDFLAGS)
 DEPS_MAIN += argmgr.o filerec.o
 
 OBJ_FILES += files_main.o $(DEPS_MAIN)
+
+OBJ_MAIN= obj_main.o
 
 
 .SUFFIXES:		.hh .ii .ccm
@@ -92,8 +94,8 @@ all:			$(ALL)
 	makemodule $(*)
 
 
-$(T).x:			$(OBJ_FILES)
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_FILES) $(LIBINFO)
+$(T).x:			$(OBJ_MAIN)
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MAIN) $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).x > $(T).nm
@@ -110,6 +112,9 @@ control:
 install:		$(T).x
 	makeinstall $(T).x
 
+
+obj_main.o:		$(OBJ_FILES)
+	$(CXX) -r -o $@ $(LDFLAGS) $^
 
 files_main.o:		files_main.cc $(DEPS_MAIN)		$(INCS)
 
