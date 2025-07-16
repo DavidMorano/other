@@ -60,10 +60,6 @@ extern int snkeyval(char *,int,cchar *,int,cchar *,int) noex ;
 extern int snwvprintf(char *,int,cchar *,va_list) noex ;
 extern int snwprintf(char *,int,cchar *,...) noex ;
 
-static inline int snkeval(char *dp,int dl,cchar *k,cchar *vp,int vl) noex {
-    	return snkeyval(dp,dl,k,-1,vp,vl) ;
-}
-
 EXTERNC_end
 
 
