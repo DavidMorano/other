@@ -117,7 +117,7 @@ namespace {
 	    return operator () (0) ;
 	} ;
     } ; /* end struct (proginfo_co) */
-    typedef int (proginfo::*proginfo_m)(CUSTAT *,cchar *,int) noex ;
+    typedef int (proginfo::*proginfo_m)(custat *,cchar *,int) noex ;
     struct proginfo {
 	friend		proginfo_co ;
 	proginfo_co	start ;
@@ -146,15 +146,15 @@ namespace {
 	    argv = a ;
 	    envv = e ;
 	} ;
-	int filecheck(CUSTAT *) noex ;
+	int filecheck(custat *) noex ;
 	int process() noex ;
 	int process_pmbegin() noex ;
 	int process_pmend() noex ;
 	int process_stdin() noex ;
 	int readin() noex ;
 	int fileproc(cchar *,int = -1) noex ;
-	int fileproc_fu(CUSTAT *,cchar *,int = -1) noex ;
-	int fileproc_lc(CUSTAT *,cchar *,int = -1) noex ;
+	int fileproc_fu(custat *,cchar *,int = -1) noex ;
+	int fileproc_lc(custat *,cchar *,int = -1) noex ;
 	int fileproc_lines() noex ;
     private:
 	int istart() noex ;
@@ -218,8 +218,8 @@ int main(int argc,mainv argv,mainv envv) noex {
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;
-	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
-	    if ((rs = pi.flistbegin) >= 0) {
+	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) ylikely {
+	    if ((rs = pi.flistbegin) >= 0) ylikely {
                 switch (pi.pm) {
                 case progmode_fileuniq:
                 case progmode_fu:
@@ -248,7 +248,7 @@ int main(int argc,mainv argv,mainv envv) noex {
 
 int proginfo::istart() noex {
 	int		rs ;
-	if ((rs = getpn(prognames)) >= 0) {
+	if ((rs = getpn(prognames)) >= 0) ylikely {
 	    rs = 0 ;
 	} /* end if (proginfo::getpn) */
 	return rs ;
@@ -264,12 +264,12 @@ int proginfo::getpn(mainv names) noex {
 	int		rs = SR_FAULT ;
 	if (argv) {
 	    rs = SR_NOMSG ;
-	    if ((argc > 0) && argv[0]) {
+	    if ((argc > 0) && argv[0]) ylikely {
 		cchar	*arg0 = argv[0] ;
 	        cchar	*bp{} ;
-	        if (int bl ; (bl = sfbasename(arg0,-1,&bp)) > 0) {
-		    if (cint pl = rmchr(bp,bl,'.') ; pl > 0) {
-	                if ((pm = matstr(names,bp,pl)) >= 0) {
+	        if (int bl ; (bl = sfbasename(arg0,-1,&bp)) > 0) ylikely {
+		    if (cint pl = rmchr(bp,bl,'.') ; pl > 0) ylikely {
+	                if ((pm = matstr(names,bp,pl)) >= 0) ylikely {
 			    pn = names[pm] ;
 		            rs = pm ;
 	                }
@@ -295,11 +295,11 @@ int proginfo::process() noex {
 	int		rs ;
 	int		rs1 ;
 	int		c = 0 ;
-	if ((rs = process_pmbegin()) >= 0) {
+	if ((rs = process_pmbegin()) >= 0) ylikely {
 	    if (argc > 1) {
 	        for (int ai = 1 ; (ai < argc) && argv[ai] ; ai += 1) {
 	            cchar	*fn = argv[ai] ;
-	            if (fn[0]) {
+	            if (fn[0]) ylikely {
 		        if ((fn[0] == '-') && (fn[1] == '\0')) {
 		            rs = readin() ;
 		            c += rs ;
@@ -352,7 +352,7 @@ int proginfo::process_pmbegin() noex {
 	    break ;
         case progmode_lc:
 	    m = &proginfo::fileproc_lc ;
-	    if ((rs = maxlinelen) >= 0) {
+	    if ((rs = maxlinelen) >= 0) ylikely {
 	        llen = rs ;
 		rs = SR_NOMEM ;
 	        if ((lbuf = new(nothrow) char[llen+1]) != nullptr) {
@@ -387,11 +387,11 @@ int proginfo::readin() noex {
 	istream		*isp = &cin ;
 	int		rs ;
 	int		c = 0 ;
-	if ((rs = maxpathlen) >= 0) {
+	if ((rs = maxpathlen) >= 0) ylikely {
 	    cint	plen = rs ;
 	    char	*pbuf ;
 	    rs = SR_NOMEM ;
-	    if ((pbuf = new(nothrow) char[plen+1]) != nullptr) {
+	    if ((pbuf = new(nothrow) char[plen+1]) != nullptr) ylikely {
 	        while ((rs = readln(isp,pbuf,plen)) > 0) {
 		    int		pl = rs ;
 		    if ((pl > 0) && (pbuf[pl - 1] == eol)) pl -= 1 ;
@@ -412,7 +412,7 @@ int proginfo::fileproc(cchar *sp,int sl) noex {
 	strnul		s(sp,sl) ;
 	int		rs ;
 	int		c = 0 ;
-	if (USTAT sb ; (rs = u_stat(s,&sb)) >= 0) {
+	if (ustat sb ; (rs = u_stat(s,&sb)) >= 0) ylikely {
 	    if ((rs = filecheck(&sb)) > 0) {
 		rs = (this->*m)(&sb,sp,sl) ;
 		c += rs ;
@@ -424,10 +424,10 @@ int proginfo::fileproc(cchar *sp,int sl) noex {
 }
 /* end method (proginfo::fileproc) */
 
-int proginfo::fileproc_fu(CUSTAT *,cchar *sp,int sl) noex {
+int proginfo::fileproc_fu(custat *,cchar *sp,int sl) noex {
 	int		rs = SR_OK ;
 	int		c = 0 ;
-	if (sp) {
+	if (sp) ylikely {
 	    strview	fn(sp,sl) ;
 	    cout << fn << eol ;
 	    c += 1 ;
@@ -436,15 +436,15 @@ int proginfo::fileproc_fu(CUSTAT *,cchar *sp,int sl) noex {
 }
 /* end method (proginfo::fileproc_fu) */
 
-int proginfo::fileproc_lc(CUSTAT *sbp,cchar *sp,int sl) noex {
+int proginfo::fileproc_lc(custat *sbp,cchar *sp,int sl) noex {
 	int		rs = SR_OK ;
 	int		rs1 ;
 	int		c = 0 ;
-	if (sbp && sp && sl) {
+	if (sbp && sp && sl) ylikely {
 	    strview	fn(sp,sl) ;
-	    if (S_ISREG(sbp->st_mode)) {
+	    if (S_ISREG(sbp->st_mode)) ylikely {
 		c += 1 ;
-	        if (ccfile rf ; (rs = rf.open(fn,"r",0)) >= 0) {
+	        if (ccfile rf ; (rs = rf.open(fn,"r",0)) >= 0) ylikely {
 		    int		nl = 0 ;
 		    while ((rs = rf.readln(lbuf,llen)) > 0) {
 			nl += 1 ;
@@ -472,14 +472,14 @@ int proginfo::fileproc_lines() noex {
 }
 /* end method (proginfo::fileproc_lines) */
 
-int proginfo::filecheck(CUSTAT *sbp)  noex {
+int proginfo::filecheck(custat *sbp)  noex {
 	return seen.checkin(sbp) ;
 }
 /* end method (proginfo::filecheck) */
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
-	if (op) {
+	if (op) ylikely {
 	    switch (w) {
 	    case proginfomem_start:
 	        rs = op->istart() ;
