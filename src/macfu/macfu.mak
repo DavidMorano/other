@@ -31,13 +31,13 @@ TOUCH		?= touch
 LINT		?= lint
 
 
-DEFS=
+DEFS +=
 
-INCS=
+INCS +=
 
 MODS += fonce.ccm ulibvals.ccm
 
-LIBS= -luo -lu
+LIBS += -luo -lu
 
 
 INCDIRS= -I$(INCDIR)
