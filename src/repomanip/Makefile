@@ -31,11 +31,13 @@ TOUCH		?= touch
 LINT		?= lint
 
 
-DEFS=
+DEFS +=
 
-INCS=
+INCS +=
 
-LIBS= -lmacuser
+MODS +=
+
+LIBS= -luo -lu
 
 
 INCDIRS=
@@ -44,7 +46,6 @@ LIBDIRS= -L$(LIBDIR)
 
 
 RUNINFO= -rpath $(RUNDIR)
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -58,7 +59,7 @@ LDFLAGS		?= $(MAKELDFLAGS)
 OBJ_REPOMANIP= main.o
 
 
-.SUFFIXES:		.hh .ii
+.SUFFIXES:		.hh .ii .ccm
 
 
 default:		$(T).x
@@ -84,6 +85,9 @@ all:			$(ALL)
 .cc.o:
 	$(COMPILE.cc) $<
 
+.ccm.o:
+	makemodule $(*)
+
 
 $(T).x:			$(OBJ_REPOMANIP)
 	$(LD) $(LDFLAGS) -o $@ $(LIBDIRS) $(LIBS) $(OBJ_REPOMANIP)
@@ -93,11 +97,6 @@ $(T).o:			$(OBJ_REPOMANIP)
 
 $(T).nm:		$(T).o
 	$(NM) $(NMFLAGS) $(T).o > $(T).nm
-
-$(T).order:		$(OBJ_REPOMANIP) $(T).a
-	$(LORDER) $(T).a | $(TSORT) > $(T).order
-	$(RM) $(T).a
-	while read O ; do $(AR) $(ARFLAGS) -cr $(T).a $${O} ; done < $(T).order
 
 again:
 	rm -f $(ALL)
