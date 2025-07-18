@@ -84,7 +84,7 @@ static constexpr tabent		table[] = {
 
 /* exported subroutines */
 
-int main(int argc,cchar **,cchar **) noexcept {
+int main(int argc,cchar **,cchar **) {
 	int	ex = 1 ;
 	if (argc > 0) {
 	    cchar	*fmt = "%3d %2X %03o %-3s %s\n" ;
