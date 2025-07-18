@@ -64,7 +64,7 @@ typedef const char *const *	mainv ;
 
 /* exported subroutines */
 
-int main(int,mainv,mainv) noexcept {
+int main(int,mainv,mainv) {
 	int	ex = 0 ;
 	if constexpr (endian::native == endian::little) {
 	    cout << "little" << eol ;

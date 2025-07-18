@@ -279,7 +279,7 @@ constexpr mode_t	dm = (0777|S_ISVTX) ;
 
 /* exported subroutines */
 
-int main(int argc,mainv argv,mainv envv) noex {
+int main(int argc,mainv argv,mainv envv) {
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;

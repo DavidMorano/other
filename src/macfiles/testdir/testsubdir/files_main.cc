@@ -321,7 +321,7 @@ constexpr bool		f_debug		= CF_DEBUG ;
 
 /* exported subroutines */
 
-int main(int argc,mainv argv,mainv envv) noex {
+int main(int argc,mainv argv,mainv envv) {
     	constexpr int	dfd = (f_debug) ? FD_STDERR : -1 ;
 	int		ex = EX_OK ;
 	int		rs ;

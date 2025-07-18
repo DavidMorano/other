@@ -92,7 +92,7 @@ static constexpr cpcchar	prognames[] = {
 
 /* exported subroutines */
 
-int main(int argc,mainv argv,mainv) noexcept {
+int main(int argc,mainv argv,mainv) {
 	int		ex = EXIT_FAILURE ;
 	if (argc > 0) {
 	    cchar	*pn = basename(const_cast<char *>(argv[0])) ;

@@ -214,12 +214,11 @@ constexpr int		maxlinelen = MAXLINELEN ;
 
 /* exported subroutines */
 
-int main(int argc,mainv argv,mainv envv) noex {
-	proginfo	pi(argc,argv,envv) ;
+int main(int argc,mainv argv,mainv envv) {
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;
-	if ((rs = pi.start) >= 0) {
+	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
 	    if ((rs = pi.flistbegin) >= 0) {
                 switch (pi.pm) {
                 case progmode_hasweird:

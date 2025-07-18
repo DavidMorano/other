@@ -286,7 +286,7 @@ constexpr cchar		devprefix[] = DEVPREFIX ;
 
 /* exported subroutines */
 
-int main(int argc,mainv argv,mainv) noex {
+int main(int argc,mainv argv,mainv) {
 	const uid_t	uid = getuid() ;
 	int		ex = EXIT_SUCCESS ;
 	int		rs ;

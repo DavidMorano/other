@@ -248,7 +248,7 @@ static cint		maxpathlen = ulibval.maxpathlen ;
 
 /* exported subroutines */
 
-int main(int argc,mainv argv,mainv envv) noexcept {
+int main(int argc,mainv argv,mainv envv) {
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;

@@ -210,7 +210,7 @@ constexpr int		nlas = 3 ;	/* by long convention */
 
 /* exported subroutines */
 
-int main(int argc,mainv argv,mainv envv) noex {
+int main(int argc,mainv argv,mainv envv) {
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;
