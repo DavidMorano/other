@@ -2,7 +2,7 @@
 /* charset=ISO8859-1 */
 /* lang=C20 */
 
-/* string-index operations */
+/* File-Once management */
 /* version %I% last-modified %G% */
 
 
