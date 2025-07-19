@@ -2,7 +2,7 @@
 /* charset=ISO8859-1 */
 /* lang=C20 */
 
-/* Target Directory */
+/* Target-Directory */
 /* version %I% last-modified %G% */
 
 
