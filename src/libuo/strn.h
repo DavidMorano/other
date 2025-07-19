@@ -55,6 +55,14 @@ static inline char *strnncpy(char *dp,cchar *sp,int sl,int sz) noex {
 
 EXTERNC_end
 
+#ifdef	__cplusplus
+
+inline char *strnwcpy(char *dp,int dl,cchar *sp) noex {
+    	return strnwcpybc(dp,dl,sp,-1) ;
+}
+
+#endif /* __cplusplus */
+
 
 #endif /* STRN_INCLUDE */
 
