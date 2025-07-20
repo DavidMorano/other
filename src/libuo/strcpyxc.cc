@@ -106,7 +106,7 @@ constexpr bool		f_stpcpy = CF_STPCPY ;
 
 char *strcpybc(char *dp,cchar *sp) noex {
 	char		*rp = nullptr ;
-	if (dp && sp) {
+	if (dp && sp) ylikely {
 	    if_constexpr (f_stpcpy) {
 	        rp = stpcpy(dp,sp) ;
 	    } else {
