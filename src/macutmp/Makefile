@@ -60,9 +60,8 @@ CXXFLAGS	?= $(MAKECXXFLAGS)
 ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
-DEPMODS += libutil.ccm
-DEPMODS += usigset.ccm usigblock.ccm umisc.ccm ureserve.ccm
-DEPMODS += ureserve.ccm
+DEPMODS += libutil.o
+DEPMODS += umisc.o ureserve.o
 
 OBJ_UTMP= utmp_main.o
 
@@ -179,27 +178,18 @@ objf_luo.o:		$(OBJF_LUO)
 
 
 utmp_main.o:		utmp_main.cc $(DEPMODS) ucx.h
-	makemodule libutil
-	makemodule usigset
-	makemodule usigblock
-	makemodule umisc
-	makemodule ureserve
 	$(COMPILE.cc) $<
 
+libutil.o:		libutil.dir
+libutil.dir:
+	makesubdir $@
 
-libutil.ccm:
-	makemodcurrent $@
+umisc.o:		umisc.dir
+umisc.dir:
+	makesubdir $@
 
-usigset.ccm:
-	makemodcurrent $@
-
-usigblock.ccm:
-	makemodcurrent $@
-
-umisc.ccm:
-	makemodcurrent $@
-
-ureserve.ccm:
-	makemodcurrent $@
+ureserve.o:		ureserve.dir
+ureserve.dir:
+	makesubdir $@
 
 
