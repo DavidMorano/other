@@ -170,7 +170,7 @@ int argmgr::argopt(cchar **rpp) noex {
 		    }
 	        }
 		if_constexpr (f_debug) {
-	        debprintf(__func__,"ret rs=%d ai=%d c=%d\n",rs,ai,cntpos) ;
+	            debprintf(__func__,"ret rs=%d ai=%d c=%d\n",rs,ai,cntpos) ;
 		}
 	    } /* end if (valid) */
 	} /* end if (magic) */
