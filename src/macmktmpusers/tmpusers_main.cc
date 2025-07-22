@@ -271,6 +271,11 @@ static cint		usernamelen	= ulibval.usernamelen ;
 
 static cint		varbuflen	= max(usernamelen,DIGBUFLEN) ;
 
+constexpr char		tmpdir[]	= "/tmp" ;
+constexpr char		usersdir[]	= "/users" ;
+
+constexpr int		to_tmpwait	= 30 ; /* seconds */
+
 constexpr mode_t	dm = (0777|S_ISVTX) ;
 
 
@@ -477,11 +482,18 @@ int proginfo::tmpusers_present() noex {
 
 int proginfo::tmpusers_wait() noex {
 	int		rs ;
-	if ((rs = snadd(pbuf,plen,pl,"/tmp")) >= 0) {
+	if ((rs = snadd(pbuf,plen,pl,tmpdir)) >= 0) {
+	    int		ti = 0 ;
+	    bool	fto = false ;
 	    pl += rs ;
 	    while ((rs = tmpusers_present()) == 0) {
 		sleep(1) ;
+		fto = (ti++ >= to_tmpwait) ;
+		if (fto) break ;
 	    } /* end while */
+	    if ((rs >= 0) && fto) {
+		rs = SR_TIMEDOUT ;
+	    }
 	} /* end if (snadd) */
 	return rs ;
 }
@@ -490,7 +502,7 @@ int proginfo::tmpusers_wait() noex {
 int proginfo::tmpusers_make() noex {
 	int		rs ;
 	int		c = 0 ;
-	if ((rs = snadd(pbuf,plen,pl,"/users")) >= 0) {
+	if ((rs = snadd(pbuf,plen,pl,usersdir)) >= 0) {
 	    pl += rs ;
 	    if ((rs = u_stat(pbuf,&sb)) >= 0) {
 		c = 0 ;
