@@ -109,7 +109,7 @@ export {
 	} ;
     } ; /* end struct (fonce_co) */
     struct fonce {
-	friend fonce_co ;
+	friend		fonce_co ;
 	typedef std::unordered_set<fonce_devino>	stype ;
 	typedef fonce_devino	key_type ;
 	fonce(const fonce &) = delete ;
