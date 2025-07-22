@@ -3,9 +3,11 @@
 
 LOCPROG=macsysdata.x
 CMDS=
-CMDS+=" sysname release nodename version "
-CMDS+=" architecture machine platform systype "
-CMDS+=" nisdomain symfile hostid lax sysuuid "
+CMDS+=" sysname systype sysrelease sysversion systime sysuuid sysid "
+CMDS+=" sysversionx "
+CMDS+=" release nodename version "
+CMDS+=" architecture machine platform cpuvendor "
+CMDS+=" nisdomain symfile hostid lax "
 CMDS+=" unixtime "
 
 TDIRS=" /usr/extra /usr/local /opt/local "
