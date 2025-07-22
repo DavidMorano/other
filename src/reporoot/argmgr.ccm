@@ -145,7 +145,7 @@ export {
 	uint		magic{} ;
 	int		argc ;
 	int		ai ;		/* argument-index */
-	int		aie ;		/* end of options */
+	int		aie ;		/* argument-index-end - end options */
 	int		cntpos ;
 	bool		argoptdone{} ;
 	argmgr(int ac = 0,mainv av = nullptr) noex : argc(ac), argv(av) {
