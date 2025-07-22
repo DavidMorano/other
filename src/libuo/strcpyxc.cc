@@ -43,6 +43,8 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be first to configure */
+#include	<cstddef>		/* |nullptr_t| */
+#include	<cstdlib>
 #include	<cstring>		/* |stpcpy(3c)| */
 #include	<clanguage.h>
 #include	<utypedefs.h>
