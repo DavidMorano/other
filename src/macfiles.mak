@@ -58,8 +58,11 @@ LDFLAGS		?= $(MAKELDFLAGS)
 
 
 DEPS_MAIN += argmgr.o filerec.o
+DEPS_MAIN += ureserve.o fonce.o
+DEPS_MAIN += strfilter.o
 
-OBJ_FILES += files_main.o $(DEPS_MAIN)
+OBJ_FILES += files_main.o 
+OBJ_FILES += argmgr.o filerec.o
 
 OBJ_MAIN= obj_main.o
 
@@ -131,24 +134,29 @@ files_tardir1.o:	files_tardir1.cc files_tardir.ccm	$(INCS)
 mods.o:			$(DEPS_MAIN)
 	$(CXX) -r -o $@ $(LDFLAGS) $^
 
-# SIF
-sif.o:			sif.dir
-sif.dir:
+# URESERVE (libu)
+ureserve.o:		ureserve.dir
+ureserve.dir:
 	makesubdir $@
 
-# FONCE
+# FONCE (libu)
 fonce.o:		fonce.dir
 fonce.dir:
+	makesubdir $@
+
+# STRFILER (libuc)
+strfilter.o:		strfilter.dir
+strfilter.dir:
+	makesubdir $@
+
+# SIF (libuc)
+sif.o:			sif.dir
+sif.dir:
 	makesubdir $@
 
 # FILEREC
 filerec.o:		filerec.dir
 filerec.dir:
-	makesubdir $@
-
-# STRFILTER
-strfilter.o:		strfilter.dir
-strfilter.dir:
 	makesubdir $@
 
 # ARGMGR
