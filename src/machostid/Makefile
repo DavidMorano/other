@@ -31,11 +31,13 @@ TOUCH		?= touch
 LINT		?= lint
 
 
-DEFS=
+DEFS +=
 
-INCS=
+INCS +=
 
-LIBS= -lmacuser
+MODS +=
+
+LIBS += -lmacuser
 
 
 INCDIRS=
@@ -44,7 +46,6 @@ LIBDIRS= -L$(LIBDIR)
 
 
 RUNINFO= -rpath $(RUNDIR)
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -55,10 +56,10 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_HOSTID= main.o
+OBJ_HOSTID= hostid_main.o
 
 
-.SUFFIXES:		.hh .ii
+.SUFFIXES:		.hh .ii .ccm
 
 
 default:		$(T).x
@@ -84,12 +85,15 @@ all:			$(ALL)
 .cc.o:
 	$(COMPILE.cc) $<
 
+.ccm.o:
+	makemodule $(*)
+
 
 $(T).x:			$(OBJ_HOSTID)
 	$(LD) $(LDFLAGS) -o $@ $(OBJ_HOSTID) $(LIBDIRS) $(LIBS)
 
 $(T).nm:		$(T).x
-	$(NM) $(NMFLAGS) $(T).so > $(T).nm
+	$(NM) $(NMFLAGS) $(T).x > $(T).nm
 
 again:
 	rm -f $(TALL)
@@ -101,7 +105,8 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc			$(INCS)
+hostid_main.o:		main.cc			$(INCS)
+
 gethostid.o:		gethostid.cc		$(INCS)
 
 
