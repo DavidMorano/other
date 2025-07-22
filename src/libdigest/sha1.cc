@@ -109,7 +109,7 @@ int sha1_start(SHA1_INFO *sha_info) noex {
     sha_info->digest[4] = 0xc3d2e1f0UL ;
     sha_info->count_lo = 0L;
     sha_info->count_hi = 0L;
-    sha_info->local = 0;
+    sha_info->locdata = 0;
 
 	return 0 ;
 }
@@ -130,16 +130,16 @@ int sha1_update(SHA1_INFO *sha_info,const char *ubuf, int count) noex {
     }
     sha_info->count_lo = clo;
     sha_info->count_hi += (SHA1_LONG) count >> 29;
-    if (sha_info->local) {
-	i = SHA1_BLOCKSIZE - sha_info->local;
+    if (sha_info->locdata) {
+	i = SHA1_BLOCKSIZE - sha_info->locdata;
 	if (i > count) {
 	    i = count;
 	}
-	memcpy(((SHA1_BYTE *) sha_info->data) + sha_info->local, buffer, i);
+	memcpy(((SHA1_BYTE *) sha_info->data) + sha_info->locdata, buffer, i);
 	count -= i;
 	buffer += i;
-	sha_info->local += i;
-	if (sha_info->local == SHA1_BLOCKSIZE) {
+	sha_info->locdata += i;
+	if (sha_info->locdata == SHA1_BLOCKSIZE) {
 	    sha_transform(sha_info);
 	} else {
 	    return 0 ;
@@ -152,7 +152,7 @@ int sha1_update(SHA1_INFO *sha_info,const char *ubuf, int count) noex {
 	sha_transform(sha_info);
     }
     memcpy(sha_info->data, buffer, count);
-    sha_info->local = count;
+    sha_info->locdata = count;
 
 	return 0 ;
 }
