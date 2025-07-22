@@ -118,8 +118,13 @@ umisc.ccm:
 ulibvals.ccm:
 	makemodcurrent $@
 
-libutil.o:		libutil.ccm
-umisc.o:		umisc.ccm
-ulibvals.o:		ulibvals.ccm
+libutil.o:		libutil.dir
+libutil.dir:
+
+umisc.o:		umisc.dir
+umisc.dir:
+
+ulibvals.o:		ulibvals.dir
+ulibvals.dir:
 
 
