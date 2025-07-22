@@ -107,6 +107,9 @@ control:
 install:		$(T).x
 	makeinstall $(T).x
 
+strip:			$(T).x
+	strip $(T).x
+
 
 sysdata_main.o:		sysdata_main.cc $(INCS)
 
