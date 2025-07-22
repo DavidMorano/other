@@ -43,7 +43,6 @@
 
 import libutil ;
 import umisc ;				/* |snadd(3u)| */
-import ureserve ;			/* |isNot{xx}(3u)| */
 
 /* local defines */
 
