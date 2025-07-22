@@ -68,9 +68,9 @@ OBJ05_LUO= mapex.o
 OBJ06_LUO= nleadx.o matxstr.o char.o 
 OBJ07_LUO= strnxcmp.o
 
-OBJ08_LUO= strcpyxc.o
+OBJ08_LUO= dictdiff.o
 OBJ09_LUO= readln.o tardir.o
-OBJ10_LUO= getourenv.o dictdiff.o
+OBJ10_LUO= getourenv.o
 OBJ11_LUO= inetconv.o inetaddrx.o 
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
@@ -309,18 +309,28 @@ strkeyx.o:		strkeyx.dir
 strkeyx.dir:
 	makesubdir $@
 
-# FONCE
+# URESERVE	(libu)
+ureserve.o:		ureserve.dir
+ureserve.dir:
+	makesubdir $@
+
+# FONCE		(libu)
 fonce.o:		fonce.dir
 fonce.dir:
 	makesubdir $@
 
-# SIF
+# CHRSET	(libu)
+chrset.o:		chrset.dir
+chrset.dir:
+	makesubdir $@
+
+# SIF		(libuc)
 sif.o:			sif.dir
 sif.dir:
 	makesubdir $@
 
-# STRFILTER
-strfilter.o:		strfilter.dir
+# STRFILTER	(libuc)
+strfilter.o:		strfilter.dir chrset.o sif.o
 strfilter.dir:
 	makesubdir $@
 
@@ -335,7 +345,7 @@ permx.dir:
 	makesubdir $@
 
 # TARDIR
-tardir.o:		tardir.dir
+tardir.o:		tardir.dir ureserve.o fonce.o
 tardir.dir:
 	makesubdir $@
 
