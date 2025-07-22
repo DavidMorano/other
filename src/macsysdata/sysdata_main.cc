@@ -44,11 +44,12 @@
 #include	<climits>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
+#include	<cstdio>		/* |printf(3c++)| */
 #include	<cstring>		/* |strchr(3c)| */
 #include	<string>
 #include	<string_view>
 #include	<iostream>
-#include	<iomanip>
+#include	<iomanip>		/* |hex(3c++)| + |setw(3c++)| */
 #include	<usystem.h>
 #include	<sfx.h>
 #include	<rmx.h>			/* |rmchr(3uc)| */
@@ -70,9 +71,9 @@ using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::istream ;			/* type */
 using std::hex ;			/* subroutine */
+using std::setw ;			/* subroutine? */
 using libu::uloadavgd ;			/* subroutine */
 using libu::snloadavgd ;		/* subroutine */
-using std::cout ;			/* variable */
 using std::nothrow ;			/* constant */
 
 
@@ -131,7 +132,8 @@ namespace {
 	    envv = e ;
 	} ;
 	int uname() noex ;
-	int output() noex ;
+	int sysoutstr() noex ;
+	int sysoutnum(cchar *) noex ;
 	int lax() noex ;
     private:
 	int istart() noex ;
@@ -148,38 +150,48 @@ namespace {
 
 enum progmodes {
 	progmode_sysname,
+	progmode_systype,
+	progmode_sysrelease,
+	progmode_sysversion,
+	progmode_sysversionx,
+	progmode_systime,
+	progmode_sysuuid,
+	progmode_sysid,
 	progmode_release,
 	progmode_nodename,
 	progmode_version,
 	progmode_architecture,
 	progmode_machine,
 	progmode_platform,
-	progmode_systype,
+	progmode_cpuvendor,
 	progmode_nisdomain,
-	progmode_sysuuid,
 	progmode_symfile,
 	progmode_hostid,
 	progmode_lax,
-	progmode_systime,
 	progmode_unixtime,
 	progmode_overlast
 } ; /* end enum (progmodes) */
 
 static constexpr cpcchar	prognames[] = {
 	[progmode_sysname]	= "sysname",
+	[progmode_systype]	= "systype",
+	[progmode_sysrelease]	= "sysrelease",
+	[progmode_sysversion]	= "sysversion",
+	[progmode_sysversionx]	= "sysversionx",
+	[progmode_systime]	= "systime",
+	[progmode_sysuuid]	= "sysuuid",
+	[progmode_sysid]	= "sysid",
 	[progmode_release]	= "release",
 	[progmode_nodename]	= "nodename",
 	[progmode_version]	= "version",
 	[progmode_architecture]	= "architecture",
 	[progmode_machine]	= "machine",
 	[progmode_platform]	= "platform",
-	[progmode_systype]	= "systype",
+	[progmode_cpuvendor]	= "cpuvendor",
 	[progmode_nisdomain]	= "nisdomain",
-	[progmode_sysuuid]	= "sysuuid",
 	[progmode_symfile]	= "symfile",
 	[progmode_hostid]	= "hostid",
 	[progmode_lax]		= "lax",
-	[progmode_systime]	= "systime",
 	[progmode_unixtime]	= "unixtime",
 	[progmode_overlast]	= nullptr
 } ; /* end array (prognames) */
@@ -222,20 +234,30 @@ int main(int argc,mainv argv,mainv envv) {
             case progmode_version:
 		rs = pi.uname() ;
 		break ;
+            case progmode_systype:
+            case progmode_sysversion:
+            case progmode_sysversionx:
+            case progmode_sysrelease:
             case progmode_architecture:
             case progmode_machine:
             case progmode_platform:
-            case progmode_systype:
+            case progmode_cpuvendor:
             case progmode_nisdomain:
             case progmode_sysuuid:
             case progmode_symfile:
-                rs = pi.output() ;
+                rs = pi.sysoutstr() ;
+                break ;
+            case progmode_sysid:
+                rs = pi.sysoutnum("kern.hostid") ;
                 break ;
 	    case progmode_hostid:
 		{
 		    clong id = gethostid() ;
-		    cout << ulong(id) << eol ;
-		}
+		    {
+			cuint	uid = uint(id) ;
+		        printf("%08X\n",uid) ;
+		    } /* end block */
+		} /* end block */
 		break ;
 	    case progmode_lax:
 		rs = pi.lax() ;
@@ -244,8 +266,7 @@ int main(int argc,mainv argv,mainv envv) {
 	    case progmode_unixtime:
 		{
 		    const time_t	t = time(nullptr) ;
-		    cout << ulong(t) << " - " ;
-		    cout << hex << ulong(t) << eol ;
+		    printf("%lu - %016lx\n",ulong(t),ulong(t)) ;
 		}
 		break ;
 	    default:
@@ -303,13 +324,13 @@ int proginfo::getpn(mainv names) noex {
 static int printnodename(cchar *valp) noex {
 	int		rs = SR_OK ;
 	if (cchar *tp ; (tp = strchr(valp,'.')) != nullptr) {
-	    string_view		s(valp,(tp - valp)) ;
-	    cout << s << eol ;
+	    strnul	s(valp,intconv(tp - valp)) ;
+	    printf("%s\n",ccp(s)) ;
 	} else {
-	    cout << valp << eol ;
+	    printf("%s\n",ccp(valp)) ;
 	}
 	return rs ;
-}
+} /* end method (proginfo::printnodename) */
 
 int proginfo::uname() noex {
 	int		rs ;
@@ -330,14 +351,14 @@ int proginfo::uname() noex {
 		break ;
 	    } /* end switch */
 	    if (valp) {
-		cout << valp << eol ;
+		printf("%s\n",valp) ;
 	    }
 	} /* end if (u_uname) */
 	return rs ;
 }
 /* end subroutine (proginfo::uname) */
 
-int proginfo::output() noex {
+int proginfo::sysoutstr() noex {
 	int		rs = SR_OK ;
 	cchar		*name = nullptr ;
 	switch (pm) {
@@ -350,8 +371,20 @@ int proginfo::output() noex {
 	case progmode_platform:
 	    name = "hw.model" ;
 	    break ;
+	case progmode_cpuvendor:
+	    name = "machdep.cpu.vendor" ;
+	    break ;
 	case progmode_systype:
 	    name = "kern.ostype" ;
+	    break ;
+	case progmode_sysrelease:
+	    name = "kern.osrelease" ;
+	    break ;
+	case progmode_sysversion:
+	    name = "kern.osversion" ;
+	    break ;
+	case progmode_sysversionx:
+	    name = "kern.version" ;
 	    break ;
 	case progmode_nisdomain:
 	    name = "kern.nisdomainname" ;
@@ -375,7 +408,7 @@ int proginfo::output() noex {
 		if ((rs = sysctlbyname(name,obuf,&rsz,np,0z)) >= 0) {
 		    cint	ol = int(rsz) ;
 		    obuf[ol] = '\0' ;
-		    cout << obuf << eol ;
+		    printf("%s\n",obuf) ;
 		} else {
 		    rs = (- errno) ;
 		}
@@ -383,8 +416,25 @@ int proginfo::output() noex {
 	    } /* end if (new-char) */
 	} /* end if (ok) */
 	return rs ;
-}
-/* end subroutine (proginfo::output) */
+} /* end subroutine (proginfo::sysoutstr) */
+
+int proginfo::sysoutnum(cchar *name) noex {
+	int		rs = SR_FAULT ;
+	if (name) {
+	    rs = SR_INVALID ;
+	    if (name[0]) {
+	        cnullptr	np{} ;
+		size_t		vsz = sizeof(uint32_t) ;
+		uint32_t	val{} ;
+		if ((rs = sysctlbyname(name,&val,&vsz,np,0z)) >= 0) {
+		    printf("%d\n",val) ;
+		} else {
+		    rs = (- errno) ;
+		}
+	    } /* end if (valid) */
+	} /* end if (non-null) */
+	return rs ;
+} /* end subroutine (proginfo::sysoutnum) */
 
 int proginfo::lax() noex {
 	int		rs ;
@@ -393,7 +443,7 @@ int proginfo::lax() noex {
 	    cint	dlen = DIGBUFLEN ;
 	    char	dbuf[DIGBUFLEN + 1] ;
 	    if ((rs = snloadavgd(dbuf,dlen,prec,dla,nlas)) >= 0) {
-		cout << dbuf << eol ;
+		printf("%s\n",dbuf) ;
 	    }
 	} /* end if (uloadavgd) */
 	return rs ;
