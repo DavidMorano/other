@@ -51,7 +51,7 @@ typedef struct {
     SHA1_LONG digest[5];		/* message digest */
     SHA1_LONG count_lo, count_hi;	/* 64-bit bit count */
     SHA1_BYTE data[SHA1_BLOCKSIZE];	/* SHA1 data buffer */
-    int local;				/* unprocessed amount in data */
+    int locdata ;			/* unprocessed amount in data */
 } SHA1_INFO ;
 
 EXTERNC_begin
