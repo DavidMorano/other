@@ -36,9 +36,9 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
+#include	<sys/stat.h>
 #include	<unistd.h>
 #include	<fcntl.h>
-#include	<climits>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<cstdio>
@@ -52,6 +52,7 @@
 #include	<getfdfile.h>		/* |FD_STDERR| */
 #include	<varnames.hh>
 #include	<strn.h>
+#include	<strw.h>		/* |strwcmp(3uc)| */
 #include	<sfx.h>			/* |sfbasename(3uc)| + |sfext(3uc)| */
 #include	<six.h>			/* |sisub(3uc)| + |siext(3uc)| */
 #include	<rmx.h>
@@ -120,6 +121,8 @@ namespace {
     enum proginfomems {
 	proginfomem_start,
 	proginfomem_finish,
+	proginfomem_argbegin,
+	proginfomem_argend,
 	proginfomem_flistbegin,
 	proginfomem_flistend,
 	proginfomem_overlast
@@ -130,7 +133,11 @@ namespace {
 	uint		uniqdir:1 ;		/* 'ud' arg-opt */
 	uint		followarg:1 ;		/* 'H' arg-opt */
 	uint		followall:1 ;		/* 'L' arg-opt */
-	uint		exts:1 ;
+	uint		exts:1 ;		/* extensions */
+	uint		dirs:1 ;		/* target-directories */
+	uint		afs:1 ;			/* argument-files */
+	uint		afsread:1 ;		/* argument-files-read */
+	uint		argfile:1 ;		/* have an arg-file */
 	uint		version:1 ;
 	uint		help:1 ;
 	uint		quiet:1 ;
@@ -138,10 +145,8 @@ namespace {
 	uint		debug:1 ;
 	uint		suffix:1 ;		/* have a suffix */
 	uint		modes:1 ;		/* have a file-type */
-	uint		afs:1 ;
-	uint		tardirs:1 ;
 	uint		seens:1 ;
-	uint		filerecs :1 ;
+	uint		recs :1 ;
     } ;
     struct proginfo_co {
 	proginfo	*op = nullptr ;
@@ -159,13 +164,15 @@ namespace {
 	friend		proginfo_co ;
 	proginfo_co	start ;
 	proginfo_co	finish ;
+	proginfo_co	argbegin ;
+	proginfo_co	argend ;
 	proginfo_co	flistbegin ;
 	proginfo_co	flistend ;
 	proginfo_fl	fl{} ;
-	strfilter	exts ;
-	tardir		dirs ;
+	strfilter	exts ;		/* extensions */
+	tardir		dirs ;		/* target-directories */
 	fonce		seen ;
-	filerec		afs ;
+	filerec		afs ;		/* argument-files */
 	filerec		recs ;
 	string		pnstr ;
 	mainv		argv ;
@@ -182,8 +189,11 @@ namespace {
 	proginfo(int c,mainv a,mainv e) noex : argc(c), argv(a), envv(e) { 
 	    start	(this,proginfomem_start) ;
 	    finish	(this,proginfomem_finish) ;
+	    argbegin	(this,proginfomem_argbegin) ;
+	    argend	(this,proginfomem_argend) ;
 	    flistbegin	(this,proginfomem_flistbegin) ;
 	    flistend	(this,proginfomem_flistend) ;
+	    fl.verbose = true ;
 	} ;
 	proginfo() noex : proginfo(0,nullptr,nullptr) { } ;
 	void operator () (int c,mainv a,mainv e) noex {
@@ -198,6 +208,8 @@ namespace {
 	int argoptlong(argmgr *,cchar *,int) noex ;
 	int argoptchr(argmgr *,cchar *,int) noex ;
 	int argpm(argmgr *) noex ;
+	int argfile(argmgr *) noex ;
+	int argfileread() noex ;
 	int argsuf(argmgr *) noex ;
 	int argtype(argmgr *) noex ;
 	int argtardir(argmgr *) noex ;
@@ -229,6 +241,8 @@ namespace {
 	int ifinish() noex ;
 	int getpnames(mainv,cc *,int) noex ;
 	int getpn(mainv) noex ;
+	int iargbegin() noex ;
+	int iargend() noex ;
 	int iflistbegin() noex ;
 	int iflistend() noex ;
     } ; /* end struct (proginfo) */
@@ -347,9 +361,26 @@ int main(int argc,mainv argv,mainv envv) {
 
 int proginfo::istart() noex {
 	int		rs ;
-	    if ((rs = exts.start) >= 0) {
-		fl.exts = true ;
-	    }
+	if ((rs = exts.start) >= 0) {
+	    fl.exts = true ;
+	    if ((rs = dirs.start) >= 0) {
+		fl.dirs = true ;
+		if ((rs = afs.start) >= 0) {
+		    fl.afs = true ;
+		    {
+		        rs = SR_OK ;
+		    }
+		} /* end if (afs.start) */
+	        if (rs < 0) {
+		    fl.dirs = false ;
+		    dirs.finish() ;
+	        } /* end if (error) */
+	    } /* end if (dirs.start) */
+	    if (rs < 0) {
+		fl.exts = false ;
+		exts.finish() ;
+	    } /* end if (error) */
+	} /* end if (exts.start) */
 	return rs ;
 }
 /* end method (proginfo::istart) */
@@ -357,6 +388,16 @@ int proginfo::istart() noex {
 int proginfo::ifinish() noex {
     	int		rs = SR_OK ;
 	int		rs1 ;
+	if (fl.afs) {
+	    rs1 = afs.finish ;
+	    if (rs >= 0) rs = rs1 ;
+	    fl.afs = false ;
+	}
+	if (fl.dirs) {
+	    rs1 = dirs.finish ;
+	    if (rs >= 0) rs = rs1 ;
+	    fl.dirs = false ;
+	}
 	if (fl.exts) {
 	    rs1 = exts.finish ;
 	    if (rs >= 0) rs = rs1 ;
@@ -378,7 +419,7 @@ int proginfo::getpnames(mainv names,cc *sp,int sl) noex {
 int proginfo::getpn(mainv names) noex {
     	cint		pnlen = intconv(pnstr.size()) ;
 	int		rs = SR_NOMSG ;
-	cchar		*bp{} ;
+	cchar		*bp{} ; /* used-multiple */
 	if (int bl = pnlen ; bl > 0) {
 	    bp = pnstr.c_str() ;
 	    rs = getpnames(names,bp,bl) ;
@@ -393,25 +434,38 @@ int proginfo::getpn(mainv names) noex {
 	return rs ;
 } /* end method (proginfo::getpn) */
 
-int proginfo::iflistbegin() noex {
+int proginfo::iargbegin() noex {
     	int		rs ;
-	if ((rs = seen.start(nents)) >= 0) {
-	    fl.seens = true ;
-	    switch (pm) {
-	    case progmode_filesyner:
-	    case progmode_filelinker:
-		    if ((rs = recs.start) >= 0) {
-			fl.filerecs = true ;
-		    }
-		break ;
-	    } /* end switch */
-	    if (rs < 0) {
-		if (fl.seens) {
-		    fl.seens = false ;
-		    seen.finish() ;
-		}
-	    } /* end if (error) */
-	} /* end if (seen.start) */
+	rs = tardirbegin() ;
+	return rs ;
+} /* end method (proginfo::iargbegin) */
+
+int proginfo::iargend() noex {
+    	int		rs = SR_OK ;
+	int		rs1 ;
+	{
+	    rs1 = tardirend() ;
+	    if (rs >= 0) rs = rs1 ;
+	}
+	return rs ;
+} /* end method (proginfo::iargend) */
+
+int proginfo::iflistbegin() noex {
+    	int		rs = SR_OK ;
+	switch (pm) {
+	case progmode_files:
+	case progmode_filelines:
+	    if ((rs = seen.start(nents)) >= 0) {
+	        fl.seens = true ;
+	    }
+	    break ;
+	case progmode_filesyner:
+	case progmode_filelinker:
+	    if ((rs = recs.start) >= 0) {
+	        fl.recs = true ;
+	    }
+	    break ;
+	} /* end switch */
 	return rs ;
 }
 /* end method (proginfo::iflistbegin) */
@@ -419,14 +473,10 @@ int proginfo::iflistbegin() noex {
 int proginfo::iflistend() noex {
     	int		rs = SR_OK ;
 	int		rs1 ;
-	if (fl.filerecs) {
+	if (fl.recs) {
 	    rs1 = recs.finish ;
 	    if (rs >= 0) rs = rs1 ;
-	    fl.filerecs = false ;
-	}
-	if (fl.tardirs) {
-	    rs1 = tardirend() ;
-	    if (rs >= 0) rs = rs1 ;
+	    fl.recs = false ;
 	}
 	if (fl.seens) {
 	    rs1 = seen.finish ;
@@ -441,22 +491,26 @@ int proginfo::argproc() noex {
 	int		rs ;
 	int		rs1 ;
 	int		c = 0 ;
-	if (argmgr am(argc,argv) ; (rs = am.start) >= 0) {
-	    if ((rs = args(&am)) >= 0) {
-		if ((rs = preamble()) > 0) {
-	            if ((rs = flistbegin) >= 0) {
-			{
-		            rs = argprocer(&am) ;
-		            c = rs ;
-			}
-		        rs1 = flistend ;
-		        if (rs >= 0) rs = rs1 ;
-		    } /* end if (flist) */
-	        } /* end if (preamble) */
-	    } /* end if (args) */
-	    rs1 = am.finish ;
+	if ((rs = argbegin) >= 0) {
+	    if (argmgr am(argc,argv) ; (rs = am.start) >= 0) {
+	        if ((rs = args(&am)) >= 0) {
+		    if ((rs = preamble()) > 0) {
+	                if ((rs = flistbegin) >= 0) {
+			    {
+		                rs = argprocer(&am) ;
+		                c = rs ;
+			    }
+		            rs1 = flistend ;
+		            if (rs >= 0) rs = rs1 ;
+		        } /* end if (flist) */
+	            } /* end if (preamble) */
+	        } /* end if (arg) */
+	        rs1 = am.finish ;
+	        if (rs >= 0) rs = rs1 ;
+	    } /* end if (argmgr) */
+	    rs1 = argend ;
 	    if (rs >= 0) rs = rs1 ;
-	} /* end if (argmgr) */
+	} /* end if (arg) */
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::argproc) */
 
@@ -496,6 +550,9 @@ int proginfo::argoptstr(argmgr *amp,int wi) noex {
 	    rs = argpm(amp) ;
 	    break ;
 	case argopt_sn:
+	    break ;
+	case argopt_af:
+	    rs = argfile(amp) ;
 	    break ;
 	case argopt_ud:
 	    fl.uniqdir = true ;
@@ -540,6 +597,9 @@ int proginfo::argoptchr(argmgr *amp,cchar *sp,int sl) noex {
 	    case 'd':
 		rs = argtardir(amp) ;
 		break ;
+	    case 'q':
+		fl.verbose = false ;
+		break ;
 	    case 's':
 	    case 'x':
 		rs = argsuf(amp) ;
@@ -557,6 +617,33 @@ int proginfo::argoptchr(argmgr *amp,cchar *sp,int sl) noex {
 	} /* end while */
 	return rs ;
 } /* end method (proginfo::argoptchr) */
+
+int proginfo::argfile(argmgr *amp) noex {
+    	int		rs ;
+	int		c = 0 ;
+	if (cc *sp ; (rs = amp->argval(&sp)) >= 0) {
+    	    sif		so(sp,rs,',') ;
+	    cchar	*cp ;
+	    fl.argfile = true ;
+	    for (int cl ; (rs >= 0) && ((cl = so(&cp)) > 0) ; ) {
+		if ((cp[0] == '-') && (strwcmp("-",cp,cl) == 0)) {
+		    fl.afsread = true ;
+		} else {
+	            rs = afs.add(cp,rs) ;
+		    c = rs ;
+		}
+	    } /* end for */
+	} /* end if (argval) */
+	return (rs >= 0) ? c : rs ;
+} /* end method (proginfo::argfile) */
+
+int proginfo::argfileread() noex {
+    	int		rs = SR_OK ;
+	if (fl.afsread) {
+	    rs = SR_OK ;
+	}
+    	return rs ;
+} /* end method (proginfo::argfileread) */
 
 int proginfo::argsuf(argmgr *amp) noex {
     	int		rs ;
@@ -629,9 +716,9 @@ int proginfo::argprocer(argmgr *amp) noex {
 	int		rs = SR_OK ;
 	int		rs1 ;
 	int		c = 0 ;
-	if (argc > 1) {
+	if ((argc > 1) && (fl.argfile || ((rs = amp->count) > 0))) {
 	    if ((rs = process_pmbegin()) > 0) {
-		if ((rs = sufready()) >= 0) {
+		if ((rs = amp->count) > 0) {
 	            for (cauto &fn : *amp) {
 	                if (fn && fn[0]) {
 		            if (fn[0] == '-') {
@@ -646,7 +733,10 @@ int proginfo::argprocer(argmgr *amp) noex {
 	                }
 	                if ((rs < 0) || fexit || (fn == nullptr)) break ;
 	            } /* end for */
-		} /* end if (sufready) */
+		} /* end if (argmgr_count) */
+		if (rs >= 0) {
+		    rs = argfileread() ;
+		}
 	        rs1 = process_pmend() ;
 	        if (rs >= 0) rs = rs1 ;
 	    } /* end if (process_pm) */
@@ -682,7 +772,9 @@ int proginfo::process_pmend() noex {
 	switch (pm) {
         case progmode_filelines:
 	    if (lbuf) {
-		cout << lines << eol ;
+		if (fl.verbose) {
+		    cout << lines << eol ;
+		}
 		delete [] lbuf ;
 		lbuf = nullptr ;
 	        llen = 0 ;
@@ -707,7 +799,7 @@ int proginfo::argreadin() noex {
 			c += rs ;
 		    }
 		    if (rs < 0) break ;
-	        } /* end if (readxing lines) */
+	        } /* end if (reading lines) */
 	        delete [] pbuf ;
 	    } /* end if (m-a-f) */
 	} /* end if (maxpathlen) */
@@ -828,7 +920,9 @@ int proginfo::procfile_list(custat *,cchar *sp,int sl) noex {
 	int		c = 0 ;
 	if (sp) {
 	    strnul fn(sp,sl) ;
-	    cout << ccp(fn) << eol ;
+	    if (fl.verbose) {
+	        cout << ccp(fn) << eol ;
+	    }
 	    c += 1 ;
 	}
 	return (rs >= 0) ? c : rs ;
@@ -859,24 +953,26 @@ int proginfo::procfile_lc(custat *sbp,cchar *sp,int sl) noex {
 /* end method (proginfo::procfile_lc) */
 
 int proginfo::sufadd(cchar *sp,int sl) noex {
-    	sif		so(sp,sl,',') ;
     	int		rs = SR_OK ;
 	int		c = 0 ;
-	cchar		*cp ;
 	if (f_debug && debon) {
 	    strnul se(sp,sl) ;
 	    debprintf(__func__,"ent sl=%d s=>%s<\n",sl,ccp(se)) ;
 	}
-	for (int cl ; (rs >= 0) && ((cl = so(&cp)) > 0) ; ) {
-	    if (f_debug && debon) {
-	        strnul sone(cp,cl) ;
-	        debprintf(__func__,"cl=%d c=>%s<\n",cl,ccp(sone)) ;
-	    }
-	    if ((rs = exts.add(cp,cl)) > 0) {
-		c += 1 ;
-		fl.suffix = true ;
-	    }
-	} /* end for */
+	if ((rs = sufready()) >= 0) {
+    	    sif		so(sp,sl,',') ;
+	    cchar	*cp ;
+	    for (int cl ; (rs >= 0) && ((cl = so(&cp)) > 0) ; ) {
+	        if (f_debug && debon) {
+	            strnul sone(cp,cl) ;
+	            debprintf(__func__,"cl=%d c=>%s<\n",cl,ccp(sone)) ;
+	        }
+	        if ((rs = exts.add(cp,cl)) > 0) {
+		    c += 1 ;
+		    fl.suffix = true ;
+	        }
+	    } /* end for */
+	} /* end if (sufready) */
 	if_constexpr (f_debug) {
 	    debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
 	}
@@ -980,9 +1076,9 @@ int proginfo::modehave(custat *sbp) noex {
 
 int proginfo::tardirbegin() noex {
     	int		rs = SR_OK ;
-	if (! fl.tardirs) {
+	if (! fl.dirs) {
 	    if ((rs = dirs.start) >= 0) {
-	        fl.tardirs = true ;
+	        fl.dirs = true ;
 	    }
 	}
 	return rs ;
@@ -990,9 +1086,9 @@ int proginfo::tardirbegin() noex {
 
 int proginfo::tardirend() noex {
     	int		rs = SR_OK ;
-	if (fl.tardirs) {
+	if (fl.dirs) {
 	    if ((rs = dirs.finish()) >= 0){
-	        fl.tardirs = false ;
+	        fl.dirs = false ;
 	    }
 	}
 	return rs ;
@@ -1000,7 +1096,7 @@ int proginfo::tardirend() noex {
 
 int proginfo::tardiravail() noex {
     	int		rs = SR_OK ;
-	if (! fl.tardirs) {
+	if (! fl.dirs) {
 	    rs = tardirbegin() ;
 	}
 	return rs ;
@@ -1031,6 +1127,12 @@ int proginfo_co::operator () (int) noex {
 	        break ;
 	    case proginfomem_finish:
 	        rs = op->ifinish() ;
+	        break ;
+	    case proginfomem_argbegin:
+	        rs = op->iargbegin() ;
+	        break ;
+	    case proginfomem_argend:
+	        rs = op->iargend() ;
 	        break ;
 	    case proginfomem_flistbegin:
 	        rs = op->iflistbegin() ;
