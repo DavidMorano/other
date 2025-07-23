@@ -1,4 +1,0 @@
-mktmpusers
-tmpusers
-tmpmounts
-tmpuserdir
