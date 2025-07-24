@@ -37,7 +37,7 @@ INCS +=
 
 MODS +=
 
-LIBS += -lmacuser
+LIBS += -luo -lu
 
 
 INCDIRS=
@@ -105,8 +105,8 @@ control:
 	(uname -n ; date) > Control
 
 
-hostid_main.o:		main.cc			$(INCS)
+hostid_main.o:		hostid_main.cc			$(INCS)
 
-gethostid.o:		gethostid.cc		$(INCS)
+gethostid.o:		gethostid.cc			$(INCS)
 
 

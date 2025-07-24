@@ -25,6 +25,7 @@
 #include	<utypealiases.h>
 #include	<usysdefs.h>
 
+#include	<matnstr.h>
 #include	<matostr.h>
 #include	<matpstr.h>
 #include	<matkeystr.h>
@@ -33,7 +34,6 @@
 
 EXTERNC_begin
 
-extern int	matnstr(mainv,cchar *,int) noex ;
 extern int	matlocalfs(cchar *,int) noex ;
 
 EXTERNC_end
