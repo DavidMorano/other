@@ -97,6 +97,9 @@ $(T).x:			$(OBJ_MACUSER)
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).x > $(T).nm
 
+strip:			$(T).x
+	strip $(T).x
+
 again:
 	rm -f $(T).x
 
