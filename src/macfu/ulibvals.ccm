@@ -57,12 +57,14 @@ export {
 	static const int	pagesz ;
 	static const int	clktck ;
 	static const int	maxbase ;
+	static const int	maxpid ;
 	static const int	maxarg ;
 	static const int	maxline ;
 	static const int	maxlogin ;
 	static const int	maxgroups ;
 	static const int	maxnamelen ;
 	static const int	maxpathlen ;
+	static const int	maxmsglen ;	/* Maximum-Message-Length */
 	static const int	usernamelen ;
 	static const int	groupnamelen ;
 	static const int	projnamelen ;
