@@ -214,8 +214,7 @@ constexpr cpcchar	prognames[] = {
 	[progmode_userents]	= "userents",
 	[progmode_groupents]	= "groupents",
 	[progmode_overlast]	= nullptr
-} ;
-
+} ; /* end array (prognames) */
 
 constexpr cpcchar	envs[] = {
 	"USERNAME",
@@ -223,7 +222,7 @@ constexpr cpcchar	envs[] = {
 	"LOGNAME",
 	"HOME",
 	"MAIL"
-} ;
+} ; /* end array (encs) */
 
 namespace {
     struct userinfo {
@@ -246,7 +245,7 @@ namespace {
 	int printdef(int,int,mainv,uid_t) noex ;
 	int printone(int,uid_t) noex ;
     } ; /* end struct (userinfo) */
-}
+} /* end namespace */
 
 constexpr bool		f_getusershell = CF_GETUSERSHELL ;
 
@@ -519,6 +518,7 @@ int userinfo::findhint(uid_t) noex {
 	}
 	return (rs >= 0) ? len : rs ;
 }
+/* end method (userinfo::findhint) */
 
 int userinfo::findenv(uid_t uid) noex {
 	int		rs = SR_OK ;
@@ -610,6 +610,7 @@ int userinfo::findutmp_stdin(uid_t uid) noex {
 	} /* end if (stat) */
 	return (rs >= 0) ? len : rs ;
 }
+/* end method (userinfo::findtmp_stdin) */
 
 int userinfo::findutmp_env(uid_t uid) noex {
     	cnullptr	np{} ;
@@ -635,6 +636,7 @@ int userinfo::findutmp_env(uid_t uid) noex {
 	} /* end for (utmpvars) */
 	return (rs >= 0) ? len : rs ;
 }
+/* end method (userinfo::findtmp_env) */
 
 int userinfo::findutmp_stat(uid_t uid) noex {
     	cnullptr	np{} ;
