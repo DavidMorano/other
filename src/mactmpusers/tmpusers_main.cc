@@ -570,7 +570,7 @@ int proginfo::tmpmounts_oner(const confstritem *itp) noex {
 	int		rs = SR_OK ;
 	int		c = 0 ;
 	if (itp->req >= 0) ylikely {
-	    if ((rs = usysconfstr(pbuf,plen,itp->req)) > 0) ylikely {
+	    if ((rs = usysconfstr(itp->req,pbuf,plen)) > 0) ylikely {
 	        if (cint rl = rmtrailchr(pbuf,rs,'/') ; rl > 1) ylikely {
 	            pbuf[rl] = '\0' ;
 	            if ((rs = u_stat(pbuf,&sb)) >= 0) {
@@ -776,7 +776,7 @@ int proginfo::tmpuserdir_link() noex {
 	cint		req = _CS_TMPDIR ;
 	int		rs ;
 	int		fmade = false ; /* return-value */
-	if ((rs = usysconfstr(dbuf,dlen,req)) > 0) ylikely {
+	if ((rs = usysconfstr(req,dbuf,dlen)) > 0) ylikely {
 	    if (cint rl = rmtrailchr(dbuf,rs,'/') ; rl > 1) ylikely {
 	        dbuf[rl] = '\0' ;
 	        if ((rs = u_stat(dbuf,&sb)) >= 0) ylikely {
