@@ -20,7 +20,7 @@
 /************************************************************************
 
   	Description:
-	Get the host-IDs from the system.
+	Get and print out the host-ID from the system.
 
 ***************************************************************************/
 
@@ -28,7 +28,9 @@
 #include	<unistd.h>		/* |gethostid(3c)| */
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
+#include	<cstdio>		/* |printf(3c++)| */
 #include	<iostream>		/* |cout(3c++)| */
+#include	<iomanip>		/* |hex(3c++)| + |setw(3c++)| */
 #include	<usystem.h>
 #include	<localmisc.h>		/* |eol(3dam)| */
 
@@ -38,6 +40,9 @@
 
 /* imported namespaces */
 
+using std::setw ;			/* subroutine */
+using std::hex ;			/* subroutine? */
+using std::printf ;			/* subroutine */
 using std::cout ;			/* variable */
 
 
@@ -66,7 +71,7 @@ using std::cout ;			/* variable */
 
 int main(int,mainv,mainv) {
 	ulong	id = gethostid() ;
-	cout << id << eol ;
+	printf("%08lX\n",id) ;
 }
 /* end subroutine (main) */
 
