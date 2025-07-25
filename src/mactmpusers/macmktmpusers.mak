@@ -40,6 +40,11 @@ MODS += umisc.ccm usysconf.ccm ulibvals.ccm
 LIBS += -luo -lu
 
 
+DEPS_MAIN += umisc.o usysconf.o ulibvals.o
+
+OBJ= tmpusers_main.o
+
+
 INCDIRS +=
 
 LIBDIRS += -L$(LIBDIR)
@@ -54,11 +59,6 @@ CFLAGS		?= $(MAKECFLAGS)
 CXXFLAGS	?= $(MAKECXXFLAGS)
 ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
-
-
-DEPS_MAIN += umisc.o usysconf.o ulibvals.o
-
-OBJ= tmpusers_main.o
 
 
 .SUFFIXES:		.hh .ii .ccm

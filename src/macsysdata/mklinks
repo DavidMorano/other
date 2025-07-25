@@ -8,7 +8,7 @@ CMDS+=" sysversionx "
 CMDS+=" release nodename version "
 CMDS+=" architecture machine platform cpuvendor "
 CMDS+=" nisdomain symfile hostid lax "
-CMDS+=" unixtime "
+CMDS+=" unixtime navail "
 
 TDIRS=" /usr/extra /usr/local /opt/local "
 

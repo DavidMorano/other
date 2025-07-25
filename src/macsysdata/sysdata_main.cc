@@ -60,6 +60,7 @@
 #include	<localmisc.h>		/* |DIGBUFLEN| + |REALNAMELEN| */
 
 import ulibvals ;
+import usysconf ;
 
 /* local defines */
 
@@ -94,6 +95,7 @@ namespace {
     enum proginfomems {
 	proginfomem_start,
 	proginfomem_finish,
+	proginfomem_nproc,
 	proginfomem_overlast
     } ;
     struct proginfo ;
@@ -113,8 +115,7 @@ namespace {
 	friend		proginfo_co ;
 	proginfo_co	start ;
 	proginfo_co	finish ;
-	proginfo_co	flistbegin ;
-	proginfo_co	flistend ;
+	proginfo_co	nproc ;
 	mainv		argv ;
 	mainv		envv ;
 	cchar		*pn = nullptr ;
@@ -124,6 +125,7 @@ namespace {
 	proginfo(int c,mainv a,mainv e) noex : argc(c), argv(a), envv(e) { 
 	    start	(this,proginfomem_start) ;
 	    finish	(this,proginfomem_finish) ;
+	    nproc	(this,proginfomem_nproc) ;
 	} ;
 	proginfo() noex : proginfo(0,nullptr,nullptr) { } ;
 	void operator () (int c,mainv a,mainv e) noex {
@@ -135,9 +137,11 @@ namespace {
 	int sysoutstr() noex ;
 	int sysoutnum(cchar *) noex ;
 	int lax() noex ;
+	int navail() noex ;
     private:
 	int istart() noex ;
 	int ifinish() noex ;
+	int inproc() noex ;
 	int getpn(mainv) noex ;
     } ; /* end struct (proginfo) */
 } /* end namespace */
@@ -169,6 +173,9 @@ enum progmodes {
 	progmode_hostid,
 	progmode_lax,
 	progmode_unixtime,
+	progmode_nproc,
+	progmode_navail,
+	progmode_ncpu,
 	progmode_overlast
 } ; /* end enum (progmodes) */
 
@@ -193,6 +200,9 @@ static constexpr cpcchar	prognames[] = {
 	[progmode_hostid]	= "hostid",
 	[progmode_lax]		= "lax",
 	[progmode_unixtime]	= "unixtime",
+	[progmode_nproc]	= "nproc",
+	[progmode_navail]	= "navail",
+	[progmode_ncpu]		= "ncpu",
 	[progmode_overlast]	= nullptr
 } ; /* end array (prognames) */
 
@@ -269,6 +279,15 @@ int main(int argc,mainv argv,mainv envv) {
 		    printf("%lu - %016lx\n",ulong(t),ulong(t)) ;
 		}
 		break ;
+	    case progmode_nproc:
+		if ((rs = pi.nproc) >= 0) {
+		    printf("%d\n",rs) ;
+		}
+		break ;
+	    case progmode_navail:
+	    case progmode_ncpu:
+		rs = pi.navail() ;
+		break ;
 	    default:
 		rs = SR_BUGCHECK ;
 		break ;
@@ -299,6 +318,20 @@ int proginfo::ifinish() noex {
 	return SR_OK ;
 }
 /* end method (proginfo::ifinish) */
+
+int proginfo::inproc() noex {
+    	cnullptr	np{} ;
+	size_t		vsz = sizeof(int32_t) ;
+    	int		rs ;
+	cchar		name[] = "hw.logicalcpu" ;
+	if (int32_t v{} ; (rs = sysctlbyname(name,&v,&vsz,np,0uz)) >= 0) {
+	    rs = intconv(v) ;
+	} else {
+	    rs = (- errno) ;
+	}
+	return rs ;
+}
+/* end method (proginfo::inproc) */
 
 int proginfo::getpn(mainv names) noex {
 	int		rs = SR_FAULT ;
@@ -405,7 +438,7 @@ int proginfo::sysoutstr() noex {
 	    rs = SR_NOMEM ;
 	    if (char *obuf ; (obuf = new(nothrow) char[olen+1]) != np) {
 		size_t	rsz = size_t(olen) ; /* <- return value also */
-		if ((rs = sysctlbyname(name,obuf,&rsz,np,0z)) >= 0) {
+		if ((rs = sysctlbyname(name,obuf,&rsz,np,0uz)) >= 0) {
 		    cint	ol = int(rsz) ;
 		    obuf[ol] = '\0' ;
 		    printf("%s\n",obuf) ;
@@ -419,14 +452,14 @@ int proginfo::sysoutstr() noex {
 } /* end subroutine (proginfo::sysoutstr) */
 
 int proginfo::sysoutnum(cchar *name) noex {
+	cnullptr	np{} ;
 	int		rs = SR_FAULT ;
 	if (name) {
 	    rs = SR_INVALID ;
 	    if (name[0]) {
-	        cnullptr	np{} ;
 		size_t		vsz = sizeof(uint32_t) ;
 		uint32_t	val{} ;
-		if ((rs = sysctlbyname(name,&val,&vsz,np,0z)) >= 0) {
+		if ((rs = sysctlbyname(name,&val,&vsz,np,0uz)) >= 0) {
 		    printf("%d\n",val) ;
 		} else {
 		    rs = (- errno) ;
@@ -450,6 +483,15 @@ int proginfo::lax() noex {
 }
 /* end subroutine (proginfo::lax) */
 
+int proginfo::navail() noex {
+	cint		cmd = _SC_NPROCESSORS_ONLN ;
+    	int		rs ;
+	if ((rs = usysconfval(cmd)) >= 0) {
+	    printf("%d\n",rs) ;
+	}
+	return rs ;
+} /* end method (proginfo::avail) */
+
 int proginfo_co::operator () (int) noex {
 	int	rs = SR_BUGCHECK ;
 	if (op) {
@@ -459,6 +501,9 @@ int proginfo_co::operator () (int) noex {
 	        break ;
 	    case proginfomem_finish:
 	        rs = op->ifinish() ;
+	        break ;
+	    case proginfomem_nproc:
+	        rs = op->inproc() ;
 	        break ;
 	    } /* end switch */
 	} /* end if (non-null) */
