@@ -64,6 +64,9 @@
 #include	<exitcodes.h>
 #include	<localmisc.h>
 
+#pragma		GCC dependency	"mod/fonce.ccm"
+#pragma		GCC dependency	"mod/ulibvals.ccm"
+
 import fonce ;
 import ulibvals ;
 
