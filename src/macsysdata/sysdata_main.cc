@@ -59,6 +59,9 @@
 #include	<exitcodes.h>
 #include	<localmisc.h>		/* |DIGBUFLEN| + |REALNAMELEN| */
 
+#pragma		GCC dependency	"mod/ulibvals.ccm"
+#pragma		GCC dependency	"mod/usysconf.ccm"
+
 import ulibvals ;
 import usysconf ;
 
