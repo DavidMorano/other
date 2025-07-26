@@ -68,6 +68,17 @@
 #include	<exitcodes.h>
 #include	<localmisc.h>
 
+#pragma		GCC dependency	"mod/libutil.ccm"
+#pragma		GCC dependency	"mod/ulibvals.ccm"
+#pragma		GCC dependency	"mod/strfilter.ccm"
+#pragma		GCC dependency	"mod/argmgr.ccm"
+#pragma		GCC dependency	"mod/fonce.ccm"
+#pragma		GCC dependency	"mod/sif.ccm"
+#pragma		GCC dependency	"mod/bitop.ccm"
+#pragma		GCC dependency	"mod/debug.ccm"
+#pragma		GCC dependency	"mod/tardir.ccm"
+#pragma		GCC dependency	"mod/filerec.ccm"
+
 import libutil ;			/* |lenstr(3u)| */
 import ulibvals ;
 import strfilter ;
@@ -117,6 +128,20 @@ typedef recursive_directory_iterator	rdi ;
 
 /* local structures */
 
+enum typeouts {
+    	typeout_file,
+    	typeout_name,
+    	typeout_obj,
+    	typeout_overlast,
+} ;
+
+constexpr cpcchar	typeouts[] = {
+    	"file",
+	"name",
+	"obj",
+	nullptr
+} ;
+
 namespace {
     enum proginfomems {
 	proginfomem_start,
@@ -147,6 +172,7 @@ namespace {
 	uint		modes:1 ;		/* have a file-type */
 	uint		seens:1 ;
 	uint		recs :1 ;
+	uint		ot:2 ;
     } ;
     struct proginfo_co {
 	proginfo	*op = nullptr ;
@@ -236,6 +262,7 @@ namespace {
 	int tardirend() noex ;
 	int tardiravail() noex ;
 	int tardiradd(cchar *,int) noex ;
+	int typeout(cchar *,int) noex ;
     private:
 	int istart() noex ;
 	int ifinish() noex ;
@@ -280,6 +307,7 @@ enum argopts {
     	argopt_of,
     	argopt_af,
     	argopt_ud,
+    	argopt_ot,
 	argopt_overlast
 } ;
 
@@ -293,6 +321,7 @@ constexpr cpcchar	argopts[] = {
     	[argopt_of]		= "of",
     	[argopt_af]		= "af",
     	[argopt_ud]		= "ud",
+    	[argopt_ot]		= "ot",
 	[argopt_overlast]	= nullptr
 } ;
 
@@ -550,12 +579,20 @@ int proginfo::argoptstr(argmgr *amp,int wi) noex {
 	    rs = argpm(amp) ;
 	    break ;
 	case argopt_sn:
+	    if (cc *cp ; (rs = amp->argval(&cp)) > 0) {
+	        rs = 0 ;
+	    }
 	    break ;
 	case argopt_af:
 	    rs = argfile(amp) ;
 	    break ;
 	case argopt_ud:
 	    fl.uniqdir = true ;
+	    break ;
+	case argopt_ot:
+	    if (cc *cp ; (rs = amp->argval(&cp)) > 0) {
+	        rs = typeout(cp,rs) ;
+	    }
 	    break ;
 	} /* end switch */
 	return rs ;
@@ -1118,9 +1155,17 @@ int proginfo::fileuniq(custat *sbp)  noex {
 	return rs ;
 } /* end method (proginfo::fileuniq) */
 
+int proginfo::typeout(cchar *cp,int cl)  noex {
+    	int		rs = SR_OK ;
+	if (int mi ; (mi = matostr(typeouts,1,cp,cl)) >= 0) {
+	    fl.ot = uchar(mi & 0x03) ;	/* avoiding GCC complaint */
+	}
+	return rs ;
+} /* end method (proginfo::typeout) */
+
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
-	if (op) {
+	if (op) ylikely {
 	    switch (w) {
 	    case proginfomem_start:
 	        rs = op->istart() ;
