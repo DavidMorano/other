@@ -42,6 +42,8 @@ module ;
 #include	<usysrets.h>
 #include	<localmisc.h>
 
+#pragma		GCC dependency	"mod/vecbool.ccm"
+
 export module argmgr ;
 
 import vecbool ;
@@ -167,6 +169,7 @@ export {
 	} ;
 	int argopt(ccharpp) noex ;
 	int argoptlong(ccharpp) noex ;
+	int argoptval(ccharp) noex ;		/* optional value */
 	int argval(ccharpp) noex ;
 	int get(int,ccharpp) noex ;
 	int present(int) noex ;
