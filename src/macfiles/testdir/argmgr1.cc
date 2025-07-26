@@ -346,24 +346,6 @@ int argmgr::icount() noex {
     	return rs ;
 } /* end method (argmgr::icount) */
 
-argmgr_iter argmgr::begin() noex {
-    	argmgr_iter	res(this,0) ;
-	cchar		*ap = nullptr ;
-	if (cint rs = get(1,&ap) ; rs > 0) {
-	    if_constexpr (f_debug) {
-		cchar *fmt = "rs=%d ap=%s\n" ;
-	        debprintf(__func__,fmt,rs,((ap) ? "ok" : "null")) ;
-	    }
-	    if (ap) res.ai = rs ;
-	}
-	return res ;
-}
-
-argmgr_iter argmgr::end() noex {
-    	argmgr_iter	res(this,argc) ;
-	return res ;
-}
-
 void argmgr::dtor() noex {
 	if (cint rs = finish ; rs < 0) {
 	    ulogerror("argmgr",rs,"fini-finish") ;
