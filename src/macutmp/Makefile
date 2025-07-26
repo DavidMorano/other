@@ -178,7 +178,8 @@ objf_luo.o:		$(OBJF_LUO)
 
 
 utmp_main.o:		utmp_main.cc $(DEPMODS) ucx.h
-	$(COMPILE.cc) $<
+
+utmp_support.o:		utmp_support.cc
 
 libutil.o:		libutil.dir
 libutil.dir:
