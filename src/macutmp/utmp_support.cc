@@ -41,6 +41,9 @@
 #include	<usysrets.h>
 #include	<localmisc.h>		/* |TIMEBUFLEN| */
 
+#pragma		GCC dependency	"mod/libutil.ccm"
+#pragma		GCC dependency	"mod/umisc.ccm"
+
 import libutil ;
 import umisc ;				/* |snadd(3u)| */
 
