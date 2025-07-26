@@ -79,6 +79,10 @@
 #include	<getfdfile.h>		/* |FD_STDIN| */
 #include	<localmisc.h>		/* |TIMEBUFLEN| */
 
+#pragma		GCC dependency	"mod/libutil.ccm"
+#pragma		GCC dependency	"mod/umisc.ccm"
+#pragma		GCC dependency	"mod/ureserve.ccm"
+
 import libutil ;
 import umisc ;				/* |snadd(3u)| */
 import ureserve ;			/* |isNot{xx}(3u)| */
