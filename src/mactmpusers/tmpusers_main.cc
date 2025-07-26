@@ -79,6 +79,10 @@
 #include	<exitcodes.h>
 #include	<localmisc.h>		/* |MAXPATHLEN| + |USERNAMELEN| */
 
+#pragma		GCC dependency	"mod/umisc.ccm"
+#pragma		GCC dependency	"mod/usysconf.ccm"
+#pragma		GCC dependency	"mod/ulibvals.ccm"
+
 import umisc ;				/* |snadd{x}(3u)| */
 import usysconf ;			/* |usysconfstr(3u)| */
 import ulibvals ;
