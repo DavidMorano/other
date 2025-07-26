@@ -74,6 +74,10 @@
 #include	<exitcodes.h>
 #include	<localmisc.h>
 
+#pragma		GCC dependency	"mod/libutil.ccm"
+#pragma		GCC dependency	"mod/umisc.ccm"
+#pragma		GCC dependency	"mod/ulibvals.ccm"
+
 import libutil ;
 import umisc ;				/* |mknpath(3u)| */
 import ulibvals ;
