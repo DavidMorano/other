@@ -90,16 +90,16 @@ int filelines(cchar *fn) noex {
 	int		rs = SR_FAULT ;
 	int		rs1 ;
 	int		lines = 0 ;
-	if (fn) {
+	if (fn) ylikely {
 	    rs = SR_INVALID ;
-	    if (fn[0]) {
+	    if (fn[0]) ylikely {
 		cint	of = O_RDONLY ;
-		if ((rs = uc_open(fn,of,0)) >= 0) {
+		if ((rs = uc_open(fn,of,0)) >= 0) ylikely {
 		    cint	fd = rs ;
-		    if (USTAT sb ; (rs = uc_fstat(fd,&sb)) >= 0) {
+		    if (ustat sb ; (rs = uc_fstat(fd,&sb)) >= 0) ylikely {
 			csize	fsize = size_t(sb.st_size) ;
 			rs = SR_NOTSUP ;
-		        if (S_ISREG(sb.st_mode)) {
+		        if (S_ISREG(sb.st_mode)) ylikely {
 			    rs = SR_OK ;
 			    if (fsize > 0) {
 			        rs = liner(fd,fsize) ;
@@ -126,9 +126,9 @@ static int liner(int fd,csize ms) noex {
 	int		rs1 ;
 	int		lines = 0 ; /* return-value */
 	cnullptr	np{} ;
-	if (void *md ; (rs = u_mmapbegin(np,ms,mp,mf,fd,0z,&md)) >= 0) {
+	if (void *md ; (rs = u_mmapbegin(np,ms,mp,mf,fd,0z,&md)) >= 0) ylikely {
 	    cint	cmd = MADV_SEQUENTIAL ;
-	    if ((rs = u_madvise(md,ms,cmd)) >= 0) {
+	    if ((rs = u_madvise(md,ms,cmd)) >= 0) ylikely {
 		size_t	ll = ms ;
 		cchar	*lp = charp(md) ;
 		for (cchar *tp ; (tp = charp(memchr(lp,'\n',ll))) != np ; ) {
