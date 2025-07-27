@@ -49,6 +49,9 @@ module ;
 #include	<ischarx.h>
 #include	<localmisc.h>
 
+#pragma		GCC dependency	"mod/libutil.ccm"
+#pragma		GCC dependency	"mod/debug.ccm"
+
 module argmgr ;
 
 import libutil ;
@@ -146,7 +149,7 @@ int argmgr::argopt(cchar **rpp) noex {
     	int		rs ;
 	if ((rs = argmgr_magic(this)) >= 0) ylikely {
 	    if_constexpr (f_debug) {
-	    debprintf(__func__,"ent ai=%d c=%d\n",ai,cntpos) ;
+	        debprintf(__func__,"ent ai=%d c=%d\n",ai,cntpos) ;
 	    }
 	    if (ai < argc) ylikely {
 	        cchar	*ap = argv[ai] ;
@@ -158,17 +161,17 @@ int argmgr::argopt(cchar **rpp) noex {
 	        }
 	        if (rs > 0) ylikely {
 		    if_constexpr (f_debug) {
-		    strnul sk((ap+1),rs) ;
-		    debprintf(__func__,"kp=>%s<\n",ccp(sk)) ;
+		        strnul sk((ap+1),rs) ;
+		        debprintf(__func__,"kp=>%s<\n",ccp(sk)) ;
 		    }
 		    if (valp) {
 		        cint vall= lenstr(valp) ;
 			if_constexpr (f_debug) {
-		        strnul sv (valp,vall) ;
-		        debprintf(__func__,"vp=>%s<\n",ccp(sv)) ;
+		            strnul sv (valp,vall) ;
+		            debprintf(__func__,"vp=>%s<\n",ccp(sv)) ;
 			}
 		    }
-	        }
+	        } /* end if (non-zero positive) */
 		if_constexpr (f_debug) {
 	            debprintf(__func__,"ret rs=%d ai=%d c=%d\n",rs,ai,cntpos) ;
 		}
@@ -230,7 +233,7 @@ int argmgr::argval(cchar **rpp) noex {
     	int		rs ;
 	int		al = 0 ; /* return-value */
 	if_constexpr (f_debug) {
-	debprintf(__func__,"ent\n") ;
+	    debprintf(__func__,"ent\n") ;
 	}
 	if ((rs =  argmgr_magic(this)) >= 0) ylikely {
     	    rs = SR_INVALID ;
@@ -260,7 +263,7 @@ int argmgr::argval(cchar **rpp) noex {
 	    } /* end if (within possible range) */
 	} /* end if (magic) */
 	if_constexpr (f_debug) {
-	debprintf(__func__,"rs=%d al=%d\n",rs,al) ;
+	    debprintf(__func__,"rs=%d al=%d\n",rs,al) ;
 	}
 	return (rs >= 0) ? al : rs ;
 } /* end method (argmgr::argval) */
@@ -269,7 +272,7 @@ int argmgr::get(int i,ccharpp rpp) noex {
     	int		rs = SR_OK ;
 	bool		f = false ;
 	if_constexpr (f_debug) {
-	debprintf(__func__,"ent i=%d\n",i) ;
+	    debprintf(__func__,"ent i=%d\n",i) ;
 	}
 	while ((rs >= 0) && (i < argc) && (! f)) {
 	    if (aie > 0) {
