@@ -29,7 +29,7 @@
 
 EXTERNC_begin
 
-extern int filelines(cchar *) noex ;
+extern int	filelines(cchar *) noex ;
 
 EXTERNC_end
 
