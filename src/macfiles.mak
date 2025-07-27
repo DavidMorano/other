@@ -57,12 +57,14 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-DEPS_MAIN += argmgr.o filerec.o
+DEPS_MAIN += argmgr.o filerec.o 
 DEPS_MAIN += ureserve.o fonce.o
-DEPS_MAIN += strfilter.o
+DEPS_MAIN += strfilter.o 
+DEPS_MAIN += modproc.o loadmodnames.o
 
 OBJ_FILES += files_main.o 
 OBJ_FILES += argmgr.o filerec.o
+OBJ_FILES += modproc.o loadmodnames.o
 
 OBJ_MAIN= obj_main.o
 
@@ -122,7 +124,6 @@ obj_main.o:		$(OBJ_FILES)
 files_main.o:		files_main.cc $(DEPS_MAIN)		$(INCS)
 
 files_tardir.o:		files_tardir0.o files_tardir1.o		$(INCS)
-	$(CXX) -r -o $@ $(LDFLAGS) $^
 
 files_tardir0.o:	files_tardir.ccm			$(INCS)
 
@@ -169,9 +170,19 @@ tardir.o:		tardir.dir
 tardir.dir:
 	makesubdir $@
 
+# LOADMODNAMES
+loadmodnames.o:		loadmodnames.dir
+loadmodnames.dir:
+	makesubdir $@
+
 # DEBUG
 debug.o:		debug.dir
 debug.dir:
+	makesubdir $@
+
+# MODPROC
+modproc.o:		modproc.dir
+modproc.dir:
 	makesubdir $@
 
 
