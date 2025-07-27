@@ -59,18 +59,18 @@ LDFLAGS		?= $(MAKELDFLAGS)
 
 
 OBJ00_LUO= ucx.o debug.o
-OBJ01_LUO= sfx.o six.o rmx.o isx.o sif.o
+OBJ01_LUO= sfx.o six.o rmx.o isx.o hasx.o sif.o
 OBJ02_LUO= strn.o strdcpy.o strx.o strkeyx.o
 OBJ03_LUO= strw.o strwcpy.o
 
 OBJ04_LUO= ccfile.o strmgr.o strfilter.o
-OBJ05_LUO= mapex.o
-OBJ06_LUO= nleadx.o matxstr.o char.o 
-OBJ07_LUO= strnxcmp.o
+OBJ05_LUO= strop.o
+OBJ06_LUO= tardir.o
+OBJ07_LUO= nleadx.o matxstr.o char.o 
 
-OBJ08_LUO= dictdiff.o
-OBJ09_LUO= readln.o tardir.o
-OBJ10_LUO= getourenv.o
+OBJ08_LUO= dictdiff.o strnxcmp.o
+OBJ09_LUO= readln.o 
+OBJ10_LUO= getourenv.o mapex.o
 OBJ11_LUO= inetconv.o inetaddrx.o 
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
@@ -354,16 +354,22 @@ rmx.o:			rmx.dir
 rmx.dir:
 	makesubdir $@
 
+# STROBJ
+strobj.o:		strobj.dir
+strobj.dir:
+	makesubdir $@
+
 # DEBUG
 debug.o:		debug.dir
 debug.dir:
 	makesubdir $@
 
-# Flat Objects
+# Objects
 storebuf.o:		storebuf.cc storebuf.h
 strmgr.o:		strmgr.cc strmgr.h
 ids.o:			ids.cc ids.h
 ccfile.o:		ccfile.cc ccfile.hh
+strop.o:		strop.cc strop.h
 
 # GROUPS
 calstrs.o:		calstrs.cc calstrs.h
@@ -377,5 +383,6 @@ dictdiff.o:		dictdiff.cc dictdiff.h
 inet4int.o:		inet4int.cc inet4int.h
 readln.o:		readln.cc readln.hh
 getourenv.o:		getourenv.cc getourenv.h
+hasx.o:			hasx.cc		hasx.h
 
 
