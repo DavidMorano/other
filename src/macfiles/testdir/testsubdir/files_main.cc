@@ -70,6 +70,7 @@
 
 #pragma		GCC dependency	"mod/libutil.ccm"
 #pragma		GCC dependency	"mod/ulibvals.ccm"
+#pragma		GCC dependency	"mod/ureserve.ccm"
 #pragma		GCC dependency	"mod/strfilter.ccm"
 #pragma		GCC dependency	"mod/argmgr.ccm"
 #pragma		GCC dependency	"mod/fonce.ccm"
@@ -78,9 +79,11 @@
 #pragma		GCC dependency	"mod/debug.ccm"
 #pragma		GCC dependency	"mod/tardir.ccm"
 #pragma		GCC dependency	"mod/filerec.ccm"
+#pragma		GCC dependency	"mod/modproc.ccm"
 
 import libutil ;			/* |lenstr(3u)| */
 import ulibvals ;
+import ureserve ;
 import strfilter ;
 import argmgr ;
 import fonce ;
@@ -89,6 +92,7 @@ import bitop ;
 import debug ;
 import tardir ;
 import filerec ;
+import modproc ;
 
 /* local defines */
 
@@ -127,20 +131,6 @@ typedef recursive_directory_iterator	rdi ;
 
 
 /* local structures */
-
-enum typeouts {
-    	typeout_file,
-    	typeout_name,
-    	typeout_obj,
-    	typeout_overlast,
-} ;
-
-constexpr cpcchar	typeouts[] = {
-    	"file",
-	"name",
-	"obj",
-	nullptr
-} ;
 
 namespace {
     enum proginfomems {
@@ -286,6 +276,7 @@ enum progmodes {
 	progmode_filelines,
 	progmode_filesyner,
 	progmode_filelinker,
+	progmode_depmods,
 	progmode_overlast
 } ;
 
@@ -294,6 +285,7 @@ constexpr cpcchar	prognames[] = {
 	[progmode_filelines]	= "filelines",
 	[progmode_filesyner]	= "filesyncer",
 	[progmode_filelinker]	= "filelinker",
+	[progmode_depmods]	= "depmods",
 	[progmode_overlast]	= nullptr
 } ;
 
