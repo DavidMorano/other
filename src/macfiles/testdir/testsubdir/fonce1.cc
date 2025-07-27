@@ -46,7 +46,7 @@ module ;
 #include	<fcntl.h>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
-#include	<new>
+#include	<new>			/* placement-new + |nothrow(3c++)| */
 #include	<utility>		/* |pair(3c++)| */
 #include	<unordered_set>
 #include	<usystem.h>
@@ -155,7 +155,7 @@ void fonce::dtor() noex {
 	if (cint rs = finish ; rs < 0) {
 	    ulogerror("fonce",rs,"fini-finish") ;
 	}
-}
+} /* end method (fonce::dtor) */
 
 int fonce_co::operator () (int a) noex {
 	int		rs = SR_BUGCHECK ;
