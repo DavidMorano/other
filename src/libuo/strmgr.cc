@@ -136,7 +136,7 @@ int strmgr_finish(strmgr *op) noex {
 	    op->dp = nullptr ;
 	    op->dl = 0 ;
 	    op->dlen = 0 ;
-	}
+	} /* end if (non-null) */
 	return rs ;
 }
 /* end subroutine (strmgr_finish) */
@@ -160,7 +160,7 @@ void strmgr::dtor() noex {
     	if (cint rs = finish ; rs < 0) {
 	    ulogerror("strmgr",rs,"dtor-finish") ;
 	}
-}
+} /* end method (strmgr::dtor) */
 
 strmgr_co::operator int () noex {
 	int		rs = SR_BUGCHECK ;
@@ -178,7 +178,6 @@ strmgr_co::operator int () noex {
 	    } /* end switch */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (strmgr_co::operator) */
+} /* end method (strmgr_co::operator) */
 
 
