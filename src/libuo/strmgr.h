@@ -64,6 +64,7 @@ struct strmgr : strmgr_head {
 	    avail(this,strmgrmem_avail) ;
 	    rem(this,strmgrmem_rem) ;
 	    finish(this,strmgrmem_finish) ;
+	    dp = nullptr ;
 	} ;
 	strmgr(const strmgr &) = delete ;
 	strmgr &operator = (const strmgr &) = delete ;
