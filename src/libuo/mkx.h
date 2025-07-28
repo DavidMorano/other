@@ -20,7 +20,7 @@
 
 */
 
-/* Copyright © 1998,2018,23023 David A-D- Morano.  All rights reserved. */
+/* Copyright © 2000,2018,23023 David A-D- Morano.  All rights reserved. */
 
 #ifndef	MKX_INCLUDE
 #define	MKX_INCLUDE
@@ -50,6 +50,8 @@
 #include	<mkaddr.h>
 #include	<mkpr.h>
 #include	<mkxdisp.h>
+#include	<mklineclean.h>
+#include	<mkunique.h>
 
 
 EXTERNC_begin
@@ -69,12 +71,9 @@ extern int	mksofname(char *,cchar *,cchar *,cchar *) noex ;
 extern int	mkvarpath(char *,cchar *,int) noex ;
 extern int	mkexpandpath(char *,cchar *,int) noex ;
 extern int	mkuserpath(char *,cchar *,cchar *,int) noex ;
-extern int	mkufname(char *,cchar *,cchar *) noex ;
 extern int	mkaltext(char *,cchar *,cchar *) noex ;
 extern int	mkufname(char *,cchar *,cchar *) noex ;
-extern int	mkaltext(char *,cchar *,cchar *) noex ;
 extern int	mkmaildirtest(char *,cchar *,int) noex ;
-extern int	mkstrunique(char *,int) noex ;
 extern int	mkcleanline(char *,int,int) noex ;
 extern int	mkfmtphone(char *,int,cchar *,int) noex ;
 extern int	mkfingerquery(char *,int,int,cchar *,mainv) noex ;
