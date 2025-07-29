@@ -90,6 +90,8 @@ static char *strcpyxc(toxc_f toxc,char *dp,cchar *sp) noex {
 	        *dp++ = char(toxc(*sp++)) ;
 	    } /* end while */
 	    *dp = '\0' ;
+	} else {
+	    dp = nullptr ;
 	} /* end if (non-null) */
 	return dp ;
 }
@@ -114,6 +116,8 @@ char *strcpybc(char *dp,cchar *sp) noex {
 	    } else {
 	        rp = strcpyxc(tobc,dp,sp) ;
 	    }
+	} else {
+	    dp = nullptr ;
 	} /* end if (non-null) */
 	return rp ;
 }
