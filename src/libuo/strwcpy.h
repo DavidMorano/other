@@ -32,12 +32,16 @@
 #ifdef	__cplusplus
 
 constexpr inline char *strwcpy(char *dp,cchar *sp,int sl = -1) noex {
-	if (sl >= 0) {
-	    while (sl-- && *sp) *dp++ = *sp++ ;
-	    *dp = '\0' ;
+    	if (dp && sp) {
+	    if (sl >= 0) {
+	        while (sl-- && *sp) *dp++ = *sp++ ;
+	        *dp = '\0' ;
+	    } else {
+	        dp = stpcpy(dp,sp) ;
+	    } /* end if */
 	} else {
-	    dp = stpcpy(dp,sp) ;
-	} /* end if */
+	    dp = nullptr ;
+	} /* end if (non-null) */
 	return dp ;
 } /* end subroutine (strwcpy) */
 
