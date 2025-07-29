@@ -67,11 +67,13 @@ import libutil ;
 int strmgr_start(strmgr *op,char *dbuf,int dlen) noex {
 	int		rs = SR_FAULT ;
 	if (op && dbuf) ylikely {
-	    rs = SR_OK ;
-	    if (dlen < 0) dlen = lenstr(dbuf) ;
-	    op->dp = dbuf ;
-	    op->dlen = dlen ;
-	    op->dl = 0 ;
+	    rs = SR_INVALID ;
+	    if (dlen >= 0) {
+	        op->dp = dbuf ;
+	        op->dlen = dlen ;
+	        op->dl = 0 ;
+		rs = SR_OK ;
+	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return rs ;
 }
