@@ -35,7 +35,12 @@ DEFS +=
 
 INCS +=
 
-LIBS += -lmacuser -lu
+MODS +=
+
+LIBS += -luo -lu
+
+
+OBJ_SHOWTERMS= showterms_main.o
 
 
 INCDIRS=
@@ -44,7 +49,6 @@ LIBDIRS= -L$(LIBDIR)
 
 
 RUNINFO= -rpath $(RUNDIR)
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -55,10 +59,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_SHOWTERMS= main.o
-
-
-.SUFFIXES:		.hh .ii
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).x
@@ -72,6 +73,9 @@ all:			$(ALL)
 .cc.ii:
 	$(CPP) $(CPPFLAGS) $< > $(*).ii
 
+.ccm.iim:
+	$(CPP) $(CPPFLAGS) $< > $(*).iim
+
 .c.s:
 	$(CC) -S $(CPPFLAGS) $(CFLAGS) $<
 
@@ -84,12 +88,15 @@ all:			$(ALL)
 .cc.o:
 	$(COMPILE.cc) $<
 
+.ccm.o:
+	makemodule $(*)
+
 
 $(T).x:			$(OBJ_SHOWTERMS) $(LIB)
 	$(CXX) $(LDFLAGS) -o $@ $(OBJ_SHOWTERMS) $(LIBINFO)
 
 $(T).nm:		$(T).x
-	$(NM) $(NMFLAGS) $(T).so > $(T).nm
+	$(NM) $(NMFLAGS) $(T).x > $(T).nm
 
 again:
 	rm -f $(TALL)
@@ -101,6 +108,6 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc		$(INCS)
+showterms_main.o:	showterms_main.cc		$(INCS)
 
 

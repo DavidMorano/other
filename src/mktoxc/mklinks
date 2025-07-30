@@ -1,0 +1,33 @@
+#!/usr/extra/bin/ksh
+# MKLINKS
+
+LOCPROG=mktoxc.x
+CMDS=" mktoxc mkcaseterms "
+
+: ${HOME:=$( userhome )}
+: ${EXTRA:=/usr/extra}
+: ${USRLOCAL:=/usr/local}
+: ${LOCAL:=/opt/local}
+
+TDIRS=" ${EXTRA} ${USRLOCAL} "
+
+function linkdir {
+  typeset TDIR=${1}
+  for C in ${CMDS} ; do
+    ln -f ${LOCPROG} ${TDIR}/bin/${C}
+  done
+}
+
+if [[ -x "${LOCPROG}" ]] ; then
+  for D in ${TDIRS} ; do
+    if [[ -d "${D}" ]] ; then
+      linkdir $D
+    else
+      print -u 2 -- "target directory not present"
+      break ;
+    fi
+  done
+else
+  print -u 2 -- "program not made"
+fi
+
