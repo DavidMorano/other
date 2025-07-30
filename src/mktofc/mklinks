@@ -1,8 +1,8 @@
 #!/usr/extra/bin/ksh
 # MKLINKS
 
-LOCPROG=fieldterms.x
-CMDS=" fieldterms "
+LOCPROG=mktofc.x
+CMDS=" mktofc "
 
 : ${HOME:=$( userhome )}
 : ${EXTRA:=/usr/extra}

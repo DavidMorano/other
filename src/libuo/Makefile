@@ -354,6 +354,11 @@ rmx.o:			rmx.dir
 rmx.dir:
 	makesubdir $@
 
+# HASX
+hasx.o:			hasx.dir
+hasx.dir:
+	makesubdir $@
+
 # STROBJ
 strobj.o:		strobj.dir
 strobj.dir:
@@ -383,6 +388,5 @@ dictdiff.o:		dictdiff.cc dictdiff.h
 inet4int.o:		inet4int.cc inet4int.h
 readln.o:		readln.cc readln.hh
 getourenv.o:		getourenv.cc getourenv.h
-hasx.o:			hasx.cc		hasx.h
 
 

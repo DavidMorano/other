@@ -1,6 +1,6 @@
-# MAKEFILE (fieldterms)
+# MAKEFILE (mkfieldterms)
 
-T= fieldterms
+T= mkfieldterms
 
 ALL= $(T).x
 
@@ -40,7 +40,7 @@ MODS +=
 LIBS += -luo -lu
 
 
-OBJ_FIELDTERMS= fieldterms_main.o
+OBJ_MKTOFC= mkfieldterms_main.o
 
 
 INCDIRS=
@@ -92,14 +92,14 @@ all:			$(ALL)
 	makemodule $(*)
 
 
-$(T).x:			$(OBJ_FIELDTERMS)
-	$(CXX) $(LDFLAGS) -o $@ $(RUNINFO) $(OBJ_FIELDTERMS) $(LIBINFO)
+$(T).x:			$(OBJ_MKTOFC)
+	$(CXX) -o $@ $(LDFLAGS) $(OBJ_MKTOFC) $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).x > $(T).nm
 
 again:
-	rm -f $(TALL)
+	rm -f $(T).x
 
 clean:
 	makeclean $(ALL)
@@ -107,10 +107,7 @@ clean:
 control:
 	(uname -n ; date) > Control
 
-install:		$(T).x
-	makeinstall $(T).x
 
-
-fieldterms_main.o:	fieldterms_main.cc $(INCS)
+mkfieldterms_main.o:	mkfieldterms_main.cc			$(INCS)
 
 
