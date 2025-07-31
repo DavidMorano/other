@@ -94,7 +94,6 @@
 #include	<chrono.h>
 #include	<clanguage.h>
 #include	<clusterdb.h>
-#include	<compactstr.h>
 #include	<conmsghdr.h>
 #include	<csem.h>
 #include	<ctx.h>

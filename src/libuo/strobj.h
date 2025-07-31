@@ -31,6 +31,9 @@
 #include	<strtab.h>
 #include	<strtabfind.h>
 
+#include	<ass.h>
+#include	<dstr.h>
+
 
 #endif /* STROBJ_INCLUDE */
 

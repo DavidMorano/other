@@ -79,6 +79,19 @@ int strmgr_start(strmgr *op,char *dbuf,int dlen) noex {
 }
 /* end subroutine (strmgr_start) */
 
+int strmgr_finish(strmgr *op) noex {
+	int		rs = SR_FAULT ;
+	if (op) ylikely {
+	    rs = op->dl ;
+	    op->dp[0] = '\0' ;
+	    op->dp = nullptr ;
+	    op->dl = 0 ;
+	    op->dlen = 0 ;
+	} /* end if (non-null) */
+	return rs ;
+}
+/* end subroutine (strmgr_finish) */
+
 int strmgr_avail(strmgr *op) noex {
 	int		rs = SR_FAULT ;
 	if (op) ylikely {
@@ -130,18 +143,14 @@ int strmgr_chr(strmgr *op,int ch) noex {
 }
 /* end subroutine (strmgr_chr) */
 
-int strmgr_finish(strmgr *op) noex {
+int strmgr_len(strmgr *op) noex {
 	int		rs = SR_FAULT ;
 	if (op) ylikely {
 	    rs = op->dl ;
-	    op->dp[0] = '\0' ;
-	    op->dp = nullptr ;
-	    op->dl = 0 ;
-	    op->dlen = 0 ;
-	} /* end if (non-null) */
+	}
 	return rs ;
 }
-/* end subroutine (strmgr_finish) */
+/* end subroutine (strmgr_len) */
 
 
 /* local subroutines */
@@ -173,6 +182,9 @@ strmgr_co::operator int () noex {
 	        break ;
 	    case strmgrmem_rem:
 	        rs = strmgr_rem(op) ;
+	        break ;
+	    case strmgrmem_len:
+	        rs = strmgr_len(op) ;
 	        break ;
 	    case strmgrmem_finish:
 	        rs = strmgr_finish(op) ;
