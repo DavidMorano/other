@@ -34,14 +34,14 @@
 #define	EMA_MAGIC	0x73169284
 
 
-enum emnatypes {
+enum ematypes {
 	ematype_reg,			/* regular */
 	ematype_pcs,			/* PCS list */
 	ematype_lalias,			/* local alias */
 	ematype_salias,			/* system alias */
 	ematype_group,			/* RFC-822 mail-address "group" */
 	ematype_overlast
-} ;
+} ; /* end enum (ematypes) */
 
 enum emaparts {
 	emapart_address,
@@ -54,16 +54,11 @@ struct ema_head {
 	vechand		*elp ;
 	uint		magic ;
 	int		n ;
-} ;
+} ; /* end struct (ema_head) */
 
 struct ema_flags {
 	uint		error:1 ;	/* address parse error */
 	uint		expanded:1 ;	/* list has been expanded */
-} ;
-
-struct ema_s {
-	cchar		*pp ;
-	int		pl ;
 } ;
 
 struct ema_entry {
@@ -72,7 +67,7 @@ struct ema_entry {
 	cchar		*rp ;		/* route-address part (if any) */
 	cchar		*cp ;		/* comment */
 	EMA		*listp ;
-	EMA_FL		f ;
+	EMA_FL		fl ;
 	int		type ;		/* mailing list type */
 	int		n ;		/* number in list */
 	int		ol, al, rl, cl ;

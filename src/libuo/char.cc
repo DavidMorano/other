@@ -92,15 +92,18 @@ namespace {
 	bitset<chtablen>	iswhite ;
 	bitset<chtablen>	islc ;
 	bitset<chtablen>	isuc ;
+	bitset<chtablen>	isfc ;
 	uchar			toval[chtablen] ;
 	constexpr void mkiswhite() noex ;
 	constexpr void mkislc() noex ;
 	constexpr void mkisuc() noex ;
+	constexpr void mkisfc() noex ;
 	constexpr void mktoval() noex ;
 	constexpr charinfo() noex {
 	    mkiswhite() ;
 	    mkislc() ;
 	    mkisuc() ;
+	    mkisfc() ;
 	    mktoval() ;
 	} ;
     } ; /* end struct (charinfo) */
@@ -138,6 +141,15 @@ constexpr void charinfo::mkisuc() noex {
 	isuc.set(UC('ß'),false) ; 	/* <- this is 'ss' in German */
 }
 /* end method (charinfo::mkisuc) */
+
+constexpr void charinfo::mkisfc() noex {
+	for (int ch = 'A' ; ch <= 'Z' ; ch += 1) {
+	    isfc.set(ch,true) ;
+	}
+	isfc.set(UC('Ð'),false) ;
+	isfc.set(UC('Þ'),false) ; /* 0xDE - 'PB' in German */
+}
+/* end method (charinfo::mkisfc) */
 
 constexpr void charinfo::mktoval() noex {
         for (int ch = 0 ; ch < chtablen ; ch += 1) {
@@ -326,6 +338,10 @@ bool char_islc(int ch) noex {
 
 bool char_isuc(int ch) noex {
 	return char_data.isuc[ch & UCHAR_MAX] ;
+}
+
+bool char_isfc(int ch) noex {
+	return char_data.isfc[ch & UCHAR_MAX] ;
 }
 
 int char_toval(int ch) noex {
