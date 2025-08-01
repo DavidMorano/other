@@ -2,7 +2,7 @@
 /* charset=ISO8859-1 */
 /* lang=C20 */
 
-/* search for a possible break-point among possiblw hite-space */
+/* search for a possible break-point among possible white-space */
 /* version %I% last-modified %G% */
 
 
@@ -12,7 +12,7 @@
 	This code was originally written for some reason.
 
 	= 2020-03-22, David A­D­ Morano
-	I modularized this.
+	I modularized this (made into a C++20 module).
 
 */
 
