@@ -138,7 +138,6 @@ constexpr void charinfo::mkisuc() noex {
 	    isuc.set(ch,true) ;
 	}
 	isuc.set(UC('×'),false) ;
-	isuc.set(UC('ß'),false) ; 	/* <- this is 'ss' in German */
 }
 /* end method (charinfo::mkisuc) */
 
