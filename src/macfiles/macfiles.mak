@@ -60,11 +60,11 @@ LDFLAGS		?= $(MAKELDFLAGS)
 DEPS_MAIN += argmgr.o filerec.o 
 DEPS_MAIN += ureserve.o fonce.o
 DEPS_MAIN += strfilter.o 
-DEPS_MAIN += modproc.o loadmodnames.o
+DEPS_MAIN += modproc.o modloadnames.o
 
 OBJ_FILES += files_main.o 
 OBJ_FILES += argmgr.o filerec.o
-OBJ_FILES += modproc.o loadmodnames.o
+OBJ_FILES += modproc.o modloadnames.o
 
 OBJ_MAIN= obj_main.o
 
@@ -171,8 +171,8 @@ tardir.dir:
 	makesubdir $@
 
 # LOADMODNAMES
-loadmodnames.o:		loadmodnames.dir
-loadmodnames.dir:
+modloadnames.o:		modloadnames.dir
+modloadnames.dir:
 	makesubdir $@
 
 # DEBUG
