@@ -1,0 +1,195 @@
+/* argmgr MODULE (primary-module-interface) */
+/* charset=ISO8859-1 */
+/* lang=C++20 (conformance reviewed) */
+
+/* manage program arguments */
+/* version %I% last-modified %G% */
+
+#define	CF_DEBUG	0		/* debugging */
+
+/* revision history:
+
+	= 1998-09-10, David A­D­ Morano
+	This subroutine was written for Rightcore Network Services.
+
+	= 2020-08-13, David A­D­ Morano
+	This code has been modularized (w/ C++20 modules).
+
+*/
+
+/* Copyright © 1998,2020 David A­D­ Morano.  All rights reserved. */
+
+/*******************************************************************************
+
+	Object:
+	argmgr
+
+	Description:
+	This object manages program arguments.
+
+*******************************************************************************/
+
+module ;
+
+#include	<envstandards.h>	/* MUST be first to configure */
+#include	<cstddef>		/* |nullptr_t| */
+#include	<cstdlib>
+#include	<new>			/* |nothrow(3c++)| */
+#include	<clanguage.h>
+#include	<utypedefs.h>
+#include	<utypealiases.h>
+#include	<usysdefs.h>
+#include	<usysrets.h>
+#include	<localmisc.h>
+
+#pragma		GCC dependency	"mod/vecbool.ccm"
+
+export module argmgr ;
+
+import vecbool ;
+
+/* local defines */
+
+#ifndef	CF_DEBUG
+#define	CF_DEBUG	0		/* debugging */
+#endif
+
+
+/* imported namespaces */
+
+using std::nullptr_t ;			/* type */
+using std::nothrow ;			/* constant */
+
+
+/* local typedefs */
+
+
+/* external subroutines */
+
+
+/* external variables */
+
+
+/* forwards references */
+
+
+/* local variables */
+
+cbool		f_debug = CF_DEBUG ;
+
+
+/* exported variables */
+
+
+/* exported subroutines */
+
+    enum argmgrmems {
+	argmgrmem_start,
+	argmgrmem_finish,
+	argmgrmem_arg,
+	argmgrmem_posarg,
+	argmgrmem_positional,
+	argmgrmem_argchar,
+	argmgrmem_count,
+	argmgrmem_overlast
+    } ; /* end enum (argmgrmems) */
+
+export {
+    struct argmgr_fl {
+	uint		plus:1 ;
+    } ;
+    struct argmgr ;
+    struct argmgr_iter {
+	argmgr		*op = nullptr ;
+	int		ai = 0 ;
+	argmgr_iter() = default ;
+	argmgr_iter(argmgr *p,int i) noex : op(p), ai(i) { } ;
+	argmgr_iter(const argmgr_iter &o) noex = default ;
+	argmgr_iter &operator = (const argmgr_iter &) = default ;
+	bool operator != (const argmgr_iter &) noex ;
+	bool operator < (const argmgr_iter &) noex ;
+	ccharp operator * () noex ;
+	operator ccharp () noex ;
+	argmgr_iter operator + (int) const noex ;
+	argmgr_iter &operator += (int) noex ;
+	argmgr_iter operator ++ () noex ; /* pre */
+	argmgr_iter operator ++ (int) noex ; /* post */
+    private:
+	int increment(int = 1) noex ;
+    } ; /* end struct (argmgr_iter) */
+    struct argmgr_co {
+	argmgr		*op = nullptr ;
+	int		w = -1 ;
+	void operator () (argmgr *p,int m) noex {
+	    op = p ;
+	    w = m ;
+	} ;
+	operator int () noex ;
+	int operator () (int) noex ;
+    } ; /* end struct (argmgr_co) */
+    struct argmgr {
+	typedef argmgr_iter	iterator ;
+	typedef ccharp		value_type ;
+	friend 		argmgr_co ;
+	friend 		argmgr_iter ;
+	argmgr_co	start ;
+	argmgr_co	finish ;
+	argmgr_co	arg ;
+	argmgr_co	posarg ;
+	argmgr_co	positional ;
+	argmgr_co	argchar ;
+	argmgr_co	count ;
+	argmgr_fl	fl ;
+	vecbool		amap ;		/* argument-map */
+	mainv		argv ;
+	ccharp		valp ;		/* value-pointer */
+	ccharp		digvalp{} ;
+	uint		magic{} ;
+	int		argc ;
+	int		ai ;		/* argument-index */
+	int		aie ;		/* argument-index-end - end options */
+	int		cntpos ;
+	bool		argoptdone{} ;	/* internally used flag */
+	bool		haveargoptval ;	/* public flag indicating arg-opt-val */
+	argmgr(int ac = 0,mainv av = nullptr) noex : argc(ac), argv(av) {
+	    start	(this,argmgrmem_start) ;
+	    finish	(this,argmgrmem_finish) ;
+	    arg		(this,argmgrmem_arg) ;
+	    posarg	(this,argmgrmem_posarg) ;
+	    positional	(this,argmgrmem_positional) ;
+	    argchar	(this,argmgrmem_argchar) ;
+	    count	(this,argmgrmem_count) ;
+	    ai = 0 ;
+	    aie = 0 ;
+	    cntpos = ((ac > 0) ? (ac - 1) : 0) ;
+	} ; /* end ctor */
+	void load(int ac,mainv av) noex {
+	    argc = ac ;
+	    argv = av ;
+	    cntpos = ((ac > 0) ? (ac - 1) : 0) ;
+	} ;
+	int argopt(ccharpp) noex ;
+	int argoptlong(ccharpp) noex ;
+	int argoptval(ccharp) noex ;		/* optional value */
+	int argval(ccharpp) noex ;
+	int get(int,ccharpp) noex ;
+	int present(int) noex ;
+	argmgr_iter begin() noex ;
+	argmgr_iter end() noex ;
+	operator int () noex ;
+	void dtor() noex ;
+	destruct argmgr() {
+	    if (magic) dtor() ;
+	} ;
+    private:
+	int istart() noex ;
+	int ifinish() noex ;
+	int iarg() noex ;
+	int iargopt(cchar *,int,cchar **) noex ;
+	int iargchar() noex ;
+	int ipositional() noex ;
+	int icount() noex ;
+    } ; /* end struct (argmgr) */
+} /* end export */
+
+
