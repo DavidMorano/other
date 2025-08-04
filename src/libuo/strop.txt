@@ -1,0 +1,17 @@
+STROP
+
+This object facilitates string parsing.
+
+method		description
+--------------------------------------------------------------------------------
+
+start		start (phase-2 construct) object
+brkfield	skip until a break character and return field pointer
+white		skip white-space
+whitechr	skip white or until character
+findchr		skip until (find) character
+findterm	ship until (find) character in terminator-block?
+spanterm	span over characters in terminator-block
+span		skip over characters in given string-class
+finish		done w/ object
+
