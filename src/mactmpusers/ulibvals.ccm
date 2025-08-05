@@ -47,6 +47,7 @@ module ;
 #include	<utypedefs.h>
 #include	<utypealiases.h>
 #include	<usysdefs.h>
+#include	<usysrets.h>
 #include	<localmisc.h>		/* |{xxx}BUFLEN| */
 
 export module ulibvals ;
@@ -75,6 +76,7 @@ export {
 	static const int	decbuflen ;	/* for |int256_t| */
 	static const int	hexbuflen ;	/* for |int256_t| */
 	static const int	digbuflen ;	/* for |int256_t| */
+	operator int () noex ;
     } ; /* end struct (ulibvals) */
 } /* end export */
 
