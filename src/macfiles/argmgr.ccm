@@ -87,9 +87,6 @@ cbool		f_debug = CF_DEBUG ;
 	argmgrmem_start,
 	argmgrmem_finish,
 	argmgrmem_arg,
-	argmgrmem_posarg,
-	argmgrmem_positional,
-	argmgrmem_argchar,
 	argmgrmem_count,
 	argmgrmem_overlast
     } ; /* end enum (argmgrmems) */
@@ -135,9 +132,6 @@ export {
 	argmgr_co	start ;
 	argmgr_co	finish ;
 	argmgr_co	arg ;
-	argmgr_co	posarg ;
-	argmgr_co	positional ;
-	argmgr_co	argchar ;
 	argmgr_co	count ;
 	argmgr_fl	fl ;
 	vecbool		amap ;		/* argument-map */
@@ -155,9 +149,6 @@ export {
 	    start	(this,argmgrmem_start) ;
 	    finish	(this,argmgrmem_finish) ;
 	    arg		(this,argmgrmem_arg) ;
-	    posarg	(this,argmgrmem_posarg) ;
-	    positional	(this,argmgrmem_positional) ;
-	    argchar	(this,argmgrmem_argchar) ;
 	    count	(this,argmgrmem_count) ;
 	    ai = 0 ;
 	    aie = 0 ;
@@ -186,8 +177,6 @@ export {
 	int ifinish() noex ;
 	int iarg() noex ;
 	int iargopt(cchar *,int,cchar **) noex ;
-	int iargchar() noex ;
-	int ipositional() noex ;
 	int icount() noex ;
     } ; /* end struct (argmgr) */
 } /* end export */

@@ -57,19 +57,23 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
+DEPS_MAIN += files_utils.o
 DEPS_MAIN += argmgr.o filerec.o 
 DEPS_MAIN += ureserve.o fonce.o
 DEPS_MAIN += strfilter.o 
 DEPS_MAIN += modproc.o modloadnames.o
 
-OBJ_FILES += files_main.o 
-OBJ_FILES += argmgr.o filerec.o
-OBJ_FILES += modproc.o modloadnames.o
+OBJ0= files_main.o files_utils.o
+OBJ1= argmgr.o filerec.o
+OBJ2= modproc.o modloadnames.o
+OBJ3= 
 
-OBJ_MAIN= obj_main.o
+OBJA= obj0.o obj1.o obj2.o
+
+OBJ_MAIN= obja.o
 
 
-.SUFFIXES:		.hh .ii .ccm
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).x
@@ -82,6 +86,9 @@ all:			$(ALL)
 
 .cc.ii:
 	$(CPP) $(CPPFLAGS) $< > $(*).ii
+
+.ccm.iim:
+	$(CPP) $(CPPFLAGS) $< > $(*).iim
 
 .c.s:
 	$(CC) -S $(CPPFLAGS) $(CFLAGS) $<
@@ -118,8 +125,26 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
-obj_main.o:		$(OBJ_FILES)
+obj_main.o:		$(OBJ_MAIN)
 	$(CXX) -r -o $@ $(LDFLAGS) $^
+
+
+obj0.o:			$(OBJ0)
+	$(CXX) -r -o $@ $(LDFLAGS) $^
+
+obj1.o:			$(OBJ1)
+	$(CXX) -r -o $@ $(LDFLAGS) $^
+
+obj2.o:			$(OBJ2)
+	$(CXX) -r -o $@ $(LDFLAGS) $^
+
+obj3.o:			$(OBJ3)
+	$(CXX) -r -o $@ $(LDFLAGS) $^
+
+
+obja.o:			$(OBJA)
+	$(CXX) -r -o $@ $(LDFLAGS) $^
+
 
 files_main.o:		files_main.cc $(DEPS_MAIN)		$(INCS)
 
@@ -183,6 +208,11 @@ debug.dir:
 # MODPROC
 modproc.o:		modproc.dir
 modproc.dir:
+	makesubdir $@
+
+# FILES_UTILS
+files_utils.o:		files_utils.dir
+files_utils.dir:
 	makesubdir $@
 
 

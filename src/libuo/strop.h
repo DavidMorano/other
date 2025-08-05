@@ -65,6 +65,7 @@ struct strop : strop_head {
 	    whitedash(this,stropmem_whitedash) ;
 	    whitecolon(this,stropmem_whitecolon) ;
 	    finish(this,stropmem_finish) ;
+	    sp = nullptr ;
 	} ;
 	strop(const strop &) = delete ;
 	strop &operator = (const strop &) = delete ;

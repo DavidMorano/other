@@ -39,6 +39,7 @@
 #include	<snflags.h>
 #include	<snuuid.h>
 #include	<snclean.h>
+#include	<snwx.h>
 
 
 EXTERNC_begin
@@ -57,8 +58,6 @@ extern int snerrabbr(char *,int,int) noex ;
 extern int snrealname(char *,int,mainv,int) noex ;
 extern int snloadavg(char *,int,uint,int,int,int) noex ;
 extern int snkeyval(char *,int,cchar *,int,cchar *,int) noex ;
-extern int snwvprintf(char *,int,cchar *,va_list) noex ;
-extern int snwprintf(char *,int,cchar *,...) noex ;
 
 EXTERNC_end
 
