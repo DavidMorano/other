@@ -155,7 +155,7 @@ main(int argc, char **argv)
 	/*
 	 * If all jobs belonging to the user are to be removed, compare
 	 * the user's id to the owner of the file. If they match, remove
-	 * the file. If the user is the super-user, don't bother comparing
+	 * the file. If the user is the super-user, do not bother comparing
 	 * the id's. After all files are removed, exit (status 0).
 	 */
 	if (allflag) {
@@ -202,7 +202,7 @@ main(int argc, char **argv)
 			}
 			++jobexists;
 			/*
-			 * if the entry is ultimately removed, don't
+			 * if the entry is ultimately removed, do not
 			 * try to remove it again later.
 			 */
 			if (removentry(namelist[i]->d_name, statlist[i],

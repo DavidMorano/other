@@ -700,7 +700,7 @@ initialize(int firstpass)
 				/* didn't fork... init(8) is waiting */
 				(void) sleep(60);
 				/*
-				 * the wait is painful, but we don't want
+				 * the wait is painful, but we do not want
 				 * init respawning this quickly
 				 */
 			}
@@ -1928,7 +1928,7 @@ get_switching_time(int to_dst, time_t t_ref)
 		}
 	}
 
-	/* ugly, but don't know other than this. */
+	/* ugly, but do not know other than this. */
 	tmp1 = tmp;
 	tmp1.tm_sec = 0;
 	if ((t = xmktime(&tmp1)) == (time_t)-1)
@@ -2671,7 +2671,7 @@ cleanup(struct runinfo *pr, int rc)
 /*
  * Mail stdout and stderr of a job to user. Get uid for real user and become
  * that person. We do this so that mail won't come from root since this
- * could be a security hole. If failure, quit - don't send mail as root.
+ * could be a security hole. If failure, quit - do not send mail as root.
  */
 static void
 mail_result(struct usr *p, struct runinfo *pr, size_t filesize)

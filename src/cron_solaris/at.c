@@ -770,7 +770,7 @@ remove_jobs(int argc, char **argv, char *login)
 			perror("");
 		} else if ((user != buf.st_uid) &&
 		    (!chkauthattr(CRONADMIN_AUTH, pw->pw_name))) {
-			fprintf(stderr, "at: you don't own %s\n",
+			fprintf(stderr, "at: you do not own %s\n",
 			    argv[i]);
 			error = 1;
 		} else {
@@ -886,7 +886,7 @@ list_jobs(int argc, char **argv, int qflag, int queue)
 			} else if ((user != buf.st_uid) &&
 			    (!chkauthattr(CRONADMIN_AUTH, pwd->pw_name))) {
 				fprintf(stderr, gettext(
-				    "at: you don't own %s\n"), argv[i]);
+				    "at: you do not own %s\n"), argv[i]);
 				error = 1;
 			} else if (pflag && not_this_project(job_file)) {
 				continue;
@@ -905,7 +905,7 @@ list_jobs(int argc, char **argv, int qflag, int queue)
 /*
  * open the command file and read the project id line
  * compare to the project number provided via -p on the command line
- * return 0 if they match, 1 if they don't match or an error occurs.
+ * return 0 if they match, 1 if they do not match or an error occurs.
  */
 #define	SKIPCOUNT 3	/* lines to skip to get to project line in file */
 

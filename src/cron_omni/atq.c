@@ -231,7 +231,7 @@ countfiles(uid_t *uidlist, int nuids)
 	 * For each file in the queue, see if the user(s) own the file. We
 	 * have to use "entryfound" (rather than simply incrementing "numfiles")
 	 * so that if a person's name appears twice on the command line we
-	 * don't double the number of files owned by that user.
+	 * do not double the number of files owned by that user.
 	 */
 	for (i = 0; i < numentries; i++) {
 		if ((stat(queue[i]->d_name, &stbuf)) < 0) {
@@ -278,7 +278,7 @@ printqueue(uid_t *uidlist, int nuids)
 	 * belonging to that person(s), otherwise print the entire queue.
 	 * Once again, we have to use "entryfound" (rather than simply
 	 * comparing each command line argument) so that if a person's name
-	 * appears twice we don't print each of their files twice.
+	 * appears twice we do not print each of their files twice.
 	 *
 	 *
 	 * "printrank", "printdate", and "printjobname" all take existing
