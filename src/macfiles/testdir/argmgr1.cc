@@ -158,7 +158,7 @@ int argmgr::argopt(cchar **rpp) noex {
 		    if (cint ch = mkchar(ap[1]) ; ch) {
 		        rs = iargopt(ap,ch,rpp) ;
 		    } /* end if (have option) */
-	        }
+	        } /* end if (isplusminus) */
 	        if (rs > 0) ylikely {
 		    if_constexpr (f_debug) {
 		        strnul sk((ap+1),rs) ;
@@ -189,9 +189,11 @@ int argmgr::iargopt(cchar *ap,int ch,cchar **rpp) noex {
 		cntpos -= 1 ;
 		if (cc *tp ; (tp = strchr((ap + 1),'=')) != np) {
 		    valp = (tp + 1) ;
+		    haveargoptval = true ;
 		    rs = intconv(tp - (ap + 1)) ;
 		} else {
 		    valp = nullptr ;
+		    haveargoptval = false ;
 		    rs = lenstr(ap + 1) ;
 		}
 	    } /* end if (amap,set) */
@@ -229,6 +231,7 @@ int argmgr::argoptlong(cchar **rpp) noex {
 	return rs ;
 } /* end method (argmgr::argoptlong) */
 
+/* this gets the next value, whether the next arg or an arg-opt-val */
 int argmgr::argval(cchar **rpp) noex {
     	int		rs ;
 	int		al = 0 ; /* return-value */
@@ -244,6 +247,7 @@ int argmgr::argval(cchar **rpp) noex {
 		    rp = valp ;
 		    al = lenstr(valp) ;
 		    valp = nullptr ;
+		    haveargoptval = false ;
 	        } else {
 	            if ((rs = get((ai + 1),&rp)) > 0) {
 		        ai = rs ;
@@ -325,21 +329,11 @@ int argmgr::present(int i) noex {
 		    if ((rs = amap.tst[i]) == 0) {
 		        f = true ;
 		    }
-	        }
+	        } /* end if */
 	    } /* end if (valid) */
 	} /* end if (magic) */
 	return (rs >= 0) ? f : rs ;
 } /* end method (argmgr::present) */
-
-int argmgr::iargchar() noex {
-    	int		rs = SR_OK ;
-	return rs ;
-}
-
-int argmgr::ipositional() noex {
-    	int		rs = SR_OK ;
-	return rs ;
-}
 
 int argmgr::icount() noex {
     	int		rs ;
@@ -353,7 +347,7 @@ void argmgr::dtor() noex {
 	if (cint rs = finish ; rs < 0) {
 	    ulogerror("argmgr",rs,"fini-finish") ;
 	}
-}
+} /* end method (argmgr::dtor) */
 
 argmgr::operator int () noex {
     	int		rs ;
@@ -376,13 +370,6 @@ argmgr_co::operator int () noex {
 	    case argmgrmem_arg:
 	        rs = op->iarg() ;
 	        break ;
-	    case argmgrmem_argchar:
-		rs = op->iargchar() ;
-		break ;
-	    case argmgrmem_posarg:
-	    case argmgrmem_positional:
-		rs = op->ipositional() ;
-		break ;
 	    case argmgrmem_count:
 	        rs = op->icount() ;
 	        break ;

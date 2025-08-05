@@ -2,7 +2,7 @@
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
-/* implement a map container of blocks (of a given structure) */
+/* (File-Once) implement a map container to track file device-inode values */
 /* version %I% last-modified %G% */
 
 
@@ -19,7 +19,7 @@
 
 /*******************************************************************************
 
-	Name:
+	Object:
 	fonce
 
 	Description:
