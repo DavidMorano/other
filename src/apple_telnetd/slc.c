@@ -228,7 +228,7 @@ process_slc(unsigned char func, unsigned char flag, cc_t val)
 
 	/*
 	 * Process the special case requests of 0 SLC_DEFAULT 0
-	 * and 0 SLC_VARIABLE 0.  Be a little forgiving here, don't
+	 * and 0 SLC_VARIABLE 0.  Be a little forgiving here, do not
 	 * worry about whether the value is actually 0 or not.
 	 */
 	if (func == 0) {
@@ -258,7 +258,7 @@ process_slc(unsigned char func, unsigned char flag, cc_t val)
 		return;
 	} else if (ack) {
 		/*
-		 * If we get here, we got an ack, but the levels don't match.
+		 * If we get here, we got an ack, but the levels do not match.
 		 * This shouldn't happen.  If it does, it is probably because
 		 * we have sent two requests to set a variable without getting
 		 * a response between them, and this is the first response.
@@ -299,7 +299,7 @@ change_slc(char func, char flag, cc_t val)
 	if (hislevel == SLC_DEFAULT) {
 		/*
 		 * Special case here.  If client tells us to use
-		 * the default on a function we don't support, then
+		 * the default on a function we do not support, then
 		 * return NOSUPPORT instead of what we may have as a
 		 * default level of DEFAULT.
 		 */
@@ -319,7 +319,7 @@ change_slc(char func, char flag, cc_t val)
 	 * is telling us that he can't change to our value.
 	 * Some of the slc's we support and can change,
 	 * some we do support but can't change,
-	 * and others we don't support at all.
+	 * and others we do not support at all.
 	 * If we can change it then we have a pointer to
 	 * the place to put the new value, so change it,
 	 * otherwise, continue the negotiation.

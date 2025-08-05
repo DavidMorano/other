@@ -521,7 +521,7 @@ willoption(int option)
 		case TELOPT_LFLOW:
 			/*
 			 * If we are going to support flow control
-			 * option, then don't worry peer that we can't
+			 * option, then do not worry peer that we can't
 			 * change the flow control characters.
 			 */
 			slctab[SLC_XON].defset.flag &= ~SLC_LEVELBITS;
@@ -700,7 +700,7 @@ wontoption(int option)
 		case TELOPT_TM:
 			/*
 			 * If we get a WONT TM, and had sent a DO TM,
-			 * don't respond with a DONT TM, just leave it
+			 * do not respond with a DONT TM, just leave it
 			 * as is.  Short circut the state machine to
 			 * achive this.
 			 */
@@ -870,7 +870,7 @@ dooption(int option)
 				clientstat(TELOPT_LINEMODE, WONT, 0);
 				/*
 				 * If linemode did not get turned off
-				 * then don't tell peer that we did.
+				 * then do not tell peer that we did.
 				 * Breaking here forces a wont SGA to
 				 * be returned.
 				 */
@@ -1186,7 +1186,7 @@ suboption(void)
 		/*
 		 * According to spec, only server can send request for
 		 * forwardmask, and client can only return a positive response.
-		 * So don't worry about it.
+		 * So do not worry about it.
 		 */
 
 	default:
@@ -1509,7 +1509,7 @@ send_status(void)
 	/*
 	 * We check the want_state rather than the current state,
 	 * because if we received a DO/WILL for an option that we
-	 * don't support, and the other side didn't send a DONT/WONT
+	 * do not support, and the other side didn't send a DONT/WONT
 	 * in response to our WONT/DONT, then the "state" will be
 	 * WILL/DO, and the "want_state" will be WONT/DONT.  We
 	 * need to go by the latter.

@@ -458,7 +458,7 @@ getpty(int *ptynum __unused, int *slavepty)
 		/*
 		 * This stat() check is just to keep us from
 		 * looping through all 256 combinations if there
-		 * aren't that many ptys available.
+		 * are not that many ptys available.
 		 */
 		if (stat(line, &stb) < 0)
 			break;
@@ -932,7 +932,7 @@ getptyslave(void)
 	erase = termbuf.c_cc[VERASE];
 
 	/*
-	 * Make sure that we don't have a controlling tty, and
+	 * Make sure that we do not have a controlling tty, and
 	 * that we are the session (process group) leader.
 	 */
 # ifdef	TIOCNOTTY
@@ -1150,7 +1150,7 @@ extern int password_enabled(void);
 	 * -h : pass on name of host.
 	 *		WARNING:  -h is accepted by login if and only if
 	 *			getuid() == 0.
-	 * -p : don't clobber the environment (so terminal type stays set).
+	 * -p : do not clobber the environment (so terminal type stays set).
 	 *
 	 * -f : force this login, he has already been authenticated
 	 */
@@ -1206,7 +1206,7 @@ extern int password_enabled(void);
 # else
 #  if defined(LOGIN_R)
 		/*
-		 * We don't have support for "login -f", but we
+		 * We do not have support for "login -f", but we
 		 * can fool /bin/login into thinking that we are
 		 * rlogind, and allow us to log in without a
 		 * password.  The rlogin protocol expects
@@ -1414,7 +1414,7 @@ cleanup(int sig __unused)
 
 	p = line + sizeof(_PATH_DEV) - 1;
 	/*
-	 * Block all signals before clearing the utmp entry.  We don't want to
+	 * Block all signals before clearing the utmp entry.  We do not want to
 	 * be called again after calling logout() and then not add the wtmp
 	 * entry because of not finding the corresponding entry in utmp.
 	 */
