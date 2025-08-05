@@ -335,16 +335,6 @@ int argmgr::present(int i) noex {
 	return (rs >= 0) ? f : rs ;
 } /* end method (argmgr::present) */
 
-int argmgr::iargchar() noex {
-    	int		rs = SR_OK ;
-	return rs ;
-}
-
-int argmgr::ipositional() noex {
-    	int		rs = SR_OK ;
-	return rs ;
-}
-
 int argmgr::icount() noex {
     	int		rs ;
 	if ((rs = argmgr_magic(this)) >= 0) ylikely {
@@ -380,13 +370,6 @@ argmgr_co::operator int () noex {
 	    case argmgrmem_arg:
 	        rs = op->iarg() ;
 	        break ;
-	    case argmgrmem_argchar:
-		rs = op->iargchar() ;
-		break ;
-	    case argmgrmem_posarg:
-	    case argmgrmem_positional:
-		rs = op->ipositional() ;
-		break ;
 	    case argmgrmem_count:
 	        rs = op->icount() ;
 	        break ;

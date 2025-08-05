@@ -1,8 +1,8 @@
-/* modproc MODULE (primary-module-interface) */
+/* files_utils MODULE (primary-module-interface) */
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
-/* Load-Module-Names */
+/* Files-Utilities (for FILES program) */
 /* version %I% last-modified %G% */
 
 
@@ -30,10 +30,14 @@ module ;
 export module files_utils ;
 
 export {
-    extern int	optval(cchar *,int) noex ;
+    int	optval(cchar *,int) noex ;
     int optbool(cchar *sp,int sl) noex {
 	return optval(sp,sl) ;
     }
+} /* end export */
+
+export {
+    int filelines(cchar *) noex ;
 } /* end export */
 
 

@@ -1,8 +1,8 @@
-/* modproc1 MODULE (module-implementation-unit) */
+/* files_utils1 MODULE (module-implementation-unit) */
 /* charset=ISO8859-1 */
 /* lang=C++20 (conformance reviewed) */
 
-/* load module names from a C++ source code file */
+/* Files-Utilities (for FILES program) */
 /* version %I% last-modified %G% */
 
 
@@ -109,7 +109,7 @@ int optval(cchar *sp,int sl) noex {
 	            cint	ch = mkchar(sp[0]) ;
 		    rs = SR_INVALID ;
 	            if (isnumlatin(ch)) {
-	                rs = cfdec(sp,sl,&v) ;
+	                rs = cfdec(sp,sl,&v) ; /* <- swapped out */
 		    }
 	        } /* end if */
 	    } /* end if */
