@@ -164,7 +164,7 @@ main(int argc, char *argv[])
 	 * that works on all telnet clients, including the FreeBSD client.
 	 * This is not quite the same as the telnet client issuing a "mode
 	 * character" command, but has most of the same benefits, and is
-	 * preferable since some clients (like usofts) don't have the
+	 * preferable since some clients (like usofts) do not have the
 	 * mode character command anyway and linemode breaks things.
 	 * The most notable symptom of fix is that csh "set filec" operations
 	 * like <ESC> (filename completion) and ^D (choices) keys now work
@@ -859,7 +859,7 @@ telnet(int f, int p, char *host)
 	 * some REALLY DUMB telnets out there might not respond
 	 * to the DO ECHO.  So, we spin looking for NAWS, (most dumb
 	 * telnets so far seem to respond with WONT for a DO that
-	 * they don't understand...) because by the time we get the
+	 * they do not understand...) because by the time we get the
 	 * response, it will already have processed the DO ECHO.
 	 * Kludge upon kludge.
 	 */

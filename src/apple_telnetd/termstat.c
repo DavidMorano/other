@@ -79,7 +79,7 @@ static int _terminit = 0;
  *	handle real linemode, or if use of kludgeomatic linemode
  *	is preferred.  It will be set to one of the following:
  *		REAL_LINEMODE : use linemode option
- *		NO_KLUDGE : don't initiate kludge linemode.
+ *		NO_KLUDGE : do not initiate kludge linemode.
  *		KLUDGE_LINEMODE : use kludge linemode
  *		NO_LINEMODE : client is ignorant of linemode
  *
@@ -110,7 +110,7 @@ static int _terminit = 0;
  *	   then lmodetype is set to REAL_LINEMODE and all linemode
  *	   processing occurs in the context of the linemode option.
  *	2) If the attempt to negotiate the linemode option failed,
- *	   and the "-k" (don't initiate kludge linemode) isn't set,
+ *	   and the "-k" (do not initiate kludge linemode) isn't set,
  *	   then we try to use kludge linemode.  We test for this
  *	   capability by sending "do Timing Mark".  If a positive
  *	   response comes back, then we assume that the client
@@ -163,8 +163,8 @@ localstat(void)
 		 *
 		 * We only need to do the binary dance if we are actually going
 		 * to use linemode.  As this confuses some telnet clients
-		 * that don't support linemode, and doesn't gain us
-		 * anything, we don't do it unless we're doing linemode.
+		 * that do not support linemode, and doesn't gain us
+		 * anything, we do not do it unless we're doing linemode.
 		 * -Crh (henrich@msu.edu)
 		 */
 
@@ -212,7 +212,7 @@ localstat(void)
 	 * the server will echo.  If echo is on, then the server
 	 * will echo if in character mode, but in linemode the
 	 * client should do local echoing.  The state machine will
-	 * not send anything if it is unnecessary, so don't worry
+	 * not send anything if it is unnecessary, so do not worry
 	 * about that here.
 	 *
 	 * If we need to send the WILL ECHO (because echo is off),
