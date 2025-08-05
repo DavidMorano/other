@@ -161,5 +161,3 @@ modproc_co::operator int () noex {
 } /* end method (modproc_co::operator) */
 
 
-
-
