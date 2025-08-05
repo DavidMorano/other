@@ -78,7 +78,7 @@ static char sccsid[] = "@(#)rlogind.c	8.2 (Berkeley) 4/28/95";
  */
 
 #ifndef	FD_SETSIZE
-#define	FD_SETSIZE	16		/* don't need many bits for select */
+#define	FD_SETSIZE	16		/* do not need many bits for select */
 #endif
 
 #include <sys/param.h>
@@ -368,7 +368,7 @@ void doit(int f,struct sockaddr_in * fromp) {
 #ifdef	CRYPT
 #ifdef	KERBEROS
 	/*
-	 * If encrypted, don't turn on NBIO or the des read/write
+	 * If encrypted, do not turn on NBIO or the des read/write
 	 * routines will croak.
 	 */
 
