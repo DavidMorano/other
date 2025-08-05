@@ -63,15 +63,20 @@ OBJ01_LUO= sfx.o six.o rmx.o isx.o hasx.o sif.o
 OBJ02_LUO= strn.o strdcpy.o strx.o strkeyx.o
 OBJ03_LUO= strw.o strwcpy.o
 
-OBJ04_LUO= ccfile.o strmgr.o strfilter.o
-OBJ05_LUO= strop.o
+OBJ04_LUO= ccfile.o strop.o strmgr.o
+OBJ05_LUO= strfilter.o
 OBJ06_LUO= tardir.o
-OBJ07_LUO= nleadx.o matxstr.o char.o 
+OBJ07_LUO= nleadx.o matxstr.o char.o toxc.o
 
 OBJ08_LUO= dictdiff.o strnxcmp.o
-OBJ09_LUO= readln.o 
+OBJ09_LUO= readln.o
 OBJ10_LUO= getourenv.o mapex.o
 OBJ11_LUO= inetconv.o inetaddrx.o 
+
+OBJ12_LUO= 
+OBJ13_LUO= 
+OBJ14_LUO= 
+OBJ15_LUO= 
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
@@ -101,6 +106,9 @@ a:			$(T).a
 
 .cc.ii:
 	$(CPP) $(CPPFLAGS) $< > $(*).ii
+
+.ccm.iim:
+	$(CPP) $(CPPFLAGS) $< > $(*).iim
 
 .c.s:
 	$(CC) -S $(CPPFLAGS) $(CFLAGS) $<
@@ -167,6 +175,7 @@ obj06_luo.o:		$(OBJ06_LUO)
 obj07_luo.o:		$(OBJ07_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $(OBJ07_LUO)
 
+
 obj08_luo.o:		$(OBJ08_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $(OBJ08_LUO)
 
@@ -178,6 +187,15 @@ obj10_luo.o:		$(OBJ10_LUO)
 
 obj11_luo.o:		$(OBJ11_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $(OBJ11_LUO)
+
+obj12_luo.o:		$(OBJ12_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ12_LUO)
+
+obj13_luo.o:		$(OBJ13_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ13_LUO)
+
+obj14_luo.o:		$(OBJ14_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ15_LUO)
 
 
 obja_luo.o:		$(OBJA_LUO)
@@ -371,14 +389,17 @@ debug.dir:
 
 # Objects
 storebuf.o:		storebuf.cc storebuf.h
-strmgr.o:		strmgr.cc strmgr.h
 ids.o:			ids.cc ids.h
 ccfile.o:		ccfile.cc ccfile.hh
-strop.o:		strop.cc strop.h
+
+# Temporary Objects
+strop.o:		strop.cc	strop.h
+strmgr.o:		strmgr.cc	strmgr.h
 
 # GROUPS
 calstrs.o:		calstrs.cc calstrs.h
 char.o:			char.cc char.h
+toxc.o:			toxc.cc toxc.h
 inetconv.o:		inetconv.cc inetconv.h
 strcpyxc.o:		strcpyxc.cc strcpyxc.h strcpy.h strcpyx.h
 
@@ -388,5 +409,6 @@ dictdiff.o:		dictdiff.cc dictdiff.h
 inet4int.o:		inet4int.cc inet4int.h
 readln.o:		readln.cc readln.hh
 getourenv.o:		getourenv.cc getourenv.h
+optval.o:		optval.cc optval.h
 
 

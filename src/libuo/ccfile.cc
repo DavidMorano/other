@@ -59,8 +59,6 @@
 #include	<string_view>
 #include	<fstream>
 #include	<usystem.h>
-#include	<storebuf.h>		/* <- not used! */
-#include	<sncpyx.h>		/* <- not used! */
 #include	<snwcpy.h>
 #include	<strnul.hh>
 #include	<stdfnames.h>
@@ -80,7 +78,6 @@
 
 /* imported namespaces */
 
-using std::istream ;			/* type */
 using std::fstream ;			/* type */
 using std::ios_base ;			/* type */
 using std::basic_ios ;			/* type */
@@ -203,10 +200,11 @@ int ccfile::open(const strview &sv,cchar *ofs,mode_t om) noex {
 
 int ccfile::readln(char *ibuf,int ilen,int dch) noex {
 	int		rs = SR_FAULT ;
-	int		len = 0 ;
+	int		len = 0 ; /* return-value */
 	if (dch == 0) dch = eol ;
 	if (ibuf) ylikely {
 	    ibuf[0] = '\0' ;
+	    rs = SR_OK ;
 	    if (! fl.fnulling) ylikely {
 	        try {
 		    rs = SR_BADFMT ;
@@ -266,6 +264,36 @@ int ccfile::readln(string &s,int dch) noex {
 	return (rs >= 0) ? len : rs ;
 }
 /* end method (ccfile::readln) */
+
+static inline bool iscont(cchar *lp,int li) noex {
+    	bool	f = true ;
+	f = f && (li >= 2) ;
+	f = f && (lp[li - 1] == '\n') ;
+	f = f && (lp[li - 2] == '\\') ;
+	return f ;
+} /* end subroutine (iscont) */
+
+int ccfile::readlns(char *lbuf,int llen,int to,int *lcp) noex {
+	int		rs = SR_FAULT ;
+	int		i = 0 ; /* return-value */
+	if (lbuf) {
+	    rs = SR_OK ;
+	    lbuf[0] = '\0' ;
+	    if (! fl.fnulling) ylikely {
+	        int	lines = 0 ;
+	        bool	fcont = false ;
+	        while ((lines == 0) || ((fcont = iscont(lbuf,i)))) {
+	            if (fcont) i -= 2 ;
+	            rs = readln((lbuf + i),(llen - i),to) ;
+	            if (rs <= 0) break ;
+	            i += rs ;
+	            lines += 1 ;
+	        } /* end while */
+	        if (lcp) *lcp = lines ;
+	    } /* end if (not-fnulling) */
+	} /* end if (non-null) */
+	return (rs >= 0) ? i : rs ;
+} /* end method (filer::readlns) */
 
 int ccfile::seek(off_t o,int w) noex {
 	int		rs = SR_OK ;
@@ -384,6 +412,6 @@ static openmode getopenmode(cchar *sp) noex {
 
 static bool isnomode(omode of) noex {
 	return ((! (of & ios::in)) && (! (of & ios::out))) ;
-}
+} /* end subroutine (isnomode) */
 
 

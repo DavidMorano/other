@@ -75,6 +75,7 @@ struct ccfile : std::fstream {
 	int open(const strview &,cchar * = nullptr,mode_t = 0) noex ;
 	int readln(char *,int,int = 0) noex ;
 	int readln(std::string &,int = 0) noex ;
+	int readlns(char *,int,int = -1,int * = nullptr) noex ;
 	int seek(off_t = 0z,int = -1) noex ;
 	int write(cvoid *,int) noex ;
 	void dtor() noex ;
