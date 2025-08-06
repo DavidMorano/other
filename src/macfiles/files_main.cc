@@ -19,7 +19,7 @@
 
 /*******************************************************************************
 
-	Names:
+	Name:
 	files_main
 
 	Description:
@@ -56,7 +56,7 @@
 #include	<strn.h>
 #include	<strw.h>		/* |strwcmp(3uc)| */
 #include	<sfx.h>			/* |sfbasename(3uc)| + |sfext(3uc)| */
-#include	<six.h>			/* |sisub(3uc)| + |siext(3uc)| */
+#include	<six.h>			/* |sisub(3uc)| */
 #include	<rmx.h>
 #include	<strwcpy.h>
 #include	<strnul.hh>
@@ -1062,7 +1062,7 @@ int proginfo::sufhave(cchar *sp,int sl) noex {
 	    if (int cl ; (cl = sfext(sp,sl,&cp)) > 0) {
 	        rs = exts.have(cp,cl) ;
 		f = rs ;
-	    } /* end if (siext) */
+	    } /* end if (sfext) */
 	} /* end if (suffix check) */
 	if_constexpr (f_debug) {
 	    debprintf(__func__,"ret rs=%d f=%u\n",rs,f) ;

@@ -42,7 +42,11 @@ LIBS += -luo -lu
 
 ELIBS += -luo -lproc -liconv
 
-ELIBINFO= $(EXTRA)/lib/libu.o -L$(EXTRA)/lib $(ELIBS)
+
+DEPMODS += libutil.o
+DEPMODS += umisc.o ureserve.o
+
+OBJ_UTMP= utmp_main.o
 
 
 INCDIRS=
@@ -52,6 +56,7 @@ LIBDIRS= -L$(LIBDIR)
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
+ELIBINFO= $(EXTRA)/lib/libu.o -L$(EXTRA)/lib $(ELIBS)
 
 # flag setting
 CPPFLAGS	?= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
@@ -60,13 +65,8 @@ CXXFLAGS	?= $(MAKECXXFLAGS)
 ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
-DEPMODS += libutil.o
-DEPMODS += umisc.o ureserve.o
 
-OBJ_UTMP= utmp_main.o
-
-
-.SUFFIXES:		.hh .ii .ccm
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).x
@@ -79,6 +79,9 @@ all:			$(ALL)
 
 .cc.ii:
 	$(CPP) $(CPPFLAGS) $< > $(*).ii
+
+.ccm.iim:
+	$(CPP) $(CPPFLAGS) $< > $(*).iim
 
 .c.s:
 	$(CC) -S $(CPPFLAGS) $(CFLAGS) $<
@@ -130,33 +133,6 @@ obj01_luo.o:		$(OBJ01_LUO)
 obj02_luo.o:		$(OBJ02_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $(OBJ02_LUO)
 
-obj03_luo.o:		$(OBJ03_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ03_LUO)
-
-obj04_luo.o:		$(OBJ04_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ04_LUO)
-
-obj05_luo.o:		$(OBJ05_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ05_LUO)
-
-obj06_luo.o:		$(OBJ06_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ06_LUO)
-
-obj07_luo.o:		$(OBJ07_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ07_LUO)
-
-obj08_luo.o:		$(OBJ08_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ08_LUO)
-
-obj09_luo.o:		$(OBJ09_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ09_LUO)
-
-obj10_luo.o:		$(OBJ10_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ10_LUO)
-
-obj11_luo.o:		$(OBJ11_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ11_LUO)
-
 
 obja_luo.o:		$(OBJA_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $(OBJA_LUO)
@@ -177,7 +153,7 @@ objf_luo.o:		$(OBJF_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $(OBJF_LUO)
 
 
-utmp_main.o:		utmp_main.cc $(DEPMODS) ucx.h
+utmp_main.o:		utmp_main.cc $(DEPMODS)
 
 utmp_support.o:		utmp_support.cc
 

@@ -49,15 +49,15 @@
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<cstdio>
-#include	<cstring>		/* for |lenstr(3c)| */
+#include	<cstring>
 #include	<usystem.h>
 #include	<localmisc.h>
 
-#include	"stdsio.h"
+#include	"freadln.h"
 
 #pragma		GCC dependency	"mod/libutil.ccm"
 
-import libutil ;
+import libutil ;			/* |lenstr(3uc)| */
 
 /* local defines */
 

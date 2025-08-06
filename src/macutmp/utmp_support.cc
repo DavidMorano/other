@@ -45,7 +45,7 @@
 #pragma		GCC dependency	"mod/umisc.ccm"
 
 import libutil ;
-import umisc ;				/* |snadd(3u)| */
+import umisc ;				/* |snaddw(3u)| */
 
 /* local defines */
 
