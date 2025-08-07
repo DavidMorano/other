@@ -74,19 +74,19 @@ enum progmodes {
     	progmode_mkcaseterms,
 	progmode_mktoxc,
 	progmode_overlast
-} ;
+} ; /* end enum (progmodes) */
 
 constexpr cpcchar	prognames[] = {
-    	[progmode_mkcaseterms] = "mkcaseterms",
-	[progmode_mktoxc] = "mktoxc",
-	[progmode_overlast] = nullptr
-} ;
+    	[progmode_mkcaseterms]	= "mkcaseterms",
+	[progmode_mktoxc] 	= "mktoxc",
+	[progmode_overlast]	= nullptr
+} ; /* end array (prognames) */
 
 enum cases {
 	case_tolower,
 	case_toupper,
 	case_overlast
-} ;
+} ; /* end enum (cases) */
 
 cint		nchars = (UCHAR_MAX + 1) ;
 
