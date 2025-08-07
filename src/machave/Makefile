@@ -40,12 +40,17 @@ MODS += libutil.ccm umisc.ccm ulibvals.ccm
 LIBS += -luo -lu
 
 
+DEPS_MAIN += libutil.o umisc.o
+
+OBJ_MACHAVE= have_main.o
+
+
 INCDIRS=
 
 LIBDIRS= -L$(LIBDIR)
 
 
-RUBNINFO= -rpath $(RUNDIR)
+RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -56,12 +61,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-DEPS_MAIN += libutil.o umisc.o ulibvals.o
-
-OBJ_MACHAVE= have_main.o
-
-
-.SUFFIXES:		.hh .ii .ccm
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).x
@@ -74,6 +74,9 @@ all:			$(ALL)
 
 .cc.ii:
 	$(CPP) $(CPPFLAGS) $< > $(*).ii
+
+.ccm.iim:
+	$(CPP) $(CPPFLAGS) $< > $(*).iim
 
 .c.s:
 	$(CC) -S $(CPPFLAGS) $(CFLAGS) $<
@@ -109,22 +112,16 @@ control:
 
 have_main.o:		have_main.cc $(DEPS_MAIN)
 
-libutil.ccm:
-	makemodcurrent $@
-
-umisc.ccm:
-	makemodcurrent $@
-
-ulibvals.ccm:
-	makemodcurrent $@
-
 libutil.o:		libutil.dir
 libutil.dir:
+	makesubdir $@
 
 umisc.o:		umisc.dir
 umisc.dir:
+	makesubdir $@
 
 ulibvals.o:		ulibvals.dir
 ulibvals.dir:
+	makesubdir $@
 
 

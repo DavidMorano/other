@@ -1,8 +1,11 @@
 #!/usr/extra/bin/ksh
 # MKLINKS
 
-CMDS=" haveprogram havefunction pathto fpathto pathenum "
-LOCPROG=macuser.x
+CMDS+=" pathenum "
+CMDS+=" pathto fpathto "
+CMDS+=" haveprogram havefunction  "
+CMDS+=" pe pt ft "
+LOCPROG=machave.x
 
 function linkdir {
   typeset TDIR=${1}
@@ -12,7 +15,7 @@ function linkdir {
 }
 
 if [[ -x "${LOCPROG}" ]] ; then
-  for D in /usr/local /opt/local ; do
+  for D in /usr/extra /usr/local /opt/local ; do
     if [[ -d "${D}" ]] ; then
       linkdir $D
     else
