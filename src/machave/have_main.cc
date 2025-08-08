@@ -260,6 +260,7 @@ static constexpr MAPEX	mapexs[] = {
 	{ SR_EXIT,	EX_TERM },
 	{ SR_NOMSG,	EX_OSERR },
 	{ SR_NOSYS,	EX_OSFILE },
+	{ SR_BUGCHECK,	EX_SOFTWARE },
 	{ 0, 0 }
 } ; /* end array (mapexs) */
 
@@ -301,14 +302,14 @@ int main(int argc,mainv argv,mainv envv) {
 		fallthrough ;
                 /* FALLTHROUGH */
             case progmode_pathto:
-                rs = pi.pathto() ;
+                rs = pi.pathtox() ;
                 break ;
             case progmode_ft:
                 pi.pm = progmode_fpathto ;
 		fallthrough ;
                 /* FALLTHROUGH */
             case progmode_fpathto:
-                rs = pi.pathto() ;
+                rs = pi.pathtox() ;
                 break ;
 	    case progmode_mt:
 		pi.pm = progmode_manto ;
@@ -502,45 +503,42 @@ int proginfo::pathtox() noex {
 int proginfo::pathto(cchar *vn) noex {
     	cnothrow	nt{} ;
     	cnullptr	np{} ;
-	cint		pm_ft = progmode_fpathto ;
-	cint		pm_hf = progmode_havefunction ;
-	int		rs ;
+	int		rs = SR_BUGCHECK ;
 	int		rs1 ;
-	int		ctotal = 0 ;
-	if (vn == nullptr) {
-	    bool f = false ;
-	    f = f || (pm == pm_ft) ;
-	    f = f || (pm == pm_hf) ;
-	    if (f) vn = varname.fpath ;
-	} /* end if (NULL variable-name) */
-	if ((rs = pathbegin(vn)) >= 0) {
-	    if ((rs = maxpathlen) >= 0) {
-	        cint	plen = rs ;
-	        rs = SR_NOMEM ;
-	        if (char *pbuf ; (pbuf = new(nt) char[plen+1]) != np) {
-		    rs = SR_OK ;
-	            for (int ai = 1 ; (ai < argc) && argv[ai] ; ai += 1) {
-	                cchar	*ap = argv[ai] ;
-		        int	c = 0 ;
-	                if (ap[0]) {
-			    if (strchr(ap,CH_SLASH) != np) {
-				rs = present(ap) ;
-				c += rs ;
-			    } else {
-				rs = pathtos(pbuf,plen,ap) ;
-				c += rs ;
-			    }
-	                } /* end if (non-empty) */
-		        ctotal += c ;
-		        if (rs < 0) break ;
-	            } /* end for (args) */
-	            delete [] pbuf ;
-	        } /* end if (m-a-f) */
-	    } /* end if (maxpathlen) */
-	    rs1 = pathend ;
-	    if (rs >= 0) rs = rs1 ;
-	} /* end if (proginfo::path) */
-	return (rs >= 0) ? ctotal : rs ;
+	int		c = 0 ;
+	debprintf(__func__,"ent\n") ;
+	if (vn) {
+	    debprintf(__func__,"vn=%s\n",vn) ;
+	    if ((rs = pathbegin(vn)) >= 0) {
+		debprintf(__func__,"pathbegin rs=%d\n",rs) ;
+	        if ((rs = maxpathlen) >= 0) {
+	            cint	plen = rs ;
+	            rs = SR_NOMEM ;
+	            if (char *pbuf ; (pbuf = new(nt) char[plen + 1]) != np) {
+			debprintf(__func__,"new\n") ;
+		        rs = SR_OK ;
+	                for (int ai = 1 ; (ai < argc) && argv[ai] ; ai += 1) {
+	                    if (cchar *ap = argv[ai] ; ap[0]) {
+			        debprintf(__func__,"ap=%s\n",ap) ;
+			        if (strchr(ap,CH_SLASH) != np) {
+				    rs = present(ap) ;
+				    c += rs ;
+			        } else {
+				    rs = pathtos(pbuf,plen,ap) ;
+				    c += rs ;
+			        }
+	                    } /* end if (non-empty) */
+		            if (rs < 0) break ;
+	                } /* end for (args) */
+	                delete [] pbuf ;
+	            } /* end if (m-a-f) */
+	        } /* end if (maxpathlen) */
+	        rs1 = pathend ;
+	        if (rs >= 0) rs = rs1 ;
+	    } /* end if (proginfo::path) */
+	} /* end if (non-null) */
+	debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
+	return (rs >= 0) ? c : rs ;
 } /* end subroutine (proginfo::pathto) */
 
 int proginfo::pathtos(char *pbuf,int plen,cchar *ap) noex {
@@ -618,6 +616,7 @@ int proginfo::getvn(cchar **rpp) noex {
 	        break ;
 	    case progmode_havefunction:
 	    case progmode_fpathto:
+	    case progmode_ft:
 	        vn = varname.fpath ;
 	        break ;
 	    case progmode_manto:
