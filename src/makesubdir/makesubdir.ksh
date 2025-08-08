@@ -68,8 +68,8 @@ trap 'cleanup ; exit 1' 1 2 3 15 16 17
 function linkfile {
   typeset F1=${1}
   typeset F2=${2}
-  if [[ -r ${F1} ]] ; then
-    if [[ -r ${F2} ]] ; then
+  if [[ -r "${F1}" ]] ; then
+    if [[ -r "${F2}" ]] ; then
       if [[ $F1 -ef $F2 ]] ; then :
       else
         ln -f $F1 $F2
@@ -79,6 +79,7 @@ function linkfile {
     fi
   fi
 }
+# function linkfile 
 
 function linkheader {
   typeset R S HF CDIR=${PWD} OF=${1}
@@ -93,6 +94,7 @@ function linkheader {
     fi
   fi
 }
+# function linkheader
 
 function makesub {
   typeset CDIR=${PWD} T=${1} 
@@ -110,6 +112,7 @@ function makesub {
     fi
   fi
 }
+# function makesub
 
 for T in ${TARGETS} ; do
   integer F=0 FS=0
@@ -141,10 +144,10 @@ for T in ${TARGETS} ; do
 	    makesub ${TF}
 	  fi
 	else
-	  makesub $TF
+	  makesub ${TF}
 	fi
       else
-	makesub $TF
+	makesub ${TF}
       fi
     fi
   fi
