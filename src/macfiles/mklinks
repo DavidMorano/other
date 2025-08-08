@@ -2,7 +2,6 @@
 # MKLINKS
 
 LOCPROG=files.x
-CMDS=
 CMDS+=" files filelines "
 
 TDIRS=" /usr/extra /usr/local "
