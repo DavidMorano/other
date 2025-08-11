@@ -1,7 +1,7 @@
 #!/usr/extra/bin/ksh
 # MKLINKS
 
-CMDS=" username userhome usershell "
+CMDS+=" username usergecos userhome usershell "
 CMDS+=" uid gid sid "
 CMDS+=" groupname sessionid shells"
 CMDS+=" userents groupents "

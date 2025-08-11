@@ -40,6 +40,11 @@ MODS += libutil.ccm umisc.ccm
 LIBS += -luo -lu
 
 
+DEPS_MAIN += libutil.o umisc.o
+
+OBJ_MACUSER= user_main.o
+
+
 INCDIRS +=
 
 LIBDIRS += -L$(LIBDIR)
@@ -56,12 +61,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-DEPS_MAIN += libutil.ccm umisc.ccm
-
-OBJ_MACUSER= user_main.o
-
-
-.SUFFIXES:		.hh .ii .ccm
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).x
@@ -74,6 +74,9 @@ all:			$(ALL)
 
 .cc.ii:
 	$(CPP) $(CPPFLAGS) $< > $(*).ii
+
+.ccm.iim:
+	$(CPP) $(CPPFLAGS) $< > $(*).iim
 
 .c.s:
 	$(CC) -S $(CPPFLAGS) $(CFLAGS) $<

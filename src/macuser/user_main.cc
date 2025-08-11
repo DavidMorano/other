@@ -191,6 +191,7 @@ using setiter = std::unordered_set<string>::iterator ;
 
 enum prognames {
 	progmode_username,
+	progmode_usergecos,
 	progmode_userhome,
 	progmode_usershell,
 	progmode_gid,
@@ -206,6 +207,7 @@ enum prognames {
 
 constexpr cpcchar	prognames[] = {
 	[progmode_username]	= "username",
+	[progmode_usergecos]	= "usergecos",
 	[progmode_userhome]	= "userhome",
 	[progmode_usershell]	= "usershell",
 	[progmode_gid]		= "gid",
@@ -232,6 +234,7 @@ namespace {
 	PASSWD		*hintpwp = nullptr ;
 	string		hintuser ;
 	string		un ;
+	string		ug ;		/* user-gecos */
 	string		uh ;
 	string		us ;
 	gid_t		gid ;
@@ -355,6 +358,9 @@ int userinfo::printone(int pm,uid_t uid) noex {
             switch (pm) {
             case progmode_username:
                 cout << un << eol ;
+                break ;
+            case progmode_usergecos:
+                cout << ug << eol ;
                 break ;
             case progmode_userhome:
                 cout << uh << eol ;
@@ -587,7 +593,7 @@ int userinfo::findutmp_stdin(uid_t uid) noex {
 	cint		fd = FD_STDIN ;
 	int		rs ;
 	int		len = 0 ;
-	if (USTAT sb ; (rs = u_fstat(fd,&sb)) >= 0) {
+	if (ustat sb ; (rs = u_fstat(fd,&sb)) >= 0) {
 	    char	tbuf[tlen+1] ;
 	    if ((rs = uc_ttyname(fd,tbuf,tlen)) >= 0) {
 		cint	n = xstrlen(devprefix) ;
@@ -705,6 +711,7 @@ int userinfo::load(PASSWD *pwp) noex {
 	if (pwp) {
 	    rs = SR_OK ;
 	    un = pwp->pw_name ;
+	    ug = pwp->pw_gecos ;
 	    uh = pwp->pw_dir ;
 	    us = pwp->pw_shell ;
 	    gid = pwp->pw_gid ;
