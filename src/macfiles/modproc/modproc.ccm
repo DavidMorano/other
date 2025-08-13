@@ -30,6 +30,12 @@ module ;
 
 export module modproc ;
 
+import ureserve ;			/* |vecstr(3u)| */
+
+export {
+    extern int	modprocload(vecstr *,cchar *) noex ;
+}
+
 using std::ostream ;			/* type */
 
 export {
