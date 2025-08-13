@@ -40,6 +40,14 @@ MODS +=
 LIBS +=
 
 
+OBJ0= modproc0.o modproc1.o
+OBJ1= modproc2.o
+
+OBJA= obj0.o obj2.o
+
+OBJ= obja.o
+
+
 INCDIRS +=
 
 LIBDIRS += -L$(LIBDIR)
@@ -56,15 +64,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ0= modproc0.o modproc1.o
-OBJ1=
-
-OBJA= obj0.o
-
-OBJ= obja.o
-
-
-.SUFFIXES:		.hh .ii .ccm
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).o
@@ -117,6 +117,12 @@ obj0.o:			$(OBJ0)
 obj1.o:			$(OBJ1)
 	$(LD) -r $(LDFLAGS) -o $@ $(OBJ1)
 
+obj2.o:			$(OBJ2)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ0)
+
+obj3.o:			$(OBJ3)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ1)
+
 
 obja.o:			$(OBJA)
 	$(LD) -r $(LDFLAGS) -o $@ $(OBJA)
@@ -129,6 +135,10 @@ modproc0.o:		modproc.ccm
 	makemodule modproc
 
 modproc1.o:		modproc1.cc modproc.ccm
+	makemodule modproc
+	$(COMPILE.cc) $<
+
+modproc2.o:		modproc2.cc modproc.ccm
 	makemodule modproc
 	$(COMPILE.cc) $<
 
