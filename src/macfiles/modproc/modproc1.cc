@@ -1,4 +1,4 @@
-/* loadmodnames1 MODULE (module-implementation-unit) */
+/* modproc1 MODULE (module-implementation-unit) */
 /* charset=ISO8859-1 */
 /* lang=C++20 (conformance reviewed) */
 
@@ -62,7 +62,7 @@ module ;
 
 #pragma		GCC dependency	"mod/ureserve.ccm"
 
-module loadmodnames ;
+module modproc ;
 
 import ureserve ;			/* |vecstr(3u)| */
 
@@ -108,7 +108,7 @@ cchar			istr[] = "import" ;
 
 /* exported subroutines */
 
-int loadmodnames(vecstr *op,cchar *fname) noex {
+int modprocload(vecstr *op,cchar *fname) noex {
     	int		rs = SR_FAULT ;
 	if (op && fname) ylikely {
     	    vecmgr	mgr(op) ;
@@ -116,7 +116,7 @@ int loadmodnames(vecstr *op,cchar *fname) noex {
 	} /* end if (non-null) */
 	return rs ;
 }
-/* end subroutine (loadmodname) */
+/* end subroutine (modprocload) */
 
 
 /* local subroutines */
