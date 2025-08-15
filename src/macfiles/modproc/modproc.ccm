@@ -20,7 +20,8 @@ module ;
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
-#include	<ostream>
+#include	<iostream>
+#include	<iomanip>
 #include	<clanguage.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
@@ -74,10 +75,10 @@ export {
 	} ;
     } ; /* end struct (modproc_co) */
     struct modproc {
-	void		*vop{} ;
 	friend		modproc_co ;
 	modproc_co	start ;
 	modproc_co	finish ;
+	void		*vop{} ;
 	modproc() noex {
 	    start	(this,modprocmem_start) ;
 	    finish	(this,modprocmem_finish) ;
