@@ -5,7 +5,7 @@
 /* enumerate filenames */
 /* version %I% last-modified %G% */
 
-#define	CF_DEBUG	1		/* debug */
+#define	CF_DEBUG	0		/* debug */
 #define	CF_FILELINES	1		/* use |filelines()| */
 
 /* revision history:
