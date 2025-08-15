@@ -43,7 +43,7 @@ LIBS +=
 OBJ0= modproc0.o modproc1.o
 OBJ1= modproc2.o
 
-OBJA= obj0.o obj2.o
+OBJA= obj0.o obj1.o
 
 OBJ= obja.o
 
