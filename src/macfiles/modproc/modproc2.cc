@@ -1,4 +1,4 @@
-/* modproc1 MODULE (module-implementation-unit) */
+/* modproc2 MODULE (module-implementation-unit) */
 /* charset=ISO8859-1 */
 /* lang=C++20 (conformance reviewed) */
 
@@ -54,7 +54,6 @@ module ;
 module modproc ;
 
 import ureserve ;			/* |vecstr(3u)| */
-import loadmodnames ;
 
 /* local defines */
 
