@@ -36,6 +36,7 @@ DEFS+=
 INCS+=
 
 MODS+= argmgr.ccm filerec.ccm
+MODS+= modproc.ccm 
 
 LIBS+= -luo -lu
 
@@ -61,11 +62,11 @@ DEPS_MAIN += files_utils.o
 DEPS_MAIN += argmgr.o filerec.o 
 DEPS_MAIN += ureserve.o fonce.o
 DEPS_MAIN += strfilter.o 
-DEPS_MAIN += modproc.o modloadnames.o
+DEPS_MAIN += modproc.o
 
 OBJ0= files_main.o files_utils.o
 OBJ1= argmgr.o filerec.o
-OBJ2= modproc.o modloadnames.o
+OBJ2= modproc.o
 OBJ3= 
 
 OBJA= obj0.o obj1.o obj2.o
@@ -148,27 +149,9 @@ obja.o:			$(OBJA)
 
 files_main.o:		files_main.cc $(DEPS_MAIN)		$(INCS)
 
-files_tardir.o:		files_tardir0.o files_tardir1.o		$(INCS)
-
-files_tardir0.o:	files_tardir.ccm			$(INCS)
-
-files_tardir1.o:	files_tardir1.cc files_tardir.ccm	$(INCS)
-	makemodule files_tardir
-	$(COMPILE.cc) $<
-
 # MODS
 mods.o:			$(DEPS_MAIN)
 	$(CXX) -r -o $@ $(LDFLAGS) $^
-
-# URESERVE (libu)
-ureserve.o:		ureserve.dir
-ureserve.dir:
-	makesubdir $@
-
-# FONCE (libu)
-fonce.o:		fonce.dir
-fonce.dir:
-	makesubdir $@
 
 # STRFILER (libuc)
 strfilter.o:		strfilter.dir
@@ -180,24 +163,29 @@ sif.o:			sif.dir
 sif.dir:
 	makesubdir $@
 
-# FILEREC
-filerec.o:		filerec.dir
-filerec.dir:
-	makesubdir $@
-
-# ARGMGR
+# ARGMGR (libuc)
 argmgr.o:		argmgr.dir
 argmgr.dir:
 	makesubdir $@
 
-# TARDIR
-tardir.o:		tardir.dir
-tardir.dir:
+# URESERVE (libu)
+ureserve.o:		ureserve.dir
+ureserve.dir:
 	makesubdir $@
 
-# LOADMODNAMES
-modloadnames.o:		modloadnames.dir
-modloadnames.dir:
+# FONCE (libu)
+fonce.o:		fonce.dir
+fonce.dir:
+	makesubdir $@
+
+# FILEREC (libu)
+filerec.o:		filerec.dir
+filerec.dir:
+	makesubdir $@
+
+# TARDIR (libuc)
+tardir.o:		tardir.dir
+tardir.dir:
 	makesubdir $@
 
 # DEBUG
