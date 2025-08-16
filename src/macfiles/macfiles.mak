@@ -36,6 +36,7 @@ DEFS+=
 INCS+=
 
 MODS+= argmgr.ccm filerec.ccm
+MODS+= files_utils.ccm
 MODS+= modproc.ccm 
 
 LIBS+= -luo -lu
