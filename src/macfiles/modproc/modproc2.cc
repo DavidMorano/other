@@ -31,8 +31,8 @@ module ;
 #include	<climits>		/* |INT_MAX| */
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
+#include	<cstdio>
 #include	<new>			/* placement-new + |nothrow(3c++)| */
-#include	<ostream>
 #include	<clanguage.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
@@ -49,7 +49,7 @@ module ;
 #include	<localmisc.h>
 
 #pragma		GCC dependency	"mod/ureserve.ccm"
-#pragma		GCC dependency	"mod/loadmodnames.ccm"
+#pragma		GCC dependency	"mod/modproc.ccm"
 
 module modproc ;
 
@@ -61,7 +61,6 @@ import ureserve ;			/* |vecstr(3u)| */
 /* imported namespaces */
 
 using std::nullptr_t ;			/* type */
-using std::ostream ;			/* type */
 using std::nothrow ;			/* constant */
 
 
@@ -119,14 +118,14 @@ int modproc::procfile(cchar *fn) noex {
 	if (fn) ylikely {
 	    if (fn[0]) ylikely {
 		vecstr *vsp = vecstrp(vop) ;
-		rs = loadmodnames(vsp,fn) ;
+		rs = modprocload(vsp,fn) ;
 		c = rs ;
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? c : rs ;
 } /* end method (modproc::procfile) */
 
-int modproc::procout(ostream *osp,uint ot) noex {
+int modproc::procout(FILE *osp,uint ot) noex {
     	int		rs = SR_FAULT ;
 	if (osp) {
 	    rs = SR_OK ;
