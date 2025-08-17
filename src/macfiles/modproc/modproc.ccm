@@ -2,7 +2,7 @@
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
-/* Load-Module-Names */
+/* Module-Processing */
 /* version %I% last-modified %G% */
 
 
@@ -20,9 +20,7 @@ module ;
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
-#include	<iostream>
-#include	<iomanip>
-#include	<format>
+#include	<cstdio>
 #include	<clanguage.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
@@ -37,8 +35,6 @@ import ureserve ;			/* |vecstr(3u)| */
 export {
     extern int	modprocload(vecstr *,cchar *) noex ;
 }
-
-using std::ostream ;			/* type */
 
 export {
     enum typeouts {
@@ -85,7 +81,7 @@ export {
 	    finish	(this,modprocmem_finish) ;
 	} ;
         int	procfile(cchar *) noex ;
-	int	procout(ostream *,uint) noex ;
+	int	procout(FILE *,uint) noex ;
 	void dtor() noex ;
 	destruct modproc() {
 	    if (vop) dtor() ;
