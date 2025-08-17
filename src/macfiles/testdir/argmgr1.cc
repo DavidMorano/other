@@ -64,9 +64,7 @@ import debug ;
 
 /* imported namespaces */
 
-using std::nullptr_t ;			/* type */
 using std::string_view ;		/* type */
-using std::nothrow ;			/* constant */
 
 
 /* local typedefs */
