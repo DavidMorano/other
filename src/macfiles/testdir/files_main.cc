@@ -78,10 +78,11 @@
 #pragma		GCC dependency	"mod/fonce.ccm"
 #pragma		GCC dependency	"mod/sif.ccm"
 #pragma		GCC dependency	"mod/bitop.ccm"
-#pragma		GCC dependency	"mod/debug.ccm"
 #pragma		GCC dependency	"mod/tardir.ccm"
 #pragma		GCC dependency	"mod/filerec.ccm"
 #pragma		GCC dependency	"mod/modproc.ccm"
+#pragma		GCC dependency	"mod/files_utils.ccm"
+#pragma		GCC dependency	"mod/debug.ccm"
 
 import libutil ;			/* |lenstr(3u)| */
 import ulibvals ;
