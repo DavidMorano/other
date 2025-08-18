@@ -48,8 +48,8 @@ module ;
 #include	<ischarx.h>		/* |isalnumlatin(3cu)| */
 #include	<localmisc.h>
 
-#pragma		GCC dependency	"mod/ureserve.ccm"
 #pragma		GCC dependency	"mod/modproc.ccm"
+#pragma		GCC dependency	"mod/ureserve.ccm"
 
 module modproc ;
 
@@ -60,7 +60,6 @@ import ureserve ;			/* |vecstr(3u)| */
 
 /* imported namespaces */
 
-using std::nullptr_t ;			/* type */
 using std::nothrow ;			/* constant */
 
 
@@ -126,12 +125,26 @@ int modproc::procfile(cchar *fn) noex {
 } /* end method (modproc::procfile) */
 
 int modproc::procout(FILE *osp,uint ot) noex {
+        cint		rsn = SR_NOTFOUND ;
     	int		rs = SR_FAULT ;
+	int		rs1 ;
+	int		c = 0 ;
 	if (osp) {
+	    vecstr *vsp = vecstrp(vop) ;
+	    vecstr_cur cur ;
+	    cchar	*cp ;
 	    rs = SR_OK ;
 	    (void) ot ;
-	}
-	return rs ;
+	    for (int i = 0 ; (rs1 = vsp->get(i,&cp)) >= 0 ; i += 1) {
+		if (cp) {
+	            rs = fprintf(osp,"%s\n",cp) ;
+		    c += 1 ;
+		}
+		if (rs < 0) break ;
+	    } /* end for */
+	    if ((rs >= 0) && (rs1 != rsn)) rs = rs1 ;
+	} /* end if (non-null) */
+	return (rs >= 0) ? c : rs ;
 } /* end method (modproc::procout) */
 
 
