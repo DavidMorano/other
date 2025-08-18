@@ -18,14 +18,14 @@
 /*******************************************************************************
 
 	Names:
-	loadmodnames
+	modprocload
 
 	Description:
 	I parse a C++ source code file and find all of the module
 	names that I can that are being imported to rhat source file.
 
 	Synopsis:
-	loadmodnames(vecstr *op,cchar *fname) noex
+	modprocload(vecstr *op,cchar *fname) noex
 
 	Arguments:
 	op		ureserve::vecstr
@@ -60,6 +60,7 @@ module ;
 #include	<ischarx.h>		/* |isalnumlatin(3cu)| */
 #include	<localmisc.h>
 
+#pragma		GCC dependency	"mod/modproc.ccm"
 #pragma		GCC dependency	"mod/ureserve.ccm"
 
 module modproc ;
