@@ -25,7 +25,6 @@
 module ;
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<climits>		/* |INT_MAX| */
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<clanguage.h>
@@ -45,7 +44,6 @@ module ;
 module files_utils ;
 
 import libutil ;			/* |lenstr(3u)| */
-
 
 /* local defines */
 
