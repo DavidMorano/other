@@ -26,7 +26,8 @@ module ;
 #include	<utypealiases.h>
 #include	<usysdefs.h>
 #include	<usysrets.h>
-#include	<localmisc.h>
+
+#pragma		GCC dependency	"mod/ureserve.ccm"
 
 export module modproc ;
 
