@@ -150,7 +150,7 @@ namespace {
 	proginfomem_flistbegin,
 	proginfomem_flistend,
 	proginfomem_overlast
-    } ;
+    } ; /* end enum (proginfomems) */
     struct proginfo ;
     struct proginfo_fl {
 	uint		uniqfile:1 ;		/* 'u' arg-opt */
@@ -170,9 +170,10 @@ namespace {
 	uint		suffix:1 ;		/* have a suffix */
 	uint		modes:1 ;		/* have a file-type */
 	uint		seens:1 ;
-	uint		recs :1 ;
+	uint		recs:1 ;
+	uint		mods:1 ;
 	uint		ot:2 ;			/* type-out */
-    } ;
+    } ; /* end struct (proginfo_fl) */
     struct proginfo_co {
 	proginfo	*op = nullptr ;
 	int		w = -1 ;
@@ -199,6 +200,7 @@ namespace {
 	fonce		seen ;
 	filerec		afs ;		/* argument-files */
 	filerec		recs ;
+	modproc		mods ;
 	string		pnstr ;
 	mainv		argv ;
 	mainv		envv ;
@@ -248,6 +250,7 @@ namespace {
 	int process_pmend() noex ;
 	int procfile_list(custat *,cchar *,int = -1) noex ;
 	int procfile_lc(custat *,cchar *,int = -1) noex ;
+	int procfile_mods(custat *,cchar *,int = -1) noex ;
 	int procdir(custat *,cchar *,int = -1) noex ;
 	int procdirsubs(custat *,cchar *,int = -1) noex ;
 	int procdirself(custat *,cchar *,int = -1) noex ;
@@ -406,12 +409,12 @@ int proginfo::istart() noex {
 		        rs = SR_OK ;
 		    }
 		} /* end if (afs.start) */
-	        if (rs < 0) {
+	        if ((rs < 0) && fl.dirs) {
 		    fl.dirs = false ;
 		    dirs.finish() ;
 	        } /* end if (error) */
 	    } /* end if (dirs.start) */
-	    if (rs < 0) {
+	    if ((rs < 0) && fl.exts) {
 		fl.exts = false ;
 		exts.finish() ;
 	    } /* end if (error) */
@@ -494,6 +497,18 @@ int proginfo::iflistbegin() noex {
 	        fl.seens = true ;
 	    }
 	    break ;
+	case progmode_depmods:
+	    if ((rs = seen.start(nents)) >= 0) {
+	        fl.seens = true ;
+		if ((rs = mods.start) >= 0) {
+	            fl.mods = true ;
+		}
+		if (rs < 0) {
+		    fl.seens = false ;
+		    seen.finish() ;
+		}
+	    }
+	    break ;
 	case progmode_filesyner:
 	case progmode_filelinker:
 	    if ((rs = recs.start) >= 0) {
@@ -517,6 +532,11 @@ int proginfo::iflistend() noex {
 	    rs1 = seen.finish ;
 	    if (rs >= 0) rs = rs1 ;
 	    fl.seens = false ;
+	}
+	if (fl.mods) {
+	    rs1 = mods.finish ;
+	    if (rs >= 0) rs = rs1 ;
+	    fl.mods = false ;
 	}
 	return rs ;
 }
@@ -840,7 +860,7 @@ int proginfo::process_pmend() noex {
 		delete [] lbuf ;
 		lbuf = nullptr ;
 	        llen = 0 ;
-	    } /* end block */
+	    } /* end if (end lines*/
 	    break ;
 	} /* end switch */
 	return rs ;
@@ -969,6 +989,10 @@ int proginfo::procfile(custat *sbp,cchar *sp,int sl) noex {
 		            rs = procfile_lc(sbp,sp,sl) ;
 		            c = rs ;
 	                    break ;
+	                case progmode_depmods:
+		            rs = procfile_mods(sbp,sp,sl) ;
+		            c = rs ;
+	                    break ;
 	                } /* end switch */
 	            } /* end if (fileuniq) */
 	        } /* end if (sufhave) */
@@ -1018,6 +1042,22 @@ int proginfo::procfile_lc(custat *sbp,cchar *sp,int sl) noex {
 	return (rs >= 0) ? c : rs ;
 }
 /* end method (proginfo::procfile_lc) */
+
+int proginfo::procfile_mods(custat *sbp,cchar *sp,int sl) noex {
+	int		rs = SR_OK ;
+	int		c = 0 ;
+	if (sp) {
+	    if (S_ISREG(sbp->st_mode)) {
+	        strnul fn(sp,sl) ;
+	        if (fl.verbose) {
+	            cout << ccp(fn) << eol ;
+	        }
+	        c += 1 ;
+	    } /* end if (regular file) */
+	} /* end if (non-null) */
+	return (rs >= 0) ? c : rs ;
+}
+/* end method (proginfo::procfile_mods) */
 
 int proginfo::sufadd(cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
