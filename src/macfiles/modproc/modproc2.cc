@@ -50,10 +50,12 @@ module ;
 
 #pragma		GCC dependency	"mod/modproc.ccm"
 #pragma		GCC dependency	"mod/ureserve.ccm"
+#pragma		GCC dependency	"mod/debug.ccm"
 
 module modproc ;
 
 import ureserve ;			/* |vecstr(3u)| */
+import debug ;
 
 /* local defines */
 
@@ -92,28 +94,42 @@ int modproc::istart() noex {
     	cnullptr	np{} ;
     	int		rs = SR_NOMEM ;
     	if (vecstr *vsp ; (vsp = new(nothrow) vecstr) != np) {
-	    vop = vsp ;
-	    rs = SR_OK ;
+	    {
+	        vop = vsp ;
+	        rs = vsp->start ;
+	    }
+	    if (rs < 0) {
+		delete vsp ;
+		vop = nullptr ;
+	    } /* end if (error) */
 	} /* end if (new-vecstr) */
+	debprintf(__func__,"ret rs=%d\n",rs) ;
 	return rs ;
 } /* end method (modproc::istart) */
 
 int modproc::ifinish() noex {
     	int		rs = SR_NOTOPEN ;
+	int		rs1 ;
 	if (vop)  {
 	    vecstr	*vsp = vecstrp(vop) ;
 	    rs = SR_OK ;
+	    {
+		rs1 = vsp->finish ;
+		if (rs >= 0) rs = rs1 ;
+	    }
 	    {
 		delete vsp ;
 	    }
 	    vop = nullptr ;
 	} /* end if (non-null) */
+	debprintf(__func__,"ret rs=%d\n",rs) ;
 	return rs ;
 } /* end method (modproc::ifinish) */
 
 int modproc::procfile(cchar *fn) noex {
     	int		rs = SR_FAULT ;
 	int		c = 0 ;
+	debprintf(__func__,"ent fn=%s\n",fn) ;
 	if (fn) ylikely {
 	    if (fn[0]) ylikely {
 		vecstr *vsp = vecstrp(vop) ;
@@ -121,6 +137,7 @@ int modproc::procfile(cchar *fn) noex {
 		c = rs ;
 	    } /* end if (valid) */
 	} /* end if (non-null) */
+	debprintf(__func__,"ret rs=%d\n",rs) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (modproc::procfile) */
 
@@ -129,12 +146,14 @@ int modproc::procout(FILE *osp,uint ot) noex {
     	int		rs = SR_FAULT ;
 	int		rs1 ;
 	int		c = 0 ;
+	debprintf(__func__,"ent ot=%u\n",ot) ;
 	if (osp) {
 	    vecstr *vsp = vecstrp(vop) ;
 	    vecstr_cur cur ;
 	    cchar	*cp ;
 	    rs = SR_OK ;
 	    (void) ot ;
+	    debprintf(__func__,"for-before\n") ;
 	    for (int i = 0 ; (rs1 = vsp->get(i,&cp)) >= 0 ; i += 1) {
 		if (cp) {
 	            rs = fprintf(osp,"%s\n",cp) ;
@@ -142,8 +161,10 @@ int modproc::procout(FILE *osp,uint ot) noex {
 		}
 		if (rs < 0) break ;
 	    } /* end for */
+	    debprintf(__func__,"for-after rs=%d rs1=%d\n",rs,rs1) ;
 	    if ((rs >= 0) && (rs1 != rsn)) rs = rs1 ;
 	} /* end if (non-null) */
+	debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (modproc::procout) */
 
