@@ -5,7 +5,8 @@
 /* generic front-end for SHELL built-ins */
 /* version %I% last-modified %G% */
 
-#define	CF_GETUSERSHELL		1		/* use |getusershell(3c)| */
+#define	CF_DEBUG	0		/* debugging */
+#define	CF_GETUSERSHELL	1		/* use |getusershell(3c)| */
 
 /* revision history:
 
@@ -100,12 +101,13 @@
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<cstdio>
-#include	<string>
-#include	<fstream>
-#include	<iostream>
+#include	<cstring>		/* |strncmp(3c)| */
 #include	<algorithm>
 #include	<unordered_set>
 #include	<utility>
+#include	<string>
+#include	<fstream>
+#include	<iostream>
 #include	<usystem.h>
 #include	<getfdfile.h>		/* |FD_STDIN| */
 #include	<sfx.h>
@@ -128,6 +130,10 @@ import libutil ;
 import umisc ;				/* |snadd{x}(3u)| */
 
 /* local defines */
+
+#ifndef	CF_DEBUG
+#define	CF_DEBUG	1		/* debugging */
+#endif
 
 #define	MAXLINE		(4*1024)
 #define	FNSHELLS	"/etc/shells"
@@ -173,6 +179,7 @@ using std::unordered_set ;		/* type */
 using std::pair ;			/* type */
 using libu::sncpy ;			/* subroutine */
 using std::cout ;			/* variable */
+using std::cerr ;			/* variable */
 using std::nothrow ;			/* constant */
 
 
@@ -253,7 +260,8 @@ namespace {
     } ; /* end struct (userinfo) */
 } /* end namespace */
 
-constexpr bool		f_getusershell = CF_GETUSERSHELL ;
+constexpr bool		f_debug		= CF_DEBUG ;
+constexpr bool		f_getusershell	= CF_GETUSERSHELL ;
 
 
 /* forward references */
@@ -295,7 +303,15 @@ int main(int argc,mainv argv,mainv) {
 	const uid_t	uid = getuid() ;
 	int		ex = EXIT_SUCCESS ;
 	int		rs ;
+	if_constexpr (f_debug) {
+	    cerr << "func=" << __func__ << eol ;
+	    fprintf(stderr,"%s: ent\n",__func__) ;
+	}
 	if ((rs = getpn(argc,argv,prognames)) >= 0) {
+	    if_constexpr (f_debug) {
+	        fprintf(stderr,"%s: getpn() rs=%d\n",__func__,rs) ;
+	        fprintf(stderr,"%s: getpn() pn=%s\n",__func__,prognames[rs]) ;
+	    }
 	    userinfo	ui ;
 	    cint	pm = rs ;
 	    switch (pm) {
