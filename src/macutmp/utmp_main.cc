@@ -359,7 +359,7 @@ static int prutmp(bool fprint) noex {
 	TM		ts ;
 	int		rs = SR_OK ;
 	int		c = 0 ;
-	cchar		*fmt = "%-4s %-8s %-16s %s %5u %s\n" ;
+	cchar		*fmt = "%-4s %-8s %-16s %s %6u %s\n" ;
 	cchar		*tmt = "%Y%m%d-%H%M%S" ;
 	char		tbuf[tlen+1] ;
 	char		ibuf[utl_id+1] ;
