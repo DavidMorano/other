@@ -8,7 +8,7 @@ CMDS+=" logid logname logline loghost logsid"
 CMDS+=" logged"
 
 LOCPROG=macutmp.x
-TDIRS=" /usr/local /opt/local "
+TDIRS=" /usr/extra /usr/local /opt/local "
 
 function linkdir {
   typeset TDIR=${1}
