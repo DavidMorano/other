@@ -32,6 +32,7 @@ struct strop_head {
 enum stropmems {
 	stropmem_remlen,
 	stropmem_inc,
+	stropmem_shrink,
 	stropmem_white,
 	stropmem_whitedash,
 	stropmem_whitecolon,
@@ -54,22 +55,25 @@ struct strop_co {
 struct strop : strop_head {
 	strop_co	remlen ;
 	strop_co	inc ;
+	strop_co	shrink ;
 	strop_co	white ;
 	strop_co	whitedash ;
 	strop_co	whitecolon ;
 	strop_co	finish ;
 	strop() noex {
-	    remlen(this,stropmem_remlen) ;
-	    inc(this,stropmem_inc) ;
-	    white(this,stropmem_white) ;
-	    whitedash(this,stropmem_whitedash) ;
-	    whitecolon(this,stropmem_whitecolon) ;
-	    finish(this,stropmem_finish) ;
+	    remlen	(this,stropmem_remlen) ;
+	    inc		(this,stropmem_inc) ;
+	    shrink	(this,stropmem_shrink) ;
+	    white	(this,stropmem_white) ;
+	    whitedash	(this,stropmem_whitedash) ;
+	    whitecolon	(this,stropmem_whitecolon) ;
+	    finish	(this,stropmem_finish) ;
 	    sp = nullptr ;
-	} ;
+	} ; /* end ctor */
 	strop(const strop &) = delete ;
 	strop &operator = (const strop &) = delete ;
 	int start(cchar *,int = -1) noex ;
+	int shrinkchr(int = -1) noex ;
 	int whitechr(int) noex ;		/* skip wht until */
 	int fieldwht(cchar **) noex ;
 	int fieldchr(int,cchar **) noex ;
@@ -84,12 +88,13 @@ struct strop : strop_head {
 	} ;
 } ; /* end struct (strop) */
 #else	/* __cplusplus */
-typedef struct strop_head	strop ;
+typedef STROP		strop ;
 #endif /* __cplusplus */
 
 EXTERNC_begin
 
 extern int	strop_start(strop *,cchar *,int) noex ;
+extern int	strop_shrink(strop *) noex ;
 extern int	strop_white(strop *) noex ;
 extern int	strop_whitechr(strop *,int) noex ;
 extern int	strop_fieldwht(strop *,cchar **) noex ;
