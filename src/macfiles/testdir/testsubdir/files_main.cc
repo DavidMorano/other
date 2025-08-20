@@ -5,7 +5,7 @@
 /* enumerate filenames */
 /* version %I% last-modified %G% */
 
-#define	CF_DEBUG	0		/* debug */
+#define	CF_DEBUG	1		/* debug */
 #define	CF_FILELINES	1		/* use |filelines()| */
 
 /* revision history:
@@ -84,7 +84,7 @@
 #pragma		GCC dependency	"mod/files_utils.ccm"
 #pragma		GCC dependency	"mod/debug.ccm"
 
-import libutil ;			/* |lenstr(3u)| */
+import libutil ;			/* |lenstr(3u)| + |getlenstr(3u)| */
 import ulibvals ;
 import ureserve ;
 import strfilter ;
@@ -206,6 +206,7 @@ namespace {
 	mainv		envv ;
 	cchar		*pn = nullptr ;
 	char		*lbuf = nullptr ;
+	FILE		*ofp ;		/* output-file-pointer */
 	int		argc ;
 	int		pm = -1 ;
 	int		debuglevel = 0 ;
@@ -221,7 +222,8 @@ namespace {
 	    flistbegin	(this,proginfomem_flistbegin) ;
 	    flistend	(this,proginfomem_flistend) ;
 	    fl.verbose = true ;
-	} ;
+	    ofp = stdout ;
+	} ; /* end ctor */
 	proginfo() noex : proginfo(0,nullptr,nullptr) { } ;
 	void operator () (int c,mainv a,mainv e) noex {
 	    argc = c ;
@@ -824,8 +826,7 @@ int proginfo::argprocer(argmgr *amp) noex {
 	    } /* end if (process_pm) */
 	} /* end if (have argument) */
 	return (rs >= 0) ? c : rs ;
-}
-/* end subroutine (proginfo::argprocer) */
+} /* end method (proginfo::argprocer) */
 
 int proginfo::process_pmbegin() noex {
 	int		rs = SR_OK ;
@@ -893,6 +894,7 @@ int proginfo::argprocname(cchar *sp,int sl) noex {
 	strnul		s(sp,sl) ;
 	int		rs ;
 	int		c = 0 ;
+	debprintf(__func__,"ent\n") ;
 	if (ustat sb ; (rs = argstat(s,&sb)) >= 0) {
 	    switch (cint ft = filetype(sb.st_mode) ; ft) {
 	    case filetype_dir:
@@ -913,20 +915,22 @@ int proginfo::argprocname(cchar *sp,int sl) noex {
 	} else if (isNotAccess(rs)) {
 	    rs = SR_OK ;
 	}
+	debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::argprocname) */
 
-int proginfo::procdir(custat *sbp,cchar *sp,int sl) noex {
+int proginfo::procdir(custat *sbp,cchar *sp,int 탎l) noex {
     	int		rs = SR_OK ;
 	int		c = 0 ;
-	if (sl && sp[0] && (sp[0] != '.')) {
-	    if (sl < 0) sl = lenstr(sp) ;
-	    if ((rs = procdirsubs(sbp,sp,sl)) >= 0) {
-		c += rs ;
-		rs = procdirself(sbp,sp,sl) ;
-		c += rs ;
-	    } /* end if (procdirsubs) */
-	} /* end if (non-empty) */
+	if (int sl ; (sl = getlenstr(sp,탎l)) > 0) {
+	    if (sp[0] != '.') {
+	        if ((rs = procdirsubs(sbp,sp,sl)) >= 0) {
+		    c += rs ;
+		    rs = procdirself(sbp,sp,sl) ;
+		    c += rs ;
+	        } /* end if (procdirsubs) */
+	    } /* end if (non-empty) */
+	} /* end if (getlenstr) */
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::procdir) */
 
@@ -955,6 +959,7 @@ int proginfo::procdirsubs(custat *sbp,cchar *sp,int sl) noex {
 			        c = rs ;
 			    }
 			} /* end block */
+			if (rs < 0) break ;
 		    } /* end for */
 		} /* end block */
 	    } catch (...) {
@@ -968,14 +973,18 @@ int proginfo::procdirself(custat *sbp,cchar *sp,int sl) noex {
     	return procfile(sbp,sp,sl) ;
 } /* end method (proginfo::procdirself) */
 
-int proginfo::procent(custat *sbp,cchar *sp,int sl) noex {
-	if (sl < 0) sl = lenstr(sp) ;
-	return procfile(sbp,sp,sl) ;
+int proginfo::procent(custat *sbp,cchar *sp,int 탎l) noex {
+    	int		rs = SR_OK ;
+	if (int sl ; (sl = getlenstr(sp,탎l)) > 0) {
+	    rs = procfile(sbp,sp,sl) ;
+	}
+	return rs ;
 } /* end method (proginfo::procent) */
 
 int proginfo::procfile(custat *sbp,cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
 	int		c = 0 ;
+	debprintf(__func__,"ent pi\n") ;
 	if (sisub(sp,sl,".git") < 0) {
 	    if ((! fl.modes) || (rs = modehave(sbp)) > 0) {
 	        if ((! fl.suffix) || ((rs = sufhave(sp,sl)) > 0)) {
@@ -998,6 +1007,7 @@ int proginfo::procfile(custat *sbp,cchar *sp,int sl) noex {
 	        } /* end if (sufhave) */
 	    } /* end if (modehave) */
 	} /* end if (sisub) */
+	debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::procfile) */
 
@@ -1044,17 +1054,29 @@ int proginfo::procfile_lc(custat *sbp,cchar *sp,int sl) noex {
 /* end method (proginfo::procfile_lc) */
 
 int proginfo::procfile_mods(custat *sbp,cchar *sp,int sl) noex {
-	int		rs = SR_OK ;
+	int		rs = SR_FAULT ;
 	int		c = 0 ;
+	if (f_debug && debon) {
+	    strnul se(sp,sl) ;
+	    debprintf(__func__,"ent sl=%d s=>%s<\n",sl,ccp(se)) ;
+	}
 	if (sp) {
+	    rs = SR_OK ;
 	    if (S_ISREG(sbp->st_mode)) {
 	        strnul fn(sp,sl) ;
 	        if (fl.verbose) {
-	            cout << ccp(fn) << eol ;
-	        }
+		    if ((rs = mods.procfile(fn)) >= 0) {
+			cint	ot = fl.ot ;
+			c += rs ;
+			rs = mods.procout(ofp,ot) ;
+		    } /* end if (modproc::procfile) */
+	        } /* end if (verbose) */
 	        c += 1 ;
 	    } /* end if (regular file) */
 	} /* end if (non-null) */
+	if_constexpr (f_debug) {
+	    debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
+	}
 	return (rs >= 0) ? c : rs ;
 }
 /* end method (proginfo::procfile_mods) */
