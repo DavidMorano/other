@@ -62,10 +62,12 @@ module ;
 
 #pragma		GCC dependency	"mod/modproc.ccm"
 #pragma		GCC dependency	"mod/ureserve.ccm"
+#pragma		GCC dependency	"mod/debug.ccm"
 
 module modproc ;
 
 import ureserve ;			/* |vecstr(3u)| */
+import debug ;
 
 /* local defines */
 
@@ -111,10 +113,12 @@ cchar			istr[] = "import" ;
 
 int modprocload(vecstr *op,cchar *fname) noex {
     	int		rs = SR_FAULT ;
+	debprintf(__func__,"ent fn=%s\n",fname) ;
 	if (op && fname) ylikely {
     	    vecmgr	mgr(op) ;
 	    rs = mgr(fname) ;
 	} /* end if (non-null) */
+	debprintf(__func__,"ret rs=%d\n",rs) ;
 	return rs ;
 }
 /* end subroutine (modprocload) */
@@ -192,26 +196,38 @@ int vecmgr::procln(cchar *lp,int ll) noex {
     	int		rs ;
 	int		rs1 ;
 	int		c = 0 ; /* return-value -- number of names found */
+	{
+	    strnul st(lp,ll) ;
+	    debprintf(__func__,"ent ln=>%s<\n",ccp(st)) ;
+	}
     	if (strop s ; (rs = s.start(lp,ll)) >= 0) ylikely {
 	    cchar	*ip ;
 	    if (int il ; (il = s.fieldwht(&ip)) > 0) {
+		{
+	    	    strnul st(ip,il) ;
+	    	    debprintf(__func__,"piece=>%s<\n",ccp(st)) ;
+		}
 		if (strwcmp(istr,ip,il) == 0) {
 		    cint	ch_s = CH_SEMI ;
 		    cchar	*mp ;
+		    debprintf(__func__,"cmp\n") ;
 		    if (int ml ; (ml = s.fieldchr(ch_s,&mp)) > 0) {
-		        s.white() ;
-			if (s.sp[0] == ch_s) {
-			    if (hasmodname(mp,ml)) {
+			{
+	    	    	    strnul st(mp,ml) ;
+	    	    	    debprintf(__func__,"m=>%s<\n",ccp(st)) ;
+			}
+		        s.shrink() ;
+			    if (hasmodname(s.sp,s,sl)) {
 			        rs = vop->adduniq(mp,ml) ;
 			        c = (rs < INT_MAX) ;
 			    }
-			}
 		    }
 	        } /* end if (got "import") */
 	    } /* end if (got field) */
 	    rs1 = s.finish ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (strop) */
+	debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (vecmgr::procln) */
 
