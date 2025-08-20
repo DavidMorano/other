@@ -28,8 +28,10 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be first to configure */
+#include	<climits>		/* |UCHAR_MAX| */
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
+#include	<cstring>		/* |strchr(3c)| */
 #include	<clanguage.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
@@ -45,7 +47,7 @@
 
 #pragma		GCC dependency	"mod/libutil.ccm"
 
-import libutil ;
+import libutil ;			/* |getlenstr(3u)| */
 
 /* local defines */
 
@@ -61,22 +63,26 @@ import libutil ;
 
 /* forward references */
 
-static bool iswhiteand(strop *sop,int tch) noex {
+local inline bool iswht(int ch) noex {
+    	return CHAR_ISWHITE(ch) ;
+}
+
+local bool iswhiteand(strop *sop,int tch) noex {
 	cint	ch = mkchar(sop->sp[0]) ;
 	return CHAR_ISWHITE(ch) && (ch != tch) ;
 }
 
-static bool isnotchr(strop *sop,int tch) noex {
+local bool isnotchr(strop *sop,int tch) noex {
 	cint	ch = mkchar(sop->sp[0]) ;
 	return (ch != tch) ;
 }
 
-static bool isnotterm(strop *sop,cchar *terms) noex {
+local bool isnotterm(strop *sop,cchar *terms) noex {
 	cint	ch = mkchar(sop->sp[0]) ;
 	return (! batst(terms,ch)) ;
 }
 
-static bool isterm(strop *sop,cchar *terms) noex {
+local bool isterm(strop *sop,cchar *terms) noex {
 	cint	ch = mkchar(sop->sp[0]) ;
 	return  batst(terms,ch) ;
 }
@@ -90,14 +96,15 @@ static bool isterm(strop *sop,cchar *terms) noex {
 
 /* exported subroutines */
 
-int strop_start(strop *sop,cchar *sp,int sl) noex {
+int strop_start(strop *sop,cchar *sp,int µsl) noex {
 	int		rs = SR_FAULT ;
 	if (sop && sp) ylikely {
-	    if (sl < 0) sl = lenstr(sp) ;
-	    sop->sp = sp ;
-	    sop->sl = sl ;
-	    rs = sop->sl ;
-	}
+	    if (int sl ; (sl = getlenstr(sp,µsl)) >= 0) {
+	        sop->sp = sp ;
+	        sop->sl = sl ;
+	        rs = sop->sl ;
+	    }
+	} /* end if (non-null) */
 	return rs ;
 }
 /* end subroutine (strop_start) */
@@ -112,6 +119,36 @@ int strop_finish(strop *sop) noex {
 	return rs ;
 }
 /* end subroutine (strop_finish) */
+
+int strop_shrink(strop *sop) noex {
+    	int		sl ;
+    	if ((sl = strop_white(sop)) >= 0) {
+	    if (int si ; (si = siwht(sop->sp,sop->sl)) > 0) {
+	        sop->sl -= si ;
+		sl = sop->sl ;
+	    }
+	}
+	return sl ;
+} /* end subroutine (strop_shrink) */
+
+int strop_shrinkchr(strop *sop,int sch) noex {
+    	int		sl = sop->sl ;
+    	if (sch > 0) {
+    	    if ((sl = strop_white(sop)) >= 0) {
+	        if (int si ; (si = siwhtchr(sop->sp,sop->sl,sch)) >= 0) {
+		    cchar *tp = (sop->sp + sop->sl + si) ;
+		    if (*tp == sch) {
+	                sop->sl -= si ;
+		        sl = sop->sl ;
+		    } else {
+		    }
+	        } /* end if (siwhtchr) */
+	    } /* end if (strop_white) */
+	} else {
+	    sl = strop_white(sop) ;
+	} /* end if (non-zero positive) */
+	return sl ;
+} /* end subroutine (strop_shrinkchr) */
 
 int strop_white(strop *sop) noex {
 	if (int si ; (si = siskipwhite(sop->sp,sop->sl)) > 0) {
@@ -144,9 +181,10 @@ int strop_fieldchr(strop *sop,int sch,cchar **rpp) noex {
 /* end subroutine (strop_fieldchr) */
 
 int strop_fieldbrk(strop *sop,cchar *ss,cchar **rpp) noex {
+    	cnullptr	np{} ;
     	int		rs = SR_FAULT ;
 	int		rl = -1 ; /* return-value */
-	if (sop && rpp) ylikely {
+	if (sop && ss && rpp) ylikely {
 	    rs = SR_OK ;
 	    *rpp = nullptr ;
 	    if (sop->sl > 0) {
@@ -157,9 +195,15 @@ int strop_fieldbrk(strop *sop,cchar *ss,cchar **rpp) noex {
 	        if (sop->sl > 0) {
 	            *rpp = sop->sp ;
 	            if (int si ; (si = siwhtbrk(sop->sp,sop->sl,ss)) >= 0) {
-	                rl = si ;
-	                sop->sp += si ;
-	                sop->sl -= si ;
+			cint tch = mkchar(sop->sp[si]) ; 
+			rl = si ;
+			if (strchr(ss,tch) != np) {
+			    while ((rl > 0) && iswht(sop->sp[rl - 1])) {
+				rl -= 1 ;
+			    }
+			}
+	                sop->sp += (si + 1) ; /* step over found character */
+	                sop->sl -= (si + 1) ; /* step over found character */
 	            } else {
 	                rl = sop->sl ;
 	                sop->sl = 0 ;
@@ -222,6 +266,9 @@ int strop::fieldchr(int sch,cchar **rpp) noex {
 }
 int strop::fieldbrk(cchar *ss,cchar **rpp) noex {
 	return strop_fieldbrk(this,ss,rpp) ;
+}
+int strop::shrinkchr(int tch) noex {
+	return strop_shrinkchr(this,tch) ;
 }
 int strop::whitechr(int tch) noex {
 	return strop_whitechr(this,tch) ;
