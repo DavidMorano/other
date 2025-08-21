@@ -54,9 +54,6 @@ module ;
 
 module modproc ;
 
-import ureserve ;			/* |vecstr(3u)| */
-import debug ;
-
 /* local defines */
 
 
@@ -122,14 +119,14 @@ int modproc::ifinish() noex {
 	    }
 	    vop = nullptr ;
 	} /* end if (non-null) */
-	debprintf(__func__,"ret rs=%d\n",rs) ;
+	if_constexpr (f_debug) debprintf(__func__,"ret rs=%d\n",rs) ;
 	return rs ;
 } /* end method (modproc::ifinish) */
 
 int modproc::procfile(cchar *fn) noex {
     	int		rs = SR_FAULT ;
 	int		c = 0 ;
-	debprintf(__func__,"ent fn=%s\n",fn) ;
+	if_constexpr (f_debug) debprintf(__func__,"ent fn=%s\n",fn) ;
 	if (fn) ylikely {
 	    if (fn[0]) ylikely {
 		vecstr *vsp = vecstrp(vop) ;
@@ -137,7 +134,7 @@ int modproc::procfile(cchar *fn) noex {
 		c = rs ;
 	    } /* end if (valid) */
 	} /* end if (non-null) */
-	debprintf(__func__,"ret rs=%d\n",rs) ;
+	if_constexpr (f_debug) debprintf(__func__,"ret rs=%d\n",rs) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (modproc::procfile) */
 
@@ -146,14 +143,14 @@ int modproc::procout(FILE *osp,uint ot) noex {
     	int		rs = SR_FAULT ;
 	int		rs1 ;
 	int		c = 0 ;
-	debprintf(__func__,"ent ot=%u\n",ot) ;
+	if_constexpr (f_debug) debprintf(__func__,"ent ot=%u\n",ot) ;
 	if (osp) {
 	    vecstr *vsp = vecstrp(vop) ;
 	    vecstr_cur cur ;
 	    cchar	*cp ;
 	    rs = SR_OK ;
 	    (void) ot ;
-	    debprintf(__func__,"for-before\n") ;
+	    if_constexpr (f_debug) debprintf(__func__,"for-before\n") ;
 	    for (int i = 0 ; (rs1 = vsp->get(i,&cp)) >= 0 ; i += 1) {
 		if (cp) {
 	            rs = fprintf(osp,"%s\n",cp) ;
@@ -161,10 +158,12 @@ int modproc::procout(FILE *osp,uint ot) noex {
 		}
 		if (rs < 0) break ;
 	    } /* end for */
-	    debprintf(__func__,"for-after rs=%d rs1=%d\n",rs,rs1) ;
+	    if_constexpr (f_debug) {
+		debprintf(__func__,"for-after rs=%d rs1=%d\n",rs,rs1) ;
+	    }
 	    if ((rs >= 0) && (rs1 != rsn)) rs = rs1 ;
 	} /* end if (non-null) */
-	debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
+	if_constexpr (f_debug) debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (modproc::procout) */
 
