@@ -131,25 +131,6 @@ int strop_shrink(strop *sop) noex {
 	return sl ;
 } /* end subroutine (strop_shrink) */
 
-int strop_shrinkchr(strop *sop,int sch) noex {
-    	int		sl = sop->sl ;
-    	if (sch > 0) {
-    	    if ((sl = strop_white(sop)) >= 0) {
-	        if (int si ; (si = siwhtchr(sop->sp,sop->sl,sch)) >= 0) {
-		    cchar *tp = (sop->sp + sop->sl + si) ;
-		    if (*tp == sch) {
-	                sop->sl -= si ;
-		        sl = sop->sl ;
-		    } else {
-		    }
-	        } /* end if (siwhtchr) */
-	    } /* end if (strop_white) */
-	} else {
-	    sl = strop_white(sop) ;
-	} /* end if (non-zero positive) */
-	return sl ;
-} /* end subroutine (strop_shrinkchr) */
-
 int strop_white(strop *sop) noex {
 	if (int si ; (si = siskipwhite(sop->sp,sop->sl)) > 0) {
 	    sop->sp += si ;
@@ -267,9 +248,6 @@ int strop::fieldchr(int sch,cchar **rpp) noex {
 int strop::fieldbrk(cchar *ss,cchar **rpp) noex {
 	return strop_fieldbrk(this,ss,rpp) ;
 }
-int strop::shrinkchr(int tch) noex {
-	return strop_shrinkchr(this,tch) ;
-}
 int strop::whitechr(int tch) noex {
 	return strop_whitechr(this,tch) ;
 }
@@ -306,6 +284,9 @@ strop_co::operator int () noex {
 	           op->sp += 1 ;
 	           op->sl -= 1 ;
 	       }
+	       break ;
+	   case stropmem_shrink:
+	       rs = strop_shrink(op) ;
 	       break ;
 	   case stropmem_white:
 	       rs = strop_white(op) ;
