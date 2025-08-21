@@ -22,7 +22,7 @@
 
 	Description:
 	I parse a C++ source code file and find all of the module
-	names that I can that are being imported to rhat source file.
+	names that I can that are being imported to that source file.
 
 	Synopsis:
 	modprocload(vecstr *op,cchar *fname) noex
@@ -65,9 +65,6 @@ module ;
 #pragma		GCC dependency	"mod/debug.ccm"
 
 module modproc ;
-
-import ureserve ;			/* |vecstr(3u)| */
-import debug ;
 
 /* local defines */
 
@@ -113,12 +110,12 @@ cchar			istr[] = "import" ;
 
 int modprocload(vecstr *op,cchar *fname) noex {
     	int		rs = SR_FAULT ;
-	debprintf(__func__,"ent fn=%s\n",fname) ;
+	if_constexpr (f_debug) debprintf(__func__,"ent fn=%s\n",fname) ;
 	if (op && fname) ylikely {
     	    vecmgr	mgr(op) ;
 	    rs = mgr(fname) ;
 	} /* end if (non-null) */
-	debprintf(__func__,"ret rs=%d\n",rs) ;
+	if_constexpr (f_debug) debprintf(__func__,"ret rs=%d\n",rs) ;
 	return rs ;
 }
 /* end subroutine (modprocload) */
@@ -160,12 +157,12 @@ int vecmgr::filenmods(cchar *fname) noex {
 } /* end method (vecmgr::filenmods) */
 
 int vecmgr::liner(int fd,csize ms) noex {
+	cnullptr	np{} ;
 	cint		mp = PROT_READ ;
 	cint		mf = MAP_SHARED ;
 	int		rs ;
 	int		rs1 ;
 	int		nmods = 0 ; /* return-value */
-	cnullptr	np{} ;
 	if (void *md ; (rs = u_mmapbegin(np,ms,mp,mf,fd,0z,&md)) >= 0) {
 	    cint	cmd = MADV_SEQUENTIAL ;
 	    if ((rs = u_madvise(md,ms,cmd)) >= 0) ylikely {
@@ -189,6 +186,9 @@ int vecmgr::liner(int fd,csize ms) noex {
 	    rs1 = u_mmapend(md,ms) ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (map-file) */
+	if_constexpr (f_debug) {
+	    debprintf(__func__,"ret rs=%d c=%d\n",rs,nmods) ;
+	}
 	return (rs >= 0) ? nmods : rs ;
 } /* end method (vecmgr::liner) */
 
@@ -196,38 +196,37 @@ int vecmgr::procln(cchar *lp,int ll) noex {
     	int		rs ;
 	int		rs1 ;
 	int		c = 0 ; /* return-value -- number of names found */
-	{
+	if_constexpr (f_debug) {
 	    strnul st(lp,ll) ;
 	    debprintf(__func__,"ent ln=>%s<\n",ccp(st)) ;
 	}
     	if (strop s ; (rs = s.start(lp,ll)) >= 0) ylikely {
 	    cchar	*ip ;
 	    if (int il ; (il = s.fieldwht(&ip)) > 0) {
-		{
+		if_constexpr (f_debug) {
 	    	    strnul st(ip,il) ;
 	    	    debprintf(__func__,"piece=>%s<\n",ccp(st)) ;
 		}
 		if (strwcmp(istr,ip,il) == 0) {
 		    cint	ch_s = CH_SEMI ;
 		    cchar	*mp ;
-		    debprintf(__func__,"cmp\n") ;
+		    if_constexpr (f_debug) debprintf(__func__,"cmp\n") ;
 		    if (int ml ; (ml = s.fieldchr(ch_s,&mp)) > 0) {
-			{
+			if_constexpr (f_debug) {
 	    	    	    strnul st(mp,ml) ;
 	    	    	    debprintf(__func__,"m=>%s<\n",ccp(st)) ;
 			}
-		        s.shrink() ;
-			    if (hasmodname(s.sp,s,sl)) {
-			        rs = vop->adduniq(mp,ml) ;
-			        c = (rs < INT_MAX) ;
-			    }
-		    }
+			if (hasmodname(mp,ml)) {
+			    rs = vop->adduniq(mp,ml) ;
+			    c = (rs < INT_MAX) ;
+			}
+		    } /* end if (strop_fieldchr) */
 	        } /* end if (got "import") */
 	    } /* end if (got field) */
 	    rs1 = s.finish ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (strop) */
-	debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
+	if_constexpr (f_debug) debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (vecmgr::procln) */
 
