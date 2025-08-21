@@ -1063,15 +1063,13 @@ int proginfo::procfile_mods(custat *sbp,cchar *sp,int sl) noex {
 	if (sp) {
 	    rs = SR_OK ;
 	    if (S_ISREG(sbp->st_mode)) {
-	        strnul fn(sp,sl) ;
 	        if (fl.verbose) {
-		    if ((rs = mods.procfile(fn)) >= 0) {
+	            if (strnul fn(sp,sl) ; (rs = mods.procfile(fn)) >= 0) {
 			cint	ot = fl.ot ;
 			c += rs ;
 			rs = mods.procout(ofp,ot) ;
 		    } /* end if (modproc::procfile) */
 	        } /* end if (verbose) */
-	        c += 1 ;
 	    } /* end if (regular file) */
 	} /* end if (non-null) */
 	if_constexpr (f_debug) {
