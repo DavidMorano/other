@@ -5,6 +5,7 @@
 /* Module-Processing */
 /* version %I% last-modified %G% */
 
+#define	CF_DEBUG	1		/* debugging */
 
 /* revision history:
 
@@ -32,6 +33,15 @@ module ;
 export module modproc ;
 
 import ureserve ;			/* |vecstr(3u)| */
+import debug ;
+
+/* local defines */
+
+#ifndef	CF_DEBUG
+#define	CF_DEBUG	0		/* debugging */
+#endif
+
+cbool			f_debug = CF_DEBUG ;
 
 export {
     extern int	modprocload(vecstr *,cchar *) noex ;
