@@ -52,6 +52,8 @@ module ;
 #include	<usysdefs.h>
 #include	<usysrets.h>
 #include	<usyscalls.h>
+#include	<strnul.hh>
+#include	<langproc.h>
 #include	<ascii.h>
 #include	<hasx.h>		/* |hasmodname(3uc)| */
 #include	<strop.h>
@@ -61,8 +63,6 @@ module ;
 #include	<localmisc.h>
 
 #pragma		GCC dependency	"mod/modproc.ccm"
-#pragma		GCC dependency	"mod/ureserve.ccm"
-#pragma		GCC dependency	"mod/debug.ccm"
 
 module modproc ;
 
@@ -86,11 +86,14 @@ module modproc ;
 namespace {
     struct vecmgr {
 	vecstr		*vop ;
+	langproc	proc ;
 	vecmgr(vecstr *p) noex : vop(p) { } ;
 	int operator () (cchar *) noex ;
-	int filenmods(cchar *) noex ;
+	int fileload(cchar *) noex ;
+	int fileproc() noex ;
 	int liner(int,size_t) noex ;
-	int procln(cchar *,int) noex ;
+	int loadln(int,cchar *,int) noex ;
+	int procln(int,cchar *,int) noex ;
     } ; /* end struct (vecmgr) */
 } /* end namespace */
 
@@ -124,10 +127,21 @@ int modprocload(vecstr *op,cchar *fname) noex {
 /* local subroutines */
 
 int vecmgr::operator () (cchar *fname) noex {
-    	return filenmods(fname) ;
+    	int		rs ;
+	int		rs1 ;
+	int		rv = 0 ; /* return-value */
+	if ((rs = proc.start) >= 0) {
+	    if ((rs = fileload(fname)) >= 0) {
+		rs = fileproc() ;
+		rv = rs ;
+	    } /* end if (fileload) */
+	    rs1 = proc.finish ;
+	    if (rs >= 0) rs = rs1 ;
+	} /* end if (langproc) */
+    	return (rs >= 0) ? rv : rs ;
 } /* end method (vecmgr::operator) */
 
-int vecmgr::filenmods(cchar *fname) noex {
+int vecmgr::fileload(cchar *fname) noex {
 	int		rs = SR_FAULT ;
 	int		rs1 ;
 	int		nmods = 0 ;
@@ -154,7 +168,7 @@ int vecmgr::filenmods(cchar *fname) noex {
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? nmods : rs ;
-} /* end method (vecmgr::filenmods) */
+} /* end method (vecmgr::fileload) */
 
 int vecmgr::liner(int fd,csize ms) noex {
 	cnullptr	np{} ;
@@ -163,23 +177,28 @@ int vecmgr::liner(int fd,csize ms) noex {
 	int		rs ;
 	int		rs1 ;
 	int		nmods = 0 ; /* return-value */
+	if_constexpr (f_debug) {
+	    debprintf(__func__,"ent\n") ;
+	}
 	if (void *md ; (rs = u_mmapbegin(np,ms,mp,mf,fd,0z,&md)) >= 0) {
 	    cint	cmd = MADV_SEQUENTIAL ;
 	    if ((rs = u_madvise(md,ms,cmd)) >= 0) ylikely {
 		size_t	ll = ms ;
+		int	ln = 1 ;
 		cchar	*lp = charp(md) ;
 		for (cchar *tp ; (tp = charp(memchr(lp,'\n',ll))) != np ; ) {
 		    csize	si = ((tp + 1) - lp) ;
 		    if (cint sl = intconv(si - 1) ; sl > 0) {
-		        rs = procln(lp,sl) ;
+		        rs = loadln(ln++,lp,sl) ;
 		        nmods += rs ;
 		    }
 		    ll -= si ;
 		    lp += si ;
+		    if (rs < 0) break ;
 		} /* end for */
 		if ((rs >= 0) && (ll > 0)) {
 		    cint	sl = intconv(ll) ;
-		    rs = procln(lp,sl) ;
+		    rs = loadln(ln++,lp,sl) ;
 		    nmods += rs ;
 		} /* end if (trailing line */
 	    } /* end if (memory-advise) */
@@ -192,7 +211,44 @@ int vecmgr::liner(int fd,csize ms) noex {
 	return (rs >= 0) ? nmods : rs ;
 } /* end method (vecmgr::liner) */
 
-int vecmgr::procln(cchar *lp,int ll) noex {
+int vecmgr::loadln(int ln,cchar *lp,int ll) noex {
+    	int		rs = SR_OK ;
+	if_constexpr (f_debug) {
+	    strnul s(lp,ll) ;
+	    debprintf(__func__,"ent ln=%d l=>%s<\n",ln,ccp(s)) ;
+	}
+	if ((ll > 0) && (lp[0] != '#')) {
+	    rs = proc.proc(ln,lp,ll) ;
+	    debprintf(__func__,"proc.proc() ret rs=%d\n",rs) ;
+	}
+	debprintf(__func__,"ret rs=%d\n",rs) ;
+    	return rs ; 
+} /* end method (vecmgr::loadln) */
+
+int vecmgr::fileproc() noex {
+    	cint		rsn = SR_NOTFOUND ;
+    	int		rs ;
+	int		rs1{} ;
+	int		rv = 0 ; /* return-value */
+	debprintf(__func__,"ent\n") ;
+	if (langproc_cur cur ; (rs = proc.curbegin(&cur)) >= 0) {
+	    cchar	*lp ;
+	    int		ln = 1 ;
+	    while ((rs1 = proc.curenum(&cur,&lp)) >= 0) {
+		if (lp) {
+		    rs = procln(ln++,lp,rs) ;
+		    rv += rs ;
+		}
+	    } /* end while (langproc_curenum) */
+	    if ((rs >= 0) && (rs1 != rsn)) rs = rs1 ;
+	    rs1 = proc.curend(&cur) ;
+	    if (rs >= 0) rs = rs1 ;
+	} /* end if (langproc_cur) */
+	debprintf(__func__,"ret rs=%d rv=%d\n",rs,rv) ;
+    	return (rs >= 0) ? rv : rs ;
+} /* end method (vecmgr::fileproc) */
+
+int vecmgr::procln(int ln,cchar *lp,int ll) noex {
     	int		rs ;
 	int		rs1 ;
 	int		c = 0 ; /* return-value -- number of names found */
@@ -200,6 +256,7 @@ int vecmgr::procln(cchar *lp,int ll) noex {
 	    strnul st(lp,ll) ;
 	    debprintf(__func__,"ent ln=>%s<\n",ccp(st)) ;
 	}
+	(void) ln ;
     	if (strop s ; (rs = s.start(lp,ll)) >= 0) ylikely {
 	    cchar	*ip ;
 	    if (int il ; (il = s.fieldwht(&ip)) > 0) {

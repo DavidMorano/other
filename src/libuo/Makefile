@@ -65,7 +65,7 @@ OBJ03_LUO= strw.o strwcpy.o
 
 OBJ04_LUO= ccfile.o strop.o strmgr.o
 OBJ05_LUO= strfilter.o
-OBJ06_LUO= tardir.o
+OBJ06_LUO= tardir.o langx.o
 OBJ07_LUO= nleadx.o matxstr.o char.o toxc.o
 
 OBJ08_LUO= dictdiff.o strnxcmp.o
@@ -127,7 +127,7 @@ a:			$(T).a
 
 
 $(T).so:		$(T).o
-	$(LD) -shared -o $@ $(LDFLAGS) $(OBJ_LUO) $(LIBINFO)
+	$(CXX) -shared -o $@ $(LDFLAGS) $(OBJ_LUO) $(LIBINFO)
 
 $(T).o:			$(OBJ_LUO)
 	$(LD) -r -o $@ $(LDFLAGS) $(OBJ_LUO)
@@ -385,6 +385,11 @@ strobj.dir:
 # DEBUG
 debug.o:		debug.dir
 debug.dir:
+	makesubdir $@
+
+# LANGX
+langx.o:		langx.dir
+langx.dir:
 	makesubdir $@
 
 # Objects
