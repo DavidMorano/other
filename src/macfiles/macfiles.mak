@@ -154,47 +154,52 @@ files_main.o:		files_main.cc $(DEPS_MAIN)		$(INCS)
 mods.o:			$(DEPS_MAIN)
 	$(CXX) -r -o $@ $(LDFLAGS) $^
 
-# STRFILER (libuc)
-strfilter.o:		strfilter.dir
-strfilter.dir:
-	makesubdir $@
-
-# SIF (libuc)
-sif.o:			sif.dir
-sif.dir:
-	makesubdir $@
-
-# ARGMGR (libuc)
-argmgr.o:		argmgr.dir
-argmgr.dir:
-	makesubdir $@
-
-# URESERVE (libu)
+# URESERVE	(libu)
 ureserve.o:		ureserve.dir
 ureserve.dir:
 	makesubdir $@
 
-# FONCE (libu)
+# FONCE		(libu)
 fonce.o:		fonce.dir
 fonce.dir:
 	makesubdir $@
 
-# FILEREC (libu)
+# FILEREC	(libu)
 filerec.o:		filerec.dir
 filerec.dir:
 	makesubdir $@
 
-# TARDIR (libuc)
-tardir.o:		tardir.dir
-tardir.dir:
-	makesubdir $@
-
-# DEBUG
+# DEBUG		(libu)
 debug.o:		debug.dir
 debug.dir:
 	makesubdir $@
 
-# MODPROC
+# STRFILER	(libuc)
+strfilter.o:		strfilter.dir
+strfilter.dir:
+	makesubdir $@
+
+# SIF		(libuc)
+sif.o:			sif.dir
+sif.dir:
+	makesubdir $@
+
+# ARGMGR	(libuc)
+argmgr.o:		argmgr.dir
+argmgr.dir:
+	makesubdir $@
+
+# TARDIR	(libuc)
+tardir.o:		tardir.dir
+tardir.dir:
+	makesubdir $@
+
+# LANGX		(libdam)
+langx.o:		langx.dir
+langx.dir:
+	makesubdir $@
+
+# MODPROC	(libdam)
 modproc.o:		modproc.dir
 modproc.dir:
 	makesubdir $@
