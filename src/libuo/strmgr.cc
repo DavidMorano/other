@@ -69,7 +69,7 @@ int strmgr_start(strmgr *op,char *dbuf,int dlen) noex {
 	if (op && dbuf) ylikely {
 	    rs = SR_INVALID ;
 	    if (dlen >= 0) {
-	        op->dp = dbuf ;
+	        op->dbuf = dbuf ;
 	        op->dlen = dlen ;
 	        op->dl = 0 ;
 		rs = SR_OK ;
@@ -83,10 +83,10 @@ int strmgr_finish(strmgr *op) noex {
 	int		rs = SR_FAULT ;
 	if (op) ylikely {
 	    rs = op->dl ;
-	    op->dp[0] = '\0' ;
-	    op->dp = nullptr ;
-	    op->dl = 0 ;
+	    op->dbuf[0] = '\0' ;
+	    op->dbuf = nullptr ;
 	    op->dlen = 0 ;
+	    op->dl = 0 ;
 	} /* end if (non-null) */
 	return rs ;
 }
@@ -114,13 +114,12 @@ int strmgr_str(strmgr *op,cchar *sp,int sl) noex {
 	    rs = SR_OK ;
 	    while ((rs >= 0) && sl-- && *sp) {
 	        if (tl < rlen) ylikely {
-	            op->dp[tl++] = *sp++ ;
+	            op->dbuf[op->dl + tl++] = *sp++ ;
 	        } else {
 	            rs = SR_OVERFLOW ;
 	        }
 	    } /* end for */
 	    if (rs >= 0) ylikely {
-	        op->dp += tl ;
 	        op->dl += tl ;
 	    }
 	} /* end if (non-null) */
@@ -133,8 +132,7 @@ int strmgr_chr(strmgr *op,int ch) noex {
 	if (op) ylikely {
 	    rs = SR_OK ;
 	    if (op->dl < op->dlen) ylikely {
-	        *op->dp++ = char(ch) ;
-	        op->dl += 1 ;
+	        op->dbuf[op->dl++] = char(ch) ;
 	    } else {
 	        rs = SR_OVERFLOW ;
 	    }
@@ -143,14 +141,34 @@ int strmgr_chr(strmgr *op,int ch) noex {
 }
 /* end subroutine (strmgr_chr) */
 
+int strmgr_get(strmgr *op,ccharpp rpp) noex {
+	int		rs = SR_FAULT ;
+	if (op) ylikely {
+	    rs = op->dl ;
+	    if (rpp) *rpp = op->dbuf ;
+	} /* end if (non-null) */
+	return rs ;
+}
+/* end subroutine (strmgr_len) */
+
 int strmgr_len(strmgr *op) noex {
 	int		rs = SR_FAULT ;
 	if (op) ylikely {
 	    rs = op->dl ;
-	}
+	} /* end if (non-null) */
 	return rs ;
 }
 /* end subroutine (strmgr_len) */
+
+int strmgr_reset(strmgr *op) noex {
+	int		rs = SR_FAULT ;
+	if (op) ylikely {
+	    rs = SR_OK ;
+	    op->dl = 0 ;
+	} /* end if (non-null) */
+	return rs ;
+}
+/* end subroutine (strmgr_reset) */
 
 
 /* local subroutines */
@@ -165,6 +183,10 @@ int strmgr::str(cchar *sp,int sl) noex {
 
 int strmgr::chr(int ch) noex {
     	return strmgr_chr(this,ch) ;
+}
+
+int strmgr::get(ccharpp rpp) noex {
+    	return strmgr_get(this,rpp) ;
 }
 
 void strmgr::dtor() noex {
@@ -185,6 +207,9 @@ strmgr_co::operator int () noex {
 	        break ;
 	    case strmgrmem_len:
 	        rs = strmgr_len(op) ;
+	        break ;
+	    case strmgrmem_reset:
+	        rs = strmgr_reset(op) ;
 	        break ;
 	    case strmgrmem_finish:
 	        rs = strmgr_finish(op) ;
