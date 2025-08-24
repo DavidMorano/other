@@ -2,7 +2,23 @@
 
 #include	<envstandards.h>	/* must be ordered first to configure */
 
-import libutil ;
+#include	<thisis\
+athing> /* \
+about\
+	   something */
+
+/* what about *\
+/
+
+const char	var[] = "/*" ;
+
+imp\
+ort \
+mod\
+ule ;
+
+import \
+libutil ;
 
 import /* here is a thing */
 /* and another */
