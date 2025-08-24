@@ -66,8 +66,8 @@ struct ccfile : std::fstream {
 	ccfile_co	close ;
 	ccfile_fl	fl{} ;
 	ccfile() noex {
-	    rewind(this,ccfilemem_rewind) ;
-	    close(this,ccfilemem_close) ;
+	    rewind	(this,ccfilemem_rewind) ;
+	    close	(this,ccfilemem_close) ;
 	} ;
 	ccfile(const ccfile &) = delete ;
 	ccfile &operator = (const ccfile &) = delete ;
