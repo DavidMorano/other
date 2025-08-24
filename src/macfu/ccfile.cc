@@ -20,11 +20,11 @@
 /* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
 
 /******************************************************************************* 
-	Name:
-	readln
+	object:
+	ccfile
 
 	Description:
-	This subroutine tries to mimic the old normal 'read' function
+	This object tries to mimic the old normal 'read' function
 	from the old days.  The "modern" |istream::getline(3c++)|
 	and |std::getline(3c++)| want to be in the middle of a
 	sequence of input operations (like reading various typed
@@ -293,7 +293,7 @@ int ccfile::readlns(char *lbuf,int llen,int to,int *lcp) noex {
 	    } /* end if (not-fnulling) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? i : rs ;
-} /* end method (filer::readlns) */
+} /* end method (ccfile::readlns) */
 
 int ccfile::seek(off_t o,int w) noex {
 	int		rs = SR_OK ;
