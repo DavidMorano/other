@@ -73,7 +73,7 @@ OBJ09_LUO= readln.o
 OBJ10_LUO= getourenv.o mapex.o
 OBJ11_LUO= inetconv.o inetaddrx.o 
 
-OBJ12_LUO= 
+OBJ12_LUO= filer.o
 OBJ13_LUO= 
 OBJ14_LUO= 
 OBJ15_LUO= 
@@ -81,7 +81,7 @@ OBJ15_LUO=
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
 OBJC_LUO= obj08_luo.o obj09_luo.o obj10_luo.o obj11_luo.o
-OBJD_LUO= 
+OBJD_LUO= obj12_luo.o
 OBJE_LUO= 
 OBJF_LUO= 
 
@@ -89,7 +89,7 @@ OBJ_LUO= obja_luo.o objb_luo.o objc_luo.o
 #OBJ_LUO= objd_luo.o obje_luo.o objf_luo.o
 
 
-.SUFFIXES:		.hh .ii .ccm
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).o
@@ -152,73 +152,74 @@ install:		$(T).x
 
 
 obj00_luo.o:		$(OBJ00_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ00_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj01_luo.o:		$(OBJ01_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ01_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj02_luo.o:		$(OBJ02_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ02_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj03_luo.o:		$(OBJ03_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ03_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj04_luo.o:		$(OBJ04_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ04_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj05_luo.o:		$(OBJ05_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ05_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj06_luo.o:		$(OBJ06_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ06_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj07_luo.o:		$(OBJ07_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ07_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
 obj08_luo.o:		$(OBJ08_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ08_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj09_luo.o:		$(OBJ09_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ09_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj10_luo.o:		$(OBJ10_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ10_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj11_luo.o:		$(OBJ11_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ11_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj12_luo.o:		$(OBJ12_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ12_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj13_luo.o:		$(OBJ13_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ13_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj14_luo.o:		$(OBJ14_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ15_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
 obja_luo.o:		$(OBJA_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJA_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 objb_luo.o:		$(OBJB_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJB_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 objc_luo.o:		$(OBJC_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJC_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 objd_luo.o:		$(OBJD_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJD_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obje_luo.o:		$(OBJE_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJC_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 objf_luo.o:		$(OBJF_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJF_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
 obj_luo.o:		$(OBJ_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
 
 six.o:			six.dir
 six.dir:
@@ -340,6 +341,11 @@ fonce.dir:
 # CHRSET	(libu)
 chrset.o:		chrset.dir
 chrset.dir:
+	makesubdir $@
+
+# FILER		(libuc)
+filer.o:		filer.dir
+filer.dir:
 	makesubdir $@
 
 # SIF		(libuc)
