@@ -49,8 +49,11 @@
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<cstdio>
-#include	<cstring>
-#include	<usystem.h>
+#include	<clanguage.h>
+#include	<utypedefs.h>
+#include	<utypealiases.h>
+#include	<usysdefs.h>
+#include	<usysrets.h>
 #include	<localmisc.h>
 
 #include	"freadln.h"
@@ -92,20 +95,18 @@ int freadln(FILE *fp,char *rbuf,int rlen) noex {
 	int		len = 0 ;
 	if (fp && rbuf) {
 	    rs = SR_INVALID ;
-	    errno = 0 ;
-	    if (rlen >= 1) {
-	        char	*bp = fgets(rbuf,(rlen + 1),fp) ;
-		if (errno == 0) {
+	    if (rlen > 0) {
+	        if (char *bp = fgets(rbuf,(rlen + 1),fp) ; bp) {
 		    rs = SR_OK ;
-		    if (bp) {
-			len = lenstr(bp) ;
-		    } else if (ferror(fp)) {
-	                clearerr(fp) ;
-	                rs = SR_IO ;
-	            }
+		    len = lenstr(bp) ;
 		} else {
-		    rs = (- errno) ;
-		}
+		    if (feof(fp)) {
+			rs = SR_OK ;
+		    } else if (ferror(fp)) {
+		        rs = (errno) ? (- errno) : SR_IO ;
+	                clearerr(fp) ;
+	            }
+		} /* end if (result) */
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? len : rs ;
