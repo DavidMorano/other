@@ -220,15 +220,15 @@ int ccfile::readln(char *ibuf,int ilen,int dch) noex {
 			    rs = SR_OVERFLOW ;
 		        } /* end if (adding delimiter to input buffer) */
 		    } else {
-		        cbool	feof	= eof() ;
-		        cbool	ffail	= fail() ;
 		        cbool	fbad	= bad() ;
-		        if (feof) {
-		            rs = SR_OK ;
+		        cbool	ffail	= fail() ;
+		        cbool	feof	= eof() ;
+		        if (fbad) {
+		            rs = SR_IO ;
 		        } else if (ffail) {
 		            rs = SR_NOMSG ;
-		        } else if (fbad) {
-		            rs = SR_IO ;
+			} else if (feof) {
+		            rs = SR_OK ;
 	                }
 	            } /* end block */
 	        } catch (...) {
