@@ -40,6 +40,11 @@ MODS +=
 LIBS += -luo -lu
 
 
+DEPS_MAIN +=
+
+OBJ_CHARSET= charset_main.o
+
+
 INCDIRS=
 
 LIBDIRS= -L$(LIBDIR)
@@ -56,12 +61,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACFU= charset_main.o
-
-DEPS_MAIN +=
-
-
-.SUFFIXES:		.hh .ii .ccm
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).x
@@ -91,8 +91,8 @@ all:			$(ALL)
 	makemodule $(*)
 
 
-$(T).x:			$(OBJ_MACFU)
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACFU) $(LIBINFO)
+$(T).x:			$(OBJ_CHARSET)
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_CHARSET) $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).x > $(T).nm
@@ -109,13 +109,10 @@ control:
 
 charset_main.o:		charset_main.cc $(DEPS_MAIN)		$(INCS)
 
-fonce.ccm:
-	makemodcurrent $@
 
-ulibvals.ccm:
-	makemodcurrent $@
-
-fonce.o:		fonce.ccm
-ulibvals.o:		ulibvals.ccm
+# FONCE		(libu)
+fonce.o:		fonce.dir
+fonce.dir:
+	makesubdir $@
 
 
