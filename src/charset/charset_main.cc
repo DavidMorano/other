@@ -5,6 +5,7 @@
 /* Character-Set (setting character-set on files) */
 /* version %I% last-modified %G% */
 
+#define	CF_DEBUG	0		/* debugging */
 
 /* revision history:
 
@@ -45,10 +46,11 @@
 #include	<climits>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
-#include	<cstring>		/* |strlen(3c)| */
+#include	<cstring>		/* |strlen(3c)| yes-we-want-it */
 #include	<iostream>
 #include	<usystem.h>
 #include	<getourenv.h>
+#include	<getfdfile.h>		/* |FD_STDERR| */
 #include	<varnames.hh>
 #include	<strn.h>
 #include	<sfx.h>
@@ -63,20 +65,31 @@
 #include	<exitcodes.h>
 #include	<localmisc.h>
 
+#pragma		GCC dependency	"mod/libutil.ccm"
+#pragma		GCC dependency	"mod/fonce.ccm"
+#pragma		GCC dependency	"mod/ulibvals.ccm"
+#pragma		GCC dependency	"mod/debug.ccm"
+
+import libutil ;			/* |gelenstr(3u)| */
 import fonce ;
 import ulibvals ;
+import debug ;
 
 /* local defines */
 
 #define	NENTS		1000
 
+#ifndef	CF_DEBUG
+#define	CF_DEBUG	1		/* debugging */
+#endif
+
 
 /* imported namespaces */
 
-using std::nullptr_t ;			/* type */
 using std::istream ;			/* type */
 using std::cin;				/* variable */
 using std::cout ;			/* variable */
+using std::cerr ;			/* variable */
 using std::nothrow ;			/* constant */
 
 
@@ -113,12 +126,12 @@ namespace {
 	} ;
     } ; /* end struct (proginfo_co) */
     struct proginfo {
-	friend proginfo_co ;
-	fonce		seen ;
+	friend		proginfo_co ;
 	proginfo_co	start ;
 	proginfo_co	finish ;
 	proginfo_co	flistbegin ;
 	proginfo_co	flistend ;
+	fonce		seen ;
 	mainv		argv ;
 	mainv		envv ;
 	cchar		*pn = nullptr ;
@@ -142,7 +155,7 @@ namespace {
 	int charprocess(char *,int) noex ;
 	int readin(char *,int) noex ;
 	int fileproc(char *,int,cchar *,int = -1) noex ;
-	int filecheck(CUSTAT *) noex ;
+	int filecheck(char *,int,cchar *,int = -1) noex ;
     private:
 	int getpn(mainv) noex ;
 	int istart() noex ;
@@ -163,7 +176,7 @@ enum progmodes {
 	progmode_overlast
 } ;
 
-static constexpr cpcchar	prognames[] = {
+constexpr cpcchar	prognames[] = {
 	[progmode_charset]	= "charset",
 	[progmode_overlast]	= nullptr
 } ;
@@ -174,13 +187,14 @@ static constexpr MAPEX	mapexs[] = {
 	{ SR_DEADLK,	EX_TEMPFAIL },
 	{ SR_NOLCK,	EX_TEMPFAIL },
 	{ SR_TXTBSY,	EX_TEMPFAIL },
+	{ SR_NOSPC,	EX_TEMPFAIL },
 	{ SR_ACCESS,	EX_NOPERM },
 	{ SR_REMOTE,	EX_PROTOCOL },
-	{ SR_NOSPC,	EX_TEMPFAIL },
 	{ SR_INTR,	EX_INTR },
 	{ SR_EXIT,	EX_TERM },
 	{ SR_NOMSG,	EX_OSERR },
 	{ SR_NOSYS,	EX_OSFILE },
+	{ SR_INVALID,	EX_USAGE },
 	{ 0, 0 }
 } ; /* end array (mapexs) */
 
@@ -191,6 +205,7 @@ static cint		pagesize	= ulibval.pagesz ;
 
 constexpr int		nents = NENTS ;
 
+cbool			f_debug		= CF_DEBUG ;
 
 
 /* exported variables */
@@ -199,9 +214,11 @@ constexpr int		nents = NENTS ;
 /* exported subroutines */
 
 int main(int argc,mainv argv,mainv envv) {
+    	constexpr int	dfd = (f_debug) ? FD_STDERR : -1 ;
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;
+	debfd(dfd) ;
 	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
             switch (pi.pm) {
             case progmode_charset:
@@ -215,6 +232,7 @@ int main(int argc,mainv argv,mainv envv) {
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (proginfo) */
 	if ((rs < 0) && (ex == EX_OK)) {
+	    cerr << "charset" << ": error (" << rs << ")" << eol ;
 	    ex = mapex(mapexs,rs) ;
 	}
 	return ex ;
@@ -260,7 +278,7 @@ int proginfo::charprocess(char *vbuf,int vlen) noex {
                     rs = readin(vbuf,vlen) ;
                     c += rs ;
                 } else {
-                    rs = fileproc(vbuf,vlen,fn) ;
+                    rs = filecheck(vbuf,vlen,fn) ;
                     c += rs ;
                 }
             }
@@ -282,8 +300,12 @@ int proginfo::readin(char *vbuf,int vlen) noex {
 	        while ((rs = readln(isp,lbuf,llen)) > 0) {
 		    int		ll = rs ;
 		    if ((ll > 0) && (lbuf[ll - 1] == eol)) ll -= 1 ;
+	if_constexpr (f_debug) {
+	    strnul fn(lbuf,ll) ;
+	    debprintf(__func__,"fn=>%s< ll=%d\n",ccp(fn),ll) ;
+	}
 		    if (ll > 0) {
-		        rs = fileproc(vbuf,vlen,lbuf,ll) ;
+		        rs = filecheck(vbuf,vlen,lbuf,ll) ;
 			c += rs ;
 		    }
 		    if (rs < 0) break ;
@@ -291,23 +313,45 @@ int proginfo::readin(char *vbuf,int vlen) noex {
 	        delete [] lbuf ;
 	    } /* end if (m-a-f) */
 	} /* end if (maxpathlen) */
+	if_constexpr (f_debug) {
+	    debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
+	}
 	return (rs >= 0) ? c : rs ;
 }
 /* end method (proginfo::readin) */
 
+int proginfo::filecheck(char *vbuf,int vlen,cc *fp,int µfl) noex {
+    	int		rs = SR_OK ;
+	if (int fl ; (fl = getlenstr(fp,µfl)) >= 0) {
+	    strnul fn(fp,fl) ;
+	    if (ustat sb ; (rs = u_stat(fn,&sb)) >= 0) {
+    	        if ((rs = seen.checkin(&sb)) > 0) {
+	            rs = fileproc(vbuf,vlen,fp,fl) ;
+	        }
+	    } /* end if (u_stat) */
+	    if_constexpr (f_debug) {
+		debprintf(__func__,"done fn=%s rs=%d\n",ccp(fn),rs) ;
+	    }
+	} /* end if (getlenstr) */
+	return rs ;
+} /* end subroutine (proginfo::filecheck) */
+
 int proginfo::fileproc(char *vbuf,int vlen,cc *sp,int sl) noex {
-	static csize	xasz = strlen(charsetval) ;
+	static csize	xasize = strlen(charsetval) ;
 	strnul		fn(sp,sl) ;
 	cint		rse = SR_EXISTS ;
 	cint		xo = XATTR_CREATE ;
 	int		rs ;
-	int		c = 0 ;
+	int		c = 0 ; /* return-value */
 	cchar		*xaval = charsetval ;
 	(void) vbuf ;
 	(void) vlen ;
-	if ((rs = u_xattrset(fn,xaname,xaval,xasz,0u,xo)) == rse) {
+	if ((rs = u_xattrset(fn,xaname,xaval,xasize,0u,xo)) == rse) {
 	    rs = SR_OK ;
 	    c += 1 ;
+	}
+	if_constexpr (f_debug) {
+	    debprintf(__func__,"ret fn=>%s< c=%d\n",ccp(fn),c) ;
 	}
 	return (rs >= 0) ? c : rs ;
 }
