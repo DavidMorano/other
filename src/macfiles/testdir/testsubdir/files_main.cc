@@ -5,7 +5,7 @@
 /* enumerate filenames */
 /* version %I% last-modified %G% */
 
-#define	CF_DEBUG	1		/* debug */
+#define	CF_DEBUG	0		/* debug */
 #define	CF_FILELINES	1		/* use |filelines()| */
 
 /* revision history:
@@ -390,6 +390,7 @@ int main(int argc,mainv argv,mainv envv) {
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (proginfo) */
 	if ((ex == EX_OK) && (rs < 0)) {
+	    cerr << "files" << ": error (" << rs << ")" << eol ;
 	    ex = mapex(mapexs,rs) ;
 	}
 	return ex ;
@@ -770,14 +771,17 @@ int proginfo::preamble() noex {
     	int		rs ;
 	int		fcont = false ; /* return-value */
 	if ((rs = getpn(prognames)) >= 0) {
-	    if (pm >= 0) {
-		if ((rs = printf("pm=%s\n",pn)) >= 0) {
 	            if (fl.version) {
 	                rs = printf("version=%s\n",version) ;
 	            } else {
 		        if (debuglevel) {
-			    rs = printf("debuglevel=%d\n",debuglevel) ;
-		        }
+			    if (rs >= 0) {
+				rs = printf("pm=%s\n",pn) ;
+			    }
+			    if (rs >= 0) {
+				rs = printf("debuglevel=%d\n",debuglevel) ;
+			    }
+		        } /* end if (debuglevel) */
 		        fcont = true ;
 	            } /* end if */
 		    if (rs >= 0) {
@@ -790,8 +794,6 @@ int proginfo::preamble() noex {
 			    break ;
 		        } /* end switch */
 		    } /* end if (ok) */
-		} /* end if (printf-progname) */
-	    } /* end if (valid progmode) */
 	} /* end if (proginfo::getpn) */
 	return (rs >= 0) ? fcont : rs ;
 } /* end method (proginfo::preamble) */
