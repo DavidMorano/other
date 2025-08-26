@@ -53,16 +53,15 @@ module ;
 #include	<ulogerror.h>
 #include	<localmisc.h>
 
+#pragma		GCC dependency	"mod/fonce.ccm"
+
 module fonce ;
 
 /* local defines */
 
-#define	FONCE_DEFTABLEN		100
-
 
 /* imported namespaces */
 
-using std::nullptr_t ;			/* type */
 using std::unordered_set ;              /* type */
 using std::pair ;                       /* type */
 using std::nothrow ;			/* constant */
@@ -100,7 +99,7 @@ int fonce::istart(int n) noex {
 	cnullptr	np{} ;
 	int		rs = SR_INVALID ;
 	if (n >= 0) ylikely {
-	    if (n == 0) n = FONCE_DEFTABLEN ;
+	    if (n == 0) n = deftablen ;
 	    try {
 	        rs = SR_NOMEM ;
 	        if ((setp = new(nothrow) stype(n)) != np) ylikely {
@@ -123,9 +122,9 @@ int fonce::ifinish() noex {
 	return rs ;
 } /* end method (fonce::ifinish) */
 
-int fonce::checkin(CUSTAT *sbp) noex {
+int fonce::checkin(custat *sbp) noex {
 	int		rs = SR_FAULT ;
-	int		f = false ;
+	int		f = false ; /* return-value: 1=unique, 0=not_unique */
 	if (sbp) ylikely {
 	    rs = SR_BUGCHECK ;
 	    if (setp) ylikely {
