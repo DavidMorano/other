@@ -60,6 +60,19 @@ module ;
 
 export module fonce ;
 
+/* local defines */
+
+#define	FONCE_DEFTABLEN		100
+
+
+/* module variables */
+
+cint	deftablen = FONCE_DEFTABLEN ;
+
+
+/* exports */
+
+
 export {
     struct fonce_devino {
 	ino_t		ino ;
@@ -127,7 +140,7 @@ export {
 	destruct fonce() {
 	    if (setp) dtor() ;
 	} ; /* end dtor */
-	int		checkin(CUSTAT *) noex ;
+	int		checkin(custat *) noex ;
     private:
 	int		istart(int) noex ;
 	int		ifinish() noex ;
