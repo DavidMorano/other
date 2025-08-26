@@ -5,6 +5,7 @@
 /* read characters from Standard-Input (STDIN) */
 /* version %I% last-modified %G% */
 
+#define	CD_DEBUG	1		/* debugging */
 
 /* revision history:
 
@@ -55,16 +56,27 @@
 
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<istream>
-#include	<usystem.h>
+#include	<clanguage.h>
+#include	<utypedefs.h>
+#include	<utypealiases.h>
+#include	<usysdefs.h>
+#include	<usysrets.h>
 #include	<storebuf.h>		/* <- not used! */
 #include	<sncpyx.h>		/* <- not used! */
 #include	<snwcpy.h>
-#include	<localmisc.h>		/* |eol(3uc)| */
+#include	<localmisc.h>		/* |eol(3dam)| */
 
 #include	"readln.hh"
 
+#pragma		GCC dependency	"mod/debug.ccm"
+
+import debug ;
 
 /* local defines */
+
+#ifndef	CD_DEBUG
+#define	CD_DEBUG	1		/* debugging */
+#endif
 
 
 /* imported namespaces */
@@ -89,6 +101,8 @@ using std::istream ;			/* type */
 
 /* local variables */
 
+cbool		f_debug = CD_DEBUG ;
+
 
 /* exported variables */
 
@@ -98,37 +112,46 @@ using std::istream ;			/* type */
 int readln(istream *isp,char *ibuf,int ilen,int dch) noex {
 	int		rs = SR_FAULT ;
 	int		len = 0 ; /* return-value */
-	if (dch == 0) dch = eol ;
+	if (dch <= 0) dch = eol ;
 	if (isp && ibuf) ylikely {
-	    try {
-		rs = SR_BADFMT ;
-	        if (bool(isp->getline(ibuf,(ilen+1),char(dch)))) ylikely {
-		    csize	qsize = isp->gcount() ;
-		    if ((rs = int(qsize)) <= ilen) ylikely {
-			len = rs ;
-			if (len > 0) {
-			    ibuf[len - 1] = char(dch) ;
-			    ibuf[len] = '\0' ;
-			}
-		    } else {
-			rs = SR_OVERFLOW ;
-		    } /* end if (adding delimiter to input buffer) */
-		} else {
-		    cbool	feof	= isp->eof() ;
-		    cbool	ffail	= isp->fail() ;
-		    cbool	fbad	= isp->bad() ;
-		    if (feof) {
-		        rs = SR_OK ;
-		    } else if (ffail) {
-		        rs = SR_NOMSG ;
-		    } else if (fbad) {
-		        rs = SR_IO ;
-	            }
-	        } /* end block */
-	    } catch (...) {
-		rs = SR_NOMEM ;
+	    rs = SR_INVALID ;
+	    if_constexpr (f_debug) {
+		debprintf(__func__,"ent ilen=%d\n",ilen) ;
 	    }
+	    if (ilen >= 0) {
+	        try {
+		    rs = SR_BADFMT ;
+	            if (bool(isp->getline(ibuf,(ilen+1),char(dch)))) ylikely {
+		        csize	qsize = isp->gcount() ;
+		        if ((rs = int(qsize)) <= ilen) ylikely {
+			    len = rs ;
+			    if (len > 0) {
+			        ibuf[len - 1] = char(dch) ;
+			        ibuf[len] = '\0' ;
+			    }
+		        } else {
+			    rs = SR_OVERFLOW ;
+		        } /* end if (adding delimiter to input buffer) */
+		    } else {
+		        cbool	fbad	= isp->bad() ;
+		        cbool	ffail	= isp->fail() ;
+		        cbool	feof	= isp->eof() ;
+		        if (fbad) {
+		            rs = SR_IO ;
+		        } else if (ffail) {
+		            rs = SR_NOMSG ;
+			} else if (feof) {
+		            rs = SR_OK ;
+		        }
+	            } /* end block */
+	        } catch (...) {
+		    rs = SR_NOMEM ;
+	        }
+	    } /* end if (valid) */
 	} /* end if (non-null) */
+	    if_constexpr (f_debug) {
+		debprintf(__func__,"ret rs=%d len=%d\n",rs,len) ;
+	    }
 	return (rs >= 0) ? len : rs ;
 }
 /* end subroutine (readln) */
