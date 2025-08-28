@@ -1,0 +1,9 @@
+template<typename ... Args>
+static inline int memtrack_magic(memtrack *op,Args ... args) noex {
+	int		rs = SR_FAULT ;
+	if (op && (args && ...)) {
+	    rs = (op->magic == memtrack_magic) ? SR_OK : SR_NOTOPEN ;
+	}
+	return rs ;
+}
+/* end subroutine (memtrack_magic) */
