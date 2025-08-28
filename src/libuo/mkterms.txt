@@ -1,0 +1,13 @@
+static int	mkterms() noex ;
+
+	static cint	srs = mkterms() ;
+
+static int mkterms() noex {
+	int		rs ;
+	if ((rs = fieldterms(aterms,0,'\b','\t','\v','\f',' ','#')) >= 0) {
+	    rs = fieldterms(kterms,0,'\b','\t','\v','\f',' ','#','=') ;
+	}
+	return rs ;
+}
+/* end subroutine (mkterms) */
+
