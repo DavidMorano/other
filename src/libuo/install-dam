@@ -1,29 +1,44 @@
 #!/usr/extra/bin/ksh
 # INSTALL-DAM
 
-
+: ${HOME:=$( userhome )}
 : ${EXTRA:=/usr/extra}
 : ${USRLCOAL:=/usr/local}
 
+GH=${HOME}/github
+
 ma all
 
-LIBS="libuo.o libuo.a "
+LIBNAMES="$( basename ${PWD} )"
 
-TDIRS+=" ${HOME}/github/system/lib"
-TDIRS+=" ${HOME}/github/other/lib"
-TDIRS+=" ${HOME}/github/test/lib"
-TDIRS+=" ${HOME}/lib "
-TDIRS+=" ${EXTRA}/lib "
-TDIRS+=" ${USRLOCAL}/lib "
+  typeset -a dirs
+  integer i=0
+  for RN in system other test ; do
+    REPO=${GH}/${RN}
+    if [[ -d "${REPO}" ]] ; then
+      dirs[i++]=${REPO}
+    fi
+  done
+  dirs[i++]=${EXTRA}
+  dirs[i++]=${USRLOCAL}
+  dirs[i++]=${HOME}
+  TDIRS=
+  for (( i = 0 ; i < ${#dirs[@]} ; i += 1 )) ; do
+    D="${dirs[i]}/lib"
+    if [[ -d "${D}" ]] ; then
+        TDIRS+=" ${D}"
+    fi
+  done
 
-if [[ -r libu.so ]] ; then
-  if [[ libu.so -ef libu.dylib ]] ; then
-    print EQUAL
-  else
-    print LN
-    ln -f libu.so libu.dylib
-  fi
-fi
+LIBS=
+for LN in ${LIBNAMES} ; do
+  for SUF in o so a dylib ; do
+    LIB=${LN}.${SUF}
+    if [[ -r ${LIB} ]] ; then
+      LIBS+=" ${LIB}"
+    fi
+  done
+done
 
 for LIB in ${LIBS} ; do
   if [[ -r "${LIB}" ]] ; then
@@ -33,7 +48,7 @@ for LIB in ${LIBS} ; do
 	if [[ ${LIB} == *.so ]] ; then
 	  M=0775
         fi
-        ln -f ${LIB} ${TD}
+        lnx ${LIB} ${TD}
       fi
     done
   fi
