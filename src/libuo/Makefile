@@ -64,7 +64,7 @@ OBJ02_LUO= strn.o strdcpy.o strx.o strkeyx.o
 OBJ03_LUO= strw.o strwcpy.o
 
 OBJ04_LUO= ccfile.o strop.o strmgr.o
-OBJ05_LUO= strfilter.o
+OBJ05_LUO= strfilter.o queue.o
 OBJ06_LUO= tardir.o langx.o
 OBJ07_LUO= nleadx.o matxstr.o char.o toxc.o
 
@@ -73,19 +73,19 @@ OBJ09_LUO= readln.o
 OBJ10_LUO= getourenv.o mapex.o
 OBJ11_LUO= inetconv.o inetaddrx.o 
 
-OBJ12_LUO= filer.o
-OBJ13_LUO= 
-OBJ14_LUO= 
-OBJ15_LUO= 
+OBJ12_LUO= addrset.o
+OBJ13_LUO= ucsig.o sigobj.o
+OBJ14_LUO= vechand.o
+OBJ15_LUO= field.o
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
 OBJC_LUO= obj08_luo.o obj09_luo.o obj10_luo.o obj11_luo.o
-OBJD_LUO= obj12_luo.o
+OBJD_LUO= obj12_luo.o obj13_luo.o obj14_luo.o 
 OBJE_LUO= 
 OBJF_LUO= 
 
-OBJ_LUO= obja_luo.o objb_luo.o objc_luo.o
+OBJ_LUO= obja_luo.o objb_luo.o objc_luo.o objd_luo.o
 #OBJ_LUO= objd_luo.o obje_luo.o objf_luo.o
 
 
@@ -195,6 +195,9 @@ obj13_luo.o:		$(OBJ13_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj14_luo.o:		$(OBJ14_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj15_luo.o:		$(OBJ15_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
@@ -343,6 +346,31 @@ chrset.o:		chrset.dir
 chrset.dir:
 	makesubdir $@
 
+# DEBUG		(libu)
+debug.o:		debug.dir
+debug.dir:
+	makesubdir $@
+
+# ADDRSET	(libuc)
+addrset.o:		addrset.dir
+addrset.dir:
+	makesubdir $@
+
+# QUEUE		(libuc)
+queue.o:		queue.dir
+queue.dir:
+	makesubdir $@
+
+# UCSIG		(libuc)
+ucsig.o:		ucsig.dir
+ucsig.dir:
+	makesubdir $@
+
+# SIGOBJ	(libuc)
+sigobj.o:		sigobj.dir
+sigobj.dir:
+	makesubdir $@
+
 # FILER		(libuc)
 filer.o:		filer.dir
 filer.dir:
@@ -354,7 +382,7 @@ sif.dir:
 	makesubdir $@
 
 # STRFILTER	(libuc)
-strfilter.o:		strfilter.dir chrset.o sif.o
+strfilter.o:		strfilter.dir sif.o
 strfilter.dir:
 	makesubdir $@
 
@@ -378,22 +406,22 @@ rmx.o:			rmx.dir
 rmx.dir:
 	makesubdir $@
 
-# HASX
+# HASX		(libuc)
 hasx.o:			hasx.dir
 hasx.dir:
 	makesubdir $@
 
-# STROBJ
+# STROBJ	(libuc)
 strobj.o:		strobj.dir
 strobj.dir:
 	makesubdir $@
 
-# DEBUG
-debug.o:		debug.dir
-debug.dir:
+# FIELD		(libuc)
+field.o:		field.dir
+field.dir:
 	makesubdir $@
 
-# LANGX
+# LANGX		(libuc)
 langx.o:		langx.dir
 langx.dir:
 	makesubdir $@
@@ -402,6 +430,7 @@ langx.dir:
 storebuf.o:		storebuf.cc storebuf.h
 ids.o:			ids.cc ids.h
 ccfile.o:		ccfile.cc ccfile.hh
+vechand.o:		vechand.cc	vechand.h		$(INCS)
 
 # Temporary Objects
 strop.o:		strop.cc	strop.h
