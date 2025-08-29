@@ -42,7 +42,7 @@ LIBS +=
 
 OBJ0= uctc.o ucttyname.o ucinetconv.o
 OBJ1= uclibmem.o
-OBJ2=
+OBJ2= uckvamatch.o
 OBJ3= 
 OBJ4= 
 OBJ5= 
@@ -151,6 +151,7 @@ ucinetconv.o:		ucinetconv.cc		ucinetconv.h	$(INCS)
 uclibmem.o:		uclibmem.cc		uclibmem.h	$(INCS)
 uctc.o:			uctc.cc			uctc.h		$(INCS)
 ucttyname.o:		ucttyname.cc		ucttyname.h	$(INCS)
+uckvamatch.o:		uckvamatch.cc		uckvamatch.h	$(INCS)
 
 ucmemalloc.o:		ucmemalloc.cc		ucmemalloc.h	$(INCS)
 
