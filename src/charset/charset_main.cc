@@ -322,18 +322,24 @@ int proginfo::readin(char *vbuf,int vlen) noex {
 
 int proginfo::filecheck(char *vbuf,int vlen,cc *fp,int µfl) noex {
     	int		rs = SR_OK ;
+	int		c = 0 ; /* return-value */
 	if (int fl ; (fl = getlenstr(fp,µfl)) >= 0) {
 	    strnul fn(fp,fl) ;
-	    if (ustat sb ; (rs = u_stat(fn,&sb)) >= 0) {
-    	        if ((rs = seen.checkin(&sb)) > 0) {
-	            rs = fileproc(vbuf,vlen,fp,fl) ;
-	        }
-	    } /* end if (u_stat) */
+	    if (ustat sb ; (rs = u_lstat(fn,&sb)) >= 0) {
+		if (S_ISREG(sb.st_mode)) {
+    	            if ((rs = seen.checkin(&sb)) > 0) {
+	                rs = fileproc(vbuf,vlen,fp,fl) ;
+		        c += rs ;
+		    } /* end if (seen-checkin) */
+	        } /* end if (regular file) */
+	    } else if (isNotPresent(rs)) {
+		rs = SR_OK ;
+	    } /* end if (u_lstat) */
 	    if_constexpr (f_debug) {
 		debprintf(__func__,"done fn=%s rs=%d\n",ccp(fn),rs) ;
 	    }
 	} /* end if (getlenstr) */
-	return rs ;
+	return (rs >= 0) ? c : rs ;
 } /* end subroutine (proginfo::filecheck) */
 
 int proginfo::fileproc(char *vbuf,int vlen,cc *sp,int sl) noex {
