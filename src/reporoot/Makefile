@@ -31,6 +31,11 @@ TOUCH		?= touch
 LINT		?= lint
 
 
+DEPS_MAIN += usysbasic.o ulibvals.o umisc.o
+
+OBJ_MAIN= reporoot_main.o
+
+
 DEFS=
 
 INCS=
@@ -56,12 +61,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-DEPS_MAIN += usysbasic.o ulibvals.o umisc.o
-
-OBJ_MACFU= reporoot_main.o
-
-
-.SUFFIXES:		.hh .ii .ccm
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).x
@@ -74,6 +74,9 @@ all:			$(ALL)
 
 .cc.ii:
 	$(CPP) $(CPPFLAGS) $< > $(*).ii
+
+.ccm.iim:
+	$(CPP) $(CPPFLAGS) $< > $(*).iim
 
 .c.s:
 	$(CC) -S $(CPPFLAGS) $(CFLAGS) $<
@@ -91,8 +94,8 @@ all:			$(ALL)
 	makemodule $(*)
 
 
-$(T).x:			$(OBJ_MACFU)
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACFU) $(LIBINFO)
+$(T).x:			$(OBJ_MAIN)
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MAIN) $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).x > $(T).nm
