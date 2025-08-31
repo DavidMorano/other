@@ -85,8 +85,7 @@ import ulibvals ;			/* |ulibval(3u)| + |pagesz| */
 /* imported namespaces */
 
 using std::string ;			/* type */
-using libu::umemalloc ;			/* subroutine */
-using libu::umemfree ;			/* subroutine */
+using libu::umem ;			/* variable */
 
 
 /* local typedefs */
@@ -363,12 +362,12 @@ int modmgr::lnbegin() noex {
 	if (lbuf == nullptr) {
 	    if ((rs = ulibval.pagesz) >= 0) {
 		cint	sz = (4 * rs) ;
-		if (char *bp ; (rs = umemalloc(sz,&bp)) >= 0) {
+		if (char *bp ; (rs = umem.malloc(sz,&bp)) >= 0) {
 		    lbuf = bp ;
 		    llen = sz ;
 		    rs = lnmgr.start(lbuf,llen) ;
 		    if (rs < 0) {
-			umemfree(lbuf) ;
+			umem.free(lbuf) ;
 			lbuf = nullptr ;
 			llen = 0 ;
 		    } /* end if (error) */
@@ -387,7 +386,7 @@ int modmgr::lnend() noex {
 		if (rs >= 0) rs = rs1 ;
 	    }
 	    {
-	        rs1 = umemfree(lbuf) ;
+	        rs1 = umem.free(lbuf) ;
 	        if (rs >= 0) rs = rs1 ;
 	        lbuf = nullptr ;
 	        llen = 0 ;
