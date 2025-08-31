@@ -114,13 +114,13 @@ import files_utils ;
 
 namespace fs = std::filesystem ;
 
-using std::nullptr_t ;			/* type */
 using fs::recursive_directory_iterator ; /* type */
 using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::istream ;			/* type */
 using libu::snprintf ;			/* subroutine */
 using libu::snvprintf ;			/* subroutine */
+using libu::umem ;			/* variable */
 using std::cin;				/* variable */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
