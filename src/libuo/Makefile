@@ -73,10 +73,12 @@ OBJ09_LUO= readln.o
 OBJ10_LUO= getourenv.o mapex.o
 OBJ11_LUO= inetconv.o inetaddrx.o 
 
-OBJ12_LUO= addrset.o
+OBJ12_LUO= addrset.o lookaside.o
 OBJ13_LUO= ucsig.o sigobj.o
 OBJ14_LUO= vechand.o
-OBJ15_LUO= field.o
+OBJ15_LUO= 
+
+OBJ16_LUO= field.o
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
@@ -427,14 +429,15 @@ langx.dir:
 	makesubdir $@
 
 # Objects
-storebuf.o:		storebuf.cc storebuf.h
-ids.o:			ids.cc ids.h
-ccfile.o:		ccfile.cc ccfile.hh
+storebuf.o:		storebuf.cc	storebuf.h		$(INCS)
+ids.o:			ids.cc		ids.h			$(INCS)
+ccfile.o:		ccfile.cc	ccfile.hh		$(INCS)
 vechand.o:		vechand.cc	vechand.h		$(INCS)
+lookaside.o:		lookaside.cc	lookaside.h		$(INCS)
 
 # Temporary Objects
-strop.o:		strop.cc	strop.h
-strmgr.o:		strmgr.cc	strmgr.h
+strop.o:		strop.cc	strop.h			$(INCS)
+strmgr.o:		strmgr.cc	strmgr.h		$(INCS)
 
 # GROUPS
 calstrs.o:		calstrs.cc calstrs.h
