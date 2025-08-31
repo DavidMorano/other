@@ -27,7 +27,7 @@
 #include	<usysrets.h>
 
 #include	<ucinetconv.h>
-#include	<ucmemalloc.h>
+#include	<uclibmem.h>
 #include	<uctc.h>
 #include	<ucttyname.h>
 
