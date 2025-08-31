@@ -63,6 +63,7 @@
 #include	<strnul.hh>
 #include	<stdfnames.h>
 #include	<matstr.h>
+#include	<readln.hh>
 #include	<mkchar.h>
 #include	<localmisc.h>
 
@@ -79,6 +80,7 @@
 /* imported namespaces */
 
 using std::fstream ;			/* type */
+using std::istream ;			/* type */
 using std::ios_base ;			/* type */
 using std::basic_ios ;			/* type */
 using std::error_code ;			/* type */
@@ -199,6 +201,7 @@ int ccfile::open(const strview &sv,cchar *ofs,mode_t om) noex {
 /* end method (ccfile::open) */
 
 int ccfile::readln(char *ibuf,int ilen,int dch) noex {
+    	istream		*isp = this ;
 	int		rs = SR_FAULT ;
 	int		len = 0 ; /* return-value */
 	if (dch == 0) dch = eol ;
@@ -206,34 +209,8 @@ int ccfile::readln(char *ibuf,int ilen,int dch) noex {
 	    ibuf[0] = '\0' ;
 	    rs = SR_OK ;
 	    if (! fl.fnulling) ylikely {
-	        try {
-		    rs = SR_BADFMT ;
-	            if (bool(getline(ibuf,(ilen+1),char(dch)))) ylikely {
-			cint gcnt = int(gcount()) ;
-		        if ((rs = gcnt) <= ilen) {
-			    len = rs ;
-			    if (len > 0) {
-			        ibuf[len-1] = char(dch) ;
-			        ibuf[len] = '\0' ;
-			    }
-		        } else {
-			    rs = SR_OVERFLOW ;
-		        } /* end if (adding delimiter to input buffer) */
-		    } else {
-		        cbool	feof	= eof() ;
-		        cbool	ffail	= fail() ;
-		        cbool	fbad	= bad() ;
-		        if (feof) {
-		            rs = SR_OK ;
-		        } else if (ffail) {
-		            rs = SR_NOMSG ;
-		        } else if (fbad) {
-		            rs = SR_IO ;
-	                }
-	            } /* end block */
-	        } catch (...) {
-		    rs = SR_NOMEM ;
-	        }
+		rs = istr_readln(isp,ibuf,ilen,dch) ;
+		len = rs ;
 	    } /* end if (not-fnulling) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? len : rs ;
@@ -326,7 +303,7 @@ int ccfile::seek(off_t o,int w) noex {
 		    }
 	        } catch (failure &e) {
 		    error_code	ec = e.code() ;
-		    cchar		*es = e.what() ;
+		    cchar	*es = e.what() ;
 		    int		ev ;
 		    rs = SR_IO ;
 		    ev = ec.value() ;
@@ -391,8 +368,7 @@ int ccfile_co::operator () (int) noex {
 
 static openmode getopenmode(cchar *sp) noex {
 	openmode	om{} ;
-	int		ch ;
-	while ((ch = mkchar(*sp++)) > 0) {
+	for (int ch ; (ch = mkchar(*sp++)) > 0 ; ) {
 	    switch (ch) {
 	    case 'r': om |= ios::in ; break ; 		/* input */
 	    case 'w': om |= ios::out ; break ;		/* output */
@@ -405,7 +381,7 @@ static openmode getopenmode(cchar *sp) noex {
 	   if (om == 0) {
 		om |= ios::in ;
 	   }
-	} /* end while */
+	} /* end for */
 	return om ;
 }
 /* end subroutine (getopenmode) */
