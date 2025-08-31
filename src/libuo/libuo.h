@@ -41,9 +41,7 @@
 #include	<uclibsubs.h>
 #include	<uclock.h>
 #include	<ucmallocx.h>
-#include	<ucmallreg.h>
 #include	<ucmem.h>
-#include	<ucmemalloc.h>
 #include	<ucmemla.h>
 #include	<ucopen.h>
 #include	<ucopeninfo.h>
@@ -160,15 +158,11 @@
 #include	<isx.h>
 #include	<keyopt.h>
 #include	<kvsfile.h>
-#include	<libmallocxx.h>
-#include	<libuo.h>
 #include	<linebuffer.h>
 #include	<liner.h>
 #include	<localmisc.h>
 #include	<lockfile.h>
 #include	<lookaside.h>
-#include	<mallocstuff.h>
-#include	<mallocxx.h>
 #include	<manstr.h>
 #include	<mapex.h>
 #include	<mapshmtmp.h>
@@ -302,13 +296,14 @@
 #include	<utmpxx.h>
 #include	<varray.h>
 #include	<vars.h>
-#include	<vec.h>
+#include	<vechand.h>
 #include	<vstrcmpx.h>
 #include	<vstrkeycmpx.h>
 #include	<willaddover.h>
 #include	<xclustername.h>
 #include	<xfile.h>
 #include	<permx.h>
+
 
 #endif /* LIBUO_INCLUDE */
 
