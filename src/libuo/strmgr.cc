@@ -39,8 +39,6 @@
 
 #include	"strmgr.h"
 
-import libutil ;
-
 /* local defines */
 
 
