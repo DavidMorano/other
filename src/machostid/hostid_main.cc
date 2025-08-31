@@ -1,4 +1,4 @@
-/* main SUPPORT */
+/* hostid_main SUPPORT (machostid) */
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
@@ -19,6 +19,9 @@
 
 /************************************************************************
 
+  	Name:
+	hostid_main
+
   	Description:
 	Get and print out the host-ID from the system.
 
@@ -32,7 +35,7 @@
 #include	<iostream>		/* |cout(3c++)| */
 #include	<iomanip>		/* |hex(3c++)| + |setw(3c++)| */
 #include	<usystem.h>
-#include	<localmisc.h>		/* |eol(3dam)| */
+#include	<localmisc.h>		/* |eol(3local)| */
 
 
 /* local defines */
