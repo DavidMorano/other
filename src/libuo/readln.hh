@@ -2,7 +2,7 @@
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
-/* read characters from Standard-Input (STDIN) */
+/* read characters from a C++ input stream */
 /* version %I% last-modified %G% */
 
 
@@ -30,7 +30,7 @@
 
 
 extern int readln(std::istream *,char *,int,int = 0) noex ;
-
+extern int istr_readln(std::istream *,char *,int,int = 0) noex ;
 
 #endif /* __cplusplus */
 #endif /* READLN_INCLUDE */
