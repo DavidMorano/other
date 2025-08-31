@@ -261,7 +261,7 @@ int fsdirtree_open(fsdirtree *op,cchar *dname,int opts) noex {
 	        op->opts = opts ;
 	        if ((rs = fifostr_start(op->dqp)) >= 0) {
 		    cint	sz = (var.maxlinklen + 1) ;
-		    if (char *lp ; (rs = uc_libmalloc(sz,&lp)) >= 0) {
+		    if (char *lp ; (rs = lm_mall(sz,&lp)) >= 0) {
 			op->llen = rs ;
 			op->lbuf = lp ;
 			if (char *bp ; (rs = libmalloc_mn(&bp)) >= 0) {
@@ -274,19 +274,19 @@ int fsdirtree_open(fsdirtree *op,cchar *dname,int opts) noex {
 			            rs = fsdirtree_opener(op,dname) ;
 			        }
 				if (rs < 0) {
-				    uc_libfree(op->bnbuf) ;
+				    lm_free(op->bnbuf) ;
 				    op->bnbuf = nullptr ;
 				    op->bnlen = 0 ;
 				}
 			    } /* end if (memory-allocation) */
 			    if (rs < 0) {
-			        uc_libfree(op->nbuf) ;
+			        lm_free(op->nbuf) ;
 			        op->nbuf = nullptr ;
 				op->nlen = 0 ;
 			    } /* end if (error-handle) */
 			} /* end if (memory-allocation) */
 			if (rs < 0) {
-			    uc_libfree(op->lbuf) ;
+			    lm_free(op->lbuf) ;
 			    op->lbuf = nullptr ;
 			    op->llen = 0 ;
 			} /* end if (error-handle) */
@@ -359,18 +359,18 @@ int fsdirtree_close(fsdirtree *op) noex {
                 if (rs >= 0) rs = rs1 ;
             }
             if (op->bnbuf) {
-                rs1 = uc_libfree(op->bnbuf) ;
+                rs1 = lm_free(op->bnbuf) ;
                 if (rs >= 0) rs = rs1 ;
                 op->bnbuf = nullptr ;
             }
             if (op->nbuf) {
-                rs1 = uc_libfree(op->nbuf) ;
+                rs1 = lm_free(op->nbuf) ;
                 if (rs >= 0) rs = rs1 ;
                 op->nbuf = nullptr ;
                 op->nlen = 0 ;
             }
             if (op->lbuf) {
-                rs1 = uc_libfree(op->lbuf) ;
+                rs1 = lm_free(op->lbuf) ;
                 if (rs >= 0) rs = rs1 ;
                 op->lbuf = nullptr ;
                 op->llen = 0 ;
@@ -607,7 +607,7 @@ static int fsdirtree_dirend(fsdirtree *op) noex {
 	            if (dip != nullptr) {
 	                rs1 = dirid_finish(dip) ;
 	                if (rs >= 0) rs = rs1 ;
-	                rs1 = uc_libfree(dip) ;
+	                rs1 = lm_free(dip) ;
 	                if (rs >= 0) rs = rs1 ;
 	            }
 	        } /* end while */
@@ -629,7 +629,7 @@ static int fsdirtree_diradd(fsdirtree *op,dev_t dev,ino_t ino) noex {
 	hdb_dat		val ;
 	cint		sz = szof(dirid) ;
 	int		rs ;
-	if (dirid *dip ; (rs = uc_libmalloc(sz,&dip)) >= 0) {
+	if (dirid *dip ; (rs = lm_mall(sz,&dip)) >= 0) {
 	    if ((rs = dirid_start(dip,dev,ino)) >= 0) {
 	        key.buf = dip ;
 	        key.len = szof(ino_t) + szof(dev_t) ;
@@ -641,7 +641,7 @@ static int fsdirtree_diradd(fsdirtree *op,dev_t dev,ino_t ino) noex {
 		}
 	    } /* end if (dirid-start) */
 	    if (rs < 0) {
-	        uc_libfree(dip) ;
+	        lm_free(dip) ;
 	    }
 	} /* end if (memory-allocation) */
 	return rs ;
