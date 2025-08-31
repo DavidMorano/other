@@ -47,11 +47,8 @@
 #include	<sys/param.h>		/* |MAXPATHLEN| */
 #include	<unistd.h>
 #include	<fcntl.h>
-#include	<climits>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
-#include	<cstdio>
-#include	<cstring>
 #include	<new>			/* |nothrow(3c++)| */
 #include	<string_view>
 #include	<vector>
@@ -66,6 +63,10 @@
 #include	<exitcodes.h>
 #include	<localmisc.h>
 
+#pragma		GCC dependency		"mod/libutil.ccm"
+#pragma		GCC dependency		"mod/umisc.ccm"
+#pragma		GCC dependency		"mod/fonce.ccm"
+
 import ulibvals ;
 import umisc ;
 import fonce ;
@@ -77,12 +78,9 @@ import fonce ;
 
 /* imported namespaces */
 
-using std::nullptr_t ;			/* type */
 using std::string_view ;		/* type */
 using std::istream ;			/* type */
-using libu::umemalloc ;			/* subroutine (LIBU) */
-using libu::umemfree ;			/* subroutine (LIBU) */
-using libu::snwcpy ;			/* subroutine (LIBU) */
+using libu::umem ;			/* variable */
 using std::cout ;			/* variable */
 using std::nothrow ;			/* constant */
 
@@ -291,19 +289,20 @@ int proginfo::iflistend() noex {
 /* end method (proginfo::iflistend) */
 
 int proginfo::process() noex {
+    	cnothrow	nt{} ;
+    	cnullptr	np{} ;
 	int		rs ;
 	int		rs1 ;
 	int		c = 0 ;
 	if ((rs = process_pmbegin()) >= 0) {
 	    if ((rs = maxpathlen) >= 0) {
 	        cint plen = rs ;
-	        if (char *pbuf ; (rs = umemalloc((plen + 1),&pbuf)) >= 0) {
+	        if (char *pbuf ; (pbuf = new(nt) char[plen + 1]) != np) {
 	            if ((rs = u_getcwd(pbuf,plen)) >= 0) {
 			rs = process_loop(pbuf,plen,rs) ;
 			c = rs ;
 		    } /* end if (u_getcwd) */
-	            rs1 = umemfree(pbuf) ;
-		    if (rs >= 0) rs = rs1 ;
+		    delete [] pbuf ;
 	        } /* end if (m-a-f) */
 	    } /* end if (maxpathlen) */
 	    rs1 = process_pmend() ;
