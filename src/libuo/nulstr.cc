@@ -87,7 +87,7 @@ int nulstr_start(nulstr *ssp,cchar *sp,int sl,cchar **rpp) noex {
 	    if (sl >= 0) ylikely {
 	        if (sp[sl] != '\0') {
 	            if (sl > NULSTR_SHORTLEN) {
-	                if (cc *cp ; (rs = libmem.mallocstrw(sp,sl,&cp)) >= 0) {
+	                if (cc *cp ; (rs = libmem.strw(sp,sl,&cp)) >= 0) {
 	                    cl = rs ;
 	                    *rpp = cp ;
 	                    ssp->as = cp ;
