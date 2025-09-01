@@ -2,7 +2,7 @@
 /* charset=ISO8859-1 */
 /* lang=C20 */
 
-/* File-Once management */
+/* Argument-Manager */
 /* version %I% last-modified %G% */
 
 
