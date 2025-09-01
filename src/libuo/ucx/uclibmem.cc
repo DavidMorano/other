@@ -13,7 +13,7 @@
 	This code was originally written.
 
 	= 2018-09-26, David A-D- Morano
-	I brought |uc_libmem.malloc(3uc)| in line w/ the standard for
+	I brought |uc_libmem.mall(3uc)| in line w/ the standard for
 	|calloc(3c)|.  I never used this myself in 40 years, so I
 	never missed it!
 
@@ -157,7 +157,7 @@ namespace libuc {
 	int		rl = 0 ;
 	if (sp && rpp) {
 	    if (int sl ; (sl = getlenstr(sp,µsl)) >= 0) {
-	        if (char *bp ; (rs = malloc((sl + 1),&bp)) >= 0) {
+	        if (char *bp ; (rs = mall((sl + 1),&bp)) >= 0) {
 	            *rpp = bp ;
 		    {
 	                char *ep = stpncpy(bp,sp,sl) ;
@@ -177,7 +177,7 @@ namespace libuc {
 	if (sp && rpp) {
 	    rs = SR_INVALID ;
 	    if (sl > 0) {
-	        if (char *bp ; (rs = malloc((sl + 1),&bp)) >= 0) {
+	        if (char *bp ; (rs = mall((sl + 1),&bp)) >= 0) {
 	            *rpp = bp ;
 		    {
 	                char *ep = charp(memcopy(bp,sp,sl)) ;
@@ -199,7 +199,7 @@ namespace libuc {
     int libmems::call(int ne,int esz,void *vp) noex {
 	cint		sz = (ne * esz) ;
 	int		rs ;
-	if ((rs = malloc(sz,vp)) >= 0) {
+	if ((rs = mall(sz,vp)) >= 0) {
 	    memclear(vp,sz) ;
 	}
 	return (rs >= 0) ? sz : rs ;
