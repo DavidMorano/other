@@ -40,14 +40,16 @@ MODS +=
 LIBS +=
 
 
-OBJ0= uctc.o ucttyname.o ucinetconv.o
+OBJ0= uctc.o ucttyname.o 
 OBJ1= uclibmem.o
 OBJ2= uckvamatch.o
-OBJ3= 
-OBJ4= 
+OBJ3= uctimeconvx.o ucinetconv.o
+OBJ4= ucstrftime.o
 OBJ5= 
+OBJ6= 
+OBJ7= 
 
-OBJA= obj0.o obj1.o
+OBJA= obj0.o obj1.o obj2.o obj3.o obj4.o
 OBJB= 
 
 OBJ= obja.o 
@@ -148,10 +150,13 @@ objb.o:			$(OBJB)
 
 
 ucinetconv.o:		ucinetconv.cc		ucinetconv.h	$(INCS)
+uctimeconvx.o:		uctimeconvx.cc		uctimeconvx.h	$(INCS)
 uclibmem.o:		uclibmem.cc		uclibmem.h	$(INCS)
+ucstrftime.o:		ucstrftime.cc		ucstrftime.h	$(INCS)
 uctc.o:			uctc.cc			uctc.h		$(INCS)
 ucttyname.o:		ucttyname.cc		ucttyname.h	$(INCS)
 uckvamatch.o:		uckvamatch.cc		uckvamatch.h	$(INCS)
 
 ucmemalloc.o:		ucmemalloc.cc		ucmemalloc.h	$(INCS)
+
 
