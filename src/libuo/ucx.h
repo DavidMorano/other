@@ -28,7 +28,9 @@
 
 #include	<ucinetconv.h>
 #include	<uclibmem.h>
+#include	<ucstrftime.h>
 #include	<uctc.h>
+#include	<uctimeconv.h>
 #include	<ucttyname.h>
 
 
