@@ -20,8 +20,12 @@
 
 /*******************************************************************************
 
-	This file contains some support for the UNIX® UCINETCONV related
-	operations.
+  	Name:
+	uc_inetconv
+
+	Description:
+	This file contains some support for the UNIX® UCINETCONV
+	related operations.
 
 *******************************************************************************/
 
@@ -34,6 +38,7 @@
 #include	<utypedefs.h>
 #include	<utypealiases.h>
 #include	<usysdefs.h>
+#include	<usysrets.h>
 
 
 EXTERNC_begin
