@@ -39,7 +39,7 @@ INCS=
 MODS += libutil.ccm argmgr.ccm strfilter.ccm sif.ccm 
 MODS += tardir.ccm
 
-LIBS= -lu
+LIBS= -lu -lsecdb
 
 
 INCDIRS=
@@ -129,7 +129,7 @@ a:			$(T).a
 
 
 $(T).so:		$(T).o
-	$(CXX) -shared -o $@ $(LDFLAGS) $(OBJ_LUO) $(LIBINFO)
+	$(CXX) -shared -o $@ $(LDFLAGS) $(OBJ_LUO) $(RUNINFO) $(LIBINFO)
 
 $(T).o:			$(OBJ_LUO)
 	$(LD) -r -o $@ $(LDFLAGS) $(OBJ_LUO)
