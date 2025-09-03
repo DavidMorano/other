@@ -32,7 +32,7 @@ extern int uc_sigsetempty(sigset_t *) noex ;
 extern int uc_sigsetfill(sigset_t *) noex ;
 extern int uc_sigsetadd(sigset_t *,int) noex ;
 extern int uc_sigsetdel(sigset_t *,int) noex ;
-extern int uc_sigsetismem(sigset_t *,int) noex ;
+extern int uc_sigsetismem(const sigset_t *,int) noex ;
 
 EXTERNC_end
 
