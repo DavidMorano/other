@@ -22,19 +22,20 @@
 	uc_strftime
 
 	Description:
-	Convert a string-like INET address into its binary
-	representation.
+	This subroutine creates a c-string in a caller-supplied
+	buffer as directed by a format specification and using the
+	values in a broken-out time structure (|struct tm|).
 
 	Synopsis:
-	int uc_strftime(int af,cchar *straddr,void *binaddr) noex
+	int uc_strftime(char *dbuf,int dlen,cc *fmt,CTM *tmp) noex
 
 	Arguments:
-	af		address family to convert from and to
-	straddr		c-string representation of INET address
-	binaddr		pointer to variable to hold binary result
+	dbuf		result buffer pointer
+	dlen		result buffer length
+	tmp		pointer to a constant |struct tm|
 
 	Returns:
-	==0		successful
+	>=0		successful - number of bytes created in result
 	<0		error (system-return)
 
 *******************************************************************************/
