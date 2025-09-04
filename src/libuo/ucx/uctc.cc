@@ -42,6 +42,9 @@
 /* external subroutines */
 
 
+/* external variables */
+
+
 /* local structures */
 
 namespace {
@@ -68,7 +71,7 @@ namespace {
 	int attrset(int) noex ;
 	int setpgrp(int) noex ;
     } ; /* end struct (uctc) */
-}
+} /* end namespace */
 
 
 /* forward references */
