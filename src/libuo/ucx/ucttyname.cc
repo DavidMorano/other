@@ -36,10 +36,12 @@
 #include	<fcntl.h>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
-#include	<usystem.h>
+#include	<uclibsubs.h>
 #include	<localmisc.h>
 
-import libutil ;
+#pragma		GCC dependency		"mod/libutil.ccm"
+
+import libutil ;			/* |lenstr(3u)| + |getlenstr(3u)| */
 
 /* local defines */
 
@@ -56,6 +58,9 @@ import libutil ;
 /* external variables */
 
 
+/* local structures */
+
+
 /* forward references */
 
 
@@ -69,16 +74,18 @@ import libutil ;
 
 int uc_ttyname(int fd,char *dbuf,int dlen) noex {
 	int		rs = SR_FAULT ;
-	int		len = 0 ;
+	int		len = 0 ; /* return-value */
 	if (dbuf) {
 	    rs = SR_BADF ;
 	    if (fd >= 0) {
 		rs = SR_INVALID ;
 		if (dlen >= 0) {
 		    if ((rs = ttyname_rp(fd,dbuf,dlen)) == 0) {
-	    	        len = xstrnlen(dbuf,dlen) ;
-		    } else {
+	    	        len = lenstr(dbuf,dlen) ;
+		    } else if (rs > 0) {
 			rs = (- rs) ; /* returned an ERRNO code */
+		    } else {
+			rs = SR_BADFMT ;
 		    }
 		} /* end if (valid) */
 	    } /* end if (valid) */
