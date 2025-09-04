@@ -21,6 +21,8 @@
 	Names:
 	uc_localtime
 	uc_gmtime
+	uc_ztime
+	uc_mktime
 
 	Description:
 	Time conversion subroutines.
@@ -29,10 +31,13 @@
 	int uc_localtime(custime *dt,TM *tmp) noex
 	int uc_gmtime(custime *dt,TM *tmp) noex
 	int uc_ztime(custime *tp,TM *tsp,int z) noex
+	int uc_mktime(TM *tmp,time_t *rp) noex
 
 	Arguments:
 	dt	time to convert
 	tmp	pointer to TM object
+	z	??
+	rp	result-pointer
 	
 	Returns:
 	>=0	OK
@@ -138,6 +143,7 @@ int uc_mktime(TM *tmp,time_t *rp) noex {
 	int		rs = SR_FAULT ;
 	if (tmp && rp) ylikely {
 	    time_t	res = 0 ; /* used-multiple */
+	    rs = SR_OK ;
 	    errno = 0 ;
 	    if ((res = mktime(tmp)) < 0) {
 	        if (errno) rs = (- errno) ;
