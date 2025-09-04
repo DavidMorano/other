@@ -31,7 +31,7 @@
 	Arguments:
 	kva		key-value handle
 	keyname		key-name to lookup
-	rpp		pointer to pointer to results
+	rpp		pointer to pointer to result
 
 	Returns:
 	>=0		key-name found and this is the length (including zero)
@@ -57,9 +57,6 @@ import libutil ;			/* |lenstr(3u)| */
 
 
 /* imported namespaces */
-
-using std::nullptr_t ;			/* type */
-using std::nothrow ;			/* constant */
 
 
 /* external subroutines */
