@@ -75,7 +75,7 @@ OBJ11_LUO= inetconv.o inetaddrx.o
 
 OBJ12_LUO= addrset.o lookaside.o
 OBJ13_LUO= ucsig.o sigobj.o
-OBJ14_LUO= vechand.o
+OBJ14_LUO= vechand.o vecitem.o vecelem.o
 OBJ15_LUO= 
 
 OBJ16_LUO= field.o
@@ -433,7 +433,11 @@ storebuf.o:		storebuf.cc	storebuf.h		$(INCS)
 ids.o:			ids.cc		ids.h			$(INCS)
 ccfile.o:		ccfile.cc	ccfile.hh		$(INCS)
 vechand.o:		vechand.cc	vechand.h		$(INCS)
+vecitem.o:		vecitem.cc	vecitem.h		$(INCS)
+vecelem.o:		vecelem.cc	vecelem.h		$(INCS)
 lookaside.o:		lookaside.cc	lookaside.h		$(INCS)
+termstr.o:		termstr.cc	termstr.h		$(INCS)
+td.o:			td.cc		td.h			$(INCS)
 
 # Temporary Objects
 strop.o:		strop.cc	strop.h			$(INCS)
