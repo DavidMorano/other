@@ -174,7 +174,8 @@ int uc_ztime(const time_t *tp,TM *tsp,int z) noex {
 int uc_mktime(TM *tmp,time_t *rp) noex {
 	int		rs = SR_FAULT ;
 	if (tmp && rp) ylikely {
-	    time_t	res = 0 ;
+	    time_t	res = 0 ; /* used-afterwards */
+	    rs = SR_OK ;
 	    errno = 0 ;
 	    if ((res = mktime(tmp)) < 0) {
 	        if (errno != 0) {
