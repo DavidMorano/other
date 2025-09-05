@@ -58,37 +58,51 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ00_LUO= ucx.o debug.o
-OBJ01_LUO= sfx.o six.o rmx.o isx.o hasx.o sif.o
-OBJ02_LUO= strn.o strdcpy.o strx.o strkeyx.o
-OBJ03_LUO= strw.o strwcpy.o
+OBJ00_LUO= ucx.o ucsig.o debug.o
+OBJ01_LUO= strn.o six.o 
+OBJ02_LUO= sfx.o rmx.o 
+OBJ03_LUO= isx.o hasx.o 
 
-OBJ04_LUO= ccfile.o strop.o strmgr.o
-OBJ05_LUO= strfilter.o queue.o
-OBJ06_LUO= tardir.o langx.o
-OBJ07_LUO= nleadx.o matxstr.o char.o toxc.o
+OBJ04_LUO= sif.o 
+OBJ05_LUO= strdcpy.o strx.o 
+OBJ06_LUO= strkeyx.o
+OBJ07_LUO= strw.o strwcpy.o
 
-OBJ08_LUO= dictdiff.o strnxcmp.o
-OBJ09_LUO= readln.o
-OBJ10_LUO= getourenv.o mapex.o
-OBJ11_LUO= inetconv.o inetaddrx.o 
+OBJ08_LUO= ccfile.o 
+OBJ09_LUO= strop.o strmgr.o
+OBJ10_LUO= strfilter.o 
+OBJ11_LUO= queue.o
 
-OBJ12_LUO= addrset.o lookaside.o
-OBJ13_LUO= ucsig.o sigobj.o
-OBJ14_LUO= vechand.o vecitem.o vecelem.o
-OBJ15_LUO= 
+OBJ12_LUO= tardir.o langx.o
+OBJ13_LUO= nleadx.o matxstr.o 
+OBJ14_LUO= char.o toxc.o
+OBJ15_LUO= dictdiff.o strnxcmp.o
 
-OBJ16_LUO= field.o
+OBJ16_LUO= readln.o
+OBJ17_LUO= getourenv.o 
+OBJ18_LUO= mapex.o colx.o
+OBJ19_LUO= inetconv.o inetaddrx.o 
+
+OBJ20_LUO= addrset.o lookaside.o
+OBJ21_LUO= sigobj.o
+OBJ22_LUO= vechand.o 
+OBJ23_LUO= vecitem.o vecelem.o
+
+OBJ24_LUO= wsfx.o
+OBJ25_LUO= wsix.o
+OBJ26_LUO= wsnx.o
+OBJ27_LUO= wswcpyx.o
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
 OBJC_LUO= obj08_luo.o obj09_luo.o obj10_luo.o obj11_luo.o
-OBJD_LUO= obj12_luo.o obj13_luo.o obj14_luo.o 
-OBJE_LUO= 
-OBJF_LUO= 
+OBJD_LUO= obj12_luo.o obj13_luo.o obj14_luo.o obj15_luo.o
+OBJE_LUO= obj16_luo.o obj17_luo.o obj18_luo.o obj19_luo.o
+OBJF_LUO= obj20_luo.o obj21_luo.o obj22_luo.o obj23_luo.o
+OBJG_LUO= obj24_luo.o obj25_luo.o obj26_luo.o obj27_luo.o
 
-OBJ_LUO= obja_luo.o objb_luo.o objc_luo.o objd_luo.o
-#OBJ_LUO= objd_luo.o obje_luo.o objf_luo.o
+OBJ_LUO += obja_luo.o objb_luo.o objc_luo.o objd_luo.o
+OBJ_LUO += obje_luo.o objf_luo.o objg_luo.o
 
 
 .SUFFIXES:		.hh .ii .iim .ccm
@@ -203,6 +217,44 @@ obj15_luo.o:		$(OBJ15_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
+obj16_luo.o:		$(OBJ16_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj17_luo.o:		$(OBJ17_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj18_luo.o:		$(OBJ18_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj19_luo.o:		$(OBJ19_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj20_luo.o:		$(OBJ20_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj21_luo.o:		$(OBJ21_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj22_luo.o:		$(OBJ22_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj23_luo.o:		$(OBJ23_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+obj24_luo.o:		$(OBJ24_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj25_luo.o:		$(OBJ25_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj26_luo.o:		$(OBJ26_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj27_luo.o:		$(OBJ27_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
 obja_luo.o:		$(OBJA_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
@@ -219,6 +271,12 @@ obje_luo.o:		$(OBJE_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 objf_luo.o:		$(OBJF_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objg_luo.o:		$(OBJG_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objh_luo.o:		$(OBJH_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
@@ -333,16 +391,6 @@ strkeyx.o:		strkeyx.dir
 strkeyx.dir:
 	makesubdir $@
 
-# URESERVE	(libu)
-ureserve.o:		ureserve.dir
-ureserve.dir:
-	makesubdir $@
-
-# FONCE		(libu)
-fonce.o:		fonce.dir
-fonce.dir:
-	makesubdir $@
-
 # CHRSET	(libu)
 chrset.o:		chrset.dir
 chrset.dir:
@@ -399,7 +447,7 @@ permx.dir:
 	makesubdir $@
 
 # TARDIR
-tardir.o:		tardir.dir ureserve.o fonce.o
+tardir.o:		tardir.dir
 tardir.dir:
 	makesubdir $@
 
@@ -426,6 +474,31 @@ field.dir:
 # LANGX		(libuc)
 langx.o:		langx.dir
 langx.dir:
+	makesubdir $@
+
+# COLX
+colx.o:			colx.dir
+colx.dir:
+	makesubdir $@
+
+# WSFX
+wsfx.o:			wsfx.dir
+wsfx.dir:
+	makesubdir $@
+
+# WSIX
+wsix.o:			wsix.dir
+wsix.dir:
+	makesubdir $@
+
+# WSNX
+wsnx.o:			wsnx.dir
+wsnx.dir:
+	makesubdir $@
+
+# WSWCPYX
+wswcpyx.o:		wswcpyx.dir
+wswcpyx.dir:
 	makesubdir $@
 
 # Objects
