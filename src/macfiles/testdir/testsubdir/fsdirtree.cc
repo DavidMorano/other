@@ -280,7 +280,7 @@ int fsdirtree_open(fsdirtree *op,cchar *dname,int opts) noex {
 				}
 			    } /* end if (memory-allocation) */
 			    if (rs < 0) {
-			        lm_free(op->nbuf) ;
+			        libmaloc_free(op->nbuf) ;
 			        op->nbuf = nullptr ;
 				op->nlen = 0 ;
 			    } /* end if (error-handle) */
