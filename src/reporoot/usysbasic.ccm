@@ -49,21 +49,21 @@ module ;
 export module usysbasic ;
 
 export {
-    extern int uatfork(void_f,void_f,void_f) noex ;
-    extern int uatexit(void_f) noex ;
-    extern int ustatfile(cchar *,ustat *) noex ;
-    extern int ustatfilefs(cchar *,ustatfs *) noex ;
-    extern int ustatfilevfs(cchar *,ustatvfs *) noex ;
-    extern int ugetcwd(char *,int) noex ;
-    extern int uaccess(cchar *,int) noex ;
-    extern int udiraccess(cchar *,int) noex ;
-    static inline int ugetstat(cchar *fn,ustat *sp) noex {
+    int uatfork(void_f,void_f,void_f) noex ;
+    int uatexit(void_f) noex ;
+    int ustatfile(cchar *,ustat *) noex ;
+    int ustatfilefs(cchar *,ustatfs *) noex ;
+    int ustatfilevfs(cchar *,ustatvfs *) noex ;
+    int ugetcwd(char *,int) noex ;
+    int uaccess(cchar *,int) noex ;
+    int udiraccess(cchar *,int) noex ;
+    int ugetstat(cchar *fn,ustat *sp) noex {
 	return ustatfile(fn,sp) ;
     }
-    static inline int ugetstatfs(cchar *fn,ustatfs *sp) noex {
+    int ugetstatfs(cchar *fn,ustatfs *sp) noex {
 	return ustatfilefs(fn,sp) ;
     }
-    static inline int ugetstatvfs(cchar *fn,ustatvfs *sp) noex {
+    int ugetstatvfs(cchar *fn,ustatvfs *sp) noex {
 	return ustatfilevfs(fn,sp) ;
     }
 } /* end export */
