@@ -125,32 +125,29 @@ install:		$(T).x
 
 
 obj00_luo.o:		$(OBJ00_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ00_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj01_luo.o:		$(OBJ01_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ01_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj02_luo.o:		$(OBJ02_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ02_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj03_luo.o:		$(OBJ03_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
 obja_luo.o:		$(OBJA_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJA_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 objb_luo.o:		$(OBJB_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJB_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 objc_luo.o:		$(OBJC_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJC_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 objd_luo.o:		$(OBJD_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJD_LUO)
-
-obje_luo.o:		$(OBJE_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJC_LUO)
-
-objf_luo.o:		$(OBJF_LUO)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJF_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
 utmp_main.o:		utmp_main.cc $(DEPMODS)
