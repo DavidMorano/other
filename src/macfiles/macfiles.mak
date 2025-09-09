@@ -59,11 +59,11 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-DEPS_MAIN += files_utils.o
+DEPS_MAIN += files_utils.o modproc.o
 DEPS_MAIN += argmgr.o filerec.o 
 DEPS_MAIN += ureserve.o fonce.o
 DEPS_MAIN += strfilter.o 
-DEPS_MAIN += modproc.o
+DEPS_MAIN += langx.o
 
 OBJ0= files_main.o files_utils.o
 OBJ1= argmgr.o filerec.o
