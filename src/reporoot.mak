@@ -31,7 +31,7 @@ TOUCH		?= touch
 LINT		?= lint
 
 
-DEPS_MAIN += usysbasic.o ulibvals.o umisc.o
+DEPS_MAIN += ulibvals.o umisc.o
 
 OBJ_MAIN= reporoot_main.o
 
@@ -115,16 +115,12 @@ install:		$(T).x
 
 reporoot_main.o:	reporoot_main.cc $(DEPS_MAIN) 		$(INCS)
 
-# MODS
-usysbasic.ccm:
-	makemodcurrent $@
-ulibvals.ccm:
-	makemodcurrent $@
-umisc.ccm:
-	makemodcurrent $@
+ulibvals.o:		ulibvals.dir
+ulibvals.dir:
+	makesubdir $@
 
-sysbasic.o:		usysbasic.ccm
-ulibvals.o:		ulibvals.ccm
-umisc.o:		umisc.ccm
+umisc.o:		umisc.dir
+umisc.dir:
+	makesubdir $@
 
 
