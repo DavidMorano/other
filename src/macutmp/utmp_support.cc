@@ -65,6 +65,9 @@ import umisc ;				/* |snaddw(3u)| */
 /* local structures */
 
 
+/* forward references */
+
+
 /* local variables */
 
 
