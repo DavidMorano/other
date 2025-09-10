@@ -304,6 +304,29 @@
 #include	<xfile.h>
 #include	<permx.h>
 
+#include	<colx.h>
+#include	<filer.h>
+#include	<ids.h>
+#include	<langx.h>
+#include	<lookaside.h>
+#include	<queue.h>
+#include	<strfilter.h>
+#include	<strmgr.h>
+#include	<strop.h>
+#include	<td.h>
+#include	<termstr.h>
+
+#include	<ucsig.h>
+#include	<ucsigset.h>
+#include	<ucx.h>
+
+#include	<vecelem.h>
+#include	<vechand.h>
+
+#include	<wsix.h>
+#include	<wsnx.h>
+#include	<wswcpyx.h>
+
 
 #endif /* LIBUO_INCLUDE */
 
