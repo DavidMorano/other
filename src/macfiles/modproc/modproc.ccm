@@ -28,7 +28,7 @@ module ;
 #include	<usysdefs.h>
 #include	<usysrets.h>
 
-#pragma		GCC dependency	"mod/ureserve.ccm"
+#pragma		GCC dependency		"mod/ureserve.ccm"
 
 export module modproc ;
 
