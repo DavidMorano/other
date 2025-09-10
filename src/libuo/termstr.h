@@ -28,12 +28,45 @@
 #include	<buffer.h>
 
 
+enum termrenditions {
+    termrendition_bold,
+    termrendition_dim,
+    termrendition_italic,
+    termrendition_under,
+    termrendition_blinks,
+    termrendition_blinkr,
+    termrendition_reverse,
+    termrendition_hidden,
+    termrendition_strike,
+    termrendition_overlast,
+    termrendition_blink = termrendition_blanks
+} ; /* end enum (termrenditions) */
+
 /* graphic renditions */
-#define	TERMSTR_GRNONE	(1<<0)		/* graphic-rendition none */
-#define	TERMSTR_GRBOLD	(1<<1)		/* graphic-rendition bold */
-#define	TERMSTR_GRUNDER	(1<<2)		/* graphic-rendition underline */
-#define	TERMSTR_GRBLINK	(1<<3)		/* graphic-rendition blinking */
-#define	TERMSTR_GRREV	(1<<4)		/* graphic-rendition reverse-video */
+#define	TERMSTR_GRNONE		0				/* none */
+#define	TERMSTR_GRBOLD		(1<<termrendition_bold)		/* bold */
+#define	TERMSTR_GRDIM		(1<<termrendition_dim)		/* dim */
+#define	TERMSTR_GRITALIC	(1<<termrendition_italic)	/* italic */
+#define	TERMSTR_GRUNDER		(1<<termrendition_under)	/* underline */
+#define	TERMSTR_GRBLINKS	(1<<termrendition_blinks)	/* blink(s) */
+#define	TERMSTR_GRBLINKR	(1<<termrendition_blinkr)	/* blink(r) */
+#define	TERMSTR_GRREVERSE	(1<<termrendition_reverse)	/* reverse */
+#define	TERMSTR_GRHIDDEN	(1<<termrendition_hidden)	/* hidden */
+#define	TERMSTR_GRSTRIKE	(1<<termrendition_strike)	/* strike */
+#define	TERMSTR_GRBLINK	TERMSTR_GRBLINKS	/* graphic blinking */
+#define	TERMSTR_GRREV	TERMSTR_GRREVERSE	/* reverse */
+
+/* graphic rendition codes */
+#define	TERMSTR_BOLD	"\033[1m"	/* bold */
+#define	TERMSTR_DIM	"\033[2m"	/* dim */
+#define	TERMSTR_ITALIC	"\033[3m"	/* italic */
+#define	TERMSTR_UNDER	"\033[4m"	/* underline */
+#define	TERMSTR_BLINKS	"\033[5m"	/* blink (slow) */
+#define	TERMSTR_BLINKR	"\033[6m"	/* blink (repid) */
+#define	TERMSTR_REVERSE	"\033[7m"	/* reverse */
+#define	TERMSTR_HIDDEN	"\033[8m"	/* hidden */
+#define	TERMSTR_SRIKE	"\033[9m"	/* strike (through) */
+#define	TERMSTR_BLINK	TERMSTR_BLINKS	/* blink (slow) */
 
 /* cursor saving and restoring (VT1xx "Fp" escape squences) */
 #define	TERMSTR_VCURS	"\0337"		/* cursor save-restore (VT) */
@@ -96,9 +129,15 @@
 /* character renditions */
 #define	TERMSTR_NORM	"\033[m"	/* no attributes */
 #define	TERMSTR_BOLD	"\033[1m"	/* bold */
+#define	TERMSTR_DIM	"\033[2m"	/* dim */
+#define	TERMSTR_ITALIC	"\033[3m"	/* italic */
 #define	TERMSTR_UNDER	"\033[4m"	/* underline */
-#define	TERMSTR_BLINK	"\033[5m"	/* blink */
+#define	TERMSTR_BLINK	"\033[5m"	/* (slow) blink */
+#define	TERMSTR_BLINKS	"\033[5m"	/* (slow) blink */
+#define	TERMSTR_BLINKR	"\033[6m"	/* (rapid) blink */
 #define	TERMSTR_REVERSE	"\033[7m"	/* reverse */
+#define	TERMSTR_HIDDEN	"\033[8m"	/* hidden */
+#define	TERMSTR_SRIKE	"\033[9m"	/* strike (through) */
 
 /* character renditions for advanced terminals */
 #define	TERMSTR_NOBOLD	"\033[22m"	/* no-bold */
