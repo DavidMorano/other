@@ -77,13 +77,14 @@
 #include	<usyscalls.h>
 #include	<ucx.h>			/* |uc_ttyname(3uc)| + |uc_tc(3uc)| */
 #include	<getfdfile.h>		/* |FD_STDIN| */
+#include	<strwcpy.h>
 #include	<localmisc.h>		/* |TIMEBUFLEN| */
 
 #pragma		GCC dependency	"mod/libutil.ccm"
 #pragma		GCC dependency	"mod/umisc.ccm"
 #pragma		GCC dependency	"mod/ureserve.ccm"
 
-import libutil ;
+import libutil ;			/* |lenstr(3u)| */
 import umisc ;				/* |snadd(3u)| */
 import ureserve ;			/* |isNot{xx}(3u)| */
 
@@ -218,27 +219,27 @@ enum progmodes {
 	progmode_loghost,
 	progmode_logsid,
 	progmode_logged,
-	progmode_iverlast
-} ;
+	progmode_overlast
+} ; /* end enum (progmodes) */
 
 constexpr cpcchar	prognames[] = {
-	"utmp",
-	"nusers",
-	"boottime",
-	"consoleid",
-	"utmpid",
-	"utmpname",
-	"utmpline",
-	"utmphost",
-	"utmpsid",
-	"logid",
-	"logname",
-	"logline",
-	"loghost",
-	"logsid",
-	"logged",
-	nullptr
-} ;
+	[progmode_utmp]		= "utmp",
+	[progmode_nusers]	= "nusers",
+	[progmode_boottime]	= "boottime",
+	[progmode_consoleid]	= "consoleid",
+	[progmode_utmpid]	= "utmpid",
+	[progmode_utmpname]	= "utmpname",
+	[progmode_utmpline]	= "utmpline",
+	[progmode_utmphost]	= "utmphost",
+	[progmode_utmpsid]	= "utmpsid",
+	[progmode_logid]	= "logid",
+	[progmode_logname]	= "logname",
+	[progmode_logline]	= "logline",
+	[progmode_loghost]	= "loghost",
+	[progmode_logsid]	= "logsid",
+	[progmode_logged]	= "logged",
+	[progmode_overlast]	= nullptr
+} ; /* end array (prognames) */
 
 constexpr cpcchar	utmpvars[] = {
 	VARUTMPLINE,
@@ -327,7 +328,7 @@ static int getpm(int argc,mainv argv,mainv names) noex {
 	if (argc > 0) {
 	    cchar	*argz = argv[0] ;
 	    if (argz[0]) {
-		int	al = xstrlen(argz) ;
+		int	al = lenstr(argz) ;
 		cchar	*ap = argz ;
 		while ((al > 1) && (ap[al-1] == '/')) al -= 1 ;
 		if (int si ; (si = sirchr(ap,al,'/')) >= 0) {
@@ -541,7 +542,7 @@ static int findstdin(int pm) noex {
 	    cchar	*devprefix = DEVPREFIX ;
 	    char	tbuf[tlen+1] ;
 	    if ((rs = uc_ttyname(fd,tbuf,tlen)) >= 0) {
-		cint	n = xstrlen(devprefix) ;
+		cint	n = lenstr(devprefix) ;
 		if (strncmp(tbuf,devprefix,n) == 0) {
 		    UTMPX	ut{} ;
 		    cchar	*line = (tbuf + n) ;
@@ -634,24 +635,24 @@ static int printutxval(int pm,UTMPX *up) noex {
 	obuf[0] = '\0' ;
 	switch (pm) {
 	case progmode_utmpid:
-	    fl = int(sizeof(up->ut_id)) ;
+	    fl = szof(up->ut_id) ;
 	    ml = min(olen,fl) ;
-	    stpncpy(obuf,up->ut_id,ml) ;
+	    strwcpy(obuf,up->ut_id,ml) ;
 	    break ;
 	case progmode_utmpname:
-	    fl = int(sizeof(up->ut_user)) ;
+	    fl = szof(up->ut_user) ;
 	    ml = min(olen,fl) ;
-	    stpncpy(obuf,up->ut_user,ml) ;
+	    strwcpy(obuf,up->ut_user,ml) ;
 	    break ;
 	case progmode_utmpline:
-	    fl = int(sizeof(up->ut_line)) ;
+	    fl = szof(up->ut_line) ;
 	    ml = min(olen,fl) ;
-	    stpncpy(obuf,up->ut_line,ml) ;
+	    strwcpy(obuf,up->ut_line,ml) ;
 	    break ;
 	case progmode_utmphost:
-	    fl = int(sizeof(up->ut_host)) ;
+	    fl = szof(up->ut_host) ;
 	    ml = min(olen,fl) ;
-	    stpncpy(obuf,up->ut_host,ml) ;
+	    strwcpy(obuf,up->ut_host,ml) ;
 	    break ;
 	case progmode_utmpsid:
 	    cout << up->ut_pid << eol ;
@@ -669,12 +670,13 @@ static int printutxval(int pm,UTMPX *up) noex {
 }
 /* end subroutine (printutxval) */
 
-static int sirchr(cchar *sp,int sl,int sch) noex {
-	int		i ; /* used-afterwards */
-	if (sl < 0) sl = xstrlen(sp) ;
-	for (i = (sl-1) ; i >= 0 ; i -= 1) {
-	    if (sp[i] == sch) break ;
-	} /* end for */
+static int sirchr(cchar *sp,int µsl,int sch) noex {
+	int		i = -1 ; /* used-afterwards */
+	if (int sl ; (sl = getlenstr(sp,µsl)) >= 0) {
+	    for (i = (sl-1) ; i >= 0 ; i -= 1) {
+	        if (sp[i] == sch) break ;
+	    } /* end for */
+	} /* end if (getlenstr) */
 	return i ;
 }
 /* end subroutine (sirchr) */
