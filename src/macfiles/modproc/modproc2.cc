@@ -48,9 +48,7 @@ module ;
 #include	<ischarx.h>		/* |isalnumlatin(3cu)| */
 #include	<localmisc.h>
 
-#pragma		GCC dependency	"mod/modproc.ccm"
-#pragma		GCC dependency	"mod/ureserve.ccm"
-#pragma		GCC dependency	"mod/debug.ccm"
+#pragma		GCC dependency		"mod/modproc.ccm"
 
 module modproc ;
 
