@@ -50,7 +50,6 @@
 #include	<filesystem>
 #include	<iostream>
 #include	<usystem.h>
-#include	<getourenv.h>
 #include	<getfdfile.h>		/* |FD_STDERR| */
 #include	<varnames.hh>
 #include	<strn.h>
