@@ -72,14 +72,16 @@ module ;
 #include	<ischarx.h>		/* |isalnumlatin(3cu)| */
 #include	<localmisc.h>
 
-#pragma		GCC dependency	"mod/modproc.ccm"
-#pragma		GCC dependency	"mod/ulibvals.ccm"
+#pragma		GCC dependency		"mod/modproc.ccm"
+#pragma		GCC dependency		"mod/ulibvals.ccm"
 
 module modproc ;
 
 import ulibvals ;			/* |ulibval(3u)| + |pagesz| */
 
 /* local defines */
+
+#define	ALTLNMULT	5		/* multplier to pagesz for alt-line */
 
 
 /* imported namespaces */
@@ -361,7 +363,7 @@ int modmgr::lnbegin() noex {
     	int		rs = SR_OK ;
 	if (lbuf == nullptr) {
 	    if ((rs = ulibval.pagesz) >= 0) {
-		cint	sz = (4 * rs) ;
+		cint	sz = (ALTLNMULT * rs) ;
 		if (char *bp ; (rs = umem.malloc(sz,&bp)) >= 0) {
 		    lbuf = bp ;
 		    llen = sz ;
