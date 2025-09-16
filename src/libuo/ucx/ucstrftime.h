@@ -43,7 +43,7 @@
 
 EXTERNC_begin
 
-extern int uc_strftime(char *,int,cchar *,CTM *) noex ;
+extern int	uc_strftime(char *,int,cchar *,CTM *) noex ;
 
 EXTERNC_end
 
