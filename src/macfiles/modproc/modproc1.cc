@@ -64,6 +64,7 @@ module ;
 #include	<strnul.hh>
 #include	<langproc.h>
 #include	<ascii.h>
+#include	<six.h>			/* |sispanwgt(3uc)| */
 #include	<hasx.h>		/* |hasmodname(3uc)| */
 #include	<strmgr.h>
 #include	<strop.h>
@@ -77,6 +78,7 @@ module ;
 
 module modproc ;
 
+import libutil ;			/* |getlenstr(3u)| */
 import ulibvals ;			/* |ulibval(3u)| + |pagesz| */
 
 /* local defines */
@@ -130,6 +132,15 @@ namespace {
 
 
 /* forward references */
+
+static bool haspound(cchar *sp,int µsl) noex {
+    	bool		f = true ;
+    	if (int sl ; (sl = getlenstr(sp,µsl)) > 0) {
+    	    cint	si = sispanwht(sp,sl) ;
+	    f = (si >= 0) && (si < sl) && (sp[si] == '#') ;
+	} /* end if (getlenstr) */
+    	return f ;
+} /* end subroutine (haspound) */
 
 
 /* local variables */
@@ -277,7 +288,7 @@ int modmgr::checkln(int ln,cchar *lp,int ll) noex {
 	    strnul s(lp,ll) ;
 	    debprintf(__func__,"ent ln=%d l=>%s<\n",ln,ccp(s)) ;
 	}
-	if ((ll > 0) && (lp[0] != '#')) {
+	if ((ll > 0) && (! haspound(lp,ll))) {
 	    if ((ll > 0) && (lp[ll - 1] == '\r')) {
 		ll -= 1 ;
 	    }
@@ -364,7 +375,7 @@ int modmgr::lnbegin() noex {
 	if (lbuf == nullptr) {
 	    if ((rs = ulibval.pagesz) >= 0) {
 		cint	sz = (ALTLNMULT * rs) ;
-		if (char *bp ; (rs = umem.malloc(sz,&bp)) >= 0) {
+		if (char *bp ; (rs = umem.mall(sz,&bp)) >= 0) {
 		    lbuf = bp ;
 		    llen = sz ;
 		    rs = lnmgr.start(lbuf,llen) ;
