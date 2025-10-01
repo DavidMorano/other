@@ -37,6 +37,7 @@
 #include	<sinon.h>
 #include	<sichar.h>
 #include	<sispan.h>
+#include	<sispanwht.h>
 
 
 EXTERNC_begin
@@ -44,7 +45,6 @@ EXTERNC_begin
 extern int sidquote(cchar *,int) noex ;
 extern int sibasename(cchar *,int) noex ;
 extern int sinext(cchar *,int) noex ;
-extern int siskipwhite(cchar *,int) noex ;
 extern int silbrace(cchar *,int) noex ;
 extern int sileader(cchar *,int) noex ;
 extern int sihyphen(cchar *,int) noex ;
