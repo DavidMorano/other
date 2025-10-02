@@ -64,7 +64,7 @@ module ;
 #include	<strnul.hh>
 #include	<langproc.h>
 #include	<ascii.h>
-#include	<six.h>			/* |sispanwgt(3uc)| */
+#include	<six.h>			/* |sispanwht(3uc)| */
 #include	<hasx.h>		/* |hasmodname(3uc)| */
 #include	<strmgr.h>
 #include	<strop.h>
@@ -74,6 +74,7 @@ module ;
 #include	<localmisc.h>
 
 #pragma		GCC dependency		"mod/modproc.ccm"
+#pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/ulibvals.ccm"
 
 module modproc ;
