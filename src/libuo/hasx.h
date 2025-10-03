@@ -28,6 +28,7 @@
 #include	<stdfnames.h>
 
 #include	<hasuniq.h>
+#include	<haslead.h>
 
 EXTERNC_begin
 
