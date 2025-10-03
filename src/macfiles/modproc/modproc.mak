@@ -142,4 +142,6 @@ modproc2.o:		modproc2.cc modproc.ccm
 	makemodule modproc
 	$(COMPILE.cc) $<
 
+haslead.o:		haslead.cc haslead.h
+
 
