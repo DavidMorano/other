@@ -121,31 +121,35 @@ int strop_finish(strop *sop) noex {
 /* end subroutine (strop_finish) */
 
 int strop_shrink(strop *sop) noex {
-    	int		sl ;
-    	if ((sl = strop_white(sop)) >= 0) {
+    	int		rl ; /* return-value */
+    	if ((rl = strop_white(sop)) >= 0) {
 	    if (int si ; (si = siwht(sop->sp,sop->sl)) > 0) {
 	        sop->sl -= si ;
-		sl = sop->sl ;
 	    }
-	}
-	return sl ;
+	    rl = sop->sl ;
+	} /* end if */
+	return rl ;
 } /* end subroutine (strop_shrink) */
 
 int strop_white(strop *sop) noex {
+    	int		rl = 0 ; /* return-value */
 	if (int si ; (si = siskipwhite(sop->sp,sop->sl)) > 0) {
 	    sop->sp += si ;
 	    sop->sl -= si ;
 	}
-	return sop->sl ;
+	rl = sop->sl ;
+	return rl ;
 }
 /* end subroutine (strop_white) */
 
 int strop_whitechr(strop *sop,int tch) noex {
+    	int		rl = 0 ; /* return-value */
 	while ((sop->sl > 0) && iswhiteand(sop,tch)) {
 	    sop->sp += 1 ;
 	    sop->sl -= 1 ;
 	}
-	return sop->sl ;
+	rl = sop->sl ;
+	return rl ;
 }
 /* end subroutine (strop_whitechr) */
 
@@ -197,39 +201,46 @@ int strop_fieldbrk(strop *sop,cchar *ss,cchar **rpp) noex {
 /* end subroutine (strop_fieldbrk) */
 
 int strop_findchr(strop *sop,int tch) noex {
+    	int		rl = 0 ; /* return-value */
 	while ((sop->sl > 0) && isnotchr(sop,tch)) {
 	    sop->sp += 1 ;
 	    sop->sl -= 1 ;
 	}
-	return sop->sl ;
+	rl = sop->sl ;
+	return rl ;
 }
 /* end subroutine (strop_findchr) */
 
 int strop_findterm(strop *sop,cchar *terms) noex {
+    	int		rl = 0 ; /* return-value */
 	while ((sop->sl > 0) && isnotterm(sop,terms)) {
 	    sop->sp += 1 ;
 	    sop->sl -= 1 ;
 	}
-	return sop->sl ;
+	rl = sop->sl ;
+	return rl ;
 }
 /* end subroutine (strop_findterm) */
 
 int strop_spanterm(strop *sop,cchar *terms) noex {
+    	int		rl = 0 ; /* return-value */
 	while ((sop->sl > 0) && isterm(sop,terms)) {
 	    sop->sp += 1 ;
 	    sop->sl -= 1 ;
 	}
-	return sop->sl ;
+	rl = sop->sl ;
+	return rl ;
 }
 /* end subroutine (strop_spanterm) */
 
 int strop_span(strop *sop,cchar *ss) noex {
-	int		si ;
-	if ((si = sispan(sop->sp,sop->sl,ss)) > 0) {
+    	int		rl = 0 ; /* return-value */
+	if (int si ; (si = sispan(sop->sp,sop->sl,ss)) > 0) {
 	    sop->sp += si ;
 	    sop->sl -= si ;
 	}
-	return sop->sl ;
+	rl = sop->sl ;
+	return rl ;
 }
 /* end subroutine (strop_span) */
 
