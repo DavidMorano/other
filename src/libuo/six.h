@@ -38,6 +38,7 @@
 #include	<sichar.h>
 #include	<sispan.h>
 #include	<sispanwht.h>
+#include	<sileadchr.h>
 
 
 EXTERNC_begin
