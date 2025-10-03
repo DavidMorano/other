@@ -163,7 +163,6 @@
 #include	<localmisc.h>
 #include	<lockfile.h>
 #include	<lookaside.h>
-#include	<manstr.h>
 #include	<mapex.h>
 #include	<mapshmtmp.h>
 #include	<mapstrint.h>
@@ -243,6 +242,7 @@
 #include	<strdcpyxw.h>
 #include	<strlinelen.h>
 #include	<strlocktype.h>
+#include	<strman.h>
 #include	<strmgr.h>
 #include	<strn.h>
 #include	<strncpyxc.h>
@@ -311,8 +311,6 @@
 #include	<lookaside.h>
 #include	<queue.h>
 #include	<strfilter.h>
-#include	<strmgr.h>
-#include	<strop.h>
 #include	<td.h>
 #include	<termstr.h>
 
