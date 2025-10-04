@@ -2,7 +2,7 @@
 /* charset=ISO8859-1 */
 /* lang=C++20 (conformance reviewed) */
 
-/* does the c-string contain a leading pound character (after skipping WS) */
+/* does the c-string contain a leading given character (after skipping WS) */
 /* version %I% last-modified %G% */
 
 
@@ -107,7 +107,7 @@ import libutil ;			/* |getlenstr(3u)| */
 /* exported subroutines */
 
 bool haslead(cchar *sp,int µsl,int chx) noex {
-    	bool		f = true ;
+    	bool		f = false ;
     	if (int sl ; (sl = getlenstr(sp,µsl)) > 0) {
     	    cint	si = sispanwht(sp,sl) ;
 	    f = (si >= 0) && (si < sl) && (mkchar(sp[si]) == chx) ;
