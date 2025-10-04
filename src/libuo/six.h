@@ -39,6 +39,8 @@
 #include	<sispan.h>
 #include	<sispanwht.h>
 #include	<sileadchr.h>
+#include	<sileader.h>
+#include	<sileadzero.h>
 
 
 EXTERNC_begin
@@ -47,10 +49,8 @@ extern int sidquote(cchar *,int) noex ;
 extern int sibasename(cchar *,int) noex ;
 extern int sinext(cchar *,int) noex ;
 extern int silbrace(cchar *,int) noex ;
-extern int sileader(cchar *,int) noex ;
 extern int sihyphen(cchar *,int) noex ;
 extern int sicite(cchar *,int,cchar *,int) noex ;
-extern int sileadzero(cchar *,int) noex ;
 
 static inline int sichr(cchar *sp,int sl,int sch) noex {
 	return siochr(sp,sl,sch) ;
