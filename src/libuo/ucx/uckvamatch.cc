@@ -3,7 +3,7 @@
 /* lang=C++20 */
 
 /* interface component for UNIX® library-3c */
-/* system data-abse key-value handling */
+/* system data-base key-value handling */
 /* version %I% last-modified %G% */
 
 
@@ -61,6 +61,9 @@ import libutil ;			/* |lenstr(3u)| */
 /* imported namespaces */
 
 
+/* local typedefs */
+
+
 /* external subroutines */
 
 
@@ -88,7 +91,6 @@ int uc_kvamatch(kva_t *kva,cchar *keyname,cchar **rpp) noex {
 	if (kva && keyname) {
 	    rs = SR_INVALID ;
 	    if (keyname[0]) {
-		rs = SR_OK ;
 	        if (syshas.userattr) {
 		    char	*kp = charp(keyname) ;
 	            if ((rp = kva_match(kva,kp)) != np) {
@@ -96,9 +98,9 @@ int uc_kvamatch(kva_t *kva,cchar *keyname,cchar **rpp) noex {
 	            } else {
 	                rs = SR_NOTFOUND ;
 	            }
-	        } else {
-	            rs = SR_NOSYS ;
-	        }
+		} else {
+		    rs = SR_NOSYS ;
+	        } /* end if (have capability) */
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	if (rpp) *rpp = (rs >= 0) ? rp : nullptr ;
