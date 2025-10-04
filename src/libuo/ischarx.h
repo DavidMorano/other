@@ -86,6 +86,9 @@ constexpr inline bool	isblanklatin(int ch) noex {
 constexpr inline bool	isspacetab(int ch) noex {
 	return isblanklatin(ch) ;
 }
+constexpr inline bool	iswht(int ch) noex {
+	return iswhite(ch) ;
+}
 
 #else /* __cplusplus */
 
@@ -120,11 +123,14 @@ static inline bool	isabbr(int ch) noex {
 	ch &= UCHAR_MAX ;
 	return (ch == '.') || (ch == ('­' & UCHAR_MAX)) || (ch == '-') ;
 }
-constexpr inline bool	isblanklatin(int ch) noex {
+static inline bool	isblanklatin(int ch) noex {
 	return (ch == ' ') || (ch == '\t') ;
 }
-constexpr inline bool	isspacetab(int ch) noex {
+static inline bool	isspacetab(int ch) noex {
 	return isblanklatin(ch) ;
+}
+static inline bool	iswht(int ch) noex {
+	return iswhite(ch) ;
 }
 
 #endif /* __cplusplus */
