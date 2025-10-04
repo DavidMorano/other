@@ -1,4 +1,4 @@
-/* uctimeconv SUPPORT */
+/* uctimeconvx SUPPORT */
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
@@ -21,6 +21,8 @@
 	Names:
 	uc_localtime
 	uc_gmtime
+	uc_ztime
+	uc_mktime
 
 	Description:
 	Time conversion subroutines.
@@ -29,10 +31,13 @@
 	int uc_localtime(custime *dt,TM *tmp) noex
 	int uc_gmtime(custime *dt,TM *tmp) noex
 	int uc_ztime(custime *tp,TM *tsp,int z) noex
+	int uc_mktime(TM *tmp,time_t *rp) noex
 
 	Arguments:
 	dt	time to convert
 	tmp	pointer to TM object
+	z	??
+	rp	result-pointer
 	
 	Returns:
 	>=0	OK
@@ -57,15 +62,8 @@
 
 #include	"uctimeconv.h"
 
-import libutil ;
 
 /* local defines */
-
-#if	defined(SYSHAS_LOCALTIMER) && SYSHAS_LOCALTIMER
-#define	F_REENTRANT	1
-#else
-#define	F_REENTRANT	0
-#endif
 
 
 /* imported namespaces */
@@ -88,79 +86,49 @@ import libutil ;
 
 /* local variables */
 
-static aflag		uctimeconvmx ;
-
-constexpr bool		f_reentrant = F_REENTRANT ;
-
 
 /* exported variables */
 
 
 /* exported subroutines */
 
-int uc_localtime(const time_t *tp,TM *tsp) noex {
+int uc_localtime(custime *tp,TM *tsp) noex {
+    	cnullptr	np{} ;
 	int		rs = SR_FAULT ;
-	int		rs1 ;
 	if (tp && tsp) ylikely {
-	    TM		*rp ; /* used-multiple */
 	    rs = SR_OK ;
 	    errno = 0 ;
-	    if_constexpr (f_reentrant) {
-	        if ((rp = localtime_r(tp,tsp)) == nullptr) {
+	    if (syshas.localtimer) {
+	        if (TM *rp ; (rp = localtime_r(tp,tsp)) == np) {
 	            rs = (- errno) ;
 		}
 	    } else {
-	        if ((rs = uc_forklockbegin(-1)) >= 0) ylikely {
-	            if ((rs = uctimeconvmx.lockbegin) >= 0) ylikely {
-	                if ((rp = localtime(tp)) == nullptr) {
-	                    rs = (- errno) ;
-		        } else {
-	                    memcpy(tsp,rp) ;
-		        }
-		        rs1 = uctimeconvmx.lockend ;
-		        if (rs >= 0) rs = rs1 ;
-		    } /* end if (uctimeconvlock) */
-	            rs1 = uc_forklockend() ;
-		    if (rs >= 0) rs = rs1 ;
-		} /* end if (fork-lock) */
+		rs = SR_NOSYS ;
 	    } /* end if_constexpr (f_reentrant) */
 	} /* end if (non-null) */
 	return rs ;
 }
 /* end subroutine (uc_localtime) */
 
-int uc_gmtime(const time_t *tp,TM *tsp) noex {
+int uc_gmtime(custime *tp,TM *tsp) noex {
+    	cnullptr	np{} ;
 	int		rs = SR_FAULT ;
-	int		rs1 ;
 	if (tp && tsp) ylikely {
-	    TM		*rp ; /* used-multiple */
 	    rs = SR_OK ;
 	    errno = 0 ;
-	    if_constexpr (f_reentrant) {
-	        if ((rp = gmtime_r(tp,tsp)) == nullptr) {
+	    if (syshas.gmtimer) {
+	        if (TM *rp ; (rp = gmtime_r(tp,tsp)) == np) {
 	            rs = (- errno) ;
 		}
 	    } else {
-	        if ((rs = uc_forklockbegin(-1)) >= 0) ylikely {
-	            if ((rs = uctimeconvmx.lockbegin) >= 0) ylikely {
-	                if ((rp = gmtime(tp)) == nullptr) {
-	                    rs = (- errno) ;
-		        } else {
-	                    memcpy(tsp,rp) ;
-		        }
-		        rs1 = uctimeconvmx.lockend ;
-		        if (rs >= 0) rs = rs1 ;
-		    } /* end if (uctimeconvlock) */
-	            rs1 = uc_forklockend() ;
-		    if (rs >= 0) rs = rs1 ;
-		} /* end if (fork-lock) */
+		rs = SR_NOSYS ;
 	    } /* end if_constexpr (f_reentrant) */
 	} /* end if (non-null) */
 	return rs ;
 }
 /* end subroutine (uc_gmtime) */
 
-int uc_ztime(const time_t *tp,TM *tsp,int z) noex {
+int uc_ztime(custime *tp,TM *tsp,int z) noex {
 	int		rs ;
 	if (z) {
 	    rs = uc_localtime(tp,tsp) ;
@@ -174,13 +142,11 @@ int uc_ztime(const time_t *tp,TM *tsp,int z) noex {
 int uc_mktime(TM *tmp,time_t *rp) noex {
 	int		rs = SR_FAULT ;
 	if (tmp && rp) ylikely {
-	    time_t	res = 0 ; /* used-afterwards */
+	    time_t	res = 0 ; /* used-multiple */
 	    rs = SR_OK ;
 	    errno = 0 ;
 	    if ((res = mktime(tmp)) < 0) {
-	        if (errno != 0) {
-	    	    rs = (- errno) ;
-	        }
+	        if (errno) rs = (- errno) ;
 	    }
 	    if (rp) {
 	        *rp = (rs >= 0) ? res : 0 ;
