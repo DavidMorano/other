@@ -24,11 +24,13 @@
 #include	<utypedefs.h>
 #include	<utypealiases.h>
 #include	<usysdefs.h>
-#include	<matstr.h>
-#include	<stdfnames.h>
+#include	<matstr.h>		/* used below in this header */
+#include	<stdfnames.h>		/* used below in this header */
 
 #include	<hasuniq.h>
 #include	<haslead.h>
+#include	<hasmodname.h>
+#include	<hasvarprefix.h>
 
 EXTERNC_begin
 
@@ -40,7 +42,6 @@ extern bool hasempty(cchar *,int) noex ;
 extern bool hasalpha(cchar *,int) noex ;
 extern bool hasalnum(cchar *,int) noex ;
 extern bool hasnum(cchar *,int) noex ;
-extern bool hasmodname(cchar *,int) noex ;
 
 extern bool hasprintlatin(cchar *,int) noex ;
 extern bool hasprintbad(cchar *,int) noex ;
