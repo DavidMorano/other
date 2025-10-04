@@ -1,0 +1,20 @@
+#!/usr/extra/bin/ksh
+# UNMKLINK
+
+CMDS=
+CMDS+=" utmp boottime nusers"
+CMDS+=" utmpid utmpname utmpline utmphost utmpsid"
+CMDS+=" logid logname logline loghost logsid"
+CMDS+=" logged"
+
+TDIRS=" /opt/local "
+
+  for D in ${TDIRS} ; do
+    if [[ -d "${D}" ]] ; then
+      for C in ${CMDS} ; do
+        rm -f ${D}/bin/${C}
+      done
+    fi
+  done
+
+
