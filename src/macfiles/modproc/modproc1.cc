@@ -135,7 +135,7 @@ namespace {
 /* forward references */
 
 static bool haspound(cchar *sp,int µsl) noex {
-    	bool		f = true ;
+    	bool		f = false ;
     	if (int sl ; (sl = getlenstr(sp,µsl)) > 0) {
     	    cint	si = sispanwht(sp,sl) ;
 	    f = (si >= 0) && (si < sl) && (sp[si] == '#') ;
