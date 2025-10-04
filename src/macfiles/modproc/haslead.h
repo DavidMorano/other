@@ -2,7 +2,7 @@
 /* charset=ISO8859-1 */
 /* lang=C20 */
 
-/* does the c-string contain a leading pound character (after skipping WS) */
+/* does the c-string contain a leading given character (after skipping WS) */
 /* version %I% last-modified %G% */
 
 
