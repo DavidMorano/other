@@ -43,7 +43,7 @@ LIBS +=
 OBJ0= uctc.o ucttyname.o 
 OBJ1= uclibmem.o
 OBJ2= uckvamatch.o
-OBJ3= uctimeconvx.o ucinetconv.o
+OBJ3= uctimeconv.o ucinetconv.o
 OBJ4= ucstrftime.o
 OBJ5= 
 OBJ6= 
@@ -84,6 +84,9 @@ all:			$(ALL)
 
 .cc.ii:
 	$(CPP) $(CPPFLAGS) $< > $(*).ii
+
+.ccm.iim:
+	$(CPP) $(CPPFLAGS) $< > $(*).iim
 
 .c.s:
 	$(CC) -S $(CPPFLAGS) $(CFLAGS) $<
@@ -150,7 +153,7 @@ objb.o:			$(OBJB)
 
 
 ucinetconv.o:		ucinetconv.cc		ucinetconv.h	$(INCS)
-uctimeconvx.o:		uctimeconvx.cc		uctimeconvx.h	$(INCS)
+uctimeconv.o:		uctimeconv.cc		uctimeconv.h	$(INCS)
 uclibmem.o:		uclibmem.cc		uclibmem.h	$(INCS)
 ucstrftime.o:		ucstrftime.cc		ucstrftime.h	$(INCS)
 uctc.o:			uctc.cc			uctc.h		$(INCS)
