@@ -98,7 +98,7 @@ int uc_localtime(custime *tp,TM *tsp) noex {
 	if (tp && tsp) ylikely {
 	    rs = SR_OK ;
 	    errno = 0 ;
-	    if (syshas.localtimer) {
+	    if (syshas.localtimer) ylikely{
 	        if (TM *rp ; (rp = localtime_r(tp,tsp)) == np) {
 	            rs = (- errno) ;
 		}
@@ -116,7 +116,7 @@ int uc_gmtime(custime *tp,TM *tsp) noex {
 	if (tp && tsp) ylikely {
 	    rs = SR_OK ;
 	    errno = 0 ;
-	    if (syshas.gmtimer) {
+	    if (syshas.gmtimer) ylikely {
 	        if (TM *rp ; (rp = gmtime_r(tp,tsp)) == np) {
 	            rs = (- errno) ;
 		}
