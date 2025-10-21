@@ -131,6 +131,16 @@ int nulstr::start(cchar *sp,int sl,cchar **rpp) noex {
 	return nulstr_start(this,sp,sl,rpp) ;
 }
 
+nulstr::operator int () noex {
+    	int		rs ;
+    	if (as) {
+	    rs = lenstr(as) ;
+	} else {
+	    rs = lenstr(buf) ;
+	}
+	return rs ;
+} /* end method (nulstr::operator) */
+
 nulstr_co::operator int () noex {
 	int		rs = SR_BUGCHECK ;
 	if (op) ylikely {
@@ -141,8 +151,7 @@ nulstr_co::operator int () noex {
 	    } /* end switch */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (nulstr_co::operator) */
+} /* end method (nulstr_co::operator) */
 
 void nulstr::dtor() noex {
 	if (cint rs = finish ; rs < 0) {
