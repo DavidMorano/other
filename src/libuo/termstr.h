@@ -39,7 +39,7 @@ enum termrenditions {
     termrendition_hidden,
     termrendition_strike,
     termrendition_overlast,
-    termrendition_blink = termrendition_blanks
+    termrendition_blink = termrendition_blinks
 } ; /* end enum (termrenditions) */
 
 /* graphic renditions */
@@ -55,18 +55,6 @@ enum termrenditions {
 #define	TERMSTR_GRSTRIKE	(1<<termrendition_strike)	/* strike */
 #define	TERMSTR_GRBLINK	TERMSTR_GRBLINKS	/* graphic blinking */
 #define	TERMSTR_GRREV	TERMSTR_GRREVERSE	/* reverse */
-
-/* graphic rendition codes */
-#define	TERMSTR_BOLD	"\033[1m"	/* bold */
-#define	TERMSTR_DIM	"\033[2m"	/* dim */
-#define	TERMSTR_ITALIC	"\033[3m"	/* italic */
-#define	TERMSTR_UNDER	"\033[4m"	/* underline */
-#define	TERMSTR_BLINKS	"\033[5m"	/* blink (slow) */
-#define	TERMSTR_BLINKR	"\033[6m"	/* blink (repid) */
-#define	TERMSTR_REVERSE	"\033[7m"	/* reverse */
-#define	TERMSTR_HIDDEN	"\033[8m"	/* hidden */
-#define	TERMSTR_SRIKE	"\033[9m"	/* strike (through) */
-#define	TERMSTR_BLINK	TERMSTR_BLINKS	/* blink (slow) */
 
 /* cursor saving and restoring (VT1xx "Fp" escape squences) */
 #define	TERMSTR_VCURS	"\0337"		/* cursor save-restore (VT) */
@@ -126,18 +114,18 @@ enum termrenditions {
 #define	TERMSTR_IC	"\033[@"	/* insert character */
 #define	TERMSTR_ICH	"\033[@"	/* insert character */
 
-/* character renditions */
+/* graphic rendition codes */
 #define	TERMSTR_NORM	"\033[m"	/* no attributes */
 #define	TERMSTR_BOLD	"\033[1m"	/* bold */
 #define	TERMSTR_DIM	"\033[2m"	/* dim */
 #define	TERMSTR_ITALIC	"\033[3m"	/* italic */
 #define	TERMSTR_UNDER	"\033[4m"	/* underline */
-#define	TERMSTR_BLINK	"\033[5m"	/* (slow) blink */
-#define	TERMSTR_BLINKS	"\033[5m"	/* (slow) blink */
-#define	TERMSTR_BLINKR	"\033[6m"	/* (rapid) blink */
+#define	TERMSTR_BLINKS	"\033[5m"	/* blink (slow) */
+#define	TERMSTR_BLINKR	"\033[6m"	/* blink (repid) */
 #define	TERMSTR_REVERSE	"\033[7m"	/* reverse */
 #define	TERMSTR_HIDDEN	"\033[8m"	/* hidden */
 #define	TERMSTR_SRIKE	"\033[9m"	/* strike (through) */
+#define	TERMSTR_BLINK	TERMSTR_BLINKS	/* blink (slow) */
 
 /* character renditions for advanced terminals */
 #define	TERMSTR_NOBOLD	"\033[22m"	/* no-bold */
