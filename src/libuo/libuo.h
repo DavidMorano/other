@@ -289,7 +289,6 @@
 #include	<upt.h>
 #include	<urotate.h>
 #include	<userattrdb.h>
-#include	<userattrent.h>
 #include	<userports.h>
 #include	<usysdefs.h>
 #include	<uterm.h>
