@@ -43,6 +43,9 @@ static inline int rmchr(cchar *sp,int sl,int sch) noex {
 static inline int rmdot(cchar *sp,int sl) noex {
 	return rmrchr(sp,sl,'.') ;
 }
+static inline int rmcom(cchar *sp,int sl) noex {
+	return rmcomment(sp,sl) ;
+}
 
 EXTERNC_end
 
