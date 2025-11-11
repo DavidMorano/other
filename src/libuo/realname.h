@@ -132,30 +132,30 @@ typedef REALNAME	realname ;
 
 EXTERNC_begin
 
-extern int	realname_start(realname *,cchar *,int) noex ;
-extern int	realname_loadparts(realname *,dstr *) noex ;
-extern int	realname_loadpieces(realname *,cchar **,int) noex ;
-extern int	realname_getlast(realname *,cchar **) noex ;
-extern int	realname_getfirst(realname *,cchar **) noex ;
-extern int	realname_getm1(realname *,cchar **) noex ;
-extern int	realname_getm2(realname *,cchar **) noex ;
-extern int	realname_getm3(realname *,cchar **) noex ;
-extern int	realname_getpieces(realname *,cchar **) noex ;
-extern int	realname_fullname(realname *,char *,int) noex ;
-extern int	realname_name(realname *,char *,int) noex ;
-extern int	realname_mailname(realname *,char *,int) noex ;
-extern int	realname_finish(realname *) noex ;
+extern int	realname_start		(realname *,cchar *,int) noex ;
+extern int	realname_loadparts	(realname *,dstr *) noex ;
+extern int	realname_loadpieces	(realname *,cchar **,int) noex ;
+extern int	realname_getlast	(realname *,cchar **) noex ;
+extern int	realname_getfirst	(realname *,cchar **) noex ;
+extern int	realname_getm1		(realname *,cchar **) noex ;
+extern int	realname_getm2		(realname *,cchar **) noex ;
+extern int	realname_getm3		(realname *,cchar **) noex ;
+extern int	realname_getpieces	(realname *,cchar **) noex ;
+extern int	realname_fullname	(realname *,char *,int) noex ;
+extern int	realname_name		(realname *,char *,int) noex ;
+extern int	realname_mailname	(realname *,char *,int) noex ;
+extern int	realname_finish		(realname *) noex ;
 
 EXTERNC_end
 
 #ifdef	COMMENT
 EXTERNC_begin
 
-extern int	realname_mat(realname *,realname *) noex ;
-extern int	realname_matlast(realname *,char *,int) noex ;
-extern int	realname_matfirst(realname *,char *,int) noex ;
-extern int	realname_matm1(realname *,char *,int) noex ;
-extern int	realname_matm2(realname *,char *,int) noex ;
+extern int	realname_mat		(realname *,realname *) noex ;
+extern int	realname_matlast	(realname *,char *,int) noex ;
+extern int	realname_matfirst	(realname *,char *,int) noex ;
+extern int	realname_matm1		(realname *,char *,int) noex ;
+extern int	realname_matm2		(realname *,char *,int) noex ;
 
 EXTERNC_end
 #endif /* COMMENT */
