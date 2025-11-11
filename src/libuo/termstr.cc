@@ -131,7 +131,7 @@ static int termstr_ctor(termstr *op,Args ... args) noex {
     	TERMSTR		*hop = op ;
 	cnullptr	np{} ;
 	int		rs = SR_FAULT ;
-	if (op && (args && ...)) {
+	if (op && (args && ...)) ylikely {
 	    memclear(hop) ;
 	    rs = SR_NOMEM ;
 	    op->magic = 0 ;
@@ -146,9 +146,9 @@ static int termstr_ctor(termstr *op,Args ... args) noex {
 
 static int termstr_dtor(termstr *op) noex {
 	int		rs = SR_FAULT ;
-	if (op) {
+	if (op) ylikely {
 	    rs = SR_OK ;
-	    if (op->sbp) {
+	    if (op->sbp) ylikely {
 		delete op->sbp ;
 		op->sbp = nullptr ;
 	    }
@@ -160,7 +160,7 @@ static int termstr_dtor(termstr *op) noex {
 template<typename ... Args>
 static int termstr_magic(termstr *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
-	if (op && (args && ...)) {
+	if (op && (args && ...)) ylikely {
 	    rs = (op->magic == TERMSTR_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
@@ -216,9 +216,9 @@ enum curtypes {
 
 int termstr_start(termstr *op,cchar *termtype) noex {
 	int		rs ;
-	if ((rs = termstr_ctor(op,termtype)) >= 0) {
+	if ((rs = termstr_ctor(op,termtype)) >= 0) ylikely {
 	    rs = SR_INVALID ;
-	    if (termtype[0]) {
+	    if (termtype[0]) ylikely {
 	        if ((rs = termstr_findterm(op,termtype)) >= 0) {
 		    cint	bsz = TERMSTR_START ;
 	            if ((rs = buffer_start(op->sbp,bsz)) >= 0) {
@@ -277,7 +277,7 @@ int termstr_write(termstr *op,cchar *bp,int bl) noex {
 int termstr_writegr(termstr *op,int gr,cchar *bp,int bl) noex {
 	int		rs ;
 	int		len = 0 ;
-	if ((rs = termstr_magic(op,bp)) >= 0) {
+	if ((rs = termstr_magic(op,bp)) >= 0) ylikely {
 	    cint	grmask = TERMSTR_GRMASK ;
 	    bool	f_have = false ;
 	    if (gr & grmask) {
@@ -289,7 +289,7 @@ int termstr_writegr(termstr *op,int gr,cchar *bp,int bl) noex {
 	        rs = termstr_conseq(op,'m',4,a1,a2,a3,a4) ;
 	        len += rs ;
 	    }
-	    if (rs >= 0) {
+	    if (rs >= 0) ylikely {
 	        rs = buffer_buf(op->sbp,bp,bl) ;
 	        len += rs ;
 	    }
@@ -305,7 +305,7 @@ int termstr_writegr(termstr *op,int gr,cchar *bp,int bl) noex {
 
 int termstr_char(termstr *op,int ch) noex {
 	int		rs ;
-	if ((rs = termstr_magic(op)) >= 0) {
+	if ((rs = termstr_magic(op)) >= 0) ylikely {
 	    rs = buffer_chr(op->sbp,ch) ;
 	} /* end if (magic) */
 	return rs ;
@@ -314,7 +314,7 @@ int termstr_char(termstr *op,int ch) noex {
 
 int termstr_get(termstr *op,cchar **rpp) noex {
 	int		rs ;
-	if ((rs = termstr_magic(op,rpp)) >= 0) {
+	if ((rs = termstr_magic(op,rpp)) >= 0) ylikely {
 	    rs = buffer_get(op->sbp,rpp) ;
 	} /* end if (magic) */
 	return rs ;
@@ -324,7 +324,7 @@ int termstr_get(termstr *op,cchar **rpp) noex {
 /* erase-display (ED) */
 int termstr_ed(termstr *op,int type) noex {
 	int		rs ;
-	if ((rs = termstr_magic(op)) >= 0) {
+	if ((rs = termstr_magic(op)) >= 0) ylikely {
 	    /* type: 0=forward, 1=back, 2=whole */
 	    if (type >= 2) type = 2 ;
 	    rs = termstr_conseq(op,'J',1,type,-1,-1,-1) ;
@@ -336,7 +336,7 @@ int termstr_ed(termstr *op,int type) noex {
 /* erase-line (EL) */
 int termstr_el(termstr *op,int type) noex {
 	int		rs ;
-	if ((rs = termstr_magic(op)) >= 0) {
+	if ((rs = termstr_magic(op)) >= 0) ylikely {
 	    /* 0=forward, 1=back, 2=whole */
 	    if (type >= 2) type = 2 ;
 	    rs = termstr_conseq(op,'K',1,type,-1,-1,-1) ;
@@ -348,8 +348,8 @@ int termstr_el(termstr *op,int type) noex {
 /* erase-character (EC) */
 int termstr_ec(termstr *op,int n) noex {
 	int		rs ;
-	if ((rs = termstr_magic(op)) >= 0) {
-	    if (n > 0) {
+	if ((rs = termstr_magic(op)) >= 0) ylikely {
+	    if (n > 0) ylikely {
 	        uint	tf ;
 	        char	tbuf[TLEN + 1] ;
 	        if (n >= TERMSTR_COLS) n = TERMSTR_COLS ;
@@ -406,7 +406,7 @@ int termstr_curl(termstr *op,int n) noex {
 /* cursor-home (CUH) */
 int termstr_curh(termstr *op,int r,int c) noex {
 	int		rs ;
-	if ((rs = termstr_magic(op)) >= 0) {
+	if ((rs = termstr_magic(op)) >= 0) ylikely {
 	    if ((r <= 0) && (c <= 0)) {
 	        cchar	*sp = "\033[H" ;
 	        cint	sl = 3 ;
@@ -425,7 +425,7 @@ int termstr_curh(termstr *op,int r,int c) noex {
 /* set-scroll-region */
 int termstr_ssr(termstr *op,int r,int n) noex {
 	int		rs ;
-	if ((rs = termstr_magic(op)) >= 0) {
+	if ((rs = termstr_magic(op)) >= 0) ylikely {
 	    if (r < 0) {
 	        cchar	*sp = "\033[r" ;
 	        cint	sl = 3 ;
@@ -442,7 +442,7 @@ int termstr_ssr(termstr *op,int r,int n) noex {
 /* crusor-save-restore */
 int termstr_csr(termstr *op,int f) noex {
 	int		rs ;
-	if ((rs = termstr_magic(op)) >= 0) {
+	if ((rs = termstr_magic(op)) >= 0) ylikely {
 	    uint	tf ;
 	    int		sl = -1 ;
 	    int		ti = op->ti ;
@@ -486,7 +486,7 @@ termstr_cvis(op,f) ;
 
 static int termstr_curm(termstr *op,int curtype,int n) noex {
 	int		rs = SR_OK ;
-	if (n != 0) {
+	if (n != 0) ylikely {
 	    rs = SR_INVALID ;
 	    if ((curtype >= 0) && (curtype < curtype_overlast)) {
 	        char	tbuf[TLEN + 1] ;
@@ -536,7 +536,7 @@ static int termstr_conseq(termstr *op,int name,int na,...) noex {
 	cnullptr	np{} ;
 	int		rs = SR_INVALID ;
 	int		len = 0 ; /* return-value */
-	if (name != 0) {
+	if (name != 0) ylikely {
 	    cint	tlen = TLEN ;
 	    char	tbuf[TLEN + 1] ;
 	    va_begin(ap,na) ;
