@@ -87,7 +87,7 @@
 int uc_strftime(char *dbuf,int dlen,cc *fmt,CTM *tmp) noex {
 	int		rs = SR_FAULT ;
 	int		rl = 0 ; /* return-value */
-	if (dbuf && fmt && tmp) {
+	if (dbuf && fmt && tmp) ylikely {
 	    rs = SR_INVALID ;
 	    if ((dlen > 0) && fmt[0]) {
 		csize	dsize = size_t(dlen) ;
