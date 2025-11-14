@@ -42,7 +42,6 @@
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<cstdarg>
-#include	<cstring>
 #include	<uclibsubs.h>
 #include	<ascii.h>
 #include	<ansigr.h>
@@ -136,7 +135,7 @@ static int termstr_ctor(termstr *op,Args ... args) noex {
 	    rs = SR_NOMEM ;
 	    op->magic = 0 ;
 	    op->ti = -1 ;
-	    if ((op->sbp = new(nothrow) buffer) != np) {
+	    if ((op->sbp = new(nothrow) buffer) != np) ylikely {
 		rs = SR_OK ;
 	    }
 	} /* end if (non-null) */
@@ -219,7 +218,7 @@ int termstr_start(termstr *op,cchar *termtype) noex {
 	if ((rs = termstr_ctor(op,termtype)) >= 0) ylikely {
 	    rs = SR_INVALID ;
 	    if (termtype[0]) ylikely {
-	        if ((rs = termstr_findterm(op,termtype)) >= 0) {
+	        if ((rs = termstr_findterm(op,termtype)) >= 0) ylikely {
 		    cint	bsz = TERMSTR_START ;
 	            if ((rs = buffer_start(op->sbp,bsz)) >= 0) {
 	                op->magic = TERMSTR_MAGIC ;
@@ -237,8 +236,8 @@ int termstr_start(termstr *op,cchar *termtype) noex {
 int termstr_finish(termstr *op) noex {
 	int		rs ;
 	int		rs1 ;
-	if ((rs = termstr_magic(op)) >= 0) {
-	    {
+	if ((rs = termstr_magic(op)) >= 0) ylikely {
+	    if (op->sbp) ylikely {
 		rs1 = buffer_finish(op->sbp) ;
 		if (rs >= 0) rs = rs1 ;
 	    }
@@ -255,7 +254,7 @@ int termstr_finish(termstr *op) noex {
 
 int termstr_clean(termstr *op) noex {
 	int		rs ;
-	if ((rs = termstr_magic(op)) >= 0) {
+	if ((rs = termstr_magic(op)) >= 0) ylikely {
 	    rs = buffer_reset(op->sbp) ;
 	} /* end if (magic) */
 	return rs ;
@@ -265,7 +264,7 @@ int termstr_clean(termstr *op) noex {
 int termstr_write(termstr *op,cchar *bp,int bl) noex {
 	int		rs ;
 	int		len = 0 ;
-	if ((rs = termstr_magic(op,bp)) >= 0) {
+	if ((rs = termstr_magic(op,bp)) >= 0) ylikely {
 	    rs = buffer_buf(op->sbp,bp,bl) ;
 	    len += rs ;
 	} /* end if (magic) */
