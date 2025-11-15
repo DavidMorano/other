@@ -58,6 +58,8 @@
 
 #include	"td.h"
 
+#pragma		GCC dependency		"mod/libutil.ccm"
+
 import libutil ;			/* |memclear(3u)| + |lenstr(3u)| */
 
 /* local defines */
@@ -78,10 +80,6 @@ import libutil ;			/* |memclear(3u)| + |lenstr(3u)| */
 #define	TD_GRMASK	(TD_GRBOLD|TD_GRUNDER|TD_GRBLINK|TD_GRREV)
 
 #define	TERMTYPE	struct termtype
-
-#ifndef	LINEBUFLEN
-#define	LINEBUFLEN	2048
-#endif
 
 #ifndef	TERMCONSEQLEN
 #define	TERMCONSEQLEN	84
