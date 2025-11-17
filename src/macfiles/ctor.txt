@@ -1,8 +1,8 @@
 template<typename ... Args>
 static int conslog_ctor(conslog *op,Args ... args) noex {
+	cnullptr	np{} ;
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) {
-	    cnullptr	np{} ;
 	    rs = SR_OK ;
 
 	} /* end if (non-null) */
