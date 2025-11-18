@@ -5,6 +5,7 @@
 /* create the '/tmp/users' directory */
 /* version %I% last-modified %G% */
 
+#define	CF_DEBUG	1		/* debugging */
 
 /* revision history:
 
@@ -66,6 +67,7 @@
 #include	<utility>		/* |pair(3c++)| */
 #include	<string>
 #include	<usystem.h>
+#include        <getfdfile.h>           /* |FD_STDERR| */
 #include	<sfx.h>
 #include	<rmx.h>
 #include	<strwcpy.h>
@@ -79,20 +81,24 @@
 #include	<exitcodes.h>
 #include	<localmisc.h>		/* |MAXPATHLEN| + |USERNAMELEN| */
 
-#pragma		GCC dependency	"mod/umisc.ccm"
-#pragma		GCC dependency	"mod/usysconf.ccm"
-#pragma		GCC dependency	"mod/ulibvals.ccm"
+#pragma		GCC dependency		"mod/umisc.ccm"
+#pragma		GCC dependency		"mod/usysconf.ccm"
+#pragma		GCC dependency		"mod/ulibvals.ccm"
 
 import umisc ;				/* |snadd{x}(3u)| */
 import usysconf ;			/* |usysconfstr(3u)| */
 import ulibvals ;
+import debug ;
 
 /* local defines */
+
+#ifndef	CF_DEBUG
+#define	CF_DEBUG	0		/* debugging */
+#endif
 
 
 /* imported namespaces */
 
-using std::nullptr_t ;			/* type */
 using std::string ;			/* type (C++STD library) */
 using std::min ;			/* subroutine-template (C++STD) */
 using std::max ;			/* subroutine-template (C++STD) */
@@ -230,7 +236,6 @@ constexpr cpcchar	prognames[] = {
 	[progmode_overlast]	= nullptr
 } ; /* end array (prognames) */
 
-
 constexpr MAPEX		mapexs[] = {
 	{ SR_NOENT,	EX_NOUSER },
 	{ SR_AGAIN,	EX_TEMPFAIL },
@@ -282,7 +287,9 @@ constexpr char		usersdir[]	= "/users" ;
 
 constexpr int		to_tmpwait	= 30 ; /* seconds */
 
-constexpr mode_t	dm = (0777|S_ISVTX) ;
+constexpr mode_t	dm = (0777 | S_ISVTX) ;
+
+cbool			f_debug = CF_DEBUG ;
 
 
 /* exported variables */
@@ -291,9 +298,12 @@ constexpr mode_t	dm = (0777|S_ISVTX) ;
 /* exported subroutines */
 
 int main(int argc,mainv argv,mainv envv) {
+	constexpr int   dfd = (f_debug) ? FD_STDERR : -1 ;
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;
+	debfd(dfd) ;
+        debprintf(__func__,"ent\n") ;
 	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) ylikely {
 	    if ((rs = pi.pmbegin) >= 0) ylikely {
                 switch (pi.pm) {
@@ -725,6 +735,7 @@ int proginfo::tmpuserdir() noex {
 	int		rs ;
 	int		rs1 ;
 	int		fdone = false ; /* return-value */
+	debprintf(__func__,"ent\n") ;
 	if ((rs = userbegin) > 0) ylikely {
 	    for (cauto &m : tmpuserdir_mems) {
 		if (rs > 0) {
@@ -738,6 +749,7 @@ int proginfo::tmpuserdir() noex {
 	} else if (rs == 0) {
 	    fprintf(stderr,"%s: no-user\n",pn) ;
 	} /* end if (user-) */
+	debprintf(__func__,"ret rs=%d\n",rs) ;
 	return (rs >= 0) ? fdone : rs ;
 }
 /* end method (proginfo::tmpuserdir) */
@@ -745,6 +757,7 @@ int proginfo::tmpuserdir() noex {
 int proginfo::tmpuserdir_base() noex {
 	int		rs ;
 	int		fcontinue = false ; /* return-value */
+	debprintf(__func__,"ent\n") ;
 	if ((rs = snadd(pbuf,plen,pl,"/tmp/users")) >= 0) ylikely {
 	    pl += rs ;
 	    if ((rs = u_stat(pbuf,&sb)) >= 0) ylikely {
@@ -756,6 +769,7 @@ int proginfo::tmpuserdir_base() noex {
 		}
 	    }
 	} /* end if (snadd) */
+	debprintf(__func__,"ret rs=%d\n",rs) ;
 	return (rs >= 0) ? fcontinue : rs ;
 }
 /* end method (proginfo::tmpuserdir_base) */
@@ -763,15 +777,20 @@ int proginfo::tmpuserdir_base() noex {
 int proginfo::tmpuserdir_already() noex {
 	int		rs ;
 	int		fdone = false ; /* return-value */
+	debprintf(__func__,"ent\n") ;
 	if ((rs = revertuser()) >= 0) ylikely {
+	debprintf(__func__,"1\n") ;
 	    if ((rs = snadd(pbuf,plen,pl,"/",ubuf)) >= 0) ylikely {
+	debprintf(__func__,"2\n") ;
 	        pl += rs ;
 	        if ((rs = u_stat(pbuf,&sb)) == SR_NOEXIST) {
+	debprintf(__func__,"3\n") ;
 		    rs = tmpuserdir_link() ;
 		    fdone = rs ;
 	        }
 	    } /* end if (snadd) */
 	} /* end if (revertuser) */
+	debprintf(__func__,"ret rs=%d\n",rs) ;
 	return (rs >= 0) ? fdone : rs ;
 }
 /* end method (proginfo::tmpuserdir_already) */
@@ -780,12 +799,18 @@ int proginfo::tmpuserdir_link() noex {
 	cint		req = _CS_TMPDIR ;
 	int		rs ;
 	int		fmade = false ; /* return-value */
+	debprintf(__func__,"1\n") ;
 	if ((rs = usysconfstr(req,dbuf,dlen)) > 0) ylikely {
+	debprintf(__func__,"2\n") ;
 	    if (cint rl = rmtrailchr(dbuf,rs,'/') ; rl > 1) ylikely {
+	debprintf(__func__,"3\n") ;
 	        dbuf[rl] = '\0' ;
 	        if ((rs = u_stat(dbuf,&sb)) >= 0) ylikely {
+	debprintf(__func__,"4\n") ;
 		    if (S_ISDIR(sb.st_mode)) ylikely {
+	debprintf(__func__,"5\n") ;
     			if ((rs = u_symlink(dbuf,pbuf)) >= 0) ylikely {
+	debprintf(__func__,"6\n") ;
 			    fmade = true ;
 			} else if (rs == SR_EXISTS) {
 			    rs = SR_OK ;
@@ -796,6 +821,7 @@ int proginfo::tmpuserdir_link() noex {
 	        }
 	    } /* end if (length-check) */
 	} /* end if (usysconfstr) */
+	debprintf(__func__,"ret rs=%d\n",rs) ;
 	return (rs >= 0) ? fmade : rs ;
 }
 /* end method (proginfo::tmpuserdir_link) */
