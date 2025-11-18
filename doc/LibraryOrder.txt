@@ -1,8 +1,14 @@
 Library-Order
 
 ----------------
+libprog
+libpr
+libpcs
+libmailmsg
 libdam
 libb
 libuc
 libu
+libsecdb
+libnss
 
