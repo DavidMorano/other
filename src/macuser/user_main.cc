@@ -123,8 +123,8 @@
 #include	<isnot.h>
 #include	<localmisc.h>
 
-#pragma		GCC dependency	"mod/libutil.ccm"
-#pragma		GCC dependency	"mod/umisc.ccm"
+#pragma		GCC dependency		"mod/libutil.ccm"
+#pragma		GCC dependency		"mod/umisc.ccm"
 
 import libutil ;
 import umisc ;				/* |snadd{x}(3u)| */
