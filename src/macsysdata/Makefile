@@ -40,6 +40,9 @@ MODS +=
 LIBS= -luo -lu
 
 
+OBJ_MACFU= sysdata_main.o
+
+
 INCDIRS= -I$(INCDIR)
 
 LIBDIRS= -L$(LIBDIR)
@@ -56,10 +59,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACFU= sysdata_main.o
-
-
-.SUFFIXES:		.hh .ii .ccm
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).x
