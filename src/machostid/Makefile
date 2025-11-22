@@ -40,6 +40,9 @@ MODS +=
 LIBS += -luo -lu
 
 
+OBJ_HOSTID= hostid_main.o
+
+
 INCDIRS=
 
 LIBDIRS= -L$(LIBDIR)
@@ -56,10 +59,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_HOSTID= hostid_main.o
-
-
-.SUFFIXES:		.hh .ii .ccm
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).x
