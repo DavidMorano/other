@@ -67,10 +67,13 @@ import usysconf ;
 
 /* local defines */
 
+#ifndef	PROVIDER
+#define	PROVIDER		"Apple"
+#endif
+
 
 /* imported namespaces */
 
-using std::nullptr_t ;			/* type */
 using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::istream ;			/* type */
@@ -170,6 +173,7 @@ enum progmodes {
 	progmode_architecture,
 	progmode_machine,
 	progmode_platform,
+	progmode_provider,
 	progmode_cpuvendor,
 	progmode_nisdomain,
 	progmode_symfile,
@@ -197,6 +201,7 @@ static constexpr cpcchar	prognames[] = {
 	[progmode_architecture]	= "architecture",
 	[progmode_machine]	= "machine",
 	[progmode_platform]	= "platform",
+	[progmode_provider]	= "provider",
 	[progmode_cpuvendor]	= "cpuvendor",
 	[progmode_nisdomain]	= "nisdomain",
 	[progmode_symfile]	= "symfile",
@@ -260,6 +265,9 @@ int main(int argc,mainv argv,mainv envv) {
             case progmode_symfile:
                 rs = pi.sysoutstr() ;
                 break ;
+            case progmode_provider:
+		printf("%s\n",PROVIDER) ;
+		break ;
             case progmode_sysid:
                 rs = pi.sysoutnum("kern.hostid") ;
                 break ;
@@ -395,6 +403,7 @@ int proginfo::uname() noex {
 /* end subroutine (proginfo::uname) */
 
 int proginfo::sysoutstr() noex {
+	cnullptr	np{} ;
 	int		rs = SR_OK ;
 	cchar		*name = nullptr ;
 	switch (pm) {
@@ -436,7 +445,6 @@ int proginfo::sysoutstr() noex {
 	    break ;
 	} /* end switch */
 	if ((rs >= 0) && name) {
-	    cnullptr	np{} ;
 	    cint	olen = maxpathlen ;
 	    rs = SR_NOMEM ;
 	    if (char *obuf ; (obuf = new(nothrow) char[olen+1]) != np) {
