@@ -130,8 +130,4 @@ export {
     int snaddslash(char *,int,int) noex ;
 } /* end export */
 
-export {
-    cchar *strbasename(cchar *) noex ;
-} /* end export */
-
 
