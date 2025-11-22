@@ -48,8 +48,6 @@
 
 /* imported namespaces */
 
-using std::nullptr_t ;			/* type */
-
 
 /* exported variables */
 
