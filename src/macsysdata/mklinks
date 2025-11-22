@@ -6,7 +6,8 @@ CMDS=
 CMDS+=" sysname systype sysrelease sysversion systime sysuuid sysid "
 CMDS+=" sysversionx "
 CMDS+=" release nodename version "
-CMDS+=" architecture machine platform cpuvendor "
+CMDS+=" architecture machine platform provider "
+CMDS+=" cpuvendor "
 CMDS+=" nisdomain symfile hostid lax "
 CMDS+=" unixtime navail "
 
