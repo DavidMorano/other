@@ -257,7 +257,7 @@ int lm_ps(char **rpp) noex {
         return rs ;
 } /* end subroutine (lm_ps) */
 
-int lm_mallsys(int w,cchar **rpp) noex {
+int lm_mallsys(int w,charpp rpp) noex {
     	int		rs ;
 	if ((rs = getbufsize(w)) >= 0) ylikely {
 	    rs = libmem.mall(rs,rpp) ;
