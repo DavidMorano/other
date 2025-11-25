@@ -117,8 +117,8 @@ struct realname : realname_head {
 	int getm2(cchar **) noex ;
 	int getm3(cchar **) noex ;
 	int getpieces(cchar **) noex ;
-	int fullname(char *,int) noex ;
 	int name(char *,int) noex ;
+	int fullname(char *,int) noex ;
 	int mailname(char *,int) noex ;
 	int mat(realname *) noex ;
 	void dtor() noex ;
@@ -141,8 +141,8 @@ extern int	realname_getm1		(realname *,cchar **) noex ;
 extern int	realname_getm2		(realname *,cchar **) noex ;
 extern int	realname_getm3		(realname *,cchar **) noex ;
 extern int	realname_getpieces	(realname *,cchar **) noex ;
-extern int	realname_fullname	(realname *,char *,int) noex ;
 extern int	realname_name		(realname *,char *,int) noex ;
+extern int	realname_fullname	(realname *,char *,int) noex ;
 extern int	realname_mailname	(realname *,char *,int) noex ;
 extern int	realname_finish		(realname *) noex ;
 
