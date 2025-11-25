@@ -63,12 +63,9 @@
 #include	<bitset>
 #include	<usystem.h>
 #include	<getbufsize.h>
-#include	<libmallocxx.h>		/* |libmalloc_mn(3uc)| */
 #include	<fsdir.h>
 #include	<fifostr.h>
 #include	<strwcpy.h>
-#include	<sncpyx.h>
-#include	<mknpathx.h>
 #include	<matxstr.h>
 #include	<filetype.h>
 #include	<hasx.h>
@@ -82,6 +79,7 @@
 #pragma		GCC dependency		"mod/libutil.ccm"
 
 import libutil ;			/* |memclear(3u)| */
+import umisc ;				/* |mknpath1(3u)| */
 
 /* local defines */
 
@@ -101,6 +99,7 @@ import libutil ;			/* |memclear(3u)| */
 /* imported namespaces */
 
 using std::bitset ;			/* type */
+using libu::sncpy ;			/* subroutine */
 using std::nothrow ;			/* constant */
 
 
@@ -265,10 +264,10 @@ int fsdirtree_open(fsdirtree *op,cchar *dname,int opts) noex {
 		    if (char *lp ; (rs = lm_mall(sz,&lp)) >= 0) ylikely {
 			op->llen = rs ;
 			op->lbuf = lp ;
-			if (char *bp ; (rs = libmalloc_mn(&bp)) >= 0) ylikely {
+			if (char *bp ; (rs = lm_mn(&bp)) >= 0) ylikely {
 			    op->nlen = rs ;
 			    op->nbuf = bp ;
-			    if ((rs = libmalloc_mp(&bp)) >= 0) {
+			    if ((rs = lm_mp(&bp)) >= 0) {
 				op->bnbuf = bp ;
 				op->bnlen = rs ;
 			        if ((rs = fsdirtree_sel(op)) >= 0) {
@@ -323,7 +322,7 @@ static int fsdirtree_opener(fsdirtree *op,cchar *dname) noex {
         if (rs >= 0) ylikely {
             if (bdp[0] != '\0') {
                 cint	cl = maxpath - op->bndlen ;
-                rs = sncpy1((op->bnbuf + op->bndlen),cl,bdp) ;
+                rs = sncpy((op->bnbuf + op->bndlen),cl,bdp) ;
                 op->bndlen += rs ;
             }
             if (rs >= 0) ylikely {
