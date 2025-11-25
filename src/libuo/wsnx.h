@@ -30,6 +30,7 @@
 
 EXTERNC_begin
 
+extern int wsnlen(const wchar_t *,int) noex ;
 extern int wsncolstr(int,int,const wchar_t *,int) noex ;
 extern int wsnwcpynarrow(wchar_t *,int,cchar *,int) noex ;
 
