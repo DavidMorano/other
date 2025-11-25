@@ -58,40 +58,50 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ00_LUO= ucx.o ucsig.o debug.o
-OBJ01_LUO= strn.o six.o 
-OBJ02_LUO= sfx.o rmx.o 
-OBJ03_LUO= isx.o hasx.o 
+OBJ00_LUO= ucsig.o ucsysconf.o ucx.o debug.o
+OBJ01_LUO= strn.o six.o mkx.o
+OBJ02_LUO= sfx.o rmx.o snx.o snwcpy.o
+OBJ03_LUO= isx.o ismisc.o hasx.o 
 
-OBJ04_LUO= sif.o 
+OBJ04_LUO= sif.o ctx.o cfx.o
 OBJ05_LUO= strdcpy.o strx.o 
 OBJ06_LUO= strkeyx.o
 OBJ07_LUO= strw.o strwcpy.o
 
-OBJ08_LUO= ccfile.o 
-OBJ09_LUO= strop.o strmgr.o
-OBJ10_LUO= strfilter.o 
-OBJ11_LUO= queue.o
+OBJ08_LUO= ccfile.o filer.o hdb.o
+OBJ09_LUO= strop.o strmgr.o strfilter.o 
+OBJ10_LUO= fsdirtree.o fsdir.o
+OBJ11_LUO= queue.o field.o nulstr.o
 
 OBJ12_LUO= tardir.o langx.o
 OBJ13_LUO= nleadx.o matxstr.o 
 OBJ14_LUO= char.o toxc.o
 OBJ15_LUO= dictdiff.o strnxcmp.o
 
-OBJ16_LUO= readln.o
-OBJ17_LUO= getourenv.o 
-OBJ18_LUO= mapex.o colx.o
+OBJ16_LUO= readln.o checkbase.o matparam.o
+OBJ17_LUO= getourenv.o bitrotate.o
+OBJ18_LUO= mapex.o colx.o hash.o permx.o
 OBJ19_LUO= inetconv.o inetaddrx.o 
 
-OBJ20_LUO= addrset.o lookaside.o
+OBJ20_LUO= addrset.o ids.o
 OBJ21_LUO= sigobj.o
-OBJ22_LUO= vechand.o 
-OBJ23_LUO= vecitem.o vecelem.o
+OBJ22_LUO= lookaside.o
+OBJ23_LUO= vec.o recip.o
 
-OBJ24_LUO= wsfx.o
-OBJ25_LUO= wsix.o
-OBJ26_LUO= wsnx.o
+OBJ24_LUO= wsfx.o 
+OBJ25_LUO= wsnx.o 
+OBJ26_LUO= wsix.o
 OBJ27_LUO= wswcpyx.o
+
+OBJ28_LUO= bufsize.o getbufsize.o
+OBJ29_LUO= sysval.o path.o termx.o
+OBJ30_LUO= vstr.o fmtflag.o fmtstr.o
+OBJ31_LUO= randlc.o pow.o calstrs.o
+
+OBJ32_LUO= realname.o
+OBJ33_LUO= ema.o
+OBJ34_LUO= sbuf.o buffer.o
+OBJ35_LUO= storebuf.o storeitem.o
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
@@ -100,9 +110,12 @@ OBJD_LUO= obj12_luo.o obj13_luo.o obj14_luo.o obj15_luo.o
 OBJE_LUO= obj16_luo.o obj17_luo.o obj18_luo.o obj19_luo.o
 OBJF_LUO= obj20_luo.o obj21_luo.o obj22_luo.o obj23_luo.o
 OBJG_LUO= obj24_luo.o obj25_luo.o obj26_luo.o obj27_luo.o
+OBJH_LUO= obj28_luo.o obj29_luo.o obj30_luo.o obj31_luo.o
+OBJI_LUO= obj32_luo.o obj33_luo.o obj34_luo.o obj35_luo.o
 
 OBJ_LUO += obja_luo.o objb_luo.o objc_luo.o objd_luo.o
-OBJ_LUO += obje_luo.o objf_luo.o objg_luo.o
+OBJ_LUO += obje_luo.o objf_luo.o objg_luo.o objh_luo.o
+OBJ_LUO += obji_luo.o
 
 
 .SUFFIXES:		.hh .ii .iim .ccm
@@ -255,6 +268,32 @@ obj27_luo.o:		$(OBJ27_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
+obj28_luo.o:		$(OBJ28_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj29_luo.o:		$(OBJ29_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj30_luo.o:		$(OBJ30_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj31_luo.o:		$(OBJ31_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+obj32_luo.o:		$(OBJ32_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj33_luo.o:		$(OBJ33_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj34_luo.o:		$(OBJ34_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj35_luo.o:		$(OBJ35_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
 obja_luo.o:		$(OBJA_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
@@ -279,6 +318,15 @@ objg_luo.o:		$(OBJG_LUO)
 objh_luo.o:		$(OBJH_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
+obji_luo.o:		$(OBJI_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objj_luo.o:		$(OBJJ_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objk_luo.o:		$(OBJK_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
 
 obj_luo.o:		$(OBJ_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
@@ -290,6 +338,10 @@ six.dir:
 
 isx.o:			isx.dir
 isx.dir:
+	makesubdir $@
+
+ismisc.o:		ismisc.dir
+ismisc.dir:
 	makesubdir $@
 
 mkx.o:			mkx.dir
@@ -341,10 +393,6 @@ inetaddrx.o:		inetaddrx.dir
 inetaddrx.dir:
 	makesubdir $@
 
-fmtstr.o:		fmtstr.dir
-fmtstr.dir:
-	makesubdir $@
-
 bufsizevar.o:		bufsizevar.dir
 bufsizevar.dir:
 	makesubdir $@
@@ -354,6 +402,16 @@ bufsizevar.dir:
 # SBUF
 sbuf.o:			sbuf.dir
 sbuf.dir:
+	makesubdir $@
+
+# SBUF
+buffer.o:		buffer.dir
+buffer.dir:
+	makesubdir $@
+
+# HDB
+hdb.o:			hdb.dir
+hdb.dir:
 	makesubdir $@
 
 # EMA
@@ -376,7 +434,16 @@ nleadx.o:		nleadx.dir
 nleadx.dir:
 	makesubdir $@
 
-# UCX
+# UCSIG		(libuc)
+ucsig.o:		ucsig.dir
+ucsig.dir:
+	makesubdir $@
+
+# UCSYSCONF	(libuc)
+ucsysconf.o:		ucsysconf.dir
+ucsysconf.dir:
+
+# UCX		(libuc)
 ucx.o:			ucx.dir
 ucx.dir:
 	makesubdir $@
@@ -411,9 +478,14 @@ queue.o:		queue.dir
 queue.dir:
 	makesubdir $@
 
-# UCSIG		(libuc)
-ucsig.o:		ucsig.dir
-ucsig.dir:
+# VEC		(libuc)
+vec.o:			vec.dir
+vec.dir:
+	makesubdir $@
+
+# RECIP		(libuc)
+recip.o:		recip.dir
+recip.dir:
 	makesubdir $@
 
 # SIGOBJ	(libuc)
@@ -476,9 +548,24 @@ langx.o:		langx.dir
 langx.dir:
 	makesubdir $@
 
+# FSDIR		(libuc)
+fsdir.o:		fsdir.dir
+fsdir.dir:
+	makesubdir $@
+
+# HASH
+hash.o:			hash.dir
+hash.dir:
+	makesubdir $@
+
 # COLX
 colx.o:			colx.dir
 colx.dir:
+	makesubdir $@
+
+# VSTR
+vstr.o:			vstr.dir
+vstr.dir:
 	makesubdir $@
 
 # WSFX
@@ -501,8 +588,39 @@ wswcpyx.o:		wswcpyx.dir
 wswcpyx.dir:
 	makesubdir $@
 
+# BUFSUZE
+bufsize.o:		bufsize.dir
+bufsize.dir:
+	makesubdir $@
+
+# PATH
+path.o:			path.dir
+path.dir:
+	makesubdir $@
+
+# POW
+pow.o:			pow.dir
+pow.dir:
+	makesubdir $@
+
+# TERMX
+termx.o:		termx.dir
+termx.dir:
+	makesubdir $@
+
+# FMTFLAG
+fmtflag.o:		fmtflag.dir
+fmtflag.dir:
+	makesubdir $@
+
+# FMTSTR
+fmtstr.o:		fmtstr.dir
+fmtstr.dir:
+	makesubdir $@
+
 # Objects
 storebuf.o:		storebuf.cc	storebuf.h		$(INCS)
+storeitem.o:		storeitem.cc	storeitem.h		$(INCS)
 ids.o:			ids.cc		ids.h			$(INCS)
 ccfile.o:		ccfile.cc	ccfile.hh		$(INCS)
 vechand.o:		vechand.cc	vechand.h		$(INCS)
@@ -511,6 +629,8 @@ vecelem.o:		vecelem.cc	vecelem.h		$(INCS)
 lookaside.o:		lookaside.cc	lookaside.h		$(INCS)
 termstr.o:		termstr.cc	termstr.h		$(INCS)
 td.o:			td.cc		td.h			$(INCS)
+nulstr.o:		nulstr.cc	nulstr.h		$(INCS)
+fsdirtree.o:		fsdirtree.cc	fsdirtree.h		$(INCS)
 
 # Temporary Objects
 strop.o:		strop.cc	strop.h			$(INCS)
@@ -522,13 +642,20 @@ char.o:			char.cc char.h
 toxc.o:			toxc.cc toxc.h
 inetconv.o:		inetconv.cc inetconv.h
 strcpyxc.o:		strcpyxc.cc strcpyxc.h strcpy.h strcpyx.h
+bitrotate.o:		bitrotate.cc bitrotate.h		$(INCS)
 
 # SINGLES
-mapex.o:		mapex.cc mapex.h
-dictdiff.o:		dictdiff.cc dictdiff.h
-inet4int.o:		inet4int.cc inet4int.h
-readln.o:		readln.cc readln.hh
-getourenv.o:		getourenv.cc getourenv.h
-optval.o:		optval.cc optval.h
+mapex.o:		mapex.cc mapex.h			$(INCS)
+dictdiff.o:		dictdiff.cc dictdiff.h			$(INCS)
+inet4int.o:		inet4int.cc inet4int.h			$(INCS)
+readln.o:		readln.cc readln.hh			$(INCS)
+getourenv.o:		getourenv.cc getourenv.h		$(INCS)
+optval.o:		optval.cc		optval.h	$(INCS)
+getbufsize.o:		getbufsize.cc		getbufsize.h	$(INCS)
+sysval.o:		sysval.cc		sysval.hh	$(INCS)
+randlc.o:		randlc.cc		randlc.h	$(INCS)
+calstrs.o:		calstrs.cc		calstrs.h	$(INCS)
+checkbase.o:		checkbase.cc		checkbase.h	$(INCS)
+matparam.o:		matparam.cc		matparam.h	$(INCS)
 
 
