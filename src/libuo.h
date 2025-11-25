@@ -260,12 +260,15 @@
 #include	<strwcpy.h>
 #include	<strwcpyxc.h>
 #include	<strx.h>
+
 #include	<sysdbfn.h>
 #include	<sysdbfiles.h>
 #include	<syshas.h>
 #include	<syshasutmpx.h>
 #include	<sysmemutil.h>
 #include	<sysnoise.h>
+#include	<sysval.hh>
+
 #include	<tabcols.h>
 #include	<tabexpand.h>
 #include	<tcx.h>
@@ -309,6 +312,7 @@
 #include	<langx.h>
 #include	<lookaside.h>
 #include	<queue.h>
+#include	<hdb.h>
 #include	<strfilter.h>
 #include	<td.h>
 #include	<termstr.h>
@@ -323,6 +327,13 @@
 #include	<wsix.h>
 #include	<wsnx.h>
 #include	<wswcpyx.h>
+
+#include	<randlm.h>
+#include	<bitrotate.h>
+#include	<matparam.h>
+
+#include	<fmtflag.h>
+#include	<fmtstr.h>
 
 
 #endif /* LIBUO_INCLUDE */
