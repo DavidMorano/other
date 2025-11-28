@@ -31,6 +31,7 @@
 #include	<haslead.h>
 #include	<hasmodname.h>
 #include	<hasvarprefix.h>
+#include	<hasall.h>
 
 EXTERNC_begin
 
@@ -61,17 +62,6 @@ extern bool hasmealone(cchar *,int) noex ;
 extern bool hasinet4addrstr(cchar *,int) noex ;
 
 extern bool hasvalidmagic(cchar *,int,cchar *) noex ;
-
-extern bool hasallalpha(cchar *,int) noex ;
-extern bool hasallalnum(cchar *,int) noex ;
-extern bool hasallwhite(cchar *,int) noex ;
-extern bool hasalllc(cchar *,int) noex ;
-extern bool hasalluc(cchar *,int) noex ;
-extern bool hasalldig(cchar *,int) noex ;
-extern bool hasallhdrkey(cchar *,int) noex ;
-
-extern bool hasallbase(cchar *,int,int) noex ;
-extern bool hasallchr(cchar *,int,int) noex ;
 
 static inline bool hascontent(cchar *fp,int fl) noex {
 	return hasnotempty(fp,fl) ;
