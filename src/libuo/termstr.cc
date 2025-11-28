@@ -122,6 +122,14 @@ struct termtype {
 	uint		flags ;
 } ;
 
+enum curtypes {
+	curtype_u,
+	curtype_d,
+	curtype_r,
+	curtype_l,
+	curtype_overlast
+} ;
+
 
 /* forward references */
 
@@ -198,14 +206,6 @@ constexpr termtype	terms[] = {
 } ; /* end array (terms) */
 
 constexpr char		curtypes[] = "ABCD" ;
-
-enum curtypes {
-	curtype_u,
-	curtype_d,
-	curtype_r,
-	curtype_l,
-	curtype_overlast
-} ;
 
 
 /* exported variables */
@@ -465,18 +465,18 @@ int termstr_csr(termstr *op,int f) noex {
 #ifdef	COMMENT
 
 /* insert */
-termstr_il(op,n) ;
-termstr_ic(op,n) ;
+int termstr_il(op,n) ;
+int termstr_ic(op,n) ;
 
 /* delete */
-termstr_dl(op,n) ;
-termstr_dc(op,n) ;
+int termstr_dl(op,n) ;
+int termstr_dc(op,n) ;
 
 /* insert-replacement-mode */
-termstr_irm(op,f) ;
+int termstr_irm(op,f) ;
 
 /* cursor-visibility */
-termstr_cvis(op,f) ;
+int termstr_cvis(op,f) ;
 
 #endif /* COMMENT */
 
