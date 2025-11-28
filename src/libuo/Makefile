@@ -42,23 +42,15 @@ MODS += tardir.ccm
 LIBS= -lu -lsecdb
 
 
-INCDIRS=
+OBJUC00= ucsys.o ucent.o ucget.o ucenum.o
+OBJUC01= ucsig.o ucsysconf.o ucx.o 
+OBJUC02= ucstrtox.o
+OBJUC03= ucsupport.o
 
-LIBDIRS= -L$(LIBDIR)
+OBJUC_A= objuc00.o objuc01.o objuc02.o objuc03.o
+OBJUC_B=
 
-
-RUNINFO= -rpath $(RUNDIR)
-LIBINFO= $(LIBDIRS) $(LIBS)
-
-# flag setting
-CPPFLAGS	?= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
-CFLAGS		?= $(MAKECFLAGS)
-CXXFLAGS	?= $(MAKECXXFLAGS)
-ARFLAGS		?= $(MAKEARFLAGS)
-LDFLAGS		?= $(MAKELDFLAGS)
-
-
-OBJ00_LUO= ucsig.o ucsysconf.o ucx.o debug.o
+OBJ00_LUO= debug.o
 OBJ01_LUO= strn.o six.o mkx.o
 OBJ02_LUO= sfx.o rmx.o snx.o snwcpy.o
 OBJ03_LUO= isx.o ismisc.o hasx.o 
@@ -68,7 +60,7 @@ OBJ05_LUO= strdcpy.o strx.o
 OBJ06_LUO= strkeyx.o
 OBJ07_LUO= strw.o strwcpy.o
 
-OBJ08_LUO= ccfile.o filer.o hdb.o
+OBJ08_LUO= ccfile.o filer.o filemap.o hdb.o
 OBJ09_LUO= strop.o strmgr.o strfilter.o 
 OBJ10_LUO= fsdirtree.o fsdir.o
 OBJ11_LUO= queue.o field.o nulstr.o
@@ -95,13 +87,18 @@ OBJ27_LUO= wswcpyx.o
 
 OBJ28_LUO= bufsize.o getbufsize.o
 OBJ29_LUO= sysval.o path.o termx.o
-OBJ30_LUO= vstr.o fmtflag.o fmtstr.o
+OBJ30_LUO= vstr.o 
 OBJ31_LUO= randlc.o pow.o calstrs.o
 
 OBJ32_LUO= realname.o
 OBJ33_LUO= ema.o
 OBJ34_LUO= sbuf.o buffer.o
 OBJ35_LUO= storebuf.o storeitem.o
+
+OBJ36_LUO= fmtflag.o fmtstr.o
+OBJ37_LUO= 
+OBJ38_LUO= 
+OBJ39_LUO= 
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
@@ -112,10 +109,29 @@ OBJF_LUO= obj20_luo.o obj21_luo.o obj22_luo.o obj23_luo.o
 OBJG_LUO= obj24_luo.o obj25_luo.o obj26_luo.o obj27_luo.o
 OBJH_LUO= obj28_luo.o obj29_luo.o obj30_luo.o obj31_luo.o
 OBJI_LUO= obj32_luo.o obj33_luo.o obj34_luo.o obj35_luo.o
+OBJJ_LUO= obj36_luo.o
+OBJK_LUO=
 
 OBJ_LUO += obja_luo.o objb_luo.o objc_luo.o objd_luo.o
 OBJ_LUO += obje_luo.o objf_luo.o objg_luo.o objh_luo.o
-OBJ_LUO += obji_luo.o
+OBJ_LUO += obji_luo.o objj_luo.o
+
+OBJ= objuc_a.o obj_luo.o
+
+
+INCDIRS=
+
+LIBDIRS= -L$(LIBDIR)
+
+RUNINFO= -rpath $(RUNDIR)
+LIBINFO= $(LIBDIRS) $(LIBS)
+
+# flag setting
+CPPFLAGS	?= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
+CFLAGS		?= $(MAKECFLAGS)
+CXXFLAGS	?= $(MAKECXXFLAGS)
+ARFLAGS		?= $(MAKEARFLAGS)
+LDFLAGS		?= $(MAKELDFLAGS)
 
 
 .SUFFIXES:		.hh .ii .iim .ccm
@@ -156,12 +172,12 @@ a:			$(T).a
 
 
 $(T).so:		$(T).o
-	$(CXX) -shared -o $@ $(LDFLAGS) $(OBJ_LUO) $(RUNINFO) $(LIBINFO)
+	$(CXX) -shared -o $@ $(LDFLAGS) $(OBJ) $(RUNINFO) $(LIBINFO)
 
-$(T).o:			$(OBJ_LUO)
-	$(LD) -r -o $@ $(LDFLAGS) $(OBJ_LUO)
+$(T).o:			$(OBJ)
+	$(LD) -r -o $@ $(LDFLAGS) $(OBJ)
 
-$(T).a:			$(OBJ_LUO)
+$(T).a:			$(OBJ)
 	$(AR) -rc $@ $?
 
 $(T).nm:		$(T).o
@@ -178,6 +194,26 @@ control:
 
 install:		$(T).x
 	makeinstall $(T).x
+
+
+objuc00.o:		$(OBJUC00)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objuc01.o:		$(OBJUC01)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objuc02.o:		$(OBJUC02)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objuc03.o:		$(OBJUC03)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+objuc_a.o:		$(OBJUC_A)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objuc_b.o:		$(OBJUC_B)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
 obj00_luo.o:		$(OBJ00_LUO)
@@ -291,6 +327,19 @@ obj34_luo.o:		$(OBJ34_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj35_luo.o:		$(OBJ35_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+obj36_luo.o:		$(OBJ36_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj37_luo.o:		$(OBJ37_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj38_luo.o:		$(OBJ38_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj39_luo.o:		$(OBJ39_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
@@ -434,6 +483,31 @@ nleadx.o:		nleadx.dir
 nleadx.dir:
 	makesubdir $@
 
+# UCSUPPORT	(libuc)
+ucsupport.o:		ucsupport.dir
+ucsupport.dir:
+	makesubdir $@
+
+# UCSYS		(libuc)
+ucsys.o:		ucsys.dir
+ucsys.dir:
+	makesubdir $@
+
+# UCENT		(libuc)
+ucent.o:		ucent.dir
+ucent.dir:
+	makesubdir $@
+
+# UCGET		(libuc)
+ucget.o:		ucget.dir
+ucget.dir:
+	makesubdir $@
+
+# UCENUM		(libuc)
+ucenum.o:		ucenum.dir
+ucenum.dir:
+	makesubdir $@
+
 # UCSIG		(libuc)
 ucsig.o:		ucsig.dir
 ucsig.dir:
@@ -442,6 +516,7 @@ ucsig.dir:
 # UCSYSCONF	(libuc)
 ucsysconf.o:		ucsysconf.dir
 ucsysconf.dir:
+	makesubdir $@
 
 # UCX		(libuc)
 ucx.o:			ucx.dir
@@ -631,6 +706,7 @@ termstr.o:		termstr.cc	termstr.h		$(INCS)
 td.o:			td.cc		td.h			$(INCS)
 nulstr.o:		nulstr.cc	nulstr.h		$(INCS)
 fsdirtree.o:		fsdirtree.cc	fsdirtree.h		$(INCS)
+filemap.o:		filemap.cc	filemap.h		$(INCS)
 
 # Temporary Objects
 strop.o:		strop.cc	strop.h			$(INCS)
@@ -657,5 +733,8 @@ randlc.o:		randlc.cc		randlc.h	$(INCS)
 calstrs.o:		calstrs.cc		calstrs.h	$(INCS)
 checkbase.o:		checkbase.cc		checkbase.h	$(INCS)
 matparam.o:		matparam.cc		matparam.h	$(INCS)
+
+# LIBUC
+ucstrtox.o:		ucstrtox.cc		ucstrtox.h	$(INCS)
 
 
