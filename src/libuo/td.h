@@ -53,13 +53,13 @@ struct td_flags {
 	uint		linebuf:1 ;	/* line buffer mode */
 	uint		smallscroll:1 ;
 	uint		nlcr:1 ;	/* NL-character display behavior */
-} ;
+} ; /* end struct (td_flags) */
 
 struct td_position {
 	uint		timecount ;
 	int		row ;
 	int		col ;
-} ;
+} ; /* end struct (td_position) */
 
 struct td_window {
 	TD_POS		move ;		/* move is outstanding */
@@ -68,7 +68,7 @@ struct td_window {
 	int		scol ;		/* starting absolute col */
 	int		rows ;		/* rows */
 	int		cols ;		/* cols */
-} ;
+} ; /* end struct (td_window) */
 
 struct td_head {
 	cchar		*termname ;	/* given terminal type-name */
@@ -85,7 +85,7 @@ struct td_head {
 	int		curlen ;	/* current buffer occupancy */
 	int		rows ;
 	int		cols ;
-} ;
+} ; /* end struct (td_head) */
 
 typedef TD		td ;
 typedef TD_FL		td_fl ;
