@@ -45,20 +45,17 @@
 #include	<fcntl.h>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
-#include	<cstring>		/* <- for |memchr(3c)| */
+#include	<cstring>		/* |memchr(3c)| */
 #include	<usystem.h>
 #include	<localmisc.h>
 
 #include	"filelines.h"
 
-import libutil ;
 
 /* local defines */
 
 
 /* imported namespaces */
-
-using std::nullptr_t ;
 
 
 /* local typedefs */
@@ -89,7 +86,7 @@ static int	liner(int,size_t) noex ;
 int filelines(cchar *fn) noex {
 	int		rs = SR_FAULT ;
 	int		rs1 ;
-	int		lines = 0 ;
+	int		lines = 0 ; /* return-value */
 	if (fn) ylikely {
 	    rs = SR_INVALID ;
 	    if (fn[0]) ylikely {
