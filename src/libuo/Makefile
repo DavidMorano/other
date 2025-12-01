@@ -45,7 +45,7 @@ LIBS= -lu -lsecdb
 OBJUC00= ucsys.o ucent.o ucget.o ucenum.o
 OBJUC01= ucsig.o ucsysconf.o ucx.o 
 OBJUC02= ucstrtox.o
-OBJUC03= ucsupport.o
+OBJUC03= ucsupport.o ucstream.o
 
 OBJUC_A= objuc00.o objuc01.o objuc02.o objuc03.o
 OBJUC_B=
@@ -71,12 +71,12 @@ OBJ14_LUO= char.o toxc.o
 OBJ15_LUO= dictdiff.o strnxcmp.o
 
 OBJ16_LUO= readln.o checkbase.o matparam.o
-OBJ17_LUO= getourenv.o bitrotate.o
-OBJ18_LUO= mapex.o colx.o hash.o permx.o
+OBJ17_LUO= bitrotate.o
+OBJ18_LUO= mapex.o ncolx.o hash.o permx.o
 OBJ19_LUO= inetconv.o inetaddrx.o 
 
-OBJ20_LUO= addrset.o ids.o
-OBJ21_LUO= sigobj.o
+OBJ20_LUO= addrset.o ids.o gecos.o
+OBJ21_LUO= sigobj.o pwentry.o
 OBJ22_LUO= lookaside.o
 OBJ23_LUO= vec.o recip.o
 
@@ -85,20 +85,20 @@ OBJ25_LUO= wsnx.o
 OBJ26_LUO= wsix.o
 OBJ27_LUO= wswcpyx.o
 
-OBJ28_LUO= bufsize.o getbufsize.o
+OBJ28_LUO= bufsize.o
 OBJ29_LUO= sysval.o path.o termx.o
-OBJ30_LUO= vstr.o 
+OBJ30_LUO= vstr.o xfile.o
 OBJ31_LUO= randlc.o pow.o calstrs.o
 
-OBJ32_LUO= realname.o
-OBJ33_LUO= ema.o
+OBJ32_LUO= realname.o nodedb.o
+OBJ33_LUO= ema.o tmpx.o
 OBJ34_LUO= sbuf.o buffer.o
 OBJ35_LUO= storebuf.o storeitem.o
 
-OBJ36_LUO= fmtflag.o fmtstr.o
-OBJ37_LUO= 
-OBJ38_LUO= 
-OBJ39_LUO= 
+OBJ36_LUO= fmtflag.o fmtstr.o sysdbfiles.o
+OBJ37_LUO= getx.o sysdbfn.o strlibval.o
+OBJ38_LUO= utmpxx.o uinfo.o caches.o
+OBJ39_LUO= fileread.o getxx.o
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
@@ -109,7 +109,7 @@ OBJF_LUO= obj20_luo.o obj21_luo.o obj22_luo.o obj23_luo.o
 OBJG_LUO= obj24_luo.o obj25_luo.o obj26_luo.o obj27_luo.o
 OBJH_LUO= obj28_luo.o obj29_luo.o obj30_luo.o obj31_luo.o
 OBJI_LUO= obj32_luo.o obj33_luo.o obj34_luo.o obj35_luo.o
-OBJJ_LUO= obj36_luo.o
+OBJJ_LUO= obj36_luo.o obj37_luo.o obj38_luo.o obj39_luo.o
 OBJK_LUO=
 
 OBJ_LUO += obja_luo.o objb_luo.o objc_luo.o objd_luo.o
@@ -518,6 +518,11 @@ ucsysconf.o:		ucsysconf.dir
 ucsysconf.dir:
 	makesubdir $@
 
+# UCSTREAM	(libuc)
+ucstream.o:		ucstream.dir
+ucstream.dir:
+	makesubdir $@
+
 # UCX		(libuc)
 ucx.o:			ucx.dir
 ucx.dir:
@@ -633,9 +638,9 @@ hash.o:			hash.dir
 hash.dir:
 	makesubdir $@
 
-# COLX
-colx.o:			colx.dir
-colx.dir:
+# NCOLX
+ncolx.o:		ncolx.dir
+ncolx.dir:
 	makesubdir $@
 
 # VSTR
@@ -693,7 +698,38 @@ fmtstr.o:		fmtstr.dir
 fmtstr.dir:
 	makesubdir $@
 
+# GETX
+getx.o:			getx.dir
+getx.dir:
+	makesubdir $@
+
+# TMPX
+tmpx.o:			tmpx.dir
+tmpx.dir:
+	makesubdir $@
+
+# UTMPXX
+utmpxx.o:		utmpxx.dir
+utmpxx.dir:
+	makesubdir $@
+
+# CACHES
+caches.o:		caches.dir
+caches.dir:
+	makesubdir $@
+
+# FILEREAD
+fileread.o:		fileread.dir
+fileread.dir:
+	makesubdir $@
+
+# GETXX
+getxx.o:		getxx.dir
+getxx.dir:
+	makesubdir $@
+
 # Objects
+uinfo.o:		uinfo.cc	uinfo.h			$(INCS)
 storebuf.o:		storebuf.cc	storebuf.h		$(INCS)
 storeitem.o:		storeitem.cc	storeitem.h		$(INCS)
 ids.o:			ids.cc		ids.h			$(INCS)
@@ -707,6 +743,9 @@ td.o:			td.cc		td.h			$(INCS)
 nulstr.o:		nulstr.cc	nulstr.h		$(INCS)
 fsdirtree.o:		fsdirtree.cc	fsdirtree.h		$(INCS)
 filemap.o:		filemap.cc	filemap.h		$(INCS)
+nodedb.o:		nodedb.cc	nodedb.h		$(INCS)
+gecos.o:		gecos.cc	gecos.h			$(INCS)
+pwentry.o:		pwentry.cc	pwentry.h		$(INCS)
 
 # Temporary Objects
 strop.o:		strop.cc	strop.h			$(INCS)
@@ -726,13 +765,18 @@ dictdiff.o:		dictdiff.cc dictdiff.h			$(INCS)
 inet4int.o:		inet4int.cc inet4int.h			$(INCS)
 readln.o:		readln.cc readln.hh			$(INCS)
 getourenv.o:		getourenv.cc getourenv.h		$(INCS)
-optval.o:		optval.cc		optval.h	$(INCS)
-getbufsize.o:		getbufsize.cc		getbufsize.h	$(INCS)
-sysval.o:		sysval.cc		sysval.hh	$(INCS)
-randlc.o:		randlc.cc		randlc.h	$(INCS)
-calstrs.o:		calstrs.cc		calstrs.h	$(INCS)
-checkbase.o:		checkbase.cc		checkbase.h	$(INCS)
-matparam.o:		matparam.cc		matparam.h	$(INCS)
+optval.o:		optval.cc	optval.h	$(INCS)
+getbufsize.o:		getbufsize.cc	getbufsize.h	$(INCS)
+sysval.o:		sysval.cc	sysval.hh	$(INCS)
+randlc.o:		randlc.cc	randlc.h	$(INCS)
+calstrs.o:		calstrs.cc	calstrs.h	$(INCS)
+checkbase.o:		checkbase.cc	checkbase.h	$(INCS)
+strlibval.o:		strlibval.cc	strlibval.hh	$(INCS)
+matparam.o:		matparam.cc	matparam.h	$(INCS)
+sysdbfn.o:		sysdbfn.cc	sysdbfn.h	$(INCS)
+sysdbfiles.o:		sysdbfiles.c	sysdbfiles.h	$(INCS)
+mallocstuff.o:		mallocstuff.cc	mallocstuff.h	$(INCS)
+xfile.o:		xfile.cc	xfile.h		$(INCS)
 
 # LIBUC
 ucstrtox.o:		ucstrtox.cc		ucstrtox.h	$(INCS)
