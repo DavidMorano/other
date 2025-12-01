@@ -366,24 +366,6 @@ namespace libuc {
     } /* end method (libmems::rsfree) */
 } /* end namespace (libuc) */
 
-namespace libuc {
-    int libmems::mallocstrw(cchar *sp,int 탎l,cchar **rpp) noex {
-	return strw(sp,탎l,rpp) ;
-    }
-    int libmems::mallocitem(cvoid *sp,int 탎l,void **rpp) noex {
-	return item(sp,탎l,rpp) ;
-    }
-    int libmems::malloc(int sz,void *vp) noex {
-	return vall(sz,vp) ;
-    }
-    int libmems::calloc(int ne,int esz,void *vp) noex {
-	return call(ne,esz,vp) ;
-    }
-    int libmems::ralloc(void *cp,int sz,void *vp) noex {
-	return rall(cp,sz,vp) ;
-    }
-} /* end namespace (libuc) */
-
 int mgr::operator () (int sz,void *vp) noex {
 	errtimer	to_again	= utimeout[uto_again] ;
 	errtimer	to_busy		= utimeout[uto_busy] ;
