@@ -44,12 +44,6 @@ EXTERNC_end
 
 namespace libuc {
     struct libmems {
-	int mallocstrw	(cchar *,int,cchar **) noex ;
-	int mallocitem	(cvoid *,int,voidpp) noex ;
-	int malloc	(int,void *) noex ;
-	int valloc	(int,void *) noex ;
-	int calloc	(int,int,void *) noex ;
-	int ralloc	(void *,int,void *) noex ;
 	int strw	(cchar *,int,cchar **) noex ;
 	int item	(cvoid *,int,voidpp) noex ;
 	int mall	(int,void *) noex ;
