@@ -51,7 +51,7 @@ OBJUC_A= objuc00.o objuc01.o objuc02.o objuc03.o
 OBJUC_B=
 
 OBJ00_LUO= debug.o
-OBJ01_LUO= strn.o six.o mkx.o
+OBJ01_LUO= strn.o six.o mkx.o mnw.o
 OBJ02_LUO= sfx.o rmx.o snx.o snwcpy.o
 OBJ03_LUO= isx.o ismisc.o hasx.o 
 
@@ -395,6 +395,10 @@ ismisc.dir:
 
 mkx.o:			mkx.dir
 mkx.dir:
+	makesubdir $@
+
+mnw.o:			mnw.dir
+mnw.dir:
 	makesubdir $@
 
 snx.o:			snx.dir
