@@ -44,7 +44,7 @@ LIBS= -lu -lsecdb
 
 OBJUC00= ucsys.o ucent.o ucget.o ucenum.o
 OBJUC01= ucsig.o ucsysconf.o ucx.o 
-OBJUC02= ucstrtox.o
+OBJUC02= ucstrtox.o ucstrtod.o
 OBJUC03= ucsupport.o ucstream.o
 
 OBJUC_A= objuc00.o objuc01.o objuc02.o objuc03.o
@@ -783,6 +783,7 @@ mallocstuff.o:		mallocstuff.cc	mallocstuff.h	$(INCS)
 xfile.o:		xfile.cc	xfile.h		$(INCS)
 
 # LIBUC
-ucstrtox.o:		ucstrtox.cc		ucstrtox.h	$(INCS)
+ucstrtox.o:		ucstrtox.cc	ucstrtox.h	$(INCS)
+ucstrtod.o:		ucstrtod.cc	ucstrtod.h	$(INCS)
 
 
