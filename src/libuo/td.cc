@@ -866,8 +866,8 @@ static int td_flushmove(td *op,td_win *wp,int r,int c) noex {
 	        int	arow = wrow + wp->srow ;
 	        int	acol = wcol + wp->scol ;
 	        bool	f_chosen = false ;
-/* relocate to absolute coordinates */
-/* search for optimizations */
+		/* relocate to absolute coordinates */
+		/* search for optimizations */
 	        if ((op->cur.row >= 0) && (op->cur.col >= 0)) {
 	            if ((arow == op->cur.row) && (acol == op->cur.col)) {
 	                f_chosen = true ;
