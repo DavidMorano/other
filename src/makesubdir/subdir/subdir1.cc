@@ -45,7 +45,7 @@ module ;
 #include	<usysrets.h>
 #include	<localmisc.h>
 
-#pragma		GCC dependency	"mod/subdir.ccm"
+#pragma		GCC dependency		"mod/subdir.ccm"
 
 module subdir ;
 
@@ -89,7 +89,7 @@ module subdir ;
 	    } /* end for */
 	    strs[i] = nullptr ;
 	    va_end(ap) ;
-	}
+	} /* end if (non-null) */
 	return i ;
     } /* end subroutine (loadstrs) */
 
