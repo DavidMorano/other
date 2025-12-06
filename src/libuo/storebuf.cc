@@ -64,7 +64,6 @@
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
-#include	<cstring>		/* |memcpy(3c)| */
 #include	<usystem.h>
 #include	<ctbin.h>
 #include	<ctoct.h>
@@ -75,6 +74,9 @@
 
 #include	"storebuf.h"
 
+#pragma		GCC dependency		"mod/libutil.ccm"
+
+import libutil ;			/* |memcopy(3u)| */
 
 /* local defines */
 
@@ -211,7 +213,7 @@ int storebuf_buf(char *rbuf,int rlen,int i,cchar *sp,int sl) noex {
 	                    *bp++ = *sp++ ;
 	 	        }
 	            } else {
-	                memcpy(bp,sp,sl) ;
+	                memcopy(bp,sp,sl) ;
 	                bp += sl ;
 	            } /* end if */
 	        } else {
@@ -224,7 +226,7 @@ int storebuf_buf(char *rbuf,int rlen,int i,cchar *sp,int sl) noex {
 		        }
 	            } else {
 		        if ((rlen - i) >= sl) {
-	                    memcpy(bp,sp,sl) ;
+	                    memcopy(bp,sp,sl) ;
 	                    bp += sl ;
 		        } else {
 		            rs = SR_OVERFLOW ;
@@ -242,8 +244,8 @@ int storebuf_buf(char *rbuf,int rlen,int i,cchar *sp,int sl) noex {
 int storebuf_strw(char *rbuf,int rlen,int i,cchar *sp,int sl) noex {
 	int		rs = SR_FAULT ;
 	int		len = 0 ;
-	if (rbuf && sp) {
- 	    if (i >= 0) {	
+	if (rbuf && sp) ylikely {
+ 	    if (i >= 0) ylikely {	
 	        char	*bp = (rbuf + i) ;
 	        rs = SR_OK ;
 	        if (rlen < 0) {
