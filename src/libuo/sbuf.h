@@ -37,7 +37,7 @@ struct sbuf_head {
 	char		*rbuf ;		/* result buffer base (constant) */
 	int		rlen ;		/* result buffer length (constant) */
 	int		index ;		/* current buffer index (changes) */
-} ;
+} ; /* end struct (sbuf_head) */
 
 #ifdef	__cplusplus
 enum sbufmems {
@@ -52,7 +52,7 @@ enum sbufmems {
 	sbufmem_reset,
 	sbufmem_finish,
 	sbufmem_overlast
-} ;
+} ; /* end enum (sbufmems) */
 struct sbuf_iter {
 	cchar		*cp = nullptr ;
 	sbuf_iter() = default ;
@@ -78,7 +78,7 @@ struct sbuf_iter {
 	sbuf_iter operator ++ () noex ; /* pre */
 	sbuf_iter operator ++ (int) noex ; /* post */
 	void increment(int = 1) noex ;
-} ; /* end struct sbuf_iter) */
+} ; /* end struct (sbuf_iter) */
 struct sbuf ;
 struct sbuf_co {
 	sbuf		*op = nullptr ;
