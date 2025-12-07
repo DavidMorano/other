@@ -105,7 +105,7 @@ namespace {
 	    mkisuc() ;
 	    mkisfc() ;
 	    mktoval() ;
-	} ;
+	} ; /* end ctor */
     } ; /* end struct (charinfo) */
 } /* end namespace */
 
