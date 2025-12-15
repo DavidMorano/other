@@ -56,8 +56,8 @@
 #include	<ucsem.h>
 #include	<ucsig.h>
 #include	<ucsthr.h>
-#include	<ucstrtod.h>
 #include	<ucstrtox.h>
+#include	<ucstrtof.h>
 #include	<ucsys.h>
 #include	<ucsysauxinfo.h>
 #include	<ucsysconf.h>
