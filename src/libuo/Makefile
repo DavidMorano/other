@@ -44,7 +44,7 @@ LIBS= -lu -lsecdb
 
 OBJUC00= ucsys.o ucent.o ucget.o ucenum.o
 OBJUC01= ucsig.o ucsysconf.o ucx.o 
-OBJUC02= ucstrtox.o ucstrtod.o
+OBJUC02= ucstrto.o
 OBJUC03= ucsupport.o ucstream.o
 
 OBJUC_A= objuc00.o objuc01.o objuc02.o objuc03.o
@@ -527,6 +527,12 @@ ucstream.o:		ucstream.dir
 ucstream.dir:
 	makesubdir $@
 
+# UNIX C-language system library string-to-integer interface
+# string-to-x
+ucstrto.o:		ucstrto.dir
+ucstrto.dir:
+	makesubdir $@
+
 # UCX		(libuc)
 ucx.o:			ucx.dir
 ucx.dir:
@@ -781,9 +787,5 @@ sysdbfn.o:		sysdbfn.cc	sysdbfn.h	$(INCS)
 sysdbfiles.o:		sysdbfiles.c	sysdbfiles.h	$(INCS)
 mallocstuff.o:		mallocstuff.cc	mallocstuff.h	$(INCS)
 xfile.o:		xfile.cc	xfile.h		$(INCS)
-
-# LIBUC
-ucstrtox.o:		ucstrtox.cc	ucstrtox.h	$(INCS)
-ucstrtod.o:		ucstrtod.cc	ucstrtod.h	$(INCS)
 
 
