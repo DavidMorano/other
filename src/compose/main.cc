@@ -31,6 +31,9 @@
 #include	<localmisc.h>
 
 
+/* local defines */
+
+
 /* imported namespaces */
 
 using namespace		std ;
@@ -39,7 +42,16 @@ using namespace		std ;
 /* local typedefs */
 
 
+/* external subroutines */
+
+
+/* external variables */
+
+
 /* local structures */
+
+
+/* forward references */
 
 
 /* local variables */
@@ -153,7 +165,7 @@ static constexpr cchar	*lines[] = {
 	R"xx(|	_/^_)xx",
 	R"xx(~	_~ _)xx",
 	nullptr
-} ;
+} ; /* end array (lines) */
 
 
 /* exported variables */
