@@ -98,7 +98,7 @@ OBJ35_LUO= storebuf.o storeitem.o
 OBJ36_LUO= fmtflag.o fmtstr.o sysdbfiles.o
 OBJ37_LUO= getx.o sysdbfn.o strlibval.o
 OBJ38_LUO= utmpxx.o uinfo.o caches.o
-OBJ39_LUO= fileread.o getxx.o
+OBJ39_LUO= fileread.o getxx.o obuf.o
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
@@ -736,6 +736,11 @@ fileread.dir:
 # GETXX
 getxx.o:		getxx.dir
 getxx.dir:
+	makesubdir $@
+
+# OBUF
+obuf.o:			obuf.dir
+obuf.dir:
 	makesubdir $@
 
 # Objects
