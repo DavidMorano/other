@@ -2,7 +2,7 @@
 /* charset=ISO8859-1 */
 /* lang=C20 */
 
-/* Module-Processing */
+/* UNIX® kernel support subroutines */
 /* version %I% last-modified %G% */
 
 
