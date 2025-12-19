@@ -68,6 +68,7 @@
 #include	<mapex.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>
+#include	<debprintf.h>		/* |DEBPRINTF| */
 
 #pragma		GCC dependency	"mod/libutil.ccm"
 #pragma		GCC dependency	"mod/ulibvals.ccm"
@@ -91,7 +92,7 @@ import argmgr ;
 import fonce ;
 import sif ;
 import bitop ;
-import debug ;
+import debug ;				/* |debprintf(3uc)| */
 import tardir ;
 import filerec ;
 import modproc ;
@@ -380,7 +381,7 @@ int main(int argc,mainv argv,mainv envv) {
 	int		rs ;
 	int		rs1 ;
 	debfd(dfd) ;
-	debprintf(__func__,"ent\n") ;
+	DEBPRINTF("ent\n") ;
 	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
 	    {
                 rs = pi.argproc() ;
@@ -895,7 +896,7 @@ int proginfo::argprocname(cchar *sp,int sl) noex {
 	strnul		s(sp,sl) ;
 	int		rs ;
 	int		c = 0 ;
-	debprintf(__func__,"ent\n") ;
+	DEBPRINTF("ent\n") ;
 	if (ustat sb ; (rs = argstat(s,&sb)) >= 0) {
 	    switch (cint ft = filetype(sb.st_mode) ; ft) {
 	    case filetype_dir:
@@ -916,7 +917,7 @@ int proginfo::argprocname(cchar *sp,int sl) noex {
 	} else if (isNotAccess(rs)) {
 	    rs = SR_OK ;
 	}
-	debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
+	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::argprocname) */
 
@@ -985,7 +986,7 @@ int proginfo::procent(custat *sbp,cchar *sp,int µsl) noex {
 int proginfo::procfile(custat *sbp,cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
 	int		c = 0 ;
-	debprintf(__func__,"ent pi\n") ;
+	DEBPRINTF("ent pi\n") ;
 	if (sisub(sp,sl,".git") < 0) {
 	    if ((! fl.modes) || (rs = modehave(sbp)) > 0) {
 	        if ((! fl.suffix) || ((rs = sufhave(sp,sl)) > 0)) {
@@ -1008,7 +1009,7 @@ int proginfo::procfile(custat *sbp,cchar *sp,int sl) noex {
 	        } /* end if (sufhave) */
 	    } /* end if (modehave) */
 	} /* end if (sisub) */
-	debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
+	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::procfile) */
 
@@ -1059,7 +1060,7 @@ int proginfo::procfile_mods(custat *sbp,cchar *sp,int sl) noex {
 	int		c = 0 ;
 	if (f_debug && debon) {
 	    strnul se(sp,sl) ;
-	    debprintf(__func__,"ent sl=%d s=>%s<\n",sl,ccp(se)) ;
+	    DEBPRINTF("ent sl=%d s=>%s<\n",sl,ccp(se)) ;
 	}
 	if (sp) {
 	    rs = SR_OK ;
@@ -1074,7 +1075,7 @@ int proginfo::procfile_mods(custat *sbp,cchar *sp,int sl) noex {
 	    } /* end if (regular file) */
 	} /* end if (non-null) */
 	if_constexpr (f_debug) {
-	    debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
+	    DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
 	}
 	return (rs >= 0) ? c : rs ;
 }
@@ -1085,7 +1086,7 @@ int proginfo::sufadd(cchar *sp,int sl) noex {
 	int		c = 0 ;
 	if (f_debug && debon) {
 	    strnul se(sp,sl) ;
-	    debprintf(__func__,"ent sl=%d s=>%s<\n",sl,ccp(se)) ;
+	    DEBPRINTF("ent sl=%d s=>%s<\n",sl,ccp(se)) ;
 	}
 	if ((rs = sufready()) >= 0) {
     	    sif		so(sp,sl,',') ;
@@ -1093,7 +1094,7 @@ int proginfo::sufadd(cchar *sp,int sl) noex {
 	    for (int cl ; (rs >= 0) && ((cl = so(&cp)) > 0) ; ) {
 	        if (f_debug && debon) {
 	            strnul sone(cp,cl) ;
-	            debprintf(__func__,"cl=%d c=>%s<\n",cl,ccp(sone)) ;
+	            DEBPRINTF("cl=%d c=>%s<\n",cl,ccp(sone)) ;
 	        }
 	        if ((rs = exts.add(cp,cl)) > 0) {
 		    c += 1 ;
@@ -1102,7 +1103,7 @@ int proginfo::sufadd(cchar *sp,int sl) noex {
 	    } /* end for */
 	} /* end if (sufready) */
 	if_constexpr (f_debug) {
-	    debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
+	    DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
 	}
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::sufadd) */
@@ -1127,7 +1128,7 @@ int proginfo::sufhave(cchar *sp,int sl) noex {
 	    } /* end if (sfext) */
 	} /* end if (suffix check) */
 	if_constexpr (f_debug) {
-	    debprintf(__func__,"ret rs=%d f=%u\n",rs,f) ;
+	    DEBPRINTF("ret rs=%d f=%u\n",rs,f) ;
 	}
 	return (rs >= 0) ? f : rs ;
 } /* end method (proginfo::sufhave) */
@@ -1139,13 +1140,13 @@ int proginfo::modeadd(cchar *sp,int sl) noex {
 	cchar		*cp ;
 	if_constexpr (f_debug) {
 	    strnul s(sp,sl) ;
-	    debprintf(__func__,"ent s=>%s<\n",ccp(s)) ;
+	    DEBPRINTF("ent s=>%s<\n",ccp(s)) ;
 	}
 	for (int cl ; (rs >= 0) && ((cl = so(&cp)) > 0) ; ) {
 	    int	dt = -1 ;
 	    if (f_debug && debon) {
 		strnul sm(cp,cl) ;
-	        debprintf(__func__,"cl=%d mode=>%s<\n",cl,ccp(sm)) ;
+	        DEBPRINTF("cl=%d mode=>%s<\n",cl,ccp(sm)) ;
 	    }
 	    switch (cint ch = mkchar(*cp) ; ch) {
 	    case 'f':
@@ -1187,7 +1188,7 @@ int proginfo::modeadd(cchar *sp,int sl) noex {
 	    }
 	} /* end for */
 	if_constexpr (f_debug) {
-	    debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
+	    DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
 	}
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::modeadd) */
@@ -1250,17 +1251,17 @@ int proginfo::typeout(cchar *cp,int cl)  noex {
     	int		rs = SR_INVALID ;
 	if_constexpr (f_debug) {
 	    strnul s(cp,cl) ;
-	    debprintf(__func__,"ot=%s\n",ccp(s)) ;
+	    DEBPRINTF("ot=%s\n",ccp(s)) ;
 	}
 	if (int mi ; (mi = matostr(typeouts,1,cp,cl)) >= 0) {
 	    if_constexpr (f_debug) {
-	        debprintf(__func__,"mi=%d\n",mi) ;
+	        DEBPRINTF(__func__,"mi=%d\n",mi) ;
 	    }
 	    rs = SR_OK ;
 	    fl.ot = uchar(mi & 0x03) ;	/* avoiding GCC complaint */
 	} else {
 	    if_constexpr (f_debug) {
-	        debprintf(__func__,"err mi=%d\n",mi) ;
+	        DEBPRINTF(__func__,"err mi=%d\n",mi) ;
 	    }
 	} /* end if (matostr) */
 	return rs ;
