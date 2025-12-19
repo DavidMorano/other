@@ -59,18 +59,18 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-DEPS_MAIN += files_utils.o modproc.o
+DEPS_MAIN += files_utils.o
 DEPS_MAIN += argmgr.o filerec.o 
 DEPS_MAIN += ureserve.o fonce.o
 DEPS_MAIN += strfilter.o 
-DEPS_MAIN += langx.o
+DEPS_MAIN += langx.o modproc.o
 
 OBJ0= files_main.o files_utils.o
 OBJ1= argmgr.o filerec.o
 OBJ2= modproc.o
-OBJ3= 
+OBJ3= shortq.o
 
-OBJA= obj0.o obj1.o obj2.o
+OBJA= obj0.o obj1.o obj2.o obj3.o
 
 OBJ_MAIN= obja.o
 
@@ -208,5 +208,7 @@ modproc.dir:
 files_utils.o:		files_utils.dir
 files_utils.dir:
 	makesubdir $@
+
+shortq.o:		shortq.cc	shortq.h		$(INCS)
 
 
