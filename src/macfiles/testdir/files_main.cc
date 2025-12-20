@@ -121,7 +121,7 @@ using std::istream ;			/* type */
 using libu::snprintf ;			/* subroutine */
 using libu::snvprintf ;			/* subroutine */
 using libu::umem ;			/* variable */
-using std::cin;				/* variable */
+using std::cin ;			/* variable */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
 using std::nothrow ;			/* constant */
@@ -393,6 +393,7 @@ int main(int argc,mainv argv,mainv envv) {
 	    cerr << "files" << ": error (" << rs << ")" << eol ;
 	    ex = mapex(mapexs,rs) ;
 	}
+	DEBPRINTF("ret ex=%d\n",ex) ;
 	return ex ;
 }
 /* end subroutine (main) */
@@ -1022,7 +1023,7 @@ int proginfo::procfile_list(custat *,cchar *sp,int sl) noex {
 	        cout << ccp(fn) << eol ;
 	    }
 	    c += 1 ;
-	}
+	} /* end if (non-null) */
 	return (rs >= 0) ? c : rs ;
 }
 /* end method (proginfo::procfile_list) */
