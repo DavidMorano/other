@@ -21,10 +21,10 @@
 	strmgr
 
 	Description:
-	We perform some simple string composition management.  The
-	caller supplies a destination (result) string-buffer (with
-	a length), and then using "builder" methods composes what
-	she wants in the result.
+	This object performs some simple string composition management.
+	The caller supplies a destination (result) string-buffer
+	(with a length), and then using "builder" methods composes
+	what the caller wants in the result (a composed string).
 
 *******************************************************************************/
 
