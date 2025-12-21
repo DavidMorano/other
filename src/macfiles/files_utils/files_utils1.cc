@@ -39,11 +39,11 @@ module ;
 #include	<ischarx.h>		/* |isnumlatin(3uc)| */
 #include	<localmisc.h>
 
-#pragma		GCC dependency	"mod/libutil.ccm"
+#pragma		GCC dependency		"mod/libutil.ccm"
 
 module files_utils ;
 
-import libutil ;			/* |lenstr(3u)| */
+import libutil ;			/* |getlenstr(3u)| */
 
 /* local defines */
 
@@ -94,12 +94,11 @@ constexpr cpcchar	hits[] = {
 
 /* exported subroutines */
 
-int optval(cchar *sp,int sl) noex {
+int optval(cchar *sp,int µsl) noex {
 	int		rs = SR_FAULT ;
 	int		v = 0 ;
-	if (sp) {
+	if (int sl ; (sl = getlenstr(sp,µsl)) >= 0) {
 	    rs = SR_OK ;
-	    if (sl < 0) sl = lenstr(sp) ;
 	    if (sl > 0) {
 		if (int hi ; (hi = matocasestr(hits,1,sp,sl)) >= 0) {
 	            v = (hi & 1) ;
@@ -110,8 +109,8 @@ int optval(cchar *sp,int sl) noex {
 	                rs = cfdec(sp,sl,&v) ; /* <- swapped out */
 		    }
 	        } /* end if */
-	    } /* end if */
-	} /* end if (non-null) */
+	    } /* end if (non-zero positive) */
+	} /* end if (getlenstr) */
 	return (rs >= 0) ? v : rs ;
 }
 /* end subroutine (optval) */
