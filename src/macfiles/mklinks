@@ -2,7 +2,7 @@
 # MKLINKS
 
 LOCPROG=files.x
-CMDS+=" files filelines "
+CMDS+=" files filelines depmods "
 
 TDIRS=" /usr/extra /usr/local "
 
