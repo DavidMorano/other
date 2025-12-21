@@ -37,8 +37,8 @@ module ;
 #include	<mkchar.h>
 #include	<localmisc.h>
 
-#pragma		GCC dependency	"mod/libutil.ccm"
-#pragma		GCC dependency	"mod/debug.ccm"
+#pragma		GCC dependency		"mod/libutil.ccm"
+#pragma		GCC dependency		"mod/debug.ccm"
 
 module files_utils ;
 
@@ -75,13 +75,7 @@ import debug ;				/* |debprintf(3u)| */
 
 /* exported subroutines */
 
-
-/* exported variables */
-
-
-/* exported subroutines */
-
-static int	liner(int,size_t) noex ;
+local int	liner(int,size_t) noex ;
 
 
 /* local variables */
@@ -110,7 +104,7 @@ int filelines(cchar *fn) noex {
 			    if (fsize > 0) {
 			        rs = liner(fd,fsize) ;
 			        lines = rs ;
-			    }
+			    } /* end if (non-zero positive) */
 			} /* end if (regular file) */
 		    } /* end if (stat) */
 		    rs1 = u_close(fd) ;
@@ -125,7 +119,7 @@ int filelines(cchar *fn) noex {
 
 /* local subroutines */
 
-static int liner(int fd,csize ms) noex {
+local int liner(int fd,csize ms) noex {
 	cint		mp = PROT_READ ;
 	cint		mf = MAP_SHARED ;
 	int		rs ;
