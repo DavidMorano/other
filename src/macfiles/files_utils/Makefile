@@ -42,6 +42,8 @@ LIBS +=
 
 OBJ0= files_utils0.o files_utils1.o
 OBJ1= files_utils2.o
+OBJ2=
+OBJ3=
 
 OBJA= obj0.o obj1.o
 
