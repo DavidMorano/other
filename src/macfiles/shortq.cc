@@ -151,7 +151,7 @@ namespace {
 	    return rs ;
 	} ; /* end method (get) */
 	int size() const noex {
-	    const int	cnt = intsat(b.max_size()) ;
+	    cint	cnt = intsat(b.max_size()) ;
 	    return cnt ;
 	} ; /* end method (size) */
 	int count() const noex {
@@ -175,8 +175,7 @@ local inline int shortq_magic(shortq *op,Args ... args) noex {
 	    rs = (op->magic == SHORTQ_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
-}
-/* end subroutine (shortq_magic) */
+} /* end subroutine (shortq_magic) */
 
 
 /* local variables */
@@ -205,8 +204,7 @@ int shortq_start(shortq *op,int a) noex {
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end subroutine (shortq_start) */
+} /* end subroutine (shortq_start) */
 
 int shortq_finish(shortq *op) noex {
     	cnullptr	np{} ;
@@ -221,8 +219,7 @@ int shortq_finish(shortq *op) noex {
 	    op->magic = 0 ;
 	} /* end if (magic) */
 	return rs ;
-}
-/* end subroutine (shortq_finish) */
+} /* end subroutine (shortq_finish) */
 
 int shortq_ins(shortq *op,short v) noex {
     	cnullptr	np{} ;
