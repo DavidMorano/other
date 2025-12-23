@@ -27,6 +27,7 @@
 #include	<matstr.h>		/* used below in this header */
 #include	<stdfnames.h>		/* used below in this header */
 
+#include	<hasclass.h>
 #include	<hasuniq.h>
 #include	<haslead.h>
 #include	<hasmodname.h>
@@ -35,14 +36,7 @@
 
 EXTERNC_begin
 
-extern bool haswhite(cchar *,int) noex ;
-extern bool haslc(cchar *,int) noex ;
-extern bool hasuc(cchar *,int) noex ;
-extern bool hasdig(cchar *,int) noex ;
 extern bool hasempty(cchar *,int) noex ;
-extern bool hasalpha(cchar *,int) noex ;
-extern bool hasalnum(cchar *,int) noex ;
-extern bool hasnum(cchar *,int) noex ;
 
 extern bool hasprintlatin(cchar *,int) noex ;
 extern bool hasprintbad(cchar *,int) noex ;
@@ -55,7 +49,6 @@ extern bool hasmacro(cchar *,int) noex ;
 extern bool hasnotdots(cchar *,int) noex ;
 extern bool hasnotempty(cchar *,int) noex ;
 extern bool haseoh(cchar *,int) noex ;
-extern bool hasleadcolon(cchar *,int) noex ;
 extern bool hasonlyminus(cchar *,int) noex ;
 extern bool hasonlyplusminus(cchar *,int) noex ;
 extern bool hasmealone(cchar *,int) noex ;
