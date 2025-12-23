@@ -1,4 +1,4 @@
-/* filerec HEADER */
+/* filerec HEADER (File-Record) */
 /* charset=ISO8859-1 */
 /* lang=C20 */
 
