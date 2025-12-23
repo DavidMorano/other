@@ -37,7 +37,6 @@
 #include	<sinon.h>
 #include	<sichar.h>
 #include	<sispan.h>
-#include	<sispanwht.h>
 #include	<sileadchr.h>
 #include	<sileader.h>
 #include	<sileadzero.h>
