@@ -89,17 +89,24 @@ using std::bitset ;			/* type */
 namespace {
     constexpr int   chtablen = (UCHAR_MAX + 1) ;
     struct charinfo {
+	bitset<chtablen>	isalpha ;
+	bitset<chtablen>	isalnum ;
 	bitset<chtablen>	iswhite ;
 	bitset<chtablen>	islc ;
 	bitset<chtablen>	isuc ;
 	bitset<chtablen>	isfc ;
 	uchar			toval[chtablen] ;
+	constexpr void mkalpha(bitset<chtablen> &s) noex ;
+	constexpr void mkisalpha() noex ;
+	constexpr void mkisalnum() noex ;
 	constexpr void mkiswhite() noex ;
 	constexpr void mkislc() noex ;
 	constexpr void mkisuc() noex ;
 	constexpr void mkisfc() noex ;
 	constexpr void mktoval() noex ;
 	constexpr charinfo() noex {
+	    mkisalpha() ;
+	    mkisalnum() ;
 	    mkiswhite() ;
 	    mkislc() ;
 	    mkisuc() ;
@@ -109,14 +116,36 @@ namespace {
     } ; /* end struct (charinfo) */
 } /* end namespace */
 
+constexpr void charinfo::mkalpha(bitset<chtablen> &s) noex {
+	for (int ch = 'A' ; ch <= 'Z' ; ch += 1) {
+	    s.set(ch,true) ;
+	    s.set((ch + 0x20),true) ;
+	}
+	for (int ch = 0xC0 ; ch < chtablen ; ch += 1) {
+	    s.set(ch,true) ;
+	}
+	s.set(UC('×'),false) ;
+	s.set(UC('÷'),false) ;
+} /* end method (charinfo::mkalpha) */
+
+constexpr void charinfo::mkisalpha() noex {
+    	mkalpha(isalpha) ;
+} /* end method (charinfo::mkisalpha) */
+
+constexpr void charinfo::mkisalnum() noex {
+    	mkalpha(isalnum) ;
+	for (int ch = '0' ; ch <= '9' ; ch += 1) {
+	    isalnum.set(ch,true) ;
+	}
+} /* end method (charinfo::mkisalnum) */
+
 constexpr void charinfo::mkiswhite() noex {
 	constexpr char	w[] = " \t\f\v\r" ;
 	for (int i = 0 ; w[i] ; i += 1) {
 	    cint	ch = w[i] ;
 	    iswhite.set(ch,true) ;
 	}
-}
-/* end method (charinfo::mkiswhite) */
+} /* end method (charinfo::mkiswhite) */
 
 constexpr void charinfo::mkislc() noex {
 	for (int ch = 'a' ; ch <= 'z' ; ch += 1) {
@@ -127,8 +156,7 @@ constexpr void charinfo::mkislc() noex {
 	}
 	islc.set(UC('÷'),false) ;
 	islc.set(UC('ß'),true) ; 	/* <- this is 'ss' in German */
-}
-/* end method (charinfo::mkislc) */
+} /* end method (charinfo::mkislc) */
 
 constexpr void charinfo::mkisuc() noex {
 	for (int ch = 'A' ; ch <= 'Z' ; ch += 1) {
@@ -138,8 +166,7 @@ constexpr void charinfo::mkisuc() noex {
 	    isuc.set(ch,true) ;
 	}
 	isuc.set(UC('×'),false) ;
-}
-/* end method (charinfo::mkisuc) */
+} /* end method (charinfo::mkisuc) */
 
 constexpr void charinfo::mkisfc() noex {
 	for (int ch = 'A' ; ch <= 'Z' ; ch += 1) {
@@ -147,8 +174,7 @@ constexpr void charinfo::mkisfc() noex {
 	}
 	isfc.set(UC('Ð'),false) ;
 	isfc.set(UC('Þ'),false) ; /* 0xDE - 'PB' in German */
-}
-/* end method (charinfo::mkisfc) */
+} /* end method (charinfo::mkisfc) */
 
 constexpr void charinfo::mktoval() noex {
         for (int ch = 0 ; ch < chtablen ; ch += 1) {
@@ -166,8 +192,7 @@ constexpr void charinfo::mktoval() noex {
                 toval[ch] = UCHAR_MAX ;
             }
         } /* end for */
-}
-/* end method (charinfo::mktoval) */
+} /* end method (charinfo::mktoval) */
 
 
 /* local variables */
@@ -326,6 +351,14 @@ const short	chardata_dictorder[] = {
 
 
 /* exported subroutines */
+
+bool char_isalpha(int ch) noex {
+	return char_data.isalpha[ch & UCHAR_MAX] ;
+}
+
+bool char_isalnum(int ch) noex {
+	return char_data.isalnum[ch & UCHAR_MAX] ;
+}
 
 bool char_iswhite(int ch) noex {
 	return char_data.iswhite[ch & UCHAR_MAX] ;
