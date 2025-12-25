@@ -28,26 +28,24 @@
 #include	<stdfnames.h>		/* used below in this header */
 
 #include	<hasclass.h>
+#include	<hasall.h>
+#include	<hasnot.h>
+#include	<hasprint.h>
 #include	<hasuniq.h>
 #include	<haslead.h>
 #include	<hasmodname.h>
 #include	<hasvarprefix.h>
-#include	<hasall.h>
 
 EXTERNC_begin
 
 extern bool hasempty(cchar *,int) noex ;
 
-extern bool hasprintlatin(cchar *,int) noex ;
-extern bool hasprintbad(cchar *,int) noex ;
 extern bool hasdoublewhite(cchar *,int) noex ;
 extern bool hasnonwhite(cchar *,int) noex ;
 extern bool hasdots(cchar *,int) noex ;
 extern bool hasvarpathprefix(cchar *,int) noex ;
 extern bool hascdpath(cchar *,int) noex ;
 extern bool hasmacro(cchar *,int) noex ;
-extern bool hasnotdots(cchar *,int) noex ;
-extern bool hasnotempty(cchar *,int) noex ;
 extern bool haseoh(cchar *,int) noex ;
 extern bool hasonlyminus(cchar *,int) noex ;
 extern bool hasonlyplusminus(cchar *,int) noex ;
@@ -64,9 +62,6 @@ static inline bool hasfnamespecial(cchar *fp,int fl) noex {
 }
 static inline bool hasValidMagic(cchar *sp,int sl,cchar *ms) noex  {
 	return hasvalidmagic(sp,sl,ms) ;
-}
-static inline bool hasNotDots(cchar *sp,int sl) noex {
-	return hasnotdots(sp,sl) ;
 }
 static inline bool hasEOH(cchar *sp,int sl) noex {
 	return haseoh(sp,sl) ;
