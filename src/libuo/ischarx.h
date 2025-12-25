@@ -50,6 +50,9 @@ EXTERNC_end
 
 #ifdef	__cplusplus
 
+constexpr inline bool	isoctallatin(int ch) noex {
+	return (ch >= '0') && (ch <= '7') ;
+}
 constexpr inline bool	isdiglatin(int ch) noex {
 	return (ch >= '0') && (ch <= '9') ;
 }
@@ -105,6 +108,9 @@ constexpr inline bool	iswht(int ch) noex {
 
 #else /* __cplusplus */
 
+static inline bool	isoctallatin(int ch) noex {
+	return (ch >= '0') && (ch <= '7') ;
+}
 static inline bool	isdiglatin(int ch) noex {
 	return (ch >= '0') && (ch <= '9') ;
 }
