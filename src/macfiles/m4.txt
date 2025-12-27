@@ -1,1 +1,0 @@
-.SUFFIXES:		.hh .ii .iim .ccm
