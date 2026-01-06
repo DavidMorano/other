@@ -1,0 +1,73 @@
+ARGMGR
+
+Example use:
+
+
+	argmgr	am[argc,argv) ;
+	int	rs ;
+	int	rs1 ;
+	if ((ra = am.start) >= 0) {
+	    while ((rs = am.arg) > 0) {
+		cchar	*sp ;
+		if (int sl ; (rs = am.argkey(&sp)) > 1) {
+		    if (int wi ; (wi = matostr(argopts,2,sp,rs)) >= 0) {
+			rs = pi.argkeystr(wi) ;
+		    } else {
+			rs = pi.argkeychr(sp,rs) ;
+		    } /* end if (matostr) */
+		} else if (rs == 1) {
+		    rs = pi.argkeychr(sp,rs) ;
+		} else if ((rs >= 0) && ((rs = am.arglong(&sp)) > 0)) {
+		    rs = pi.arglong(sp,rs) ;
+		} else if ((rs >= 0) && ((rs = am.keyend) > 0)) {
+		    rs = pi.argkeychr(sp,rs) ;
+		} else if (rs >= 0) {
+		    rs = am.positional ;
+		}
+		if (rs < 0) break ;
+	    } /* end while */
+	    if (rs >= 0) {
+	        for (cauto &a : am) {
+
+	        } /* end for */
+	    } /* end if (ok) */
+	    rs1 = am.finish ;
+	    if (rs >= 0) rs = rs1 ;
+	} /* end if (argmgr) */
+
+
+int proginfo::argkeystr(int wi) noex {
+    	int	rs = SR_OK ;
+			switch (wi) {
+			case argopt_a:
+			    fl.a = true ;
+			    break ;
+			} /* end switch */
+	return rs ;
+} /* end method (proginfo::argkeustr) */
+
+int progifo::arglong(cchar *sp,int sl) noex {
+	int		rs = SR_OK ;
+	cint		sl = rs ;
+		    if (int wi ; (wi = matostr(arglongs,2,sp,rs)) >= 0) {
+			rs = 0 ;
+		    } else {
+			rs = SR_INVALID ;
+		    } /* end if (matostr) */
+	return rs ;
+} /* end method (proginfo::arglong) */
+
+int proginfo::argkeychr(cchar *sp,int sl) noex {
+    	int		rs = SR_OK ;
+			while (sl-- && *sp) {
+			    cint key = mkchar(*sp++) ;
+			    switch (key) {
+			    case 'a':
+				if (am.fl.plus) fl.a = true ;
+				break ;
+			    } /* end switch */
+			} /* end while */
+	return rs ;
+} /* end method (proginfo::argkeychr) */
+
+
