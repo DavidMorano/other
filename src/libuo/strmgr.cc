@@ -30,14 +30,12 @@
 
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<usysbase.h>
 #include	<ulogerror.h>
 #include	<localmisc.h>
 
 #include	"strmgr.h"
+
 
 /* local defines */
 
@@ -103,6 +101,11 @@ int strmgr_rem(strmgr *op) noex {
 	return strmgr_avail(op) ;
 }
 /* end subroutine (strmgr_rem) */
+
+int strmgr_lenrem(strmgr *op) noex {
+	return strmgr_avail(op) ;
+}
+/* end subroutine (strmgr_lenrem) */
 
 int strmgr_str(strmgr *op,cchar *sp,int sl) noex {
 	int		rs = SR_FAULT ;
