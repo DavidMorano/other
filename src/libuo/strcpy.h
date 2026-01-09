@@ -28,6 +28,6 @@
 #include	<strcpyx.h>
 
 
-#endif /* STRCPY_INCLUDE	*/
+#endif /* STRCPY_INCLUDE */
 
 
