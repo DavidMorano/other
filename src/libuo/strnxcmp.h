@@ -22,9 +22,7 @@
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<string.h>		/* |strncmp(3c)| for inline below */
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
+#include	<usysbase.h>
 
 
 EXTERNC_begin
