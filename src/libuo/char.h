@@ -113,17 +113,17 @@ EXTERNC_begin
 
 extern bool char_isalpha(int) noex ;
 extern bool char_isalnum(int) noex ;
-static inline bool char_isdigit(int ch) noex {
+local inline bool char_isdigit(int ch) noex {
 	return ((ch >= '0') && (ch <= '9')) ;
 }
-static inline bool char_isdigex(int ch) noex {
+local inline bool char_isdigex(int ch) noex {
     	bool f = false ;
 	f = f || ((ch >= '0') && (ch <= '9')) ;
 	f = f || ((ch >= 'A') && (ch <= 'Z')) ;
 	f = f || ((ch >= 'a') && (ch <= 'z')) ;
 	return f ;
 }
-static inline bool char_isoctal(int ch) noex {
+local inline bool char_isoctal(int ch) noex {
 	return ((ch >= '0') && (ch <= '7')) ;
 }
 extern bool char_iswhite(int) noex ;
@@ -131,41 +131,41 @@ extern bool char_islc(int) noex ;
 extern bool char_isuc(int) noex ;
 extern bool char_isfc(int) noex ;
 
-static inline bool char_isdig(int ch) noex {
+local inline bool char_isdig(int ch) noex {
 	return ((ch >= '0') && (ch <= '9')) ;
 }
-static inline bool char_isoct(int ch) noex {
+local inline bool char_isoct(int ch) noex {
 	return ((ch >= '0') && (ch <= '7')) ;
 }
-static inline bool char_isdec(int ch) noex {
+local inline bool char_isdec(int ch) noex {
 	return ((ch >= '0') && (ch <= '9')) ;
 }
-static inline bool char_ishex(int ch) noex {
+local inline bool char_ishex(int ch) noex {
     	bool f = false ;
 	f = f || ((ch >= '0') && (ch <= '9')) ;
 	f = f || ((ch >= 'A') && (ch <= 'Z')) ;
 	f = f || ((ch >= 'a') && (ch <= 'z')) ;
 	return f ;
 }
-static inline bool char_iswht(int ch) noex {
+local inline bool char_iswht(int ch) noex {
     	return char_iswhite(ch) ;
 }
-static inline bool char_isspacetab(int ch) noex {
+local inline bool char_isspacetab(int ch) noex {
 	return CHAR_ISSPACETAB(ch) ;
 }
-static inline short char_dictorder(int ch) noex {
+local inline short char_dictorder(int ch) noex {
 	return chardata_dictorder[ch & UCHAR_MAX] ;
 }
-static inline uchar char_tobc(int ch) noex {
+local inline uchar char_tobc(int ch) noex {
 	return uchar(ch & UCHAR_MAX) ;
 }
-static inline uchar char_tolc(int ch) noex {
+local inline uchar char_tolc(int ch) noex {
 	return chardata_tolc[ch & UCHAR_MAX] ;
 }
-static inline uchar char_touc(int ch) noex {
+local inline uchar char_touc(int ch) noex {
 	return chardata_touc[ch & UCHAR_MAX] ;
 }
-static inline uchar char_tofc(int ch) noex {
+local inline uchar char_tofc(int ch) noex {
 	return chardata_tofc[ch & UCHAR_MAX] ;
 }
 extern int char_toval(int) noex ;
