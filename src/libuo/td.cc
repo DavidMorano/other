@@ -1,4 +1,4 @@
-/* td SUPPORT */
+/* td SUPPORT (Terminal-Display) */
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
@@ -42,7 +42,11 @@
 #include	<cstdlib>		/* |abs(3c)| */
 #include	<cstdarg>
 #include	<algorithm>		/* |min(3c++)| * |max(3c++)| */
-#include	<usystem.h>
+#include	<clanguage.h>
+#include	<usysbase.h>
+#include	<usyscalls.h>
+#include	<uclibmem.h>
+#include	<uctc.h>		/* Terminal-Control */
 #include	<vecitem.h>
 #include	<buffer.h>
 #include	<ascii.h>
