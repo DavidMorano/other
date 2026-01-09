@@ -21,9 +21,7 @@
 
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
+#include	<usysbase.h>
 
 #include	<strnxcmp.h>		/* compare */
 #include	<strnxchr.h>		/* find */
