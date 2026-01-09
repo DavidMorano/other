@@ -86,8 +86,9 @@ using std::bitset ;			/* type */
 
 /* local structures */
 
+constexpr int   chtablen = (UCHAR_MAX + 1) ;
+
 namespace {
-    constexpr int   chtablen = (UCHAR_MAX + 1) ;
     struct charinfo {
 	bitset<chtablen>	isalpha ;
 	bitset<chtablen>	isalnum ;
