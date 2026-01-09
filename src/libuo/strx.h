@@ -24,23 +24,22 @@
 #include	<strsub.h>
 #include	<strxbrk.h>
 #include	<strxcmp.h>
-#include	<strerrabbr.h>
-#include	<strsigabbr.h>
+#include	<strabbrerr.h>
+#include	<strabbrsig.h>
 #include	<straltwchar.h>
 #include	<strcpyxc.h>
 #include	<strlinelen.h>
 #include	<strlocktype.h>
+#include	<strwhite.h>
 
 
 EXTERNC_begin
 
 extern int	strwildsub(cchar *,cchar *) noex ;
 
-static inline char *strochr(cchar *sp,int sch) noex {
+local inline char *strochr(cchar *sp,int sch) noex {
     	return strchr(sp,sch) ;
 }
-
-extern char	*strwhite(cchar *) noex ;
 
 /* deprecated (can give erroneous result) */
 [[deprecated("can give erroneous result")]] 
@@ -54,15 +53,14 @@ extern char *strdirname(char *) noex ;
 
 EXTERNC_end
 
-
-#ifndef	DECLARATION_STRBRK
-#define	DECLARATION_STRBRK
+#ifndef	SUBROUTINE_STRBRK
+#define	SUBROUTINE_STRBRK
 EXTERNC_begin
-static inline char *strbrk(cchar *sp,cchar *ss) noex {
-    	return strpbrk(sp,ss) ;
+local inline char *strbrk(cchar *sp,cchar *sc) noex {
+    	return strpbrk(sp,sc) ;
 }
 EXTERNC_end
-#endif /* DECLARATION_STRBRK */
+#endif /* SUBROUTINE_STRBRK */
 
 
 #endif /* STRX_INCLUDE */
