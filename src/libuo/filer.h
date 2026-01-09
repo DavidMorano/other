@@ -36,10 +36,7 @@
 #include	<unistd.h>		/* system types */
 #include	<stdarg.h>		/* |va_list(3c)| */
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysrets.h>
-#include	<usysdefs.h>
+#include	<usysbase.h>
 
 
 #define	FILER		struct filer_head
