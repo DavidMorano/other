@@ -34,7 +34,7 @@ LINT		?= lint
 
 DEFS=
 
-INCS=
+INCS= libuc.h
 
 MODS += libutil.ccm argmgr.ccm strfilter.ccm sif.ccm 
 MODS += tardir.ccm
@@ -44,7 +44,7 @@ LIBS= -lu -lsecdb
 
 OBJUC00= ucsys.o ucent.o ucget.o ucenum.o
 OBJUC01= ucsig.o ucsysconf.o ucx.o 
-OBJUC02= ucstrto.o
+OBJUC02= ucstrto.o uclibmem.o ucids.o
 OBJUC03= ucsupport.o ucstream.o
 
 OBJUC_A= objuc00.o objuc01.o objuc02.o objuc03.o
@@ -85,20 +85,20 @@ OBJ25_LUO= wsnx.o
 OBJ26_LUO= wsix.o
 OBJ27_LUO= wswcpyx.o
 
-OBJ28_LUO= bufsize.o
+OBJ28_LUO= bufsize.o open.o
 OBJ29_LUO= sysval.o path.o termx.o
 OBJ30_LUO= vstr.o xfile.o
 OBJ31_LUO= randlc.o pow.o calstrs.o
 
 OBJ32_LUO= realname.o nodedb.o
-OBJ33_LUO= ema.o tmpx.o
+OBJ33_LUO= ema.o tmpx.o getxname.o
 OBJ34_LUO= sbuf.o buffer.o
 OBJ35_LUO= storebuf.o storeitem.o
 
 OBJ36_LUO= fmtflag.o fmtstr.o sysdbfiles.o
 OBJ37_LUO= getx.o sysdbfn.o strlibval.o
 OBJ38_LUO= utmpxx.o uinfo.o caches.o
-OBJ39_LUO= fileread.o getxx.o obuf.o
+OBJ39_LUO= filex.o getxx.o obuf.o optval.o
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
@@ -527,15 +527,29 @@ ucstream.o:		ucstream.dir
 ucstream.dir:
 	makesubdir $@
 
-# UNIX C-language system library string-to-integer interface
-# string-to-x
+# UCSTRTOX
 ucstrto.o:		ucstrto.dir
 ucstrto.dir:
+	makesubdir $@
+
+# UCMEM		(libuc)
+ucmem.o:		ucmem.dir
+ucmem.dir:
+	makesubdir $@
+
+# UCIDS		(libuc)
+ucids.o:		ucids.dir
+ucids.dir:
 	makesubdir $@
 
 # UCX		(libuc)
 ucx.o:			ucx.dir
 ucx.dir:
+	makesubdir $@
+
+# MEMTRACK	(libuc)
+memtrack.o:		memtrack.dir
+memtrack.dir:
 	makesubdir $@
 
 # STRNXCMP
@@ -713,6 +727,11 @@ getx.o:			getx.dir
 getx.dir:
 	makesubdir $@
 
+# GETXNAME
+getxname.o:		getxname.dir
+getxname.dir:
+	makesubdir $@
+
 # TMPX
 tmpx.o:			tmpx.dir
 tmpx.dir:
@@ -729,8 +748,8 @@ caches.dir:
 	makesubdir $@
 
 # FILEREAD
-fileread.o:		fileread.dir
-fileread.dir:
+filex.o:		filex.dir
+filex.dir:
 	makesubdir $@
 
 # GETXX
@@ -741,6 +760,11 @@ getxx.dir:
 # OBUF
 obuf.o:			obuf.dir
 obuf.dir:
+	makesubdir $@
+
+# OPEN
+open.o:			open.dir
+open.dir:
 	makesubdir $@
 
 # Objects
