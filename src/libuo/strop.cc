@@ -33,9 +33,7 @@
 #include	<cstdlib>
 #include	<cstring>		/* |strchr(3c)| */
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysrets.h>
+#include	<usysbase.h>
 #include	<ulogerror.h>
 #include	<six.h>			/* |siwhtbrk(3uc)| */
 #include	<baops.h>
