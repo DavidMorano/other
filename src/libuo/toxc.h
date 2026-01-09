@@ -30,29 +30,29 @@
 
 EXTERNC_begin
 
-static inline int tobc(int ch) noex {
+local inline int tobc(int ch) noex {
 	return (ch & UCHAR_MAX) ;
 }
-static inline int tolc(int ch) noex {
+local inline int tolc(int ch) noex {
 	return CHAR_TOLC(ch) ;
 }
-static inline int touc(int ch) noex {
+local inline int touc(int ch) noex {
 	return CHAR_TOUC(ch) ;
 }
-static inline int tofc(int ch) noex {
+local inline int tofc(int ch) noex {
 	return CHAR_TOFC(ch) ;
 }
 
-static inline char chtobc(int ch) noex {
+local inline char chtobc(int ch) noex {
 	return char(ch) ;
 }
-static inline char chtolc(int ch) noex {
+local inline char chtolc(int ch) noex {
 	return char(CHAR_TOLC(ch)) ;
 }
-static inline char chtouc(int ch) noex {
+local inline char chtouc(int ch) noex {
 	return char(CHAR_TOUC(ch)) ;
 }
-static inline char chtofc(int ch) noex {
+local inline char chtofc(int ch) noex {
 	return char(CHAR_TOFC(ch)) ;
 }
 
