@@ -15,16 +15,26 @@
 
 /* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
 
+/*******************************************************************************
+
+	Object:
+	strmgr
+
+	Description:
+	This object performs some simple string composition management.
+	The caller supplies a destination (result) string-buffer
+	(with a length), and then using "builder" methods composes
+	what the caller wants in the result (a composed string).
+
+*******************************************************************************/
+
 #ifndef	STRMGR_INCLUDE
 #define	STRMGR_INCLUDE
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<usysbase.h>
 
 
 #define	STRMGR		struct strmgr_head
@@ -88,12 +98,12 @@ struct strmgr : strmgr_head {
 typedef STRMGR		strmgr ;
 #endif /* __cplusplus */
 
-
 EXTERNC_begin
 
 extern int strmgr_start(strmgr *,char *,int) noex ;
 extern int strmgr_avail(strmgr *) noex ;
 extern int strmgr_rem(strmgr *) noex ;
+extern int strmgr_lenrem(strmgr *) noex ;
 extern int strmgr_str(strmgr *,cchar *,int) noex ;
 extern int strmgr_chr(strmgr *,int) noex ;
 extern int strmgr_get(strmgr *,ccharpp) noex ;
