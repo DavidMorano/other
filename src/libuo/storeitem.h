@@ -23,10 +23,7 @@
 
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<usysbase.h>
 
 
 #define	STOREITEM	struct storeitem_head
@@ -37,14 +34,14 @@ struct storeitem_head {
 	int		dlen ;
 	int		index ;
 	int		f_overflow ;
-} ;
+} ; /* end struct */
 
 #ifdef	__cplusplus
 enum storeitemmems {
 	storeitemmem_getlen,
 	storeitemmem_finish,
 	storeitemmem_overlast
-} ;
+} ; /* end enum */
 struct storeitem ;
 struct storeitem_co {
 	storeitem	*op = nullptr ;
