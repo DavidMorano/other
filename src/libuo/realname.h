@@ -21,10 +21,7 @@
 
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<usysbase.h>
 #include	<dstr.h>
 
 
@@ -43,7 +40,7 @@ struct realname_len {
 	uchar		m3 ;
 	uchar		last ;
 	uchar		store ;
-} ;
+} ; /* end struct (realname_len) */
 
 struct realname_abv {
 	uint		first:1 ;
@@ -51,7 +48,7 @@ struct realname_abv {
 	uint		m2:1 ;
 	uint		m3:1 ;
 	uint		last:1 ;
-} ;
+} ; /* end struct (realname_adv) */
 
 struct realname_head {
     	char		*stbuf ;	/* allocated */
@@ -64,13 +61,13 @@ struct realname_head {
 	REALNAME_ABV	abv ;
 	int		stlen ;
 	uint		magic ;
-} ;
+} ; /* end struct (realname_head) */
 
 #ifdef	__cplusplus
 enum realnamemems {
 	realnamemem_finish,
 	realnamemem_overlast
-} ;
+} ; /* end enum (realnamemems) */
 struct realname ;
 struct realname_esther {
 	realname	*op = nullptr ;
