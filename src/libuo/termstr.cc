@@ -42,7 +42,8 @@
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<cstdarg>
-#include	<uclibsubs.h>
+#include	<clanguage.h>
+#include	<usysbase.h>
 #include	<ascii.h>
 #include	<ansigr.h>
 #include	<buffer.h>
