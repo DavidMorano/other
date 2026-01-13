@@ -31,15 +31,15 @@ TOUCH		?= touch
 LINT		?= lint
 
 
-DEFS+=
+DEFS +=
 
-INCS+=
+INCS +=
 
-MODS+= argmgr.ccm filerec.ccm
-MODS+= files_utils.ccm
-MODS+= modproc.ccm 
+MODS += argmgr.ccm filerec.ccm
+MODS += cmdutils.ccm
+MODS += modproc.ccm 
 
-LIBS+= -luo -lu
+LIBS += -luo -lu
 
 
 INCDIRS=
@@ -59,16 +59,16 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-DEPS_MAIN += files_utils.o
+DEPS_MAIN += cmdutils.o
 DEPS_MAIN += argmgr.o filerec.o 
 DEPS_MAIN += ureserve.o fonce.o
-DEPS_MAIN += strfilter.o 
+DEPS_MAIN += strfilter.o tardir.o
 DEPS_MAIN += langx.o modproc.o
 
-OBJ0= files_main.o files_utils.o
-OBJ1= argmgr.o filerec.o
-OBJ2= modproc.o
-OBJ3= shortq.o
+OBJ0= files_main.o cmdutils.o
+OBJ1= argmgr.o filerec.o tardir.o
+OBJ2= modproc.o langx.o
+OBJ3= shortq.o ischarx.o
 
 OBJA= obj0.o obj1.o obj2.o obj3.o
 
@@ -205,10 +205,11 @@ modproc.dir:
 	makesubdir $@
 
 # FILES_UTILS
-files_utils.o:		files_utils.dir
-files_utils.dir:
+cmdutils.o:		cmdutils.dir
+cmdutils.dir:
 	makesubdir $@
 
 shortq.o:		shortq.cc	shortq.h		$(INCS)
+ischarx.o:		ischarx.cc	ischarx.h
 
 
