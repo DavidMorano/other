@@ -5,7 +5,7 @@
 /* create the '/tmp/users' directory */
 /* version %I% last-modified %G% */
 
-#define	CF_DEBUG	1		/* debugging */
+#define	CF_DEBUG	0		/* debugging */
 
 /* revision history:
 
@@ -66,7 +66,12 @@
 #include	<algorithm>		/* |min(3c++)| + |max(3c++)| */
 #include	<utility>		/* |pair(3c++)| */
 #include	<string>
-#include	<usystem.h>
+#include	<clanguage.h>
+#include	<usysbase.h>
+#include	<usyscalls.h>
+#include	<usupport.h>
+#include	<uclibmem.h>
+#include	<ucsysconf.h>
 #include        <getfdfile.h>           /* |FD_STDERR| */
 #include	<sfx.h>
 #include	<rmx.h>
@@ -80,14 +85,18 @@
 #include	<mapex.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>		/* |MAXPATHLEN| + |USERNAMELEN| */
+#include	<debprintf.h>
 
 #pragma		GCC dependency		"mod/umisc.ccm"
 #pragma		GCC dependency		"mod/usysconf.ccm"
 #pragma		GCC dependency		"mod/ulibvals.ccm"
+#pragma		GCC dependency		"mod/uconstants.ccm"
+#pragma		GCC dependency		"mod/debug.ccm"
 
 import umisc ;				/* |snadd{x}(3u)| */
 import usysconf ;			/* |usysconfstr(3u)| */
 import ulibvals ;
+import uconstants ;			/* |varname(3u)| */
 import debug ;
 
 /* local defines */
@@ -256,7 +265,7 @@ constexpr confstritem	confstritems[] = {
 	{ "public",	_CS_PUBLICDIR },
 	{ "tmp",	_CS_TMPDIR },
 	{ "cache",	_CS_CACHEDIR }
-} ;
+} ; /* end array (confstritems) */
 
 constexpr cpcchar	uservars[] = {
 	varname.username,
@@ -264,18 +273,18 @@ constexpr cpcchar	uservars[] = {
 	varname.user,
 	varname.home,
 	varname.mail
-} ;
+} ; /* end array (uservars) */
 
 constexpr proginfo_m	tmpusers_mems[] = {
 	&proginfo::tmpusers_wait,
 	&proginfo::tmpusers_make,
 	&proginfo::tmpusers_mode
-} ;
+} ; /* end array (tmpusers_mems) */
 
 constexpr proginfo_m	tmpuserdir_mems[] = {
 	&proginfo::tmpuserdir_base,
 	&proginfo::tmpuserdir_already
-} ;
+} ; /* end array (tmpuserdir_mems) */
 
 static cint		maxpathlen	= ulibval.maxpathlen ;
 static cint		usernamelen	= ulibval.usernamelen ;
@@ -303,7 +312,7 @@ int main(int argc,mainv argv,mainv envv) {
 	int		rs ;
 	int		rs1 ;
 	debfd(dfd) ;
-        debprintf(__func__,"ent\n") ;
+        DEBPRINTF("ent\n") ;
 	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) ylikely {
 	    if ((rs = pi.pmbegin) >= 0) ylikely {
                 switch (pi.pm) {
@@ -584,7 +593,7 @@ int proginfo::tmpmounts_oner(const confstritem *itp) noex {
 	int		rs = SR_OK ;
 	int		c = 0 ;
 	if (itp->req >= 0) ylikely {
-	    if ((rs = usysconfstr(itp->req,pbuf,plen)) > 0) ylikely {
+	    if ((rs = u_sysconfstr(itp->req,pbuf,plen)) > 0) ylikely {
 	        if (cint rl = rmtrailchr(pbuf,rs,'/') ; rl > 1) ylikely {
 	            pbuf[rl] = '\0' ;
 	            if ((rs = u_stat(pbuf,&sb)) >= 0) {
@@ -799,8 +808,8 @@ int proginfo::tmpuserdir_link() noex {
 	cint		req = _CS_TMPDIR ;
 	int		rs ;
 	int		fmade = false ; /* return-value */
-	debprintf(__func__,"1\n") ;
-	if ((rs = usysconfstr(req,dbuf,dlen)) > 0) ylikely {
+	debprintf(__func__,"ent\n") ;
+	if ((rs = u_sysconfstr(req,dbuf,dlen)) > 0) ylikely {
 	debprintf(__func__,"2\n") ;
 	    if (cint rl = rmtrailchr(dbuf,rs,'/') ; rl > 1) ylikely {
 	debprintf(__func__,"3\n") ;
@@ -820,8 +829,8 @@ int proginfo::tmpuserdir_link() noex {
 		    rs = SR_OK ;
 	        }
 	    } /* end if (length-check) */
-	} /* end if (usysconfstr) */
-	debprintf(__func__,"ret rs=%d\n",rs) ;
+	} /* end if (u_sysconfstr) */
+	DEBPRINTF("ret rs=%d\n",rs) ;
 	return (rs >= 0) ? fmade : rs ;
 }
 /* end method (proginfo::tmpuserdir_link) */
