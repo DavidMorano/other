@@ -1,8 +1,8 @@
-/* modproc HEADER */
+/* modproc HEADER (Module-Processing) */
 /* charset=ISO8859-1 */
 /* lang=C20 */
 
-/* UNIX® kernel support subroutines */
+/* Module-Processing - C++ module name processing (from C++ source files) */
 /* version %I% last-modified %G% */
 
 
