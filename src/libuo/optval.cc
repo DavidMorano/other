@@ -39,17 +39,20 @@
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
-#include	<cstring>		/* <- for |lenstr(3c)| */
-#include	<usystem.h>
+#include	<clanguage.h>
+#include	<usysbase.h>
+#include	<usupport.h>
 #include	<matostr.h>
 #include	<cfnum.h>
 #include	<mkchar.h>
-#include	<ischarx.h>
+#include	<ischarx.h>		/* |isnumlatin(3uc) */
 #include	<localmisc.h>
 
 #include	"optval.h"
 
-import libutil ;
+#pragma		GCC dependency		"mod/libutil.ccm"
+
+import libutil ;			/* |lenstr(3u)| */
 
 /* local defines */
 
@@ -86,12 +89,11 @@ constexpr cpcchar	hits[] = {
 
 /* exported subroutines */
 
-int optval(cchar *sp,int sl) noex {
+int optval(cchar *sp,int µsl) noex {
 	int		rs = SR_FAULT ;
 	int		v = 0 ;
-	if (sp) {
+	if (int sl ; (sl = getlenstr(sp,µsl)) >= 0) {
 	    rs = SR_OK ;
-	    if (sl < 0) sl = lenstr(sp) ;
 	    if (sl > 0) {
 		if (int hi ; (hi = matocasestr(hits,1,sp,sl)) >= 0) {
 	            v = (hi & 1) ;
@@ -103,7 +105,7 @@ int optval(cchar *sp,int sl) noex {
 		    }
 	        } /* end if */
 	    } /* end if */
-	} /* end if (non-null) */
+	} /* end if (getlenstr) */
 	return (rs >= 0) ? v : rs ;
 }
 /* end subroutine (optval) */
