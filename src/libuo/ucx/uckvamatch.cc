@@ -46,10 +46,11 @@
 #include	<cstdlib>
 #include	<new>			/* |nothrow(3c++)| */
 #include	<secdb.h>		/* <- the money shot */
-#include	<usystem.h>
+#include	<clanguage.h>
+#include	<usysbase.h>
 #include	<localmisc.h>
 
-#include	"uckvamatch.h"
+#include	"uckvamatch.h"		/* |kva_t| */
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 
