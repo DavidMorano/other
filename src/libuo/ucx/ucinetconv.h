@@ -20,8 +20,8 @@
 
 /*******************************************************************************
 
-  	Name:
-	uc_inetconv
+  	Group:
+	ucinetconv
 
 	Description:
 	This file contains some support for the UNIX® UCINETCONV
