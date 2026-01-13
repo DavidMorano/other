@@ -23,10 +23,7 @@
 #include	<stddef.h>
 #include	<stdlib.h>
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<usysbase.h>
 
 
 #define	SHORTQ		struct shortq_head
