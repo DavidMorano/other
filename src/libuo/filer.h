@@ -117,22 +117,22 @@ struct filer : filer_head {
 	} ; /* end ctor */
 	filer(const filer &) = delete ;
 	filer &operator = (const filer &) = delete ;
-	int start(int = 0,off_t = 0z,int = 0,int = 0) noex ;
-	int read(void *,int,int = -1) noex ;
-	int readp(void *,int,off_t,int = -1) noex ;
-	int readln(char *,int,int = -1) noex ;
-	int readlns(char *,int,int = -1,int * = nullptr) noex ;
-	int write(cvoid *,int) noex ;
-	int writeto(cvoid *,int,int) noex ;
-	int println(cchar *,int) noex ;
-	int printf(cchar *,...) noex ;
-	int vprintf(cchar *,va_list) noex ;
-	int seek(off_t,int) noex ;
-	int tell(off_t *) noex ;
-	int writefill(cchar *,int) noex ;
-	int writefd(char *,int,int,int) noex ;
-	int stat(ustat *) noex ;
-	int lockbegin(int,int) noex ;
+	int start	(int = 0,off_t = 0z,int = 0,int = 0) noex ;
+	int read	(void *,int,int = -1) noex ;
+	int readp	(void *,int,off_t,int = -1) noex ;
+	int readln	(char *,int,int = -1) noex ;
+	int readlns	(char *,int,int = -1,int * = nullptr) noex ;
+	int write	(cvoid *,int) noex ;
+	int writeto	(cvoid *,int,int) noex ;
+	int println	(cchar *,int) noex ;
+	int printf	(cchar *,...) noex ;
+	int vprintf	(cchar *,va_list) noex ;
+	int seek	(off_t,int) noex ;
+	int tell	(off_t *) noex ;
+	int writefill	(cchar *,int) noex ;
+	int writefd	(char *,int,int,int) noex ;
+	int stat	(ustat *) noex ;
+	int lockbegin	(int,int) noex ;
 	void dtor() noex ;
 	destruct filer() {
 	    if (magic) dtor() ;
