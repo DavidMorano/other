@@ -41,18 +41,18 @@ LIBS +=
 
 
 OBJ0= uctc.o ucttyname.o 
-OBJ1= uclibmem.o
+OBJ1= ucstrftime.o
 OBJ2= uckvamatch.o
 OBJ3= uctimeconv.o ucinetconv.o
-OBJ4= ucstrftime.o
+OBJ4= 
 OBJ5= 
 OBJ6= 
 OBJ7= 
 
-OBJA= obj0.o obj1.o obj2.o obj3.o obj4.o
-OBJB= 
+OBJA= obj0.o obj1.o obj2.o 
+OBJB= obj3.o
 
-OBJ= obja.o 
+OBJ= obja.o objb.o
 
 
 INCDIRS +=
