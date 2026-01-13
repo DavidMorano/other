@@ -49,7 +49,10 @@
 #include	<string_view>
 #include	<filesystem>
 #include	<iostream>
-#include	<usystem.h>
+#include	<clanguage.h>
+#include	<usysbase.h>
+#include	<usyscalls.h>
+#include	<uclibmem.h>
 #include	<getfdfile.h>		/* |FD_STDERR| */
 #include	<varnames.hh>
 #include	<strn.h>
@@ -81,7 +84,7 @@
 #pragma		GCC dependency	"mod/tardir.ccm"
 #pragma		GCC dependency	"mod/filerec.ccm"
 #pragma		GCC dependency	"mod/modproc.ccm"
-#pragma		GCC dependency	"mod/files_utils.ccm"
+#pragma		GCC dependency	"mod/cmdutils.ccm"
 #pragma		GCC dependency	"mod/debug.ccm"
 
 import libutil ;			/* |lenstr(3u)| + |getlenstr(3u)| */
@@ -96,7 +99,7 @@ import debug ;				/* |debprintf(3uc)| */
 import tardir ;
 import filerec ;
 import modproc ;
-import files_utils ;
+import cmdutils ;
 
 /* local defines */
 
@@ -118,7 +121,6 @@ using fs::recursive_directory_iterator ; /* type */
 using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::istream ;			/* type */
-using libu::snprintf ;			/* subroutine */
 using libu::snvprintf ;			/* subroutine */
 using libu::umem ;			/* variable */
 using std::cin ;			/* variable */
@@ -160,7 +162,7 @@ namespace {
 	uint		exts:1 ;		/* extensions */
 	uint		dirs:1 ;		/* target-directories */
 	uint		afs:1 ;			/* argument-files */
-	uint		afsread:1 ;		/* argument-files-read */
+	uint		afread:1 ;		/* argument-file-read */
 	uint		argfile:1 ;		/* have an arg-file */
 	uint		version:1 ;
 	uint		help:1 ;
@@ -204,7 +206,7 @@ namespace {
 	string		pnstr ;
 	mainv		argv ;
 	mainv		envv ;
-	cchar		*pn = nullptr ;
+	cchar		*pn = nullptr ; /* program-name (derived) */
 	char		*lbuf = nullptr ;
 	FILE		*ofp ;		/* output-file-pointer */
 	int		argc ;
@@ -238,18 +240,22 @@ namespace {
 	int argoptchr(argmgr *,cchar *,int) noex ;
 	int argpm(argmgr *) noex ;
 	int argfile(argmgr *) noex ;
-	int argfileread() noex ;
+	int argfileread(cchar *) noex ;
 	int argsuf(argmgr *) noex ;
 	int argtype(argmgr *) noex ;
 	int argtardir(argmgr *) noex ;
 	int argstat(cchar *,ustat *) noex ;
 	int argprocer(argmgr *) noex ;
+	int argprocer_pos(argmgr *) noex ;
+	int argprocer_af() noex ;
+	int argprocer_in() noex ;
 	int argreadin() noex ;
+	int argprocspec(cchar *,int = -1) noex ;
 	int argprocname(cchar *,int = -1) noex ;
 	int argdebug(argmgr *) noex ;
 	int preamble() noex ;
 	int process_pmbegin() noex ;
-	int process_pmend() noex ;
+	int process_pmend(bool) noex ;
 	int procfile_list(custat *,cchar *,int = -1) noex ;
 	int procfile_lc(custat *,cchar *,int = -1) noex ;
 	int procfile_mods(custat *,cchar *,int = -1) noex ;
@@ -294,7 +300,7 @@ enum progmodes {
 	progmode_filelinker,
 	progmode_depmods,
 	progmode_overlast
-} ;
+} ; /* end enum (progmodes) */
 
 constexpr cpcchar	prognames[] = {
 	[progmode_files]	= "files",
@@ -303,7 +309,7 @@ constexpr cpcchar	prognames[] = {
 	[progmode_filelinker]	= "filelinker",
 	[progmode_depmods]	= "depmods",
 	[progmode_overlast]	= nullptr
-} ;
+} ; /* end array (prognames) */
 
 enum argopts {
     	argopt_debug,
@@ -317,7 +323,7 @@ enum argopts {
     	argopt_ud,
     	argopt_ot,
 	argopt_overlast
-} ;
+} ; /* end enum (argopts) */
 
 constexpr cpcchar	argopts[] = {
     	[argopt_debug]		= "DEBUG",
@@ -331,17 +337,17 @@ constexpr cpcchar	argopts[] = {
     	[argopt_ud]		= "ud",
     	[argopt_ot]		= "ot",
 	[argopt_overlast]	= nullptr
-} ;
+} ; /* end array (argopts) */
 
 enum argoptlongs {
     	argoptlong_version,
 	argoptlong_overlast
-} ;
+} ; /* end enum (argoptlongs) */
 
 constexpr cpcchar	argoptlongs[] = {
     	[argoptlong_version]	= "version",
 	[argoptlong_overlast]	= nullptr
-} ;
+} ; /* end array (argoptlongs) */
 
 constexpr MAPEX		mapexs[] = {
     	{ SR_INVALID,	EX_USAGE },
@@ -377,6 +383,7 @@ constexpr bool		f_filelines	= CF_FILELINES ;
 
 int main(int argc,mainv argv,mainv envv) {
     	constexpr int	dfd = (f_debug) ? FD_STDERR : -1 ;
+	string		spn ;
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;
@@ -385,12 +392,14 @@ int main(int argc,mainv argv,mainv envv) {
 	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
 	    {
                 rs = pi.argproc() ;
+	        spn = (pi.pn) ? pi.pn : "files.x" ;
 	    }
 	    rs1 = pi.finish ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (proginfo) */
 	if ((ex == EX_OK) && (rs < 0)) {
-	    cerr << "files" << ": error (" << rs << ")" << eol ;
+	    cchar *cp = spn.c_str() ;
+            fprintf(stderr,"%s: error (%d)\n",cp,rs) ;
 	    ex = mapex(mapexs,rs) ;
 	}
 	DEBPRINTF("ret ex=%d\n",ex) ;
@@ -412,6 +421,10 @@ int proginfo::istart() noex {
 		    {
 		        rs = SR_OK ;
 		    }
+		    if ((rs < 0) && fl.afs) {
+			fl.afs = false ;
+			afs.finish() ;
+		    } /* end if (error) */
 		} /* end if (afs.start) */
 	        if ((rs < 0) && fl.dirs) {
 		    fl.dirs = false ;
@@ -510,7 +523,7 @@ int proginfo::iflistbegin() noex {
 		if (rs < 0) {
 		    fl.seens = false ;
 		    seen.finish() ;
-		}
+		} /* end if (error) */
 	    }
 	    break ;
 	case progmode_filesyner:
@@ -587,13 +600,14 @@ int proginfo::args(argmgr *amp) noex {
 	    } else if ((rs >= 0) && ((rs = amp->argoptlong(&sp)) > 0)) {
 		rs = argoptlong(amp,sp,rs) ;
 	    }
-	    if ((rs < 0) || amp->argoptdone) break ;
+	    if ((rs < 0) || amp->fargoptdone) break ;
 	} /* end while */
 	return rs ;
 } /* end method (proginfo::args) */
 
 int proginfo::argoptstr(argmgr *amp,int wi) noex {
     	int		rs = SR_OK ;
+	DEBPRINTF("ent\n") ;
 	(void) amp ;
 	switch (wi) {
 	case argopt_version:
@@ -626,8 +640,9 @@ int proginfo::argoptstr(argmgr *amp,int wi) noex {
 	    }
 	    break ;
 	} /* end switch */
+	DEBPRINTF("ret rs=%d\n",rs) ;
 	return rs ;
-} /* end method (proginfo::argkeustr) */
+} /* end method (proginfo::argoptstr) */
 
 int proginfo::argoptlong(argmgr *amp,cchar *sp,int sl) noex {
 	int		rs = SR_OK ;
@@ -639,7 +654,7 @@ int proginfo::argoptlong(argmgr *amp,cchar *sp,int sl) noex {
 		break ;
 	    } /* end switch */
 	} else {
-	    cerr << pn << ": " << "invalid option" << eol ;
+            printf("invalid option\n") ;
 	    rs = SR_INVALID ;
 	} /* end if (matostr) */
 	return rs ;
@@ -663,7 +678,7 @@ int proginfo::argoptchr(argmgr *amp,cchar *sp,int sl) noex {
 		fl.quiet = true ;
 		break ;
 	    case 'V':
-		fl.verbose = true ;
+		fl.version = true ;
 		break ;
 	    case 'd':
 		rs = argtardir(amp) ;
@@ -681,10 +696,14 @@ int proginfo::argoptchr(argmgr *amp,cchar *sp,int sl) noex {
 	    case 'u':
 		fl.uniqfile = true ;
 		break ;
+	    case 'v':
+		fl.verbose = true ;
+		break ;
 	    default:
 		rs = SR_INVALID ;
 		break ;
 	    } /* end switch */
+	    if (rs < 0) break ;
 	} /* end while */
 	return rs ;
 } /* end method (proginfo::argoptchr) */
@@ -692,28 +711,53 @@ int proginfo::argoptchr(argmgr *amp,cchar *sp,int sl) noex {
 int proginfo::argfile(argmgr *amp) noex {
     	int		rs ;
 	int		c = 0 ;
+	DEBPRINTF("ent\n") ;
 	if (cc *sp ; (rs = amp->argval(&sp)) >= 0) {
     	    sif		so(sp,rs,',') ;
 	    cchar	*cp ;
 	    fl.argfile = true ;
 	    for (int cl ; (rs >= 0) && ((cl = so(&cp)) > 0) ; ) {
 		if ((cp[0] == '-') && (strwcmp("-",cp,cl) == 0)) {
-		    fl.afsread = true ;
+		    fl.afread = true ;
 		} else {
+		    DEBPRINTF("afs.add ->\n") ;
 	            rs = afs.add(cp,rs) ;
 		    c += (rs < INT_MAX) ;
+		    DEBPRINTF("afs.add rs=%d\n",rs) ;
 		}
 	    } /* end for */
 	} /* end if (argval) */
+	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::argfile) */
 
-int proginfo::argfileread() noex {
-    	int		rs = SR_OK ;
-	if (fl.afsread) {
-	    rs = SR_OK ;
-	}
-    	return rs ;
+int proginfo::argfileread(cchar *fn) noex {
+	cnullptr	np{} ;
+    	cnothrow	nt{} ;
+    	int		rs ;
+	int		rs1 ;
+	int		c = 0 ;
+	DEBPRINTF("ent fn=%s\n",fn) ;
+	if ((rs = maxpathlen) >= 0) {
+	    cint	plen = rs ;
+	    rs = SR_NOMEM ;
+	    if (char *pbuf ; (pbuf = new(nt) char[plen + 1]) != np) {
+                if (ccfile rf ; (rs = rf.open(fn,"r")) >= 0) {
+                    while ((rs = rf.readln(pbuf,plen)) > 0) {
+		        if (cint pl = rmeol(pbuf,rs) ; pl > 0) {
+                            rs = argprocspec(pbuf,pl) ;
+                            c += rs ;
+		        }
+			if (rs < 0) break ;
+                    } /* end while */
+                    rs1 = rf.close ;
+                    if (rs >= 0) rs = rs1 ;
+                } /* end if (ccfile) */
+	        delete [] pbuf ;
+	    } /* end if (m-a-f) */
+	} /* end if (maxpathlen) */
+	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
+    	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::argfileread) */
 
 int proginfo::argsuf(argmgr *amp) noex {
@@ -759,12 +803,14 @@ int proginfo::argtardir(argmgr *amp) noex {
 } /* end method (proginfo::argtardir) */
 
 int proginfo::argstat(cchar *fn,ustat *sbp) noex {
-    	int		rs ;
-	if (fl.followarg || fl.followall) {
-	    rs = u_stat(fn,sbp) ;
-	} else {
-	    rs = u_lstat(fn,sbp) ;
-	}
+    	int		rs = SR_FAULT ;
+	if (fn && sbp) {
+	    if (fl.followarg || fl.followall) {
+	        rs = u_stat(fn,sbp) ;
+	    } else {
+	        rs = u_lstat(fn,sbp) ;
+	    }
+	} /* end if (non-null) */
 	return rs ;
 } /* end method (proginfo::argstat) */
 
@@ -772,29 +818,29 @@ int proginfo::preamble() noex {
     	int		rs ;
 	int		fcont = false ; /* return-value */
 	if ((rs = getpn(prognames)) >= 0) {
-	            if (fl.version) {
-	                rs = printf("version=%s\n",version) ;
-	            } else {
-		        if (debuglevel) {
-			    if (rs >= 0) {
-				rs = printf("pm=%s\n",pn) ;
-			    }
-			    if (rs >= 0) {
-				rs = printf("debuglevel=%d\n",debuglevel) ;
-			    }
-		        } /* end if (debuglevel) */
-		        fcont = true ;
-	            } /* end if */
-		    if (rs >= 0) {
-		        switch (pm) {
-		        case progmode_depmods:
-			    {
-				cint mi = fl.ot ;
-	    		        rs = printf("typeout=%s\n",typeouts[mi]) ;
-			    }
-			    break ;
-		        } /* end switch */
-		    } /* end if (ok) */
+            if (fl.version) {
+                rs = printf("version=%s\n",version) ;
+            } else {
+                if (debuglevel) {
+                    if (rs >= 0) {
+                        rs = printf("pm=%s\n",pn) ;
+                    }
+                    if (rs >= 0) {
+                        rs = printf("debuglevel=%d\n",debuglevel) ;
+                    }
+                } /* end if (debuglevel) */
+                fcont = true ;
+            } /* end if */
+            if (rs >= 0) {
+                switch (pm) {
+                case progmode_depmods:
+                    if (debuglevel) {
+                        cint mi = fl.ot ;
+                        rs = printf("typeout=%s\n",typeouts[mi]) ;
+                    }
+                    break ;
+                } /* end switch */
+            } /* end if (ok) */
 	} /* end if (proginfo::getpn) */
 	return (rs >= 0) ? fcont : rs ;
 } /* end method (proginfo::preamble) */
@@ -805,31 +851,70 @@ int proginfo::argprocer(argmgr *amp) noex {
 	int		c = 0 ;
 	if ((argc > 1) && (fl.argfile || ((rs = amp->count) > 0))) {
 	    if ((rs = process_pmbegin()) > 0) {
-		if ((rs = amp->count) > 0) {
-	            for (cauto &fn : *amp) {
-	                if (fn && fn[0]) {
-		            if (fn[0] == '-') {
-			        if (fn[1] == '\0') {
-		                    rs = argreadin() ;
-		                    c += rs ;
-			        }
-		            } else {
-	                        rs = argprocname(fn) ;
-		                c += rs ;
-		            }
-	                } /* end if */
-	                if ((rs < 0) || fexit || (fn == nullptr)) break ;
-	            } /* end for */
-		} /* end if (argmgr_count) */
-		if (rs >= 0) {
-		    rs = argfileread() ;
-		}
-	        rs1 = process_pmend() ;
+		if ((rs = argprocer_pos(amp)) >= 0) {
+		    c += rs ;
+		    if ((rs = argprocer_af()) >= 0) {
+		        c += rs ;
+			rs = argprocer_in() ;
+		        c += rs ;
+		    } /* end if (argprocer_af) */
+		} /* end if (argprocer_pos) */
+	        rs1 = process_pmend(rs < 0) ;
 	        if (rs >= 0) rs = rs1 ;
 	    } /* end if (process_pm) */
 	} /* end if (have argument) */
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::argprocer) */
+
+int proginfo::argprocer_pos(argmgr *amp) noex {
+    	int		rs ;
+	int		c = 0 ;
+        if ((rs = amp->count) > 0) {
+            for (cauto &fn : *amp) {
+                if (fn && fn[0]) {
+                    rs = argprocspec(fn) ;
+                    c += rs ;
+                } /* end if */
+                if ((rs < 0) || fexit || (fn == nullptr)) break ;
+            } /* end for */
+        } /* end if (argmgr_count) */
+	return (rs >= 0) ? c : rs ;
+} /* end subroutine (proginfo::argprocer_pos) */
+
+int proginfo::argprocer_af() noex {
+    	int		rs = SR_OK ;
+	int		rs1 ;
+	int		c = 0 ;
+	DEBPRINTF("ent\n") ;
+	if (fl.afs) {
+	    if (filerec_cur cur ; (rs = afs.curbegin(&cur)) >= 0) {
+		const filerec_ent *ep ;
+		while ((rs = afs.curenum(&cur,&ep)) > 0) {
+		    if (ep) {
+		        cchar *fn = ep->fname ;
+		        DEBPRINTF("fn=%s\n",fn) ;
+	                rs = argfileread(fn) ;
+		        c += rs ;
+		    }
+		    if (rs < 0) break ;
+		} /* end while */
+	        rs1 = afs.curend(&cur) ;
+	        if (rs >= 0) rs = rs1 ;
+	    } /* end if (cursor) */
+	} /* end if (fl.afs) */
+	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
+	return (rs >= 0) ? c : rs ;
+} /* end subroutine (proginfo::argprocer_af) */
+
+int proginfo::argprocer_in() noex {
+    	int		rs = SR_OK ;
+	int		c = 0 ;
+	if (fl.afread) {
+	    rs = argreadin() ;
+	    c += rs ;
+	}
+	return (rs >= 0) ? c : rs ;
+} /* end subroutine (proginfo::argprocer_in) */
 
 int proginfo::process_pmbegin() noex {
 	int		rs = SR_OK ;
@@ -853,12 +938,12 @@ int proginfo::process_pmbegin() noex {
 }
 /* end subroutine (proginfo::process_pmbegin) */
 
-int proginfo::process_pmend() noex {
+int proginfo::process_pmend(bool ferr) noex {
 	int		rs = SR_OK ;
 	switch (pm) {
         case progmode_filelines:
 	    if (lbuf) {
-		if (fl.verbose) {
+		if ((! ferr) && fl.verbose) {
 		    cout << lines << eol ;
 		}
 		delete [] lbuf ;
@@ -873,15 +958,16 @@ int proginfo::process_pmend() noex {
 
 int proginfo::argreadin() noex {
 	cnullptr	np{} ;
+	cnothrow	nt{} ;
 	int		rs ;
 	int		c = 0 ;
 	if ((rs = maxpathlen) >= 0) {
 	    cint	plen = rs ;
 	    rs = SR_NOMEM ;
-	    if (char *pbuf ; (pbuf = new(nothrow) char[plen + 1]) != np) {
+	    if (char *pbuf ; (pbuf = new(nt) char[plen + 1]) != np) {
 	        while ((rs = readln(&cin,pbuf,plen)) > 0) {
 		    if (cint pl = rmeol(pbuf,rs) ; pl > 0) {
-		        rs = argprocname(pbuf,pl) ;
+		        rs = argprocspec(pbuf,pl) ;
 			c += rs ;
 		    }
 		    if (rs < 0) break ;
@@ -892,6 +978,20 @@ int proginfo::argreadin() noex {
 	return (rs >= 0) ? c : rs ;
 }
 /* end method (proginfo::argreadin) */
+
+int proginfo::argprocspec(cchar *sp,int sl) noex {
+    	int		rs = SR_OK ;
+	int		c = 0 ;
+        if (sp[0] == '-') {
+            if (sp[1] == '\0') {
+                fl.afread = true ;
+            }
+        } else {
+            rs = argprocname(sp,sl) ;
+            c += rs ;
+        }
+	return (rs >= 0) ? c : rs ;
+} /* end method (proginfo::argprocspec) */
 
 int proginfo::argprocname(cchar *sp,int sl) noex {
 	strnul		s(sp,sl) ;
@@ -915,9 +1015,9 @@ int proginfo::argprocname(cchar *sp,int sl) noex {
 		c = rs ;
 		break ;
 	    } /* end switch */
-	} else if (isNotAccess(rs)) {
-	    rs = SR_OK ;
-	}
+	} else {
+	    printf("not-accessible=%s\n",ccp(s)) ;
+	} /* end if (argstat) */
 	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::argprocname) */
@@ -979,7 +1079,9 @@ int proginfo::procdirself(custat *sbp,cchar *sp,int sl) noex {
 int proginfo::procent(custat *sbp,cchar *sp,int µsl) noex {
     	int		rs = SR_OK ;
 	if (int sl ; (sl = getlenstr(sp,µsl)) > 0) {
-	    rs = procfile(sbp,sp,sl) ;
+	    if ((! S_ISDIR(sbp->st_mode)) || (sisub(sp,sl,".git") < 0)) {
+	        rs = procfile(sbp,sp,sl) ;
+	    }
 	}
 	return rs ;
 } /* end method (proginfo::procent) */
@@ -987,29 +1089,27 @@ int proginfo::procent(custat *sbp,cchar *sp,int µsl) noex {
 int proginfo::procfile(custat *sbp,cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
 	int		c = 0 ;
-	DEBPRINTF("ent pi\n") ;
-	if (sisub(sp,sl,".git") < 0) {
-	    if ((! fl.modes) || (rs = modehave(sbp)) > 0) {
-	        if ((! fl.suffix) || ((rs = sufhave(sp,sl)) > 0)) {
-	            if ((! fl.uniqfile) || ((rs = fileuniq(sbp)) > 0)) {
-	                switch (pm) {
-	                case progmode_files:
-		            rs = procfile_list(sbp,sp,sl) ;
-		            c = rs ;
-	                    break ;
-	                case progmode_filelines:
-		            rs = procfile_lc(sbp,sp,sl) ;
-		            c = rs ;
-	                    break ;
-	                case progmode_depmods:
-		            rs = procfile_mods(sbp,sp,sl) ;
-		            c = rs ;
-	                    break ;
-	                } /* end switch */
-	            } /* end if (fileuniq) */
-	        } /* end if (sufhave) */
-	    } /* end if (modehave) */
-	} /* end if (sisub) */
+	DEBPRINTF("ent\n") ;
+	if ((! fl.modes) || (rs = modehave(sbp)) > 0) {
+	    if ((! fl.suffix) || ((rs = sufhave(sp,sl)) > 0)) {
+	        if ((! fl.uniqfile) || ((rs = fileuniq(sbp)) > 0)) {
+	            switch (pm) {
+	            case progmode_files:
+		        rs = procfile_list(sbp,sp,sl) ;
+		        c = rs ;
+	                break ;
+	            case progmode_filelines:
+		        rs = procfile_lc(sbp,sp,sl) ;
+		        c = rs ;
+	                break ;
+	            case progmode_depmods:
+		        rs = procfile_mods(sbp,sp,sl) ;
+		        c = rs ;
+	                break ;
+	            } /* end switch */
+	        } /* end if (fileuniq) */
+	    } /* end if (sufhave) */
+	} /* end if (modehave) */
 	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::procfile) */
@@ -1018,8 +1118,8 @@ int proginfo::procfile_list(custat *,cchar *sp,int sl) noex {
 	int		rs = SR_OK ;
 	int		c = 0 ;
 	if (sp) {
-	    strnul fn(sp,sl) ;
 	    if (fl.verbose) {
+	        strnul fn(sp,sl) ;
 	        cout << ccp(fn) << eol ;
 	    }
 	    c += 1 ;
@@ -1028,9 +1128,22 @@ int proginfo::procfile_list(custat *,cchar *sp,int sl) noex {
 }
 /* end method (proginfo::procfile_list) */
 
+local int findlines(char *lbuf,int llen,cchar *fn) noex {
+    	int		rs ;
+	int		rs1 ;
+	int		nl = 0 ;
+        if (ccfile rf ; (rs = rf.open(fn,"r")) >= 0) {
+            while ((rs = rf.readln(lbuf,llen)) > 0) {
+                nl += 1 ;
+            } /* end while */
+            rs1 = rf.close ;
+            if (rs >= 0) rs = rs1 ;
+        } /* end if (ccfile) */
+	return (rs >= 0) ? nl : rs ;
+} /* end subroutine (findlines) */
+
 int proginfo::procfile_lc(custat *sbp,cchar *sp,int sl) noex {
 	int		rs = SR_OK ;
-	int		rs1 ;
 	int		c = 0 ;
 	if (sbp && sp && sl) ylikely {
 	    if (S_ISREG(sbp->st_mode)) {
@@ -1040,15 +1153,8 @@ int proginfo::procfile_lc(custat *sbp,cchar *sp,int sl) noex {
 		    rs = filelines(fn) ;
 		    lines += rs ;
 		} else {
-	            if (ccfile rf ; (rs = rf.open(fn,"r",0)) >= 0) {
-		        int	nl = 0 ; /* used-afterwards */
-		        while ((rs = rf.readln(lbuf,llen)) > 0) {
-			    nl += 1 ;
-		        } /* end while */
-		        lines += nl ;
-		        rs1 = rf.close ;
-		        if (rs >= 0) rs = rs1 ;
-		    } /* end if (ccfile) */
+		    rs = findlines(lbuf,llen,fn) ;
+		    lines += rs ;
 		} /* end if_constexpr (f_filelines) */
 	    } /* end if (is-reg) */
 	} /* end if (non-null) */
@@ -1232,11 +1338,16 @@ int proginfo::tardiravail() noex {
 	return rs ;
 } /* end method (proginfo::tardiravail) */
 
-int proginfo::tardiradd(cchar *dp,int dl) noex {
+int proginfo::tardiradd(cchar *sp,int sl) noex {
     	int		rs ;
 	if ((rs = tardiravail()) >= 0) {
-    	    rs = dirs.add(dp,dl) ;
-	}
+	    sif so(sp,sl,',') ;
+	    cchar *cp ;
+	    for (int cl ; (cl = so(&cp)) > 0 ; ) {
+    	        rs = dirs.add(cp,cl) ;
+		if (rs < 0) break ;
+	    } /* end for */
+	} /* end if (tardiravail) */
     	return rs ;
 } /* end method (proginfo::tardiradd) */
 
@@ -1270,20 +1381,19 @@ int proginfo::typeout(cchar *cp,int cl)  noex {
 
 int proginfo::argdebug(argmgr *amp) noex {
     	int		rs = SR_OK ;
-	if (amp->haveargoptval) {
-	    cchar *cp ;
-	    if ((rs = amp->argval(&cp)) > 0) {
+	if (amp->fargoptval) {
+	    if (cchar *cp ; (rs = amp->argval(&cp)) > 0) {
 		if ((rs = optval(cp,rs)) >= 0) {
 		    debuglevel = rs ;
 		}
-	    } /* end if (argoptval) */
-	} /* end if (haveargoptval) */
+	    } /* end if (argmgr::argoptval) */
+	} /* end if (fargoptval) */
 	return rs ;
 } /* end method (proginfo::argdebug) */
 
 int proginfo::printf(cchar *fmt,...) noex {
-    	cnothrow	nt{} ;
 	cnullptr	np{} ;
+    	cnothrow	nt{} ;
     	va_list		ap ;
     	int		rs = SR_FAULT ;
 	int		len = 0 ;
