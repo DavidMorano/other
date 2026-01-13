@@ -56,7 +56,6 @@
 #include	<conmsghdr.h>
 #include	<csem.h>
 #include	<ctx.h>
-#include	<database.h>
 #include	<dater.h>
 #include	<defproc.h>
 #include	<dictdiff.h>
@@ -121,14 +120,12 @@
 #include	<isx.h>
 #include	<keyopt.h>
 #include	<kvsfile.h>
-#include	<libmallocxx.h>
 #include	<limits.h>
 #include	<liner.h>
 #include	<localmisc.h>
 #include	<lockfile.h>
 #include	<lookaside.h>
 #include	<mallocstuff.h>
-#include	<mallocxx.h>
 #include	<mapex.h>
 #include	<mapshmtmp.h>
 #include	<mapstrint.h>
@@ -180,7 +177,7 @@
 #include	<quoteshellarg.h>
 #include	<randlc.h>
 #include	<randomvar.h>
-#include	<rmdirs.h>
+#include	<rmdirfiles.h>
 #include	<rmx.h>
 #include	<rpsem.h>
 #include	<rsfree.h>
@@ -222,7 +219,6 @@
 #include	<strnxcmp.h>
 #include	<strop.h>
 #include	<strpack.h>
-#include	<strsigabbr.h>
 #include	<strstdfname.h>
 #include	<strstore.h>
 #include	<strtab.h>
@@ -274,10 +270,7 @@
 #include	<ucinetconv.h>
 #include	<uckvamatch.h>
 #include	<uclibmem.h>
-#include	<uclibmemalloc.h>
-#include	<uclibsubs.h>
 #include	<uclock.h>
-#include	<ucmallocx.h>
 #include	<ucmem.h>
 #include	<ucmemla.h>
 #include	<ucontext.h>
@@ -367,8 +360,8 @@ extern int	uc_sockpair(int,int,int,int *) noex ;
 /* operate group */
 extern int	uc_mknod(cchar *,mode_t,dev_t) noex ;
 extern int	uc_statvfs(cchar *,USTATVFS *) noex ;
-extern int	uc_stat(cchar *,USTAT *) noex ;
-extern int	uc_lstat(cchar *,USTAT *) noex ;
+extern int	uc_stat(cchar *,ustat *) noex ;
+extern int	uc_lstat(cchar *,ustat *) noex ;
 extern int	uc_readlink(cchar *,char *,int) noex ;
 extern int	uc_chmod(cchar *,mode_t) noex ;
 extern int	uc_chown(cchar *,uid_t,gid_t) noex ;
@@ -382,11 +375,11 @@ extern int	uc_fcntl(int,int,...) noex ;
 extern int	uc_ioctl(int,int,...) noex ;
 extern int	uc_fpassfd(int,int) noex ;
 extern int	uc_ftruncate(int,off_t) noex ;
-extern int	uc_fstat(int,USTAT *) noex ;
+extern int	uc_fstat(int,ustat *) noex ;
 extern int	uc_fchown(int,uid_t,gid_t) noex ;
 extern int	uc_isatty(int) noex ;
 extern int	uc_fsync(int) noex ;
-extern int	uc_fdatasync(int) noex ;
+extern int	uc_fsyncdata(int) noex ;
 extern int	uc_fattach(int,cchar *) noex ;
 extern int	uc_fdetach(cchar *) noex ;
 extern int	uc_minmod(cchar *,mode_t) noex ;
@@ -399,7 +392,7 @@ extern int	uc_seek(int,off_t,int) noex ;
 extern int	uc_tell(int,off_t *) noex ;
 extern int	uc_rewind(int) noex ;
 
-extern int	uc_bind(int,void *,int) noex ;
+extern int	uc_bind(int,cvoid *,int) noex ;
 extern int	uc_connect(int,cvoid *,int) noex ;
 extern int	uc_connecte(int,cvoid *,int,int) noex ;
 extern int	uc_setsockopt(int,int,int,int *,int) noex ;
