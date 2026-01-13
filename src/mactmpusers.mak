@@ -40,7 +40,6 @@ MODS += umisc.ccm usysconf.ccm ulibvals.ccm
 LIBS += -luo -lu
 
 
-DEPS_MAIN += umisc.o usysconf.o ulibvals.o
 
 OBJ= tmpusers_main.o
 
@@ -118,17 +117,14 @@ control:
 
 tmpusers_main.o:	tmpusers_main.cc $(DEPS_MAIN)		$(INCS)
 
-umisc.ccm:
-	makemodcurrent $@
 
-usysconf.ccm:
-	makemodcurrent $@
+umisc.o:		umisc.dir
+umisc.dir:
 
-ulibvals.ccm:
-	makemodcurrent $@
+usysconf.o:		usysconf.dir
+usysconf.dir:
 
-umisc.o:		umisc.ccm
-usysconf.o:		usysconf.ccm
-ulibvals.o:		ulibvals.ccm
+ulibvals.o:		ulibvals.dir
+ulibvals.dir:
 
 
