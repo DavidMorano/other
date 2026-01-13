@@ -41,7 +41,7 @@
 #include <pwd.h>
 #include <stdio.h>
 #include <ctype.h>
-#include <time.h>
+#include <ctime>
 #include <signal.h>
 #include <errno.h>
 #include <limits.h>
@@ -351,7 +351,7 @@ main(int argc, char **argv)
 		}
 	}
 
-	if (when < now)	/* time has already past */
+	if (when < now)	/* ctimeas already past */
 		atabort("too late");
 
 	tflen = strlen(ATDIR) + 1 + strlen(TMPFILE) +
