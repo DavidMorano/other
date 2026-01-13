@@ -20,7 +20,8 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<usystem.h>
+#include	<clanguage.h>
+#include	<usysbase.h>
 #include	<fsdir.h>
 #include	<fifostr.h>
 #include	<hdb.h>
@@ -100,7 +101,7 @@ struct fsdirtree_flags {
 	uint		feof:1 ;
 	uint		dir:1 ;
 	uint		dirids:1 ;	/* dir-id tracking */
-} ;
+} ; /* end struct (fsdirtree_flags) */
 
 struct fsdirtree_head {
 	cchar		**prune ;
@@ -120,7 +121,7 @@ struct fsdirtree_head {
 	int		nlen ;		/* "name" length */
 	int		llen ;		/* "link" length */
 	ushort		selset ;	/* section-set of DTs */
-} ;
+} ; /* end struct (fsdirtree_head) */
 
 typedef FSDIRTREE	fsdirtree ;
 typedef	FSDIRTREE_FL	fsdirtree_fl ;
