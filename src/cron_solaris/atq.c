@@ -30,7 +30,7 @@
 #include <sys/file.h>
 #include <dirent.h>
 #include <sys/stat.h>
-#include <time.h>
+#include <ctime>
 #include <pwd.h>
 #include <ctype.h>
 #include <unistd.h>
