@@ -40,7 +40,6 @@
 #include	<uclibmemalloc.h>
 #include	<uclibsubs.h>
 #include	<uclock.h>
-#include	<ucmallocx.h>
 #include	<ucmem.h>
 #include	<ucmemla.h>
 #include	<ucopen.h>
@@ -119,7 +118,6 @@
 #include	<filegrp.h>
 #include	<filemap.h>
 #include	<filer.h>
-#include	<findbit.h>
 #include	<findfilepath.h>
 #include	<findinline.h>
 #include	<findxfile.h>
@@ -250,7 +248,6 @@
 #include	<strnxcmp.h>
 #include	<strop.h>
 #include	<strpack.h>
-#include	<strsigabbr.h>
 #include	<strstdfname.h>
 #include	<strstore.h>
 #include	<strtab.h>
