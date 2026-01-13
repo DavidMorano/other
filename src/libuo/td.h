@@ -1,4 +1,4 @@
-/* td HEADER */
+/* td HEADER (Terminal-Display) */
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
