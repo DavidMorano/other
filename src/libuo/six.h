@@ -57,9 +57,6 @@ static inline int sibrk(cchar *sp,int sl,cchar *ss) noex {
 static inline int sibreak(cchar *sp,int sl,cchar *ss) noex {
 	return sibrk(sp,sl,ss) ;
 }
-static inline int sisub(cchar *sp,int sl,cchar *ss) noex {
-	return sibasesub(sp,sl,ss) ;
-}
 static inline int siterm(cchar *sp,int sl,cchar *ss) noex {
     	return sioterm(sp,sl,ss) ;
 }
