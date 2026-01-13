@@ -61,7 +61,10 @@
 #include	<cstring>
 #include	<new>			/* |nothrow(3c++)| */
 #include	<bitset>
-#include	<usystem.h>
+#include	<clanguage.h>
+#include	<usysbase.h>
+#include	<usyscalls.h>
+#include	<uclibmem.h>
 #include	<getbufsize.h>
 #include	<fsdir.h>
 #include	<fifostr.h>
@@ -109,6 +112,12 @@ typedef ino_t		ui ;
 
 
 /* external subroutines */
+
+extern "C" {
+    extern int uc_getcwd(char *,int) noex ;
+    extern int uc_readlink(cchar *,char *,int) noex ;
+    extern int uc_stat(cchar *,ustat *) noex ;
+}
 
 
 /* external variables */
