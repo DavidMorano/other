@@ -18,6 +18,9 @@
 
 /*******************************************************************************
 
+  	Group:
+	uctimeconv
+
 	Names:
 	uc_localtime
 	uc_gmtime
@@ -50,7 +53,6 @@
 #include	<ctime>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
-#include	<cstring>		/* |memcpy(3c)| */
 #include	<clanguage.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
@@ -98,7 +100,7 @@ int uc_localtime(custime *tp,TM *tsp) noex {
 	if (tp && tsp) ylikely {
 	    rs = SR_OK ;
 	    errno = 0 ;
-	    if (syshas.localtimer) ylikely{
+	    if (syshas.localtimer) ylikely {
 	        if (TM *rp ; (rp = localtime_r(tp,tsp)) == np) {
 	            rs = (- errno) ;
 		}
