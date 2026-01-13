@@ -58,8 +58,9 @@
 #include	<string>
 #include	<string_view>
 #include	<fstream>
-#include	<usystem.h>
-#include	<snwcpy.h>
+#include	<clanguage.h>
+#include	<usysbase.h>
+#include	<usyscalls.h>		/* |ulogerror(3u)| */
 #include	<strnul.hh>
 #include	<stdfnames.h>
 #include	<matstr.h>
