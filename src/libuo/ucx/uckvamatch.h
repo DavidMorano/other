@@ -46,12 +46,9 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<secdb.h>		/* <- the money shot */
+#include	<secdb.h>		/* <- the money shot |kva_t| */
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<usysbase.h>
 
 
 EXTERNC_begin
