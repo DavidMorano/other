@@ -70,7 +70,7 @@
 #pragma		GCC dependency	"mod/ulibvals.ccm"
 #pragma		GCC dependency	"mod/debug.ccm"
 
-import libutil ;			/* |gelenstr(3u)| */
+import libutil ;			/* |getlenstr(3u)| */
 import fonce ;
 import ulibvals ;
 import debug ;
