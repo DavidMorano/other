@@ -4,7 +4,7 @@
 CMDS=" mktmpusers tmpusers tmpmounts tmpuserdir "
 
 LOCPROG=mactmpusers.x
-TDIRS=" /usr/extra /usr/local /opt/local "
+TDIRS=" /usr/extra /usr/local "
 
 function linkdir {
   typeset TDIR=${1}
