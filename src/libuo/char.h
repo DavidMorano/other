@@ -89,6 +89,7 @@ extern const unsigned char	chardata_tofc[] ;
 #define	CHAR_ISDIGEX(c)		char_isdigex(c)
 #define	CHAR_ISWHITE(c)		char_iswhite(c)
 #define	CHAR_ISOCTAL(c)		char_isoctal(c)
+#define	CHAR_ISBLANK(c)		char_isblank(c)
 #define	CHAR_ISLC(c)		char_islc(c)
 #define	CHAR_ISUC(c)		char_isuc(c)
 #define	CHAR_ISFC(c)		char_isfc(c)
@@ -125,6 +126,9 @@ local inline bool char_isdigex(int ch) noex {
 }
 local inline bool char_isoctal(int ch) noex {
 	return ((ch >= '0') && (ch <= '7')) ;
+}
+local inline bool char_isblank(int ch) noex {
+	return ((ch == ' ') && (ch == '\t')) ;
 }
 extern bool char_iswhite(int) noex ;
 extern bool char_islc(int) noex ;
