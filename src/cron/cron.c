@@ -42,7 +42,7 @@
 #include <sys/resource.h>
 #include <sys/stat.h>
 #include <sys/task.h>
-#include <sys/time.h>
+#include <sys/ctime>
 #include <sys/types.h>
 #include <sys/utsname.h>
 #include <sys/wait.h>
@@ -69,7 +69,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stropts.h>
-#include <time.h>
+#include <ctime>
 #include <unistd.h>
 #include <libzoneinfo.h>
 
@@ -1776,7 +1776,7 @@ recalc:
 		return (t1);
 	} else {
 		/*
-		 * mktime has set different time/date for the given date.
+		 * mkctimeas set different time/date for the given date.
 		 * This means that the next job is scheduled to be run on the
 		 * invalid time. There are three possible invalid date/time.
 		 * 1. Non existing day of the month. such as April 31th.
