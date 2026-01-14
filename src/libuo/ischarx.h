@@ -103,7 +103,7 @@ constexpr inline bool	isspacetab(int ch) noex {
 	return isblanklatin(ch) ;
 }
 constexpr inline bool	iswht(int ch) noex {
-	return iswhite(ch) ;
+	return iswhitelatin(ch) ;
 }
 
 #else /* __cplusplus */
@@ -161,7 +161,7 @@ local inline bool	isspacetab(int ch) noex {
 	return isblanklatin(ch) ;
 }
 local inline bool	iswht(int ch) noex {
-	return iswhite(ch) ;
+	return iswhitelatin(ch) ;
 }
 
 #endif /* __cplusplus */
