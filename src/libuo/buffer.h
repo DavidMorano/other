@@ -38,7 +38,7 @@ struct buffer_head {
 	int		dlen ;		/* current buffer extent */
 	int		startlen ;	/* saved for expansion purposes */
 	int		clen ;		/* current (occupied) length */
-} ;
+} ; /* end struct (buffer_head) */
 
 #ifdef	__cplusplus
 enum buffermems {
@@ -49,7 +49,7 @@ enum buffermems {
 	buffermem_len,
 	buffermem_finish,
 	buffermem_overlast
-} ;
+} ; /* end enum (buffermems) */
 struct buffer ;
 struct buffer_co {
 	buffer		*op = nullptr ;
@@ -78,7 +78,7 @@ struct buffer : buffer_head {
 	    len		(this,buffermem_len) ;
 	    finish	(this,buffermem_finish) ;
 	    dbuf = nullptr ;
-	} ;
+	} ; /* end ctor */
 	buffer(const buffer &) = delete ;
 	buffer &operator = (const buffer &) = delete ;
 	int adv(int = 1) noex ;
@@ -115,12 +115,28 @@ extern int	buffer_adv(buffer *,int) noex ;
 extern int	buffer_strw(buffer *,cchar *,int) noex ;
 extern int	buffer_chr(buffer *,int) noex ;
 extern int	buffer_buf(buffer *,cchar *,int) noex ;
+
+extern int	buffer_bini(buffer *,int) noex ;
+extern int	buffer_binl(buffer *,long) noex ;
+extern int	buffer_binll(buffer *,longlong) noex ;
+extern int	buffer_binui(buffer *,uint) noex ;
+extern int	buffer_binul(buffer *,ulong) noex ;
+extern int	buffer_binull(buffer *,ulonglong) noex ;
+
+extern int	buffer_octi(buffer *,int) noex ;
+extern int	buffer_octl(buffer *,long) noex ;
+extern int	buffer_octll(buffer *,longlong) noex ;
+extern int	buffer_octui(buffer *,uint) noex ;
+extern int	buffer_octul(buffer *,ulong) noex ;
+extern int	buffer_octull(buffer *,ulonglong) noex ;
+
 extern int	buffer_deci(buffer *,int) noex ;
 extern int	buffer_decl(buffer *,long) noex ;
 extern int	buffer_decll(buffer *,longlong) noex ;
 extern int	buffer_decui(buffer *,uint) noex ;
 extern int	buffer_decul(buffer *,ulong) noex ;
 extern int	buffer_decull(buffer *,ulonglong) noex ;
+
 extern int	buffer_hexc(buffer *,int) noex ;
 extern int	buffer_hexi(buffer *,int) noex ;
 extern int	buffer_hexl(buffer *,long) noex ;
@@ -152,6 +168,46 @@ static inline int buffer_str(buffer *op,cchar *sp) noex {
 EXTERNC_end
 
 #ifdef	__cplusplus
+
+inline int buffer_bin(buffer *op,int v) noex {
+	return buffer_bini(op,v) ;
+}
+inline int buffer_bin(buffer *op,long v) noex {
+	return buffer_binl(op,v) ;
+}
+inline int buffer_bin(buffer *op,longlong v) noex {
+	return buffer_binll(op,v) ;
+}
+
+inline int buffer_bin(buffer *op,uint v) noex {
+	return buffer_binui(op,v) ;
+}
+inline int buffer_bin(buffer *op,ulong v) noex {
+	return buffer_binul(op,v) ;
+}
+inline int buffer_bin(buffer *op,ulonglong v) noex {
+	return buffer_binull(op,v) ;
+}
+
+inline int buffer_oct(buffer *op,int v) noex {
+	return buffer_octi(op,v) ;
+}
+inline int buffer_oct(buffer *op,long v) noex {
+	return buffer_octl(op,v) ;
+}
+inline int buffer_oct(buffer *op,longlong v) noex {
+	return buffer_octll(op,v) ;
+}
+
+inline int buffer_oct(buffer *op,uint v) noex {
+	return buffer_octui(op,v) ;
+}
+inline int buffer_oct(buffer *op,ulong v) noex {
+	return buffer_octul(op,v) ;
+}
+inline int buffer_oct(buffer *op,ulonglong v) noex {
+	return buffer_octull(op,v) ;
+}
 
 inline int buffer_dec(buffer *op,int v) noex {
 	return buffer_deci(op,v) ;
