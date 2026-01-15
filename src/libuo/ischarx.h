@@ -42,9 +42,6 @@ extern bool	isprintterm(int) noex ;
 extern bool	isdict(int) noex ;
 extern bool	iscmdstart(int) noex ;
 extern bool	ishdrkey(int) noex ;
-extern bool	ismmclass_7bit(int) noex ;
-extern bool	ismmclass_8bit(int) noex ;
-extern bool	ismmclass_binary(int) noex ;
 
 EXTERNC_end
 
