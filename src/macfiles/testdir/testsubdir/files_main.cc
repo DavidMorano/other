@@ -5,7 +5,7 @@
 /* enumerate filenames */
 /* version %I% last-modified %G% */
 
-#define	CF_DEBUG	0		/* debug */
+#define	CF_DEBUG	1		/* debug */
 #define	CF_FILELINES	1		/* use |filelines()| */
 
 /* revision history:
@@ -40,6 +40,7 @@
 #include	<sys/stat.h>
 #include	<unistd.h>
 #include	<fcntl.h>
+#include	<climits>		/* |INT_MAX| */
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<cstdarg>
@@ -175,6 +176,7 @@ namespace {
 	uint		recs:1 ;
 	uint		mods:1 ;
 	uint		ot:2 ;			/* type-out */
+	uint		dup:1 ;			/* duplicate-file-record */
     } ; /* end struct (proginfo_fl) */
     struct proginfo_co {
 	proginfo	*op = nullptr ;
@@ -208,11 +210,15 @@ namespace {
 	mainv		envv ;
 	cchar		*pn = nullptr ; /* program-name (derived) */
 	char		*lbuf = nullptr ;
+	char		*pbuf = nullptr ;
+	char		*tbuf = nullptr ;
 	FILE		*ofp ;		/* output-file-pointer */
 	int		argc ;
 	int		pm = -1 ;
 	int		debuglevel = 0 ;
 	int		llen = 0 ;
+	int		plen = 0 ;
+	int		tlen = 0 ;
 	int		lines = 0 ;
 	ushort		modes = 0 ;	/* file-modes (matched) */
 	bool		fexit = false ;
@@ -259,6 +265,7 @@ namespace {
 	int procfile_list(custat *,cchar *,int = -1) noex ;
 	int procfile_lc(custat *,cchar *,int = -1) noex ;
 	int procfile_mods(custat *,cchar *,int = -1) noex ;
+	int procfile_tardir(custat *,cchar *,int = -1) noex ;
 	int procdir(custat *,cchar *,int = -1) noex ;
 	int procdirsubs(custat *,cchar *,int = -1) noex ;
 	int procdirself(custat *,cchar *,int = -1) noex ;
@@ -722,9 +729,9 @@ int proginfo::argfile(argmgr *amp) noex {
 		} else {
 		    DEBPRINTF("afs.add ->\n") ;
 	            rs = afs.add(cp,rs) ;
-		    c += (rs < INT_MAX) ;
+		    c += rs ;
 		    DEBPRINTF("afs.add rs=%d\n",rs) ;
-		}
+		} /* end if */
 	    } /* end for */
 	} /* end if (argval) */
 	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
@@ -739,13 +746,13 @@ int proginfo::argfileread(cchar *fn) noex {
 	int		c = 0 ;
 	DEBPRINTF("ent fn=%s\n",fn) ;
 	if ((rs = maxpathlen) >= 0) {
-	    cint	plen = rs ;
+	    cint	rlen = rs ;
 	    rs = SR_NOMEM ;
-	    if (char *pbuf ; (pbuf = new(nt) char[plen + 1]) != np) {
+	    if (char *rbuf ; (rbuf = new(nt) char[rlen + 1]) != np) {
                 if (ccfile rf ; (rs = rf.open(fn,"r")) >= 0) {
-                    while ((rs = rf.readln(pbuf,plen)) > 0) {
-		        if (cint pl = rmeol(pbuf,rs) ; pl > 0) {
-                            rs = argprocspec(pbuf,pl) ;
+                    while ((rs = rf.readln(rbuf,rlen)) > 0) {
+		        if (cint rl = rmeol(rbuf,rs) ; rl > 0) {
+                            rs = argprocspec(rbuf,rl) ;
                             c += rs ;
 		        }
 			if (rs < 0) break ;
@@ -753,7 +760,7 @@ int proginfo::argfileread(cchar *fn) noex {
                     rs1 = rf.close ;
                     if (rs >= 0) rs = rs1 ;
                 } /* end if (ccfile) */
-	        delete [] pbuf ;
+	        delete [] rbuf ;
 	    } /* end if (m-a-f) */
 	} /* end if (maxpathlen) */
 	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
@@ -792,12 +799,7 @@ int proginfo::argtype(argmgr *amp) noex {
 int proginfo::argtardir(argmgr *amp) noex {
     	int		rs ;
 	if (cc *cp ; (rs = amp->argval(&cp)) >= 0) {
-	    switch (pm) {
-	    case progmode_filesyner:
-	    case progmode_filelinker:
-	        rs = tardiradd(cp,rs) ;
-	        break ;
-	    } /* end switch */
+	    rs = tardiradd(cp,rs) ;
 	} /* end if (argval) */
 	return rs ;
 } /* end method (proginfo::argtardir) */
@@ -917,6 +919,8 @@ int proginfo::argprocer_in() noex {
 } /* end subroutine (proginfo::argprocer_in) */
 
 int proginfo::process_pmbegin() noex {
+    	cnullptr	np{} ;
+	cnothrow	nt{} ;
 	int		rs = SR_OK ;
 	int		fcontinue = (! fexit) ;
 	switch (pm) {
@@ -926,12 +930,26 @@ int proginfo::process_pmbegin() noex {
 	    if ((rs = maxlinelen) >= 0) {
 	        llen = rs ;
 		rs = SR_NOMEM ;
-	        if ((lbuf = new(nothrow) char[llen + 1]) != nullptr) {
+	        if ((lbuf = new(nt) char[llen + 1]) != np) {
 		    rs = SR_OK ;
 	        } else {
 		    llen = 0 ;
 		}
 	    } /* end block */
+	    break ;
+        case progmode_filesyner:
+        case progmode_filelinker:
+	    if ((rs = maxpathlen) >= 0) {
+		cint sz = ((rs + 1) * 2) ;
+		plen = rs ;
+	        tlen = rs ;
+	        rs = SR_NOMEM ;
+	        if (char *a ; (a = new(nt) char[sz]) != np) {
+		    pbuf = a + (0 * (plen + 1)) ;
+		    tbuf = a + (1 * (plen + 1)) ;
+		    rs = SR_OK ;
+		} /* end if (new-{x}buf) */
+	    } /* end if (maxpathlen) */
 	    break ;
 	} /* end switch */
 	return (rs >= 0) ? fcontinue : rs ;
@@ -949,7 +967,15 @@ int proginfo::process_pmend(bool ferr) noex {
 		delete [] lbuf ;
 		lbuf = nullptr ;
 	        llen = 0 ;
-	    } /* end if (end lines*/
+	    } /* end if (end lines) */
+	    break ;
+        case progmode_filesyner:
+        case progmode_filelinker:
+	    if (tbuf) {
+		delete [] tbuf ;
+		tbuf = nullptr ;
+		tlen = 0 ;
+	    }
 	    break ;
 	} /* end switch */
 	return rs ;
@@ -962,17 +988,17 @@ int proginfo::argreadin() noex {
 	int		rs ;
 	int		c = 0 ;
 	if ((rs = maxpathlen) >= 0) {
-	    cint	plen = rs ;
+	    cint rlen = rs ;
 	    rs = SR_NOMEM ;
-	    if (char *pbuf ; (pbuf = new(nt) char[plen + 1]) != np) {
-	        while ((rs = readln(&cin,pbuf,plen)) > 0) {
-		    if (cint pl = rmeol(pbuf,rs) ; pl > 0) {
-		        rs = argprocspec(pbuf,pl) ;
+	    if (char *rbuf ; (rbuf = new(nt) char[rlen + 1]) != np) {
+	        while ((rs = readln(&cin,rbuf,rlen)) > 0) {
+		    if (cint rl = rmeol(pbuf,rs) ; rl > 0) {
+		        rs = argprocspec(rbuf,rl) ;
 			c += rs ;
 		    }
 		    if (rs < 0) break ;
 	        } /* end if (reading lines) */
-	        delete [] pbuf ;
+	        delete [] rbuf ;
 	    } /* end if (m-a-f) */
 	} /* end if (maxpathlen) */
 	return (rs >= 0) ? c : rs ;
@@ -1106,6 +1132,11 @@ int proginfo::procfile(custat *sbp,cchar *sp,int sl) noex {
 		        rs = procfile_mods(sbp,sp,sl) ;
 		        c = rs ;
 	                break ;
+	            case progmode_filesyner:
+		    case progmode_filelinker:
+			rs = procfile_tardir(sbp,sp,sl) ;
+			c = rs ;
+			break ;
 	            } /* end switch */
 	        } /* end if (fileuniq) */
 	    } /* end if (sufhave) */
@@ -1187,6 +1218,29 @@ int proginfo::procfile_mods(custat *sbp,cchar *sp,int sl) noex {
 	return (rs >= 0) ? c : rs ;
 }
 /* end method (proginfo::procfile_mods) */
+
+int proginfo::procfile_tardir(custat *sbp,cchar *sp,int sl) noex {
+    	int		rs ;
+	int		rs1 ;
+	int		c = 0 ;
+	DEBPRINTF("ent\n") ;
+	(void) sbp ;
+	(void) sp ;
+	(void) sl ;
+	if (tardir_cur cur ; (rs = dirs.curbegin(&cur)) >= 0) {
+	    for (cchar *dp ; (rs = dirs.curenum(&cur,&dp)) > 0 ; ) {
+		DEBPRINTF("dir=%s\n",dp,rs) ;
+		{
+		    rs = SR_OK ;
+		} /* end block */
+		if (rs < 0) break ;
+	    } /* end for */
+	    rs1 = dirs.curend(&cur) ;
+	    if (rs >= 0) rs = rs1 ;
+	} /* end if (tardir::cursor) */
+	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
+    	return (rs >= 0) ? c : rs ;
+} /* end method (proginfo::procfile_tardir) */
 
 int proginfo::sufadd(cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
@@ -1340,15 +1394,23 @@ int proginfo::tardiravail() noex {
 
 int proginfo::tardiradd(cchar *sp,int sl) noex {
     	int		rs ;
+	int		c = 0 ;
+	DEBPRINTF("ent\n") ;
 	if ((rs = tardiravail()) >= 0) {
 	    sif so(sp,sl,',') ;
 	    cchar *cp ;
 	    for (int cl ; (cl = so(&cp)) > 0 ; ) {
+		{
+		    strnul s(cp,cl) ;
+		    DEBPRINTF("dir=%s\n",ccp(s)) ;
+		}
     	        rs = dirs.add(cp,cl) ;
+		c += rs ;
 		if (rs < 0) break ;
 	    } /* end for */
 	} /* end if (tardiravail) */
-    	return rs ;
+	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
+    	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::tardiradd) */
 
 int proginfo::fileuniq(custat *sbp)  noex {
