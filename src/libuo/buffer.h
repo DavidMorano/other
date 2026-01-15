@@ -81,24 +81,24 @@ struct buffer : buffer_head {
 	} ; /* end ctor */
 	buffer(const buffer &) = delete ;
 	buffer &operator = (const buffer &) = delete ;
-	int adv(int = 1) noex ;
-	int strw(cchar *,int = -1) noex ;
-	int chr(int) noex ;
-	int get(cchar **) noex ;
-	int strcompact(cchar *,int = -1) noex ;
-	int stropaque(cchar *,int = -1) noex ;
-	int strquote(cchar *,int = -1) noex ;
-	int chrs(int,int) noex ;
-	int blanks(int) noex ;
-	int vprintf(cchar *,va_list) noex ;
-	int printf(cchar *,...) noex ;
-	int buf(cchar *,int) noex ;
+	int adv		(int = 1) noex ;
+	int strw	(cchar *,int = -1) noex ;
+	int chr		(int) noex ;
+	int get		(cchar **) noex ;
+	int strcompact	(cchar *,int = -1) noex ;
+	int stropaque	(cchar *,int = -1) noex ;
+	int strquote	(cchar *,int = -1) noex ;
+	int chrs	(int,int) noex ;
+	int blanks	(int) noex ;
+	int vprintf	(cchar *,va_list) noex ;
+	int printf	(cchar *,...) noex ;
+	int buf		(cchar *,int) noex ;
 	template<typename Binary> int bin(Binary) noex ;
 	template<typename Octal> int oct(Octal) noex ;
 	template<typename Decimal> int dec(Decimal) noex ;
 	template<typename Hexadecimal> int hex(Hexadecimal) noex ;
-	operator int () noex ;
 	void dtor() noex ;
+	operator int () noex ;
 	destruct buffer() {
 	    if (dbuf) dtor() ;
 	} ;
@@ -109,54 +109,55 @@ typedef BUFFER		buffer ;
 
 EXTERNC_begin
 
-extern int	buffer_start(buffer *,int) noex ;
-extern int	buffer_reset(buffer *) noex ;
-extern int	buffer_adv(buffer *,int) noex ;
-extern int	buffer_strw(buffer *,cchar *,int) noex ;
-extern int	buffer_chr(buffer *,int) noex ;
-extern int	buffer_buf(buffer *,cchar *,int) noex ;
+extern int	buffer_start	(buffer *,int) noex ;
+extern int	buffer_reset	(buffer *) noex ;
+extern int	buffer_adv	(buffer *,int) noex ;
+extern int	buffer_strw	(buffer *,cchar *,int) noex ;
+extern int	buffer_chr	(buffer *,int) noex ;
+extern int	buffer_buf	(buffer *,cchar *,int) noex ;
 
-extern int	buffer_bini(buffer *,int) noex ;
-extern int	buffer_binl(buffer *,long) noex ;
-extern int	buffer_binll(buffer *,longlong) noex ;
-extern int	buffer_binui(buffer *,uint) noex ;
-extern int	buffer_binul(buffer *,ulong) noex ;
-extern int	buffer_binull(buffer *,ulonglong) noex ;
+extern int	buffer_bini	(buffer *,int) noex ;
+extern int	buffer_binl	(buffer *,long) noex ;
+extern int	buffer_binll	(buffer *,longlong) noex ;
+extern int	buffer_binui	(buffer *,uint) noex ;
+extern int	buffer_binul	(buffer *,ulong) noex ;
+extern int	buffer_binull	(buffer *,ulonglong) noex ;
 
-extern int	buffer_octi(buffer *,int) noex ;
-extern int	buffer_octl(buffer *,long) noex ;
-extern int	buffer_octll(buffer *,longlong) noex ;
-extern int	buffer_octui(buffer *,uint) noex ;
-extern int	buffer_octul(buffer *,ulong) noex ;
-extern int	buffer_octull(buffer *,ulonglong) noex ;
+extern int	buffer_octi	(buffer *,int) noex ;
+extern int	buffer_octl	(buffer *,long) noex ;
+extern int	buffer_octll	(buffer *,longlong) noex ;
+extern int	buffer_octui	(buffer *,uint) noex ;
+extern int	buffer_octul	(buffer *,ulong) noex ;
+extern int	buffer_octull	(buffer *,ulonglong) noex ;
 
-extern int	buffer_deci(buffer *,int) noex ;
-extern int	buffer_decl(buffer *,long) noex ;
-extern int	buffer_decll(buffer *,longlong) noex ;
-extern int	buffer_decui(buffer *,uint) noex ;
-extern int	buffer_decul(buffer *,ulong) noex ;
-extern int	buffer_decull(buffer *,ulonglong) noex ;
+extern int	buffer_deci	(buffer *,int) noex ;
+extern int	buffer_decl	(buffer *,long) noex ;
+extern int	buffer_decll	(buffer *,longlong) noex ;
+extern int	buffer_decui	(buffer *,uint) noex ;
+extern int	buffer_decul	(buffer *,ulong) noex ;
+extern int	buffer_decull	(buffer *,ulonglong) noex ;
 
-extern int	buffer_hexc(buffer *,int) noex ;
-extern int	buffer_hexi(buffer *,int) noex ;
-extern int	buffer_hexl(buffer *,long) noex ;
-extern int	buffer_hexll(buffer *,longlong) noex ;
-extern int	buffer_hexuc(buffer *,uint) noex ;
-extern int	buffer_hexui(buffer *,uint) noex ;
-extern int	buffer_hexul(buffer *,ulong) noex ;
-extern int	buffer_hexull(buffer *,ulonglong) noex ;
-extern int	buffer_printf(buffer *,cchar *,...) noex ;
-extern int	buffer_vprintf(buffer *,cchar *,va_list) noex ;
-extern int	buffer_get(buffer *,cchar **) noex ;
-extern int	buffer_getprev(buffer *) noex ;
-extern int	buffer_len(buffer *) noex ;
-extern int	buffer_finish(buffer *) noex ;
+extern int	buffer_hexc	(buffer *,int) noex ;
+extern int	buffer_hexi	(buffer *,int) noex ;
+extern int	buffer_hexl	(buffer *,long) noex ;
+extern int	buffer_hexll	(buffer *,longlong) noex ;
+extern int	buffer_hexuc	(buffer *,uint) noex ;
+extern int	buffer_hexui	(buffer *,uint) noex ;
+extern int	buffer_hexul	(buffer *,ulong) noex ;
+extern int	buffer_hexull	(buffer *,ulonglong) noex ;
+
+extern int	buffer_printf	(buffer *,cchar *,...) noex ;
+extern int	buffer_vprintf	(buffer *,cchar *,va_list) noex ;
+extern int	buffer_get	(buffer *,cchar **) noex ;
+extern int	buffer_getprev	(buffer *) noex ;
+extern int	buffer_len	(buffer *) noex ;
+extern int	buffer_finish	(buffer *) noex ;
 
 extern int	buffer_strcompact(buffer *,cchar *,int) noex ;
 extern int	buffer_stropaque(buffer *,cchar *,int) noex ;
-extern int	buffer_strquote(buffer *,cchar *,int) noex ;
-extern int	buffer_chrs(buffer *,int,int) noex ;
-extern int	buffer_blanks(buffer *,int) noex ;
+extern int	buffer_strquote	(buffer *,cchar *,int) noex ;
+extern int	buffer_chrs	(buffer *,int,int) noex ;
+extern int	buffer_blanks	(buffer *,int) noex ;
 
 static inline int buffer_backs(buffer *op,int n) noex {
 	return buffer_chrs(op,CH_BS,n) ;
