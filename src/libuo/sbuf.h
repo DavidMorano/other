@@ -122,24 +122,24 @@ struct sbuf : sbuf_head {
 	} ; /* end ctor */
 	sbuf(const sbuf &) = delete ;
 	sbuf &operator = (const sbuf &) = delete ;
-	int start(char *,int) noex ;
-	int chrs(int,int = 1) noex ;
-	int strw(cchar *sp,int sl = -1) noex {
+	int start	(char *,int) noex ;
+	int chrs	(int,int = 1) noex ;
+	int strw	(cchar *sp,int sl = -1) noex {
 	    return sbuf_strw(this,sp,sl) ;
 	} ;
-	int str(cchar *sp) noex {
+	int str		(cchar *sp) noex {
 	    return sbuf_strw(this,sp,-1) ;
 	} ;
-	int strs(int,mainv) noex ;
-	int addquoted(cchar *sp,int sl = -1) noex {
+	int strs	(int,mainv) noex ;
+	int addquoted	(cchar *sp,int sl = -1) noex {
 	    return sbuf_addquoted(this,sp,sl) ;
 	} ;
-	int vprintf(cchar *,va_list) noex ;
-	int printf(cchar *,...) noex ;
-	int hexp(uint64_t,int) noex ;
-	int buf(cchar *,int) noex ;
-	int getpoint(cchar **) noex ;
-	int decl(long) noex ;
+	int vprintf	(cchar *,va_list) noex ;
+	int printf	(cchar *,...) noex ;
+	int hexp	(uint64_t,int) noex ;
+	int buf		(cchar *,int) noex ;
+	int getpoint	(cchar **) noex ;
+	int decl	(long) noex ;
 	template<typename Binary> int bin(Binary) noex ;
 	template<typename Octal> int oct(Octal) noex ;
 	template<typename Decimal> int dec(Decimal) noex ;
@@ -160,10 +160,10 @@ struct sbuf : sbuf_head {
 	    sbuf_iter		it(rbuf+index) ;
 	    return it ;
 	} ;
+	void dtor() noex ;
 	operator int () noex {
 	    return sbuf_getlen(this) ;
 	} ;
-	void dtor() noex ;
 	destruct sbuf() {
 	    if (rbuf) dtor() ;
 	} ;
