@@ -696,7 +696,7 @@ static int dirid_finish(dirid *dip) noex {
 
 vars::operator int () noex {
     	int		rs ;
-	if ((rs = getbufsize(getbufsize_mp)) >= 0) ylikely {
+	if ((rs = getbufsize(bufsize_mp)) >= 0) ylikely {
 	    maxpathlen = rs ;
 	    maxlinklen = (rs * MAXLINKLEN_MULT) ;
 	}
