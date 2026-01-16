@@ -34,7 +34,7 @@
 #include	<clanguage.h>
 #include	<usysbase.h>
 
-#include	<bufsizenames.h>
+#include	<bufsizes.h>
 #include	<bufsizevar.hh>
 
 
