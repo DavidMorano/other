@@ -2,7 +2,7 @@
 /* charset=ISO8859-1 */
 /* lang=C20 */
 
-/* has a counted c-string some characteristic? */
+/* does a counted c-string some characteristic? */
 /* version %I% last-modified %G% */
 
 
@@ -24,35 +24,23 @@
 #include	<utypedefs.h>
 #include	<utypealiases.h>
 #include	<usysdefs.h>
-#include	<matstr.h>		/* used below in this header */
-#include	<stdfnames.h>		/* used below in this header */
+#include	<matstr.h>		/* |matstr(3uc)| used below */
+#include	<stdfnames.h>		/* |stdfnames| used below */
 
-#include	<hasclass.h>
 #include	<hasall.h>
-#include	<hasnot.h>
-#include	<hasprint.h>
-#include	<hasuniq.h>
+#include	<hasclass.h>
 #include	<haslead.h>
 #include	<hasmodname.h>
+#include	<hasnon.h>
+#include	<hasnot.h>
+#include	<hasonly.h>
+#include	<hasprint.h>
+#include	<hasprime.h>
+#include	<hasuniq.h>
 #include	<hasvarprefix.h>
 
+
 EXTERNC_begin
-
-extern bool hasempty(cchar *,int) noex ;
-
-extern bool hasdoublewhite(cchar *,int) noex ;
-extern bool hasnonwhite(cchar *,int) noex ;
-extern bool hasdots(cchar *,int) noex ;
-extern bool hasvarpathprefix(cchar *,int) noex ;
-extern bool hascdpath(cchar *,int) noex ;
-extern bool hasmacro(cchar *,int) noex ;
-extern bool haseoh(cchar *,int) noex ;
-extern bool hasonlyminus(cchar *,int) noex ;
-extern bool hasonlyplusminus(cchar *,int) noex ;
-extern bool hasmealone(cchar *,int) noex ;
-extern bool hasinet4addrstr(cchar *,int) noex ;
-
-extern bool hasvalidmagic(cchar *,int,cchar *) noex ;
 
 static inline bool hascontent(cchar *fp,int fl) noex {
 	return hasnotempty(fp,fl) ;
