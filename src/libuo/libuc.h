@@ -184,7 +184,7 @@
 #include	<sbuf.h>
 #include	<secdb.h>
 #include	<serialbuf.h>
-#include	<sesmsg.h>
+#include	<sesmsg.hh>
 #include	<setint.h>
 #include	<setstr.h>
 #include	<sfx.h>
