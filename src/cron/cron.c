@@ -42,7 +42,7 @@
 #include <sys/resource.h>
 #include <sys/stat.h>
 #include <sys/task.h>
-#include <sys/ctime>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/utsname.h>
 #include <sys/wait.h>
