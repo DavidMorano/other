@@ -767,6 +767,16 @@ open.o:			open.dir
 open.dir:
 	makesubdir $@
 
+# MKTMP
+mktmp.o:		mktmp.dir
+mktmp.dir:
+	makesubdir $@
+
+# DIRS
+dirs.o:			dirs.dir
+dirs.dir:
+	makesubdir $@
+
 # Objects
 uinfo.o:		uinfo.cc	uinfo.h			$(INCS)
 storebuf.o:		storebuf.cc	storebuf.h		$(INCS)
