@@ -259,7 +259,7 @@
 #include	<ucfiledesc.h>
 #include	<ucfileop.h>
 #include	<ucfork.h>
-#include	<ucfunctioncodes.h>
+#include	<ucfuncodes.h>
 #include	<ucget.h>
 #include	<ucgethost.h>
 #include	<ucgetloadavg.h>
