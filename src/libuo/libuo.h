@@ -29,7 +29,7 @@
 #include	<ucenum.h>
 #include	<ucfdmanip.h>
 #include	<ucfiledesc.h>
-#include	<ucfunctioncodes.h>
+#include	<ucfuncodes.h>
 #include	<ucget.h>
 #include	<ucgethost.h>
 #include	<ucgetloadavg.h>
@@ -206,7 +206,6 @@
 #include	<quoteshellarg.h>
 #include	<randlc.h>
 #include	<randomvar.h>
-#include	<rmdirs.h>
 #include	<rmx.h>
 #include	<rpsem.h>
 #include	<rsfree.h>
