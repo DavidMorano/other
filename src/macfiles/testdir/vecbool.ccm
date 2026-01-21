@@ -60,9 +60,7 @@ export module vecbool ;
 
 /* imported namespaces */
 
-using std::nullptr_t ;			/* type */
 using std::vector ;			/* type */
-using std::nothrow ;			/* constant */
 
 
 /* local typedefs */
