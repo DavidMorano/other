@@ -40,14 +40,12 @@ MODS += umisc.ccm usysconf.ccm ulibvals.ccm
 LIBS += -luo -lu
 
 
-
 OBJ= tmpusers_main.o
 
 
 INCDIRS +=
 
 LIBDIRS += -L$(LIBDIR)
-
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -115,8 +113,39 @@ control:
 	(uname -n ; date) > Control
 
 
-tmpusers_main.o:	tmpusers_main.cc $(DEPS_MAIN)		$(INCS)
+obj0.o:			$(OBJ0)
+	$(CXX) -r -o $@ $(LDFLAGS) $^
 
+obj1.o:			$(OBJ1)
+	$(CXX) -r -o $@ $(LDFLAGS) $^
+
+obj2.o:			$(OBJ2)
+	$(CXX) -r -o $@ $(LDFLAGS) $^
+
+obj3.o:			$(OBJ3)
+	$(CXX) -r -o $@ $(LDFLAGS) $^
+
+obj4.o:			$(OBJ4)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj5.o:			$(OBJ5)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj6.o:			$(OBJ6)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj7.o:			$(OBJ7)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+obja.o:			$(OBJA)
+	$(CXX) -r -o $@ $(LDFLAGS) $^
+
+objb.o:			$(OBJB)
+	$(CXX) -r -o $@ $(LDFLAGS) $^
+
+
+tmpusers_main.o:	tmpusers_main.cc $(DEPS_MAIN)		$(INCS)
 
 umisc.o:		umisc.dir
 umisc.dir:
