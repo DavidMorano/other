@@ -5,7 +5,7 @@
 /* enumerate filenames */
 /* version %I% last-modified %G% */
 
-#define	CF_DEBUG	1		/* debug */
+#define	CF_DEBUG	0		/* debug */
 #define	CF_FILELINES	1		/* use |filelines()| */
 
 /* revision history:
@@ -123,7 +123,6 @@ using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::istream ;			/* type */
 using libu::snvprintf ;			/* subroutine */
-using libu::umem ;			/* variable */
 using std::cin ;			/* variable */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
@@ -1115,7 +1114,6 @@ int proginfo::procent(custat *sbp,cchar *sp,int µsl) noex {
 int proginfo::procfile(custat *sbp,cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
 	int		c = 0 ;
-	DEBPRINTF("ent\n") ;
 	if ((! fl.modes) || (rs = modehave(sbp)) > 0) {
 	    if ((! fl.suffix) || ((rs = sufhave(sp,sl)) > 0)) {
 	        if ((! fl.uniqfile) || ((rs = fileuniq(sbp)) > 0)) {
@@ -1141,7 +1139,6 @@ int proginfo::procfile(custat *sbp,cchar *sp,int sl) noex {
 	        } /* end if (fileuniq) */
 	    } /* end if (sufhave) */
 	} /* end if (modehave) */
-	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::procfile) */
 
