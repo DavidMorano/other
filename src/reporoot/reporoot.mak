@@ -31,24 +31,30 @@ TOUCH		?= touch
 LINT		?= lint
 
 
-DEPS_MAIN += ulibvals.o umisc.o
+DEFS +=
 
-OBJ_MAIN= reporoot_main.o
-
-
-DEFS=
-
-INCS=
+INCS +=
 
 MODS +=
 
-LIBS= -luo -lu
+LIBS += -luo -lu
+
+
+DEPS_MAIN += ulibvals.o umisc.o
+
+OBJ0= reporoot_prime.o
+OBJ1= pathxx.o storebufxx.o
+OBJ2= 
+OBJ3=
+
+OBJA= obj0.o obj1.o
+
+OBJ_MAIN= obja.o
 
 
 INCDIRS= -I$(INCDIR)
 
 LIBDIRS= -L$(LIBDIR)
-
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -113,7 +119,41 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
-reporoot_main.o:	reporoot_main.cc $(DEPS_MAIN) 		$(INCS)
+obj0.o:			$(OBJ0)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj1.o:			$(OBJ1)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj2.o:			$(OBJ2)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj3.o:			$(OBJ3)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj4.o:			$(OBJ4)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj5.o:			$(OBJ5)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj6.o:			$(OBJ6)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj7.o:			$(OBJ7)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+obja.o:			$(OBJA)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objb.o:			$(OBJB)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+reporoot_prime.o:	reporoot_prime.cc $(DEPS_MAIN) 		$(INCS)
+
+storebufxx.o:		storebufxx.cc	storebuf.h
 
 ulibvals.o:		ulibvals.dir
 ulibvals.dir:
@@ -121,6 +161,11 @@ ulibvals.dir:
 
 umisc.o:		umisc.dir
 umisc.dir:
+	makesubdir $@
+
+# PATH
+path.o:			path.dir
+path.dir:
 	makesubdir $@
 
 
