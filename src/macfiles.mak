@@ -69,10 +69,15 @@ OBJ0= files_main.o cmdutils.o
 OBJ1= argmgr.o filerec.o tardir.o
 OBJ2= modproc.o langx.o
 OBJ3= shortq.o ischarx.o
+OBJ4= six.o
+OBJ5=
+OBJ6=
+OBJ7=
 
 OBJA= obj0.o obj1.o obj2.o obj3.o
+OBJB= obj4.o
 
-OBJ_MAIN= obja.o
+OBJ_MAIN= obja.o objb.o
 
 
 .SUFFIXES:		.hh .ii .iim .ccm
@@ -143,8 +148,23 @@ obj2.o:			$(OBJ2)
 obj3.o:			$(OBJ3)
 	$(CXX) -r -o $@ $(LDFLAGS) $^
 
+obj4.o:			$(OBJ4)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj5.o:			$(OBJ5)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj6.o:			$(OBJ6)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj7.o:			$(OBJ7)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
 
 obja.o:			$(OBJA)
+	$(CXX) -r -o $@ $(LDFLAGS) $^
+
+objb.o:			$(OBJB)
 	$(CXX) -r -o $@ $(LDFLAGS) $^
 
 
@@ -204,9 +224,14 @@ modproc.o:		modproc.dir
 modproc.dir:
 	makesubdir $@
 
-# FILES_UTILS
+# CMD_UTILS
 cmdutils.o:		cmdutils.dir
 cmdutils.dir:
+	makesubdir $@
+
+# SIX
+six.o:			six.dir
+six.dir:
 	makesubdir $@
 
 shortq.o:		shortq.cc	shortq.h		$(INCS)
