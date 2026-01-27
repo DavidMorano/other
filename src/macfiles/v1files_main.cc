@@ -5,7 +5,7 @@
 /* enumerate filenames */
 /* version %I% last-modified %G% */
 
-#define	CF_DEBUG	1		/* debug */
+#define	CF_DEBUG	0		/* debug */
 #define	CF_FILELINES	1		/* use |filelines()| */
 
 /* revision history:
@@ -123,7 +123,6 @@ using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::istream ;			/* type */
 using libu::snvprintf ;			/* subroutine */
-using libu::umem ;			/* variable */
 using std::cin ;			/* variable */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
@@ -176,6 +175,7 @@ namespace {
 	uint		recs:1 ;
 	uint		mods:1 ;
 	uint		ot:2 ;			/* type-out */
+	uint		dup:1 ;			/* duplicate-file-record */
     } ; /* end struct (proginfo_fl) */
     struct proginfo_co {
 	proginfo	*op = nullptr ;
@@ -209,12 +209,14 @@ namespace {
 	mainv		envv ;
 	cchar		*pn = nullptr ; /* program-name (derived) */
 	char		*lbuf = nullptr ;
+	char		*pbuf = nullptr ;
 	char		*tbuf = nullptr ;
 	FILE		*ofp ;		/* output-file-pointer */
 	int		argc ;
 	int		pm = -1 ;
 	int		debuglevel = 0 ;
 	int		llen = 0 ;
+	int		plen = 0 ;
 	int		tlen = 0 ;
 	int		lines = 0 ;
 	ushort		modes = 0 ;	/* file-modes (matched) */
@@ -743,13 +745,13 @@ int proginfo::argfileread(cchar *fn) noex {
 	int		c = 0 ;
 	DEBPRINTF("ent fn=%s\n",fn) ;
 	if ((rs = maxpathlen) >= 0) {
-	    cint	plen = rs ;
+	    cint	rlen = rs ;
 	    rs = SR_NOMEM ;
-	    if (char *pbuf ; (pbuf = new(nt) char[plen + 1]) != np) {
+	    if (char *rbuf ; (rbuf = new(nt) char[rlen + 1]) != np) {
                 if (ccfile rf ; (rs = rf.open(fn,"r")) >= 0) {
-                    while ((rs = rf.readln(pbuf,plen)) > 0) {
-		        if (cint pl = rmeol(pbuf,rs) ; pl > 0) {
-                            rs = argprocspec(pbuf,pl) ;
+                    while ((rs = rf.readln(rbuf,rlen)) > 0) {
+		        if (cint rl = rmeol(rbuf,rs) ; rl > 0) {
+                            rs = argprocspec(rbuf,rl) ;
                             c += rs ;
 		        }
 			if (rs < 0) break ;
@@ -757,7 +759,7 @@ int proginfo::argfileread(cchar *fn) noex {
                     rs1 = rf.close ;
                     if (rs >= 0) rs = rs1 ;
                 } /* end if (ccfile) */
-	        delete [] pbuf ;
+	        delete [] rbuf ;
 	    } /* end if (m-a-f) */
 	} /* end if (maxpathlen) */
 	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
@@ -937,11 +939,15 @@ int proginfo::process_pmbegin() noex {
         case progmode_filesyner:
         case progmode_filelinker:
 	    if ((rs = maxpathlen) >= 0) {
+		cint sz = ((rs + 1) * 2) ;
+		plen = rs ;
 	        tlen = rs ;
 	        rs = SR_NOMEM ;
-	        if ((tbuf = new(nt) char[tlen + 1]) != np) {
+	        if (char *a ; (a = new(nt) char[sz]) != np) {
+		    pbuf = a + (0 * (plen + 1)) ;
+		    tbuf = a + (1 * (plen + 1)) ;
 		    rs = SR_OK ;
-		}
+		} /* end if (new-{x}buf) */
 	    } /* end if (maxpathlen) */
 	    break ;
 	} /* end switch */
@@ -981,17 +987,17 @@ int proginfo::argreadin() noex {
 	int		rs ;
 	int		c = 0 ;
 	if ((rs = maxpathlen) >= 0) {
-	    cint	plen = rs ;
+	    cint rlen = rs ;
 	    rs = SR_NOMEM ;
-	    if (char *pbuf ; (pbuf = new(nt) char[plen + 1]) != np) {
-	        while ((rs = readln(&cin,pbuf,plen)) > 0) {
-		    if (cint pl = rmeol(pbuf,rs) ; pl > 0) {
-		        rs = argprocspec(pbuf,pl) ;
+	    if (char *rbuf ; (rbuf = new(nt) char[rlen + 1]) != np) {
+	        while ((rs = readln(&cin,rbuf,rlen)) > 0) {
+		    if (cint rl = rmeol(pbuf,rs) ; rl > 0) {
+		        rs = argprocspec(rbuf,rl) ;
 			c += rs ;
 		    }
 		    if (rs < 0) break ;
 	        } /* end if (reading lines) */
-	        delete [] pbuf ;
+	        delete [] rbuf ;
 	    } /* end if (m-a-f) */
 	} /* end if (maxpathlen) */
 	return (rs >= 0) ? c : rs ;
@@ -1108,7 +1114,6 @@ int proginfo::procent(custat *sbp,cchar *sp,int µsl) noex {
 int proginfo::procfile(custat *sbp,cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
 	int		c = 0 ;
-	DEBPRINTF("ent\n") ;
 	if ((! fl.modes) || (rs = modehave(sbp)) > 0) {
 	    if ((! fl.suffix) || ((rs = sufhave(sp,sl)) > 0)) {
 	        if ((! fl.uniqfile) || ((rs = fileuniq(sbp)) > 0)) {
@@ -1134,7 +1139,6 @@ int proginfo::procfile(custat *sbp,cchar *sp,int sl) noex {
 	        } /* end if (fileuniq) */
 	    } /* end if (sufhave) */
 	} /* end if (modehave) */
-	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::procfile) */
 
