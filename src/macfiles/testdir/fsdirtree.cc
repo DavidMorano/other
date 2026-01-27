@@ -148,7 +148,7 @@ namespace {
 ****/
 
 template<typename ... Args>
-static int fsdirtree_ctor(fsdirtree *op,Args ... args) noex {
+local int fsdirtree_ctor(fsdirtree *op,Args ... args) noex {
     	FSDIRTREE	*hop = op ;
 	cnullptr	np{} ;
 	int		rs = SR_FAULT ;
@@ -175,7 +175,7 @@ static int fsdirtree_ctor(fsdirtree *op,Args ... args) noex {
 }
 /* end subroutine (fsdirtree_ctor) */
 
-static int fsdirtree_dtor(fsdirtree *op) noex {
+local int fsdirtree_dtor(fsdirtree *op) noex {
 	int		rs = SR_FAULT ;
 	if (op) ylikely {
 	    rs = SR_OK ;
@@ -193,31 +193,29 @@ static int fsdirtree_dtor(fsdirtree *op) noex {
 	    }
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end subroutine (fsdirtree_dtor) */
+} /* end subroutine (fsdirtree_dtor) */
 
 template<typename ... Args>
-static inline int fsdirtree_magic(fsdirtree *op,Args ... args) noex {
+local inline int fsdirtree_magic(fsdirtree *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) ylikely {
 	    rs = (op->magic == FSDIRTREE_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
-}
-/* end subroutine (fsdirtree_magic) */
+} /* end subroutine (fsdirtree_magic) */
 
-static int	fsdirtree_sel(fsdirtree *) noex ;
-static int	fsdirtree_trackbegin(fsdirtree *) noex ;
-static int	fsdirtree_trackend(fsdirtree *) noex ;
-static int	fsdirtree_dirbegin(fsdirtree *) noex ;
-static int	fsdirtree_diradd(fsdirtree *,dev_t,ino_t) noex ;
-static int	fsdirtree_dirhave(fsdirtree *,dev_t,ino_t,dirid **) noex ;
-static int	fsdirtree_dirend(fsdirtree *) noex ;
+local int	fsdirtree_sel(fsdirtree *) noex ;
+local int	fsdirtree_trackbegin(fsdirtree *) noex ;
+local int	fsdirtree_trackend(fsdirtree *) noex ;
+local int	fsdirtree_dirbegin(fsdirtree *) noex ;
+local int	fsdirtree_diradd(fsdirtree *,dev_t,ino_t) noex ;
+local int	fsdirtree_dirhave(fsdirtree *,dev_t,ino_t,dirid **) noex ;
+local int	fsdirtree_dirend(fsdirtree *) noex ;
 
-static int	dirid_start(dirid *,dev_t,ino_t) noex ;
-static int	dirid_finish(dirid *) noex ;
+local int	dirid_start(dirid *,dev_t,ino_t) noex ;
+local int	dirid_finish(dirid *) noex ;
 
-static int	diridcmp(dirid *,dirid *,int) noex ;
+local int	diridcmp(dirid *,dirid *,int) noex ;
 
 static uint	diridhash(cvoid *,int) noex ;
 
@@ -260,7 +258,7 @@ constexpr fsdirtreems	fsdirtreem ;	/* FSDIRTREE mask */
 
 /* exported subroutines */
 
-static int	fsdirtree_opener(fsdirtree *,cchar *) noex ;
+local int	fsdirtree_opener(fsdirtree *,cchar *) noex ;
 
 int fsdirtree_open(fsdirtree *op,cchar *dname,int opts) noex {
 	int		rs ;
@@ -313,7 +311,7 @@ int fsdirtree_open(fsdirtree *op,cchar *dname,int opts) noex {
 }
 /* end subroutine (fsdirtree_open) */
 
-static int fsdirtree_opener(fsdirtree *op,cchar *dname) noex {
+local int fsdirtree_opener(fsdirtree *op,cchar *dname) noex {
     	cint		maxpath = var.maxpathlen ;
 	int             rs = SR_OK ;
         cchar		*bdp = dname ;
@@ -539,7 +537,7 @@ static void bset(bitset<selsz> &v,int n) noex {
     	v[n] = true ;
 }
 
-static int fsdirtree_sel(fsdirtree *op) noex {
+local int fsdirtree_sel(fsdirtree *op) noex {
     	const fsdirtreems	*dtp = &fsdirtreem ;
 	bitset<selsz>	sel ;
     	cint		opts = op->opts ;
@@ -561,7 +559,7 @@ static int fsdirtree_sel(fsdirtree *op) noex {
 	return rs ;
 } /* end subroutine (fsdirtree_sel) */
 
-static int fsdirtree_trackbegin(fsdirtree *op) noex {
+local int fsdirtree_trackbegin(fsdirtree *op) noex {
     	int		rs = SR_OK ;
         if (op->opts & FSDIRTREE_MUNIQFILE) ylikely {
             if ((rs = fsdirtree_dirbegin(op)) >= 0) ylikely {
@@ -578,7 +576,7 @@ static int fsdirtree_trackbegin(fsdirtree *op) noex {
 	return rs ;
 } /* end subroutine (fsdirtree_trackbegin) */
 
-static int fsdirtree_trackend(fsdirtree *op) noex {
+local int fsdirtree_trackend(fsdirtree *op) noex {
     	int		rs = SR_OK ;
 	int		rs1 ;
         if (op->fl.dirids) {
@@ -588,7 +586,7 @@ static int fsdirtree_trackend(fsdirtree *op) noex {
 	return rs ;
 } /* end subroutine (fsdirtree_trackend) */
 
-static int fsdirtree_dirbegin(fsdirtree *op) noex {
+local int fsdirtree_dirbegin(fsdirtree *op) noex {
 	hdb		*dbp = op->dip ;
 	cint		ne = FSDIRTREE_NENTS ;
 	cint		at = 1 ;	/* use |lookaside(3dam)| */
@@ -601,7 +599,7 @@ static int fsdirtree_dirbegin(fsdirtree *op) noex {
 }
 /* end subroutine (fsdirtree_dirbegin) */
 
-static int fsdirtree_dirend(fsdirtree *op) noex {
+local int fsdirtree_dirend(fsdirtree *op) noex {
 	int		rs = SR_OK ;
 	int		rs1 ;
 	if (op->fl.dirids) {
@@ -632,7 +630,7 @@ static int fsdirtree_dirend(fsdirtree *op) noex {
 }
 /* end subroutine (fsdirtree_dirend) */
 
-static int fsdirtree_diradd(fsdirtree *op,dev_t dev,ino_t ino) noex {
+local int fsdirtree_diradd(fsdirtree *op,dev_t dev,ino_t ino) noex {
 	hdb		*dbp = op->dip ;
 	hdb_dat		key ;
 	hdb_dat		val ;
@@ -657,7 +655,7 @@ static int fsdirtree_diradd(fsdirtree *op,dev_t dev,ino_t ino) noex {
 }
 /* end subroutine (fsdirtree_diradd) */
 
-static int fsdirtree_dirhave(fsdirtree *op,dev_t d,ui ino,dirid **rpp) noex {
+local int fsdirtree_dirhave(fsdirtree *op,dev_t d,ui ino,dirid **rpp) noex {
 	hdb		*dbp = op->dip ;
 	hdb_dat		key ;
 	hdb_dat		val ;
@@ -674,7 +672,7 @@ static int fsdirtree_dirhave(fsdirtree *op,dev_t d,ui ino,dirid **rpp) noex {
 }
 /* end subroutine (fsdirtree_dirhave) */
 
-static int dirid_start(dirid *dip,dev_t dev,ino_t ino) noex {
+local int dirid_start(dirid *dip,dev_t dev,ino_t ino) noex {
 	int		rs = SR_FAULT ;
 	if (dip) ylikely {
 	    rs = SR_OK ;
@@ -685,7 +683,7 @@ static int dirid_start(dirid *dip,dev_t dev,ino_t ino) noex {
 }
 /* end subroutine (dirid_start) */
 
-static int dirid_finish(dirid *dip) noex {
+local int dirid_finish(dirid *dip) noex {
 	int		rs = SR_FAULT ;
 	if (dip) ylikely {
 	    rs = SR_OK ;
@@ -725,7 +723,7 @@ static uint diridhash(cvoid *vp,int vl) noex {
 }
 /* end subroutine (diridhash) */
 
-static int diridcmp(dirid *e1p,dirid *e2p,int len) noex {
+local int diridcmp(dirid *e1p,dirid *e2p,int len) noex {
 	int64_t		d = int64_t(e1p->dev - e2p->dev) ;
 	int		rc = 0 ;
 	(void) len ;
