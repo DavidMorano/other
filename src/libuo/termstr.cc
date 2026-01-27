@@ -135,7 +135,7 @@ enum curtypes {
 /* forward references */
 
 template<typename ... Args>
-static int termstr_ctor(termstr *op,Args ... args) noex {
+local int termstr_ctor(termstr *op,Args ... args) noex {
     	TERMSTR		*hop = op ;
 	cnullptr	np{} ;
 	int		rs = SR_FAULT ;
@@ -149,10 +149,9 @@ static int termstr_ctor(termstr *op,Args ... args) noex {
 	    }
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end subroutine (termstr_ctor) */
+} /* end subroutine (termstr_ctor) */
 
-static int termstr_dtor(termstr *op) noex {
+local int termstr_dtor(termstr *op) noex {
 	int		rs = SR_FAULT ;
 	if (op) ylikely {
 	    rs = SR_OK ;
@@ -162,22 +161,20 @@ static int termstr_dtor(termstr *op) noex {
 	    }
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end subroutine (termstr_dtor) */
+} /* end subroutine (termstr_dtor) */
 
 template<typename ... Args>
-static int termstr_magic(termstr *op,Args ... args) noex {
+local int termstr_magic(termstr *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) ylikely {
 	    rs = (op->magic == TERMSTR_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
-}
-/* end subroutine (termstr_magic) */
+} /* end subroutine (termstr_magic) */
 
-static int	termstr_curm	(termstr *,int,int) noex ;
-static int	termstr_findterm(termstr *,cchar *) noex ;
-static int	termstr_conseq	(termstr *,int,int,...) noex ;
+local int	termstr_curm	(termstr *,int,int) noex ;
+local int	termstr_findterm(termstr *,cchar *) noex ;
+local int	termstr_conseq	(termstr *,int,int,...) noex ;
 
 
 /* local variables */
@@ -484,7 +481,7 @@ int termstr_cvis(op,f) ;
 
 /* private subroutines */
 
-static int termstr_curm(termstr *op,int curtype,int n) noex {
+local int termstr_curm(termstr *op,int curtype,int n) noex {
 	int		rs = SR_OK ;
 	if (n != 0) ylikely {
 	    rs = SR_INVALID ;
@@ -508,7 +505,7 @@ static int termstr_curm(termstr *op,int curtype,int n) noex {
 }
 /* end subroutine (termstr_curm) */
 
-static int termstr_findterm(termstr *op,cchar *termtype) noex {
+local int termstr_findterm(termstr *op,cchar *termtype) noex {
 	cint		tlen = lenstr(termtype) ;
 	int		rs = SR_OK ;
 	int		n = 2 ;
@@ -531,7 +528,7 @@ static int termstr_findterm(termstr *op,cchar *termtype) noex {
 }
 /* end subroutine (termstr_findterm) */
 
-static int termstr_conseq(termstr *op,int name,int na,...) noex {
+local int termstr_conseq(termstr *op,int name,int na,...) noex {
 	va_list		ap ;
 	cnullptr	np{} ;
 	int		rs = SR_INVALID ;
