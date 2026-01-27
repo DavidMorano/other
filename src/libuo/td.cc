@@ -141,7 +141,7 @@ struct termtype {
 /* forward references */
 
 template<typename ... Args>
-static int td_ctor(td *op,Args ... args) noex {
+local int td_ctor(td *op,Args ... args) noex {
     	TD		*hop = op ;
 	cnullptr	np{} ;
 	int		rs = SR_FAULT ;
@@ -159,10 +159,9 @@ static int td_ctor(td *op,Args ... args) noex {
 	    } /* end if (new-termstr) */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end subroutine (td_ctor) */
+} /* end subroutine (td_ctor) */
 
-static int td_dtor(td *op) noex {
+local int td_dtor(td *op) noex {
 	int		rs = SR_FAULT ;
 	if (op) ylikely {
 	    rs = SR_OK ;
@@ -176,36 +175,34 @@ static int td_dtor(td *op) noex {
 	    }
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end subroutine (td_dtor) */
+} /* end subroutine (td_dtor) */
 
 template<typename ... Args>
-static int td_magic(td *op,Args ... args) noex {
+local int td_magic(td *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) ylikely {
 	    rs = (op->magic == TD_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
-}
-/* end subroutine (td_magic) */
+} /* end subroutine (td_magic) */
 
-static int	td_starter	(td *,int,cchar *,int,int) noex ;
-static int	td_startwin	(td *,int,int,int,int) noex ;
-static int	td_flushmove	(td *,td_win *,int,int) noex ;
-static int	td_iflush	(td *) noex ;
-static int	td_procstr	(td *,td_win *,int,cchar *,int) noex ;
-static int	td_termstrbegin	(td *) noex ;
-static int	td_termstrend	(td *) noex ;
-static int	td_store	(td *,cchar *,int) noex ;
-static int	td_erase	(td *,int,int,int) noex ;
+local int	td_starter	(td *,int,cchar *,int,int) noex ;
+local int	td_startwin	(td *,int,int,int,int) noex ;
+local int	td_flushmove	(td *,td_win *,int,int) noex ;
+local int	td_iflush	(td *) noex ;
+local int	td_procstr	(td *,td_win *,int,cchar *,int) noex ;
+local int	td_termstrbegin	(td *) noex ;
+local int	td_termstrend	(td *) noex ;
+local int	td_store	(td *,cchar *,int) noex ;
+local int	td_erase	(td *,int,int,int) noex ;
 
 #if	CF_SAVERESTORE
-static int	td_isave(td *) noex ;
-static int	td_irestore(td *) noex ;
+local int	td_isave(td *) noex ;
+local int	td_irestore(td *) noex ;
 #endif /* CF_SAVERESTORE */
 
 #ifdef	COMMENT
-static int	termmatch(const TERMTYPE *,cchar *) noex ;
+local int	termmatch(const TERMTYPE *,cchar *) noex ;
 #endif
 
 
@@ -213,7 +210,7 @@ static int	termmatch(const TERMTYPE *,cchar *) noex ;
 
 #ifdef	COMMENT
 /* 	TYPE		CAPABILITY	*/
-static const TERMTYPE	terms[] = {
+constexpr TERMTYPE	terms[] = {
 	{ "vt100",	(TD_TCSCROLL) },
 	{ "ansi",	(TD_TCSCROLL | TD_TCIL) },
 	{ "xterm",	(TD_TCSCROLL | TD_TCIL | TD_TCCOLOR) },
@@ -720,7 +717,7 @@ int td_getpos(td *op,int wn,td_pos *pp) noex {
 
 /* private subroutines */
 
-static int td_starter(td *op,int tfd,cchar *termname,int r,int c) noex {
+local int td_starter(td *op,int tfd,cchar *termname,int r,int c) noex {
         TERMIOS         termconf{} ;
         int             rs ;
         op->tfd = tfd ;
@@ -775,7 +772,7 @@ static int td_starter(td *op,int tfd,cchar *termname,int r,int c) noex {
 /* end subroutine (td_starter) */
 
 /* create and initialize a new sub-window */
-static int td_startwin(td *op,int srow,int scol,int rows,int cols) noex {
+local int td_startwin(td *op,int srow,int scol,int rows,int cols) noex {
 	int		rs = SR_OK ;
 	bool		f = false ;
 	f = f || (srow >= op->rows) ;
@@ -800,7 +797,7 @@ static int td_startwin(td *op,int srow,int scol,int rows,int cols) noex {
 /* end subroutine (td_startwin) */
 
 /* flush buffer */
-static int td_iflush(td *op) noex {
+local int td_iflush(td *op) noex {
 	td_win		*wp ;
 	td_win		*mwp = nullptr ;
 	uint		mtimecount = 0 ;
@@ -829,7 +826,7 @@ static int td_iflush(td *op) noex {
 #if	CF_SAVERESTORE
 
 /* set the save-cursor stuff in the buffer */
-static int td_isave(td *op) noex {
+local int td_isave(td *op) noex {
 	int		rs ;
 	int		len = 0 ;
 	int		rv = 0 ;
@@ -849,7 +846,7 @@ static int td_isave(td *op) noex {
 /* end subroutine (td_isave) */
 
 /* set the restore-cursor stuff in the buffer */
-static int td_irestore(td *op) noex {
+local int td_irestore(td *op) noex {
 	cchar		*cp = strwcpy(op->buf,TERMSTR_RESTORE,-1) ;
 	op->curlen = (cp - op->buf) ;
 	return op->curlen ;
@@ -859,7 +856,7 @@ static int td_irestore(td *op) noex {
 #endif /* CF_SAVERESTORE */
 
 /* flush out any accumulated moves */
-static int td_flushmove(td *op,td_win *wp,int r,int c) noex {
+local int td_flushmove(td *op,td_win *wp,int r,int c) noex {
 	int		rs = SR_OK ;
 	int		nrow = (r >= 0) ? r : wp->move.row ;
 	int		ncol = (c >= 0) ? c : wp->move.col ;
@@ -917,7 +914,7 @@ static int td_flushmove(td *op,td_win *wp,int r,int c) noex {
 /* end subroutine (td_flushmove) */
 
 /* process the special C-language string-escape characters */
-static int td_procstr(td *op,td_win *wp,int gr,cchar *sbuf,int slen) noex {
+local int td_procstr(td *op,td_win *wp,int gr,cchar *sbuf,int slen) noex {
 	cint		grmask = TD_GRMASK ;
 	cint		clen = CBUFLEN ;
 	int		rs = SR_OK ;
@@ -1079,14 +1076,14 @@ static int td_procstr(td *op,td_win *wp,int gr,cchar *sbuf,int slen) noex {
 }
 /* end subroutine (td_procstr) */
 
-static int td_termstrbegin(td *op) noex {
+local int td_termstrbegin(td *op) noex {
 	int		rs ;
 	rs = termstr_clean(op->tsp) ; /* clear any buffered actions */
 	return rs ;
 }
 /* end subroutine (td_termstrbegin) */
 
-static int td_termstrend(td *op) noex {
+local int td_termstrend(td *op) noex {
 	int		rs ;
 	int		len = 0 ;
 	if (cchar *bp ; (rs = termstr_get(op->tsp,&bp)) >= 0) ylikely {
@@ -1098,7 +1095,7 @@ static int td_termstrend(td *op) noex {
 }
 /* end subroutine (td_termstrend) */
 
-static int td_store(td *op,cchar *bp,int µbl) noex {
+local int td_store(td *op,cchar *bp,int µbl) noex {
 	int		rlen = (op->buflen - op->curlen) ;
 	int		rs = SR_OK ;
 	int		len = 0 ; /* return-value */
@@ -1123,7 +1120,7 @@ static int td_store(td *op,cchar *bp,int µbl) noex {
 }
 /* end subroutine (td_store) */
 
-static int td_erase(td *op,int w,int item,int type) noex {
+local int td_erase(td *op,int w,int item,int type) noex {
 	int		rs ;
 	int		len = 0 ;
 	if ((rs = td_magic(op)) >= 0) ylikely {
@@ -1157,7 +1154,7 @@ static int td_erase(td *op,int w,int item,int type) noex {
 #ifdef	COMMENT
 
 /* match a terminal name with our list */
-static int termmatch(const TERMTYPE *tlist,cchar *term) noex {
+local int termmatch(const TERMTYPE *tlist,cchar *term) noex {
 	int	i ; /* used-afterwards */
 	for (i = 0 ; tlist[i].term != nullptr ; i += 1) {
 	    if (strcmp(term,tlist[i].term) == 0) break ;
