@@ -59,7 +59,7 @@ enum fieldmems {
 	fieldmem_rem,
 	fieldmem_finish,
 	fieldmem_overlast
-} ;
+} ; /* end enum (fieldmems) */
 struct field ;
 struct field_co {
 	field		*op = nullptr ;
@@ -80,7 +80,7 @@ struct field : field_head {
 	    rem(this,fieldmem_rem) ;
 	    finish(this,fieldmem_finish) ;
 	    lp = nullptr ;
-	} ;
+	} ; /* end ctor */
 	field(const field &) = delete ;
 	field &operator = (const field &) = delete ;
 	int start(cchar *,int = -1) noex ;
