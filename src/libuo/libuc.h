@@ -392,21 +392,8 @@ extern int	uc_seek(int,off_t,int) noex ;
 extern int	uc_tell(int,off_t *) noex ;
 extern int	uc_rewind(int) noex ;
 
-extern int	uc_bind(int,cvoid *,int) noex ;
-extern int	uc_connect(int,cvoid *,int) noex ;
-extern int	uc_connecte(int,cvoid *,int,int) noex ;
-extern int	uc_setsockopt(int,int,int,int *,int) noex ;
-extern int	uc_linger(int,int) noex ;
-
 extern int	uc_copy(int,int,int) noex ;
-
-extern int	uc_recve(int,void *,int,int,int,int) noex ;
-extern int	uc_recvfrome(int,void *,int,int,void *,int *,int,int) noex ;
-extern int	uc_recvmsge(int,MSGHDR *,int,int,int) noex ;
-extern int	uc_sockatmark(int) noex ;
 extern int	uc_peek(int,void *,int) noex ;
-extern int	uc_getsocktype(int) noex ;
-
 extern int	uc_keepalive(int,int) noex ;
 extern int	uc_moveup(int,int) noex ;
 extern int	uc_ndelay(int,int) noex ;
