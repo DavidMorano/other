@@ -30,27 +30,28 @@
 #include	<clanguage.h>
 #include	<usysbase.h>
 
-#include	<mkcexsync.h>
+#include	<mkaddr.h>
 #include	<mkbasename.h>
+#include	<mkcexsync.h>
+#include	<mkdisplayable.h>
+#include	<mkfname.h>
+#include	<mkfdfname.h>
 #include	<mkgecosname.h>
-#include	<mkquoted.h>
+#include	<mklineclean.h>
+#include	<mkmagic.h>
+#include	<mknpath.h>
 #include	<mkprogenv.h>
 #include	<mkpath.h>
 #include	<mkpathxx.h>
-#include	<mknpath.h>
-#include	<mkmagic.h>
-#include	<mkfname.h>
-#include	<mkfdfname.h>
-#include	<mkdisplayable.h>
-#include	<mknpath.h>
-#include	<mkpath.h>
-#include	<mkaddr.h>
 #include	<mkpr.h>
-#include	<mkxdisp.h>
-#include	<mklineclean.h>
+#include	<mkpr.h>
+#include	<mkquoted.h>
+#include	<mksofname.h>
+#include	<mksoname.h>
 #include	<mkunique.h>
 #include	<mkutmpid.h>
 #include	<mkuuid.h>
+#include	<mkxdisp.h>
 
 
 EXTERNC_begin
