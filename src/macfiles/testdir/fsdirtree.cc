@@ -172,8 +172,7 @@ local int fsdirtree_ctor(fsdirtree *op,Args ... args) noex {
 	    } /* end if (new-fifostr) */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end subroutine (fsdirtree_ctor) */
+} /* end subroutine (fsdirtree_ctor) */
 
 local int fsdirtree_dtor(fsdirtree *op) noex {
 	int		rs = SR_FAULT ;
@@ -219,11 +218,11 @@ local int	diridcmp(dirid *,dirid *,int) noex ;
 
 static uint	diridhash(cvoid *,int) noex ;
 
-static inline bool btst(ushort v,int n) noex {
+local inline bool btst(ushort v,int n) noex {
     	return bool((v >> n) & 1) ;
 }
 
-static inline bool interested(ushort sel,mode_t m) noex {
+local inline bool interested(ushort sel,mode_t m) noex {
     	cint	ft = filetype(m) ;
 	return btst(sel,ft) ;
 }
@@ -533,7 +532,7 @@ int fsdirtree_prune(fsdirtree *op,cchar **prune) noex {
 
 constexpr cint	selsz = DT_OVERLAST ;
 
-static void bset(bitset<selsz> &v,int n) noex {
+local void bset(bitset<selsz> &v,int n) noex {
     	v[n] = true ;
 }
 
