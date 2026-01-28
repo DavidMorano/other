@@ -120,7 +120,7 @@ struct fsdirtree_head {
 	int		bnlen ;
 	int		nlen ;		/* "name" length */
 	int		llen ;		/* "link" length */
-	ushort		selset ;	/* section-set of DTs */
+	ushort		selset ;	/* selection-set of DTs */
 } ; /* end struct (fsdirtree_head) */
 
 typedef FSDIRTREE	fsdirtree ;
@@ -130,7 +130,7 @@ EXTERNC_begin
 
 extern int fsdirtree_open(fsdirtree *,cchar *,int) noex ;
 extern int fsdirtree_prune(fsdirtree *,cchar **) noex ;
-extern int fsdirtree_read(fsdirtree *,USTAT *,char *,int) noex ;
+extern int fsdirtree_read(fsdirtree *,ustat *,char *,int) noex ;
 extern int fsdirtree_close(fsdirtree *) noex ;
 
 EXTERNC_end
