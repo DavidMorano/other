@@ -1,0 +1,15 @@
+#!/usr/extra/bin/ksh
+# SUBMAKS
+ls */*.mak | while read M ; do
+  D=$( dirname $M )
+  B=$( basename $M )
+  print D=$D B=$B
+  R=${B%.*}
+  DB=$( basename $D )
+  print R=${R} DB=${DB}
+  if [[ $R != ${DB} ]] ; then
+    print RM DB=${DB} R=${R} 
+    print rm ${DB}/${R}.mak
+  fi
+done
+
