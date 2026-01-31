@@ -24,9 +24,9 @@
 #include	<usysbase.h>
 
 
-#define	UCMEM_STATS	struct ucmem_status
 #define	UCMEM_CUR	struct ucmem_cursor
 #define	UCMEM_ENT	struct ucmem_entry
+#define	UCMEM_STATS	struct ucmem_status
 
 
 struct ucmem_cursor {
