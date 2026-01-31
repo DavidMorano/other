@@ -20,8 +20,6 @@
 
 
 #include	<envstandards.h>	/* MUST be ordered first to configure */
-#include	<stddef.h>
-#include	<stdlib.h>
 #include	<clanguage.h>
 #include	<usysbase.h>
 
