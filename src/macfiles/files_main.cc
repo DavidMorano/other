@@ -6,7 +6,7 @@
 /* version %I% last-modified %G% */
 
 #define	CF_DEBUG	0		/* debug */
-#define	CF_FILELINES	1		/* use |filelines()| */
+#define	CF_FILELINES	1		/* use |filelines(3uc)| */
 
 /* revision history:
 
@@ -23,7 +23,8 @@
 	files_main
 
 	Description:
-	This program enumerates directories and files.
+	This program enumerates directories and files, and optionally
+	performs some function on those files.
 
 	Synopsis:
 	main(int argc,mainv argv,mainv argv)
@@ -61,6 +62,7 @@
 #include	<sfx.h>			/* |sfbasename(3uc)| + |sfext(3uc)| */
 #include	<six.h>			/* |sisub(3uc)| */
 #include	<rmx.h>
+#include	<mkpathx.h>
 #include	<strwcpy.h>
 #include	<strnul.hh>
 #include	<ccfile.hh>
@@ -74,19 +76,19 @@
 #include	<localmisc.h>
 #include	<debprintf.h>		/* |DEBPRINTF| */
 
-#pragma		GCC dependency	"mod/libutil.ccm"
-#pragma		GCC dependency	"mod/ulibvals.ccm"
-#pragma		GCC dependency	"mod/ureserve.ccm"
-#pragma		GCC dependency	"mod/strfilter.ccm"
-#pragma		GCC dependency	"mod/argmgr.ccm"
-#pragma		GCC dependency	"mod/fonce.ccm"
-#pragma		GCC dependency	"mod/sif.ccm"
-#pragma		GCC dependency	"mod/bitop.ccm"
-#pragma		GCC dependency	"mod/tardir.ccm"
-#pragma		GCC dependency	"mod/filerec.ccm"
-#pragma		GCC dependency	"mod/modproc.ccm"
-#pragma		GCC dependency	"mod/cmdutils.ccm"
-#pragma		GCC dependency	"mod/debug.ccm"
+#pragma		GCC dependency		"mod/libutil.ccm"
+#pragma		GCC dependency		"mod/ulibvals.ccm"
+#pragma		GCC dependency		"mod/ureserve.ccm"
+#pragma		GCC dependency		"mod/strfilter.ccm"
+#pragma		GCC dependency		"mod/argmgr.ccm"
+#pragma		GCC dependency		"mod/fonce.ccm"
+#pragma		GCC dependency		"mod/sif.ccm"
+#pragma		GCC dependency		"mod/bitop.ccm"
+#pragma		GCC dependency		"mod/tardir.ccm"
+#pragma		GCC dependency		"mod/filerec.ccm"
+#pragma		GCC dependency		"mod/modproc.ccm"
+#pragma		GCC dependency		"mod/cmdutils.ccm"
+#pragma		GCC dependency		"mod/debug.ccm"
 
 import libutil ;			/* |lenstr(3u)| + |getlenstr(3u)| */
 import ulibvals ;
@@ -215,6 +217,7 @@ namespace {
 	char		*lbuf = nullptr ;
 	char		*pbuf = nullptr ;
 	char		*tbuf = nullptr ;
+	char		*axp = nullptr ; /* allocated-memory */
 	FILE		*ofp ;		/* output-file-pointer */
 	int		argc ;
 	int		pm = -1 ;
@@ -267,15 +270,15 @@ namespace {
 	int preamble() noex ;
 	int process_pmbegin() noex ;
 	int process_pmend(bool) noex ;
-	int procfile_list(custat *,cchar *,int = -1) noex ;
-	int procfile_lc(custat *,cchar *,int = -1) noex ;
-	int procfile_mods(custat *,cchar *,int = -1) noex ;
-	int procfile_tardir(custat *,cchar *,int = -1) noex ;
 	int procdir(custat *,cchar *,int = -1) noex ;
 	int procdirsubs(custat *,cchar *,int = -1) noex ;
 	int procdirself(custat *,cchar *,int = -1) noex ;
 	int procent(custat *,cchar *,int = -1) noex ;
 	int procfile(custat *,cchar *,int = -1) noex ;
+	int procfile_list(custat *,cchar *,int = -1) noex ;
+	int procfile_lc(custat *,cchar *,int = -1) noex ;
+	int procfile_mods(custat *,cchar *,int = -1) noex ;
+	int procfile_tardirs(custat *,cchar *,int = -1) noex ;
 	int sufadd(cchar *,int = -1) noex ;
 	int sufhave(cchar *,int) noex ;
 	int modeadd(cchar *,int) noex ;
@@ -286,6 +289,11 @@ namespace {
 	int tardiradd(cchar *,int) noex ;
 	int typeout(cchar *,int) noex ;
 	int printf(cchar *,...) noex ;
+	int tardirs_begin() noex ;
+	int tardirs_end() noex ;
+	int tardirs_albegin() noex ;
+	int tardirs_alend() noex ;
+	int tardirs_check() noex ;
     private:
 	int istart() noex ;
 	int ifinish() noex ;
@@ -949,17 +957,7 @@ int proginfo::process_pmbegin() noex {
 	    break ;
         case progmode_filesyner:
         case progmode_filelinker:
-	    if ((rs = maxpathlen) >= 0) {
-		cint sz = ((rs + 1) * 2) ;
-		plen = rs ;
-	        tlen = rs ;
-	        rs = SR_NOMEM ;
-	        if (char *a ; (a = new(nt) char[sz]) != np) {
-		    pbuf = a + (0 * (plen + 1)) ;
-		    tbuf = a + (1 * (plen + 1)) ;
-		    rs = SR_OK ;
-		} /* end if (new-{x}buf) */
-	    } /* end if (maxpathlen) */
+	    rs = tardirs_begin() ;
 	    break ;
 	} /* end switch */
 	return (rs >= 0) ? fcontinue : rs ;
@@ -981,11 +979,7 @@ int proginfo::process_pmend(bool ferr) noex {
 	    break ;
         case progmode_filesyner:
         case progmode_filelinker:
-	    if (tbuf) {
-		delete [] tbuf ;
-		tbuf = nullptr ;
-		tlen = 0 ;
-	    }
+	    rs = tardirs_end() ;
 	    break ;
 	} /* end switch */
 	return rs ;
@@ -1143,7 +1137,7 @@ int proginfo::procfile(custat *sbp,cchar *sp,int sl) noex {
 	                break ;
 	            case progmode_filesyner:
 		    case progmode_filelinker:
-			rs = procfile_tardir(sbp,sp,sl) ;
+			rs = procfile_tardirs(sbp,sp,sl) ;
 			c = rs ;
 			break ;
 	            } /* end switch */
@@ -1227,7 +1221,7 @@ int proginfo::procfile_mods(custat *sbp,cchar *sp,int sl) noex {
 }
 /* end method (proginfo::procfile_mods) */
 
-int proginfo::procfile_tardir(custat *sbp,cchar *sp,int sl) noex {
+int proginfo::procfile_tardirs(custat *sbp,cchar *sp,int sl) noex {
     	int		rs ;
 	int		rs1 ;
 	int		c = 0 ;
@@ -1238,9 +1232,19 @@ int proginfo::procfile_tardir(custat *sbp,cchar *sp,int sl) noex {
 	if (tardir_cur cur ; (rs = dirs.curbegin(&cur)) >= 0) {
 	    for (cchar *dp ; (rs = dirs.curenum(&cur,&dp)) > 0 ; ) {
 		DEBPRINTF("dir=%s\n",dp,rs) ;
-		{
+		switch (pm) {
+#ifdef	COMMENT
+		case progmode_filelinker:
+		    rs = proclink(dp,sbp,sp,sl) ;
+		    break ;
+		case progmode_filesyner:
+		    rs = procsymc(dp,sbp,sp,sl) ;
+		    break ;
+#endif /* COMMENT */
+		default:
 		    rs = SR_OK ;
-		} /* end block */
+		} /* end switch */
+		c += rs ;
 		if (rs < 0) break ;
 	    } /* end for */
 	    rs1 = dirs.curend(&cur) ;
@@ -1248,8 +1252,9 @@ int proginfo::procfile_tardir(custat *sbp,cchar *sp,int sl) noex {
 	} /* end if (tardir::cursor) */
 	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
     	return (rs >= 0) ? c : rs ;
-} /* end method (proginfo::procfile_tardir) */
+} /* end method (proginfo::procfile_tardirs) */
 
+/* suffix */
 int proginfo::isufavail() noex {
     	int		rs = SR_OK ;
 	if (! fl.exts) {
@@ -1260,6 +1265,7 @@ int proginfo::isufavail() noex {
 	return rs ;
 } /* end method (proginfo::isufavail) */
 
+/* suffix */
 int proginfo::sufadd(cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
 	int		c = 0 ;
@@ -1287,6 +1293,7 @@ int proginfo::sufadd(cchar *sp,int sl) noex {
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::sufadd) */
 
+/* suffix */
 int proginfo::isufready() noex {
     	int		rs = SR_OK ;
 	if (fl.suffix) {
@@ -1295,6 +1302,7 @@ int proginfo::isufready() noex {
     	return rs ;
 } /* end method (proginfo::isufready) */
 
+/* suffix */
 int proginfo::sufhave(cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
 	int		f = true ; /* return-value */
@@ -1312,6 +1320,7 @@ int proginfo::sufhave(cchar *sp,int sl) noex {
 	return (rs >= 0) ? f : rs ;
 } /* end method (proginfo::sufhave) */
 
+/* file-mode */
 int proginfo::modeadd(cchar *sp,int sl) noex {
     	sif		so(sp,sl,',') ;
     	int		rs = SR_OK ;
@@ -1372,6 +1381,7 @@ int proginfo::modeadd(cchar *sp,int sl) noex {
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::modeadd) */
 
+/* file-mode */
 int proginfo::modehave(custat *sbp) noex {
     	int		rs = SR_OK ;
 	int		f = true ;
@@ -1382,26 +1392,29 @@ int proginfo::modehave(custat *sbp) noex {
     	return (rs >= 0) ? f : rs ;
 } /* end method (proginfo::modehave) */
 
+/* tardir */
 int proginfo::tardirbegin() noex {
     	int		rs = SR_OK ;
 	if (! fl.dirs) {
 	    if ((rs = dirs.start) >= 0) {
 	        fl.dirs = true ;
 	    }
-	}
+	} /* end if (initialization needed) */
 	return rs ;
 } /* end method (proginfo::tardirbegin) */
 
+/* tardir */
 int proginfo::tardirend() noex {
     	int		rs = SR_OK ;
 	if (fl.dirs) {
 	    if ((rs = dirs.finish()) >= 0) {
 	        fl.dirs = false ;
 	    }
-	}
+	} /* end if (was initialized) */
 	return rs ;
 } /* end method (proginfo::tardirend) */
 
+/* tardir */
 int proginfo::tardiravail() noex {
     	int		rs = SR_OK ;
 	if (! fl.dirs) {
@@ -1410,6 +1423,7 @@ int proginfo::tardiravail() noex {
 	return rs ;
 } /* end method (proginfo::tardiravail) */
 
+/* tardir */
 int proginfo::tardiradd(cchar *sp,int sl) noex {
     	int		rs ;
 	int		c = 0 ;
@@ -1430,6 +1444,81 @@ int proginfo::tardiradd(cchar *sp,int sl) noex {
 	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
     	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::tardiradd) */
+
+#ifdef	COMMENT
+int proginfo::proclink(cchar *dp,ustat *sbp,cchar *sp,int sl) noex {
+	int		rs = SR_OK ;
+	int		f_linked = false ; /* return-value */
+	if (sbp->st_dev == pip->tardev) {
+	    int		w = 0 ;
+	    cmode	dm = 0775 ;
+	    if ((rs = mkpath2w(tbuf,dp,sp,sl)) >= 0) {
+	        bool	f_dolink = true ;
+	        if (ustat tsb ; (rs = uc_lstat(tbuf,&tsb)) >= 0) {
+	            if (S_ISDIR(sbp->st_mode)) {
+	                if (S_ISDIR(tsb.st_mode)) {
+	                    f_dolink = false ;
+	                } else {
+	                    w = 3 ;
+	                    rs = uc_unlink(tbuf) ;
+	                }
+		    } else {
+	                bool	f = true ;
+	                f = f && (tsb.st_dev == sbp->st_dev) ;
+	                f = f && (tsb.st_ino == sbp->st_ino) ;
+	                if (f) {
+	                    f_linked = true ;
+	                    f_dolink = false ;
+	                } else {
+	                    if (S_ISDIR(tsb.st_mode)) {
+	                        w = 1 ;
+	                        rs = removes(tarfname) ;
+	                    } else {
+	                        w = 2 ;
+	                        rs = uc_unlink(tarfname) ;
+	                    }
+	                }
+	            } /* end if */
+	        } else if (isNotStat(rs)) {
+	            rs = SR_OK ;
+	        }
+	        if ((rs >= 0) && f_dolink) {
+	            if (S_ISDIR(sbp->st_mode)) {
+	                w = 7 ;
+	                rs = uc_mkdir(tbuf,dm) ;
+	                if ((rs == SR_NOTDIR) || (rs == SR_NOENT)) {
+	                    w = 8 ;
+	                    if ((rs = mkpdirs(tbuf,dm)) >= 0) {
+	                        w = 9 ;
+	                        rs = uc_mkdir(tbuf,dm) ;
+	                    }
+	                }
+	            } else {
+	                f_linked = true ;
+	                w = 4 ;
+	                rs = uc_link(name,tbuf) ;
+	                if ((rs == SR_NOTDIR) || (rs == SR_NOENT)) {
+	                    w = 5 ;
+	                    if ((rs = mkpdirs(tbuf,dm)) >= 0) {
+	                        w = 6 ;
+	                        rs = uc_link(name,tbuf) ;
+	                    }
+	                }
+		    } /* end if */
+	        } /* end if (dolink) */
+	        if ((rs == SR_EXIST) && (! pip->fl.quiet)) {
+	    	    bfile	*efp = (bfile *) pip->efp ;
+	            cchar	*pn = pip->progname ;
+	            bprintf(efp,"%s: exists w=%u\n",pn,w) ;
+	        }
+	    } /* end if (mkpath) */
+	} else {
+	    pip->c_linkerr += 1 ;
+	    rs = SR_XDEV ;
+	}
+	return (rs >= 0) ? f_linked : rs ;
+} /* end method (proginfo::proclink) */
+#endif /* COMMENT */
 
 int proginfo::fileuniq(custat *sbp)  noex {
     	int		rs = 1 ; /* default indicates "uniq" */
@@ -1496,6 +1585,69 @@ int proginfo::printf(cchar *fmt,...) noex {
 	} /* end if (non-null) */
 	return (rs >= 0) ? len : rs ;
 } /* end method (proginfo::argdebug) */
+
+int proginfo::tardirs_begin() noex {
+    	int		rs ;
+	if ((rs = tardirs_albegin()) >= 0) {
+	    rs = tardirs_check() ;
+	    if (rs < 0) {
+		tardirs_alend() ;
+	    } /* end if (error) */
+	} /* end if (tardirs_albegin) */
+	return rs ;
+} /* end method (proginfo::tardirs_begin) */
+
+int proginfo::tardirs_end() noex {
+	return tardirs_alend() ;
+} /* end method (proginfo::tardirs_end) */
+
+int proginfo::tardirs_albegin() noex {
+    	cnullptr	np{} ;
+	cnothrow	nt{} ;
+    	int		rs ;
+	if ((rs = maxpathlen) >= 0) {
+	    cint maxpath = rs ;
+	    cint sz = ((rs + 1) * 2) ;
+	    rs = SR_NOMEM ;
+	    if ((axp = new(nt) char[sz]) != np) {
+		int ai = 0 ;
+		pbuf = (axp + ((plen + 1) * ai++)) ;
+		tbuf = (axp + ((plen + 1) * ai++)) ;
+		plen = maxpath ;
+	        tlen = maxpath ;
+	    } /* end if (new-{x}buf) */
+	} /* end if (maxpathlen) */
+	return rs ;
+} /* end method (proginfo::tardirs_albegin) */
+
+int proginfo::tardirs_alend() noex {
+    	int		rs = SR_OK ;
+	    if (axp) {
+		delete [] axp ;
+		axp = nullptr ;
+		pbuf = nullptr ;
+		tbuf = nullptr ;
+		plen = 0 ;
+		tlen = 0 ;
+	    } /* end if (deleting allocated-memory) */
+	    return rs ;
+} /* end method (proginfo::tardirs_alend) */
+
+int proginfo::tardirs_check() noex {
+	int		rs = SR_OK ;
+	int		rs1 ;
+	if_constexpr (false) {
+	    if (tardir_cur cur ; (rs = dirs.curbegin(&cur)) >= 0) {
+	        for (cchar *dp ; (rs = dirs.curenum(&cur,&dp)) > 0 ; ) {
+		    rs = SR_OK ;
+		    if (rs < 0) break ;
+	        } /* end for */
+	        rs1 = dirs.curend(&cur) ;
+	        if (rs >= 0) rs = rs1 ;
+	    } /* end if (tardir-cursor) */
+	} /* end if_constexpr (false) */
+	return rs ;
+} /* end method (proginfo::tardirs_check) */
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
