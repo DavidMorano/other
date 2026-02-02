@@ -45,7 +45,7 @@ enum emaparts {
 	emapart_route,
 	emapart_comment,
 	emapart_overlast
-} ;
+} ; /* end enum (emaparts) */
 
 struct ema_head {
 	vechand		*elp ;
@@ -56,7 +56,7 @@ struct ema_head {
 struct ema_flags {
 	uint		error:1 ;	/* address parse error */
 	uint		expanded:1 ;	/* list has been expanded */
-} ;
+} ; /* end struct (ema_flags) */
 
 struct ema_entry {
 	cchar		*op ;		/* original address */
@@ -68,7 +68,7 @@ struct ema_entry {
 	int		type ;		/* mailing list type */
 	int		n ;		/* number in list */
 	int		ol, al, rl, cl ;
-} ;
+} ; /* end struct (ema_entry) */
 
 typedef	EMA_FL		ema_fl ;
 typedef EMA_ENT		ema_ent ;
@@ -79,7 +79,7 @@ enum emamems {
 	emamem_count,
 	emamem_finish,
 	emamem_overlast
-} ;
+} ; /* end enum (emamems) */
 struct ema ;
 struct ema_st {
 	ema		*op = nullptr ;
@@ -115,7 +115,7 @@ struct ema : ema_head {
 	    count(this,emamem_count) ;
 	    finish(this,emamem_finish) ;
 	    magic = 0 ;
-	} ;
+	} ; /* end ctor */
 	ema(const ema &) = delete ;
 	ema &operator = (const ema &) = delete ;
 	int parse(cchar *,int = -1) noex ;
