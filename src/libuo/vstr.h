@@ -27,7 +27,7 @@
 
 #include	<vstrcmpx.h>
 #include	<vstrkeycmpx.h>
-#include	<vstrsort.h>
+#include	<vstrkeydictcmp.h>
 
 
 #endif /* VSTRKEYCMPX_INCLUDE */
