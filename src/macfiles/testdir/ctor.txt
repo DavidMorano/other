@@ -1,31 +1,28 @@
 template<typename ... Args>
-static int conslog_ctor(conslog *op,Args ... args) noex {
+local int conslog_ctor(conslog *op,Args ... args) noex {
 	cnullptr	np{} ;
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) {
-	    rs = SR_OK ;
+	    rs = SR_NOMEM ;
 
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end subroutine (conslog_ctor) */
+} /* end subroutine (conslog_ctor) */
 
-static int conslog_dtor(conslog *op) noex {
+local int conslog_dtor(conslog *op) noex {
 	int		rs = SR_FAULT ;
 	if (op) {
 	    rs = SR_OK ;
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end subroutine (conslog_dtor) */
+} /* end subroutine (conslog_dtor) */
 
 template<typename ... Args>
-static inline int conslog_magic(conslog *op,Args ... args) noex {
+local inline int conslog_magic(conslog *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) {
 	    rs = (op->magic == CONSLOG_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
-}
-/* end subroutine (conslog_magic) */
+} /* end subroutine (conslog_magic) */
 
