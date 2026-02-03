@@ -27,12 +27,10 @@
 	different from 'ftw' and 'wdt' in that it allows the caller
 	to intermix directory functions with other caller activities.
 	It allows this by "reading" and entry in a similar way as
-	FSDIR allows.
-
-	The caller "opens" an object and then performs operations
-	on it like reading a directory entry.  After the caller is
-	finished with all directory functions on this object, the
-	object should be "closed".
+	FSDIR allows.  The caller "opens" an object and then performs
+	operations on it like reading a directory entry.  After the
+	caller is finished with all directory functions on this
+	object, the object should be "closed".
 
 	Synopsis:
 	int fsdirtree_open(fsdirtree *op,cchar *dname,int opts) noex
@@ -136,7 +134,7 @@ namespace {
 	int		maxlinklen ;
 	operator int () noex ;
     } ; /* end struct (vars) */
-}
+} /* end namespace */
 
 
 /* forward references */
@@ -220,12 +218,12 @@ static uint	diridhash(cvoid *,int) noex ;
 
 local inline bool btst(ushort v,int n) noex {
     	return bool((v >> n) & 1) ;
-}
+} /* end subroutine (btst) */
 
 local inline bool interested(ushort sel,mode_t m) noex {
     	cint	ft = filetype(m) ;
 	return btst(sel,ft) ;
-}
+} /* end subroutine (interested) */
 
 
 /* local variables */
@@ -234,23 +232,6 @@ static vars		var ;
 
 
 /* exported variables */
-
-cint	fsdirtreems::pipe		= (1 << fsdirtreeo_pipe) ;
-cint	fsdirtreems::chr		= (1 << fsdirtreeo_chr) ;
-cint	fsdirtreems::dir		= (1 << fsdirtreeo_dir) ;
-cint	fsdirtreems::name		= (1 << fsdirtreeo_name) ;
-cint	fsdirtreems::blk		= (1 << fsdirtreeo_blk) ;
-cint	fsdirtreems::reg		= (1 << fsdirtreeo_reg) ;
-cint	fsdirtreems::lnk		= (1 << fsdirtreeo_lnk) ;
-cint	fsdirtreems::sock		= (1 << fsdirtreeo_sock) ;
-cint	fsdirtreems::door		= (1 << fsdirtreeo_door) ;
-cint	fsdirtreems::wht		= (1 << fsdirtreeo_wht) ;
-cint	fsdirtreems::follow		= (1 << fsdirtreeo_follow) ;
-cint	fsdirtreems::noent		= (1 << fsdirtreeo_noent) ;
-cint	fsdirtreems::uniqfile		= (1 << fsdirtreeo_uniqfile) ;
-cint	fsdirtreems::uniqdir		= (1 << fsdirtreeo_uniqdir) ;
-cint	fsdirtreems::igndotfile		= (1 << fsdirtreeo_igndotfile) ;
-cint	fsdirtreems::igndotdir		= (1 << fsdirtreeo_igndotdir) ;
 
 constexpr fsdirtreems	fsdirtreem ;	/* FSDIRTREE mask */
 
@@ -283,23 +264,23 @@ int fsdirtree_open(fsdirtree *op,cchar *dname,int opts) noex {
 				    lm_free(op->bnbuf) ;
 				    op->bnbuf = nullptr ;
 				    op->bnlen = 0 ;
-				}
+				} /* end if (error) */
 			    } /* end if (memory-allocation) */
 			    if (rs < 0) {
 			        lm_free(op->nbuf) ;
 			        op->nbuf = nullptr ;
 				op->nlen = 0 ;
-			    } /* end if (error-handle) */
+			    } /* end if (error) */
 			} /* end if (memory-allocation) */
 			if (rs < 0) {
 			    lm_free(op->lbuf) ;
 			    op->lbuf = nullptr ;
 			    op->llen = 0 ;
-			} /* end if (error-handle) */
+			} /* end if (error) */
 		    } /* end if (memory_allocation) */
 	            if (rs < 0) {
 	                fifostr_finish(op->dqp) ;
-	            }
+	            } /* end if (error) */
 	        } /* end if (fifostr_start) */
 	    } /* end if (vars) */
 	    if (rs < 0) {
@@ -395,15 +376,39 @@ int fsdirtree_close(fsdirtree *op) noex {
 }
 /* end subroutine (fsdirtree_close) */
 
+namespace {
+    struct reader {
+	fsdirtree	*op ;
+	ustat		*sbp ;
+	char		*rbuf ;
+	int		rlen ;
+	reader(fsdirtree *o,ustat *s,char *p,int l) noex : op(o) {
+	    sbp = s ;
+	    rbuf = p ;
+	    rlen = l ;
+	} ; /* end ctor */
+	operator int () noex ;
+    } ; /* end struct (reader) */
+} /* end namespace */
+
 int fsdirtree_read(fsdirtree *op,ustat *sbp,char *rbuf,int rlen) noex {
 	int		rs ;
-	int		len = 0 ;
 	if ((rs = fsdirtree_magic(op,sbp,rbuf)) >= 0) ylikely {
-	USTAT		se ;
+	    reader ro(op,sbp,rbuf,rlen) ;
+	    rs = ro ;
+	} /* end if (magic) */
+	return rs ;
+}
+/* end subroutine (fsdirtree_read) */
+
+reader::operator int () noex {
+	ustat		se ;
 	int		mlen ;
 	int		clen ;
 	int		flen ;
 	int		ndir = 0 ;
+	int		rs = SR_OK ;
+	int		len = 0 ; /* return-value */
 	char		*fnp ;
 	char		*cdnp = nullptr ;
 	if (rlen < 0) rlen = var.maxpathlen ;
@@ -435,7 +440,7 @@ int fsdirtree_read(fsdirtree *op,ustat *sbp,char *rbuf,int rlen) noex {
 	                        if ((rs = uc_readlink(fn,lbuf,llen)) >= 0) {
 				    if (! isDotDir(lbuf)) {
 	                                if ((rs = uc_stat(fn,&se)) >= 0) {
-	                                    sbp = &se ;
+	                                    *sbp = se ;
 	                                } else if (rs == SR_NOENT) {
 	                                    rs = SR_OK ;
 	                                }
@@ -513,10 +518,9 @@ int fsdirtree_read(fsdirtree *op,ustat *sbp,char *rbuf,int rlen) noex {
 	    rs = mknpath1(rbuf,rlen,cdnp) ;
 	    len = rs ;
 	}
-	} /* end if (magic) */
 	return (rs >= 0) ? len : rs ;
 }
-/* end subroutine (fsdirtree_read) */
+/* end method (reader::operator) */
 
 int fsdirtree_prune(fsdirtree *op,cchar **prune) noex {
     	int		rs ;
