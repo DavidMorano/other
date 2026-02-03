@@ -55,22 +55,22 @@ enum fsdirtreeos {
 /* masks */
 #ifdef	__cplusplus
 struct fsdirtreems {
-    static cint	pipe ;
-    static cint	chr ;
-    static cint	dir ;
-    static cint	name ;
-    static cint	blk ;
-    static cint	reg ;
-    static cint	lnk ;
-    static cint	sock ;
-    static cint	door ;
-    static cint	wht ;
-    static cint	follow ;
-    static cint	noent ;
-    static cint	uniqfile ;
-    static cint	uniqdir ;
-    static cint	igndotfile ;
-    static cint	igndotdir ;
+    constexpr static cint	pipe		= (1 << fsdirtreeo_pipe) ;
+    constexpr static cint	chr		= (1 << fsdirtreeo_chr) ;
+    constexpr static cint	dir		= (1 << fsdirtreeo_dir) ;
+    constexpr static cint	name		= (1 << fsdirtreeo_name) ;
+    constexpr static cint	blk		= (1 << fsdirtreeo_blk) ;
+    constexpr static cint	reg		= (1 << fsdirtreeo_reg) ;
+    constexpr static cint	lnk		= (1 << fsdirtreeo_lnk) ;
+    constexpr static cint	sock		= (1 << fsdirtreeo_sock) ;
+    constexpr static cint	door		= (1 << fsdirtreeo_door) ;
+    constexpr static cint	wht		= (1 << fsdirtreeo_wht) ;
+    constexpr static cint	follow		= (1 << fsdirtreeo_follow) ;
+    constexpr static cint	noent		= (1 << fsdirtreeo_noent) ;
+    constexpr static cint	uniqfile	= (1 << fsdirtreeo_uniqfile) ;
+    constexpr static cint	uniqdir		= (1 << fsdirtreeo_uniqdir) ;
+    constexpr static cint	igndotfile	= (1 << fsdirtreeo_igndotfile) ;
+    constexpr static cint	igndotdir	= (1 << fsdirtreeo_igndotdir) ;
 } ; /* end struct (fsdirtreems) */
 #endif /* __cplusplus */
 
@@ -136,9 +136,7 @@ extern int fsdirtree_close(fsdirtree *) noex ;
 EXTERNC_end
 
 #ifdef	__cplusplus
-
 extern const fsdirtreems	fsdirtreem ;
-
 #endif /* __cplusplus */
 
 
