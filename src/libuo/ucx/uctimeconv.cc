@@ -22,18 +22,18 @@
 	uctimeconv
 
 	Names:
-	uc_localtime
-	uc_gmtime
-	uc_ztime
+	uc_timelocal
+	uc_timegm
+	uc_timex
 	uc_mktime
 
 	Description:
 	Time conversion subroutines.
 
 	Synopsis:
-	int uc_localtime(custime *dt,TM *tmp) noex
-	int uc_gmtime(custime *dt,TM *tmp) noex
-	int uc_ztime(custime *tp,TM *tsp,int z) noex
+	int uc_timelocal(custime *dt,TM *tmp) noex
+	int uc_timegm(custime *dt,TM *tmp) noex
+	int uc_timex(custime *tp,TM *tsp,int z) noex
 	int uc_mktime(TM *tmp,time_t *rp) noex
 
 	Arguments:
@@ -54,10 +54,7 @@
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<usysbase.h>
 #include	<usyscalls.h>
 #include	<aflag.hh>
 #include	<localmisc.h>
@@ -94,7 +91,7 @@
 
 /* exported subroutines */
 
-int uc_localtime(custime *tp,TM *tsp) noex {
+int uc_timelocal(custime *tp,TM *tsp) noex {
     	cnullptr	np{} ;
 	int		rs = SR_FAULT ;
 	if (tp && tsp) ylikely {
@@ -110,9 +107,9 @@ int uc_localtime(custime *tp,TM *tsp) noex {
 	} /* end if (non-null) */
 	return rs ;
 }
-/* end subroutine (uc_localtime) */
+/* end subroutine (uc_timelocal) */
 
-int uc_gmtime(custime *tp,TM *tsp) noex {
+int uc_timegm(custime *tp,TM *tsp) noex {
     	cnullptr	np{} ;
 	int		rs = SR_FAULT ;
 	if (tp && tsp) ylikely {
@@ -128,18 +125,18 @@ int uc_gmtime(custime *tp,TM *tsp) noex {
 	} /* end if (non-null) */
 	return rs ;
 }
-/* end subroutine (uc_gmtime) */
+/* end subroutine (uc_timegm) */
 
-int uc_ztime(custime *tp,TM *tsp,int z) noex {
+int uc_timex(custime *tp,TM *tsp,int z) noex {
 	int		rs ;
 	if (z) {
-	    rs = uc_localtime(tp,tsp) ;
+	    rs = uc_timelocal(tp,tsp) ;
 	} else {
-	    rs = uc_gmtime(tp,tsp) ;
+	    rs = uc_timegm(tp,tsp) ;
 	}
 	return rs ;
 }
-/* end subroutine (uc_ztime) */
+/* end subroutine (uc_timex) */
 
 int uc_mktime(TM *tmp,time_t *rp) noex {
 	int		rs = SR_FAULT ;
