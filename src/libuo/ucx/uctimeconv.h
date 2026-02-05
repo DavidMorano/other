@@ -42,9 +42,9 @@
 
 EXTERNC_begin
 
-extern int	uc_localtime(custime *,TM *) noex ;
-extern int	uc_gmtime(custime *,TM *) noex ;
-extern int	uc_ztime(custime *,TM *,int) noex ;
+extern int	uc_timelocal(custime *,TM *) noex ;
+extern int	uc_timegm(custime *,TM *) noex ;
+extern int	uc_timex(custime *,TM *,int) noex ;
 extern int	uc_mktime(TM *,time_t *) noex ;
 
 EXTERNC_end
