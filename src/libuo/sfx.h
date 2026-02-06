@@ -23,11 +23,12 @@
 #include	<clanguage.h>
 #include	<usysbase.h>
 
+#include	<sfcasesub.h>
+#include	<sfext.h>
+#include	<sfnext.h>
 #include	<sfxchr.h>
 #include	<sfxbrk.h>
 #include	<sfxsub.h>
-#include	<sfext.h>
-#include	<sfcasesub.h>
 #include	<sfweirdo.h>
 
 EXTERNC_begin
@@ -43,11 +44,7 @@ extern int sfkey(cchar *,int,cchar **) noex ;
 extern int sfkeyval(cchar *,int,cchar *,cchar **) noex ;
 extern int sflast(cchar *,int,int,cchar **) noex ;
 extern int sfnamecomp(cchar *,int,cchar **) noex ;
-extern int sfnext(cchar *,int,cchar **) noex ;
-extern int sfnextchr(cchar *,int,int,cchar **) noex ;
-extern int sfnextbrk(cchar *,int,cchar *,cchar **) noex ;
-extern int sfnextterm(cchar *,int,cchar *,cchar **) noex ;
-extern int sfnextqtok(cchar *,int,cchar **) noex ;
+
 extern int sfprogroot(cchar *,int,cchar **) noex ;
 extern int sfprogname(cchar *,int,cchar **) noex ;
 extern int sfrootname(cchar *,int,cchar **) noex ;
