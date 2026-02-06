@@ -23,43 +23,30 @@
 #include	<clanguage.h>
 #include	<usysbase.h>
 
+#include	<sicasechr.h>
+#include	<sichar.h>
 #include	<siext.h>
 #include	<sifext.h>
-#include	<sixchr.h>
-#include	<sixbrk.h>
-#include	<sixterm.h>
-#include	<sixsub.h>
-#include	<siwht.h>
-#include	<sicasechr.h>
-#include	<sinon.h>
-#include	<sichar.h>
-#include	<sispan.h>
 #include	<sileadchr.h>
 #include	<sileader.h>
 #include	<sileadzero.h>
+#include	<sinext.h>
+#include	<sinon.h>
+#include	<sispan.h>
+#include	<sixbrk.h>
+#include	<sixchr.h>
+#include	<sixterm.h>
+#include	<sixsub.h>
+#include	<siwht.h>
 
 
 EXTERNC_begin
 
 extern int sidquote(cchar *,int) noex ;
 extern int sibasename(cchar *,int) noex ;
-extern int sinext(cchar *,int) noex ;
 extern int silbrace(cchar *,int) noex ;
 extern int sihyphen(cchar *,int) noex ;
 extern int sicite(cchar *,int,cchar *,int) noex ;
-
-static inline int sichr(cchar *sp,int sl,int sch) noex {
-	return siochr(sp,sl,sch) ;
-}
-static inline int sibrk(cchar *sp,int sl,cchar *ss) noex {
-    	return siobrk(sp,sl,ss) ;
-}
-static inline int sibreak(cchar *sp,int sl,cchar *ss) noex {
-	return sibrk(sp,sl,ss) ;
-}
-static inline int siterm(cchar *sp,int sl,cchar *ss) noex {
-    	return sioterm(sp,sl,ss) ;
-}
 
 EXTERNC_end
 
