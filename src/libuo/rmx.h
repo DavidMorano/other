@@ -30,6 +30,7 @@ EXTERNC_begin
 
 extern int	rmeol(cchar *,int) noex ;
 extern int	rmwht(cchar *,int) noex ;
+extern int	rmblk(cchar *,int) noex ;
 extern int	rmclass(cchar *,int,cchar *) noex ;
 extern int	rmtrailchr(cchar *,int,int) noex ;
 extern int	rmochr(cchar *,int,int) noex ;
