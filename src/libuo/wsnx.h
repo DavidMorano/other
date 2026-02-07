@@ -22,10 +22,7 @@
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<stddef.h>		/* |wchar_t| */
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<usysbase.h>
 
 
 EXTERNC_begin
