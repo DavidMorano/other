@@ -54,7 +54,7 @@ enum strmgrmems {
 	strmgrmem_reset,
 	strmgrmem_finish,
 	strmgrmem_overlast
-} ;
+} ; /* end enum (strmgrmems) */
 struct strmgr ;
 struct strmgr_co {
 	strmgr		*op = nullptr ;
