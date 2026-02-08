@@ -1,4 +1,4 @@
-# MAKEFILES (libdigest)
+# MAKEFILE (libdigest)
 
 T= libdigest
 
