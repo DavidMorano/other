@@ -1,4 +1,4 @@
-# MAKEFILES (ucx)
+# MAKEFILE (ucx)
 
 T= ucx
 
