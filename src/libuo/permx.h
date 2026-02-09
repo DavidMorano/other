@@ -34,20 +34,17 @@
 #include	<sys/types.h>		/* UNIX® system types */
 #include	<sys/stat.h>
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<usysbase.h>
 #include	<ids.h>
 #include	<vecstr.h>
 
+#include	<permsched.h>
 
 EXTERNC_begin
 
 extern int permid(ids *,ustat *,int) noex ;
 extern int perm(cchar *,uid_t,gid_t,const gid_t *,int) noex ;
 extern int permf(int,uid_t,gid_t,const gid_t *,int) noex ;
-extern int permsched(mainv,vecstr *,char *,int,cc *,mode_t) noex ;
 
 EXTERNC_end
 
