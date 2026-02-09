@@ -1572,6 +1572,7 @@ int proginfo::printf(cchar *fmt,...) noex {
 	        va_begin(ap,fmt) ;
 	        if ((rs = maxlinelen) >= 0) {
 		    cint µllen = rs ;
+		    rs = SR_NOMEM ;
 		    if (char *µlbuf ; (µlbuf = new(nt) char[µllen + 1]) != np) {
 			if ((rs = snvprintf(µlbuf,µllen,fmt,ap)) >= 0) {
 			    cerr << pn << ": " << µlbuf ;
@@ -1584,7 +1585,7 @@ int proginfo::printf(cchar *fmt,...) noex {
 	    } /* end if (non-empty) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? len : rs ;
-} /* end method (proginfo::argdebug) */
+} /* end method (proginfo::printf) */
 
 int proginfo::tardirs_begin() noex {
     	int		rs ;
