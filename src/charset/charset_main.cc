@@ -426,19 +426,22 @@ int proginfo::printf(cchar *fmt,...) noex {
     	va_list		ap ;
     	int		rs = SR_FAULT ;
 	if (fmt) {
-	    if ((rs = maxlinelen) >= 0) {
+	    rs = SR_INVALID ;
+	    if (fmt[0]) {
 	        va_begin(ap,fmt) ;
-		cint	llen = rs ;
-		rs = SR_NOMEM ;
-		if (char *lbuf ; (lbuf = new(nt) char[llen + 1]) != np) {
-	    	    if ((rs = snvprintf(lbuf,llen,fmt,ap)) >= 0) {
-			if (pn == nullptr) pn = "charset" ;
-			cerr << pn << ": " << lbuf ;
-		    } /* end if (snvprintf) */
-		    delete [] lbuf ;
-		} /* end if (new-char) */
+	        if ((rs = maxlinelen) >= 0) {
+		    cint	llen = rs ;
+		    rs = SR_NOMEM ;
+		    if (char *lbuf ; (lbuf = new(nt) char[llen + 1]) != np) {
+	    	        if ((rs = snvprintf(lbuf,llen,fmt,ap)) >= 0) {
+			    if (pn == nullptr) pn = "charset" ;
+			    cerr << pn << ": " << lbuf ;
+		        } /* end if (snvprintf) */
+		        delete [] lbuf ;
+		    } /* end if (new-char) */
+	        } /* end if (maxlinelen) */
 	        va_end(ap) ;
-	    } /* end if (maxlinelen) */
+	    } /* end if (valid) */
 	} /* end if (non-null) */
     	return rs ;
 } /* end method (proginfo::printf) */
