@@ -1454,13 +1454,13 @@ int proginfo::proclink(cchar *dp,ustat *sbp,cchar *sp,int sl) noex {
 	    cmode	dm = 0775 ;
 	    if ((rs = mkpath2w(tbuf,dp,sp,sl)) >= 0) {
 	        bool	f_dolink = true ;
-	        if (ustat tsb ; (rs = uc_lstat(tbuf,&tsb)) >= 0) {
+	        if (ustat tsb ; (rs = u_lstat(tbuf,&tsb)) >= 0) {
 	            if (S_ISDIR(sbp->st_mode)) {
 	                if (S_ISDIR(tsb.st_mode)) {
 	                    f_dolink = false ;
 	                } else {
 	                    w = 3 ;
-	                    rs = uc_unlink(tbuf) ;
+	                    rs = u_unlink(tbuf) ;
 	                }
 		    } else {
 	                bool	f = true ;
@@ -1472,10 +1472,10 @@ int proginfo::proclink(cchar *dp,ustat *sbp,cchar *sp,int sl) noex {
 	                } else {
 	                    if (S_ISDIR(tsb.st_mode)) {
 	                        w = 1 ;
-	                        rs = removes(tarfname) ;
+	                        rs = u_rmdirs(tarfname) ;
 	                    } else {
 	                        w = 2 ;
-	                        rs = uc_unlink(tarfname) ;
+	                        rs = u_unlink(tarfname) ;
 	                    }
 	                }
 	            } /* end if */
@@ -1485,23 +1485,23 @@ int proginfo::proclink(cchar *dp,ustat *sbp,cchar *sp,int sl) noex {
 	        if ((rs >= 0) && f_dolink) {
 	            if (S_ISDIR(sbp->st_mode)) {
 	                w = 7 ;
-	                rs = uc_mkdir(tbuf,dm) ;
+	                rs = u_mkdir(tbuf,dm) ;
 	                if ((rs == SR_NOTDIR) || (rs == SR_NOENT)) {
 	                    w = 8 ;
 	                    if ((rs = mkpdirs(tbuf,dm)) >= 0) {
 	                        w = 9 ;
-	                        rs = uc_mkdir(tbuf,dm) ;
+	                        rs = u_mkdir(tbuf,dm) ;
 	                    }
 	                }
 	            } else {
 	                f_linked = true ;
 	                w = 4 ;
-	                rs = uc_link(name,tbuf) ;
+	                rs = u_link(name,tbuf) ;
 	                if ((rs == SR_NOTDIR) || (rs == SR_NOENT)) {
 	                    w = 5 ;
 	                    if ((rs = mkpdirs(tbuf,dm)) >= 0) {
 	                        w = 6 ;
-	                        rs = uc_link(name,tbuf) ;
+	                        rs = u_link(name,tbuf) ;
 	                    }
 	                }
 		    } /* end if */
