@@ -169,6 +169,7 @@ objb.o:			$(OBJB)
 
 
 files_main.o:		files_main.cc $(DEPS_MAIN)		$(INCS)
+files_helpdata.o:	files_helpdata.cc			$(INCS)
 
 # MODS
 mods.o:			$(DEPS_MAIN)
