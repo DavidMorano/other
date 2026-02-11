@@ -62,7 +62,6 @@
 #include	<sfx.h>			/* |sfbasename(3uc)| + |sfext(3uc)| */
 #include	<six.h>			/* |sisub(3uc)| */
 #include	<rmx.h>
-#include	<mkpathx.h>
 #include	<strwcpy.h>
 #include	<strnul.hh>
 #include	<ccfile.hh>
@@ -93,6 +92,7 @@
 import libutil ;			/* |lenstr(3u)| + |getlenstr(3u)| */
 import ulibvals ;
 import ureserve ;
+import umisc ;				/* |mknpath{x}(3u)| */
 import strfilter ;
 import argmgr ;
 import fonce ;
@@ -311,6 +311,8 @@ namespace {
 
 /* forward references */
 
+local int	mkpdirs(cchar *,mode_t) noex ;
+
 
 /* local variables */
 
@@ -395,6 +397,26 @@ constexpr cchar		version[]	= "0.0.1" ; /* semantic-versioning */
 constexpr int		nents		= NENTS ;
 constexpr bool		f_debug		= CF_DEBUG ;
 constexpr bool		f_filelines	= CF_FILELINES ;
+
+template<typename ... Args>
+local int mkpath(char *rbuf,Args ... args) noex {
+	cint		na = npack(Args) ;
+	int		rs ;
+	if ((rs = maxpathlen) >= 0) {
+	    rs = mknpathx(rbuf,rs,na,args ...) ;
+	}
+	return rs ;
+} /* end if (mkpath) */
+
+template<typename ... Args>
+local int mkpathw(char *rbuf,Args ... args) noex {
+	cint		na = npack(Args) ;
+	int		rs ;
+	if ((rs = maxpathlen) >= 0) {
+	    rs = mknpathxw(rbuf,rs,na,args ...) ;
+	}
+	return rs ;
+} /* end if (mkpathw) */
 
 
 /* exported variables */
@@ -1452,7 +1474,7 @@ int proginfo::proclink(cchar *dp,ustat *sbp,cchar *sp,int sl) noex {
 	if (sbp->st_dev == pip->tardev) {
 	    int		w = 0 ;
 	    cmode	dm = 0775 ;
-	    if ((rs = mkpath2w(tbuf,dp,sp,sl)) >= 0) {
+	    if ((rs = mkpathw(tbuf,dp,sp,sl)) >= 0) {
 	        bool	f_dolink = true ;
 	        if (ustat tsb ; (rs = u_lstat(tbuf,&tsb)) >= 0) {
 	            if (S_ISDIR(sbp->st_mode)) {
@@ -1511,7 +1533,7 @@ int proginfo::proclink(cchar *dp,ustat *sbp,cchar *sp,int sl) noex {
 	            cchar	*pn = pip->progname ;
 	            bprintf(efp,"%s: exists w=%u\n",pn,w) ;
 	        }
-	    } /* end if (mkpath) */
+	    } /* end if (mkpathxw) */
 	} else {
 	    pip->c_linkerr += 1 ;
 	    rs = SR_XDEV ;
@@ -1683,5 +1705,34 @@ int proginfo_co::operator () (int) noex {
 	return rs ;
 }
 /* end method (proginfo_co::operator) */
+
+/* make *parent* directories as needed */
+local int mkpdirs(cchar *tarfname,mode_t dm) noex {
+	int		rs = SR_OK ;
+	int		rs1 ;
+	int		rv = 0 ; /* return-value */
+	cchar		*dp ;
+	if (int dl ; (dl = sfdirname(tarfname,-1,&dp)) > 0) {
+	    if (char *dbuf ; (rs = lm_mp(&dbuf)) >= 0) {
+	        if ((rs = mkpath(dbuf,dp,dl)) >= 0) {
+	            if ((rs = u_unlink(dbuf)) >= 0) {
+		        rs = SR_OK ;
+		    } else if (isNotPresent(rs)) {
+		        rs = SR_OK ;
+		    }
+		    if (rs >= 0) {
+	                rs = u_mkdirs(dbuf,dm) ;
+		        rv = rs ;
+		    }
+	        } /* end if (mkpath) */
+	        rs1 = lm_free(dbuf) ;
+	        if (rs >= 0) rs = rs1 ;
+	    } /* end if (m-a-f) */
+	} else {
+	    rs = SR_NOENT ;
+	}
+	return (rs >= 0) ? rv : rs ;
+}
+/* end subroutine (mkpdirs) */
 
 
