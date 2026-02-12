@@ -74,13 +74,13 @@ struct shortq : shortq_head {
 	} ; /* end ctor */
 	shortq(const shortq &) = delete ;
 	shortq &operator = (const shortq &) = delete ;
-	int load(short *,int) noex ;
-	int ins(short) noex ;
-	int rem(short *) noex ;
-	int remread(short *,int) noex ;
-	int get(int) noex ;
-	int readat(int,short *,int) noex ;
-	int read(short *,int) noex ;
+	int load	(short *,int) noex ;
+	int ins		(short) noex ;
+	int rem		(short *) noex ;
+	int remread	(short *,int) noex ;
+	int get		(int) noex ;
+	int readat	(int,short *,int) noex ;
+	int read	(short *,int) noex ;
 	void dtor() noex ;
 	int operator [] (int) noex ;
 	operator int () noex ;
