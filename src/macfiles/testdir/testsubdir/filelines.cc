@@ -137,7 +137,7 @@ static int liner(int fd,csize ms) noex {
 		size_t	ll = ms ;
 		cchar	*lp = charp(md) ;
 		for (cchar *tp ; (tp = charp(memchr(lp,'\n',ll))) != np ; ) {
-		    csize	si = ((tp + 1) - lp) ;
+		    csize	si = size_t((tp + 1) - lp) ;
 		    lines += 1 ;
 		    ll -= si ;
 		    lp += si ;
