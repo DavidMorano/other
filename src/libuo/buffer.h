@@ -93,10 +93,10 @@ struct buffer : buffer_head {
 	int vprintf	(cchar *,va_list) noex ;
 	int printf	(cchar *,...) noex ;
 	int buf		(cchar *,int) noex ;
-	template<typename Binary> int bin(Binary) noex ;
-	template<typename Octal> int oct(Octal) noex ;
-	template<typename Decimal> int dec(Decimal) noex ;
-	template<typename Hexadecimal> int hex(Hexadecimal) noex ;
+	template<typename Binary>	int bin(Binary) noex ;
+	template<typename Octal>	int oct(Octal) noex ;
+	template<typename Decimal>	int dec(Decimal) noex ;
+	template<typename Hexadecimal>	int hex(Hexadecimal) noex ;
 	void dtor() noex ;
 	operator int () noex ;
 	destruct buffer() {
