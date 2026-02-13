@@ -119,6 +119,7 @@ struct sbuf : sbuf_head {
 	    getprev	(this,sbufmem_getprev) ;
 	    reset	(this,sbufmem_reset) ;
 	    finish	(this,sbufmem_finish) ;
+	    rbuf = nullptr ;
 	} ; /* end ctor */
 	sbuf(const sbuf &) = delete ;
 	sbuf &operator = (const sbuf &) = delete ;
@@ -140,10 +141,10 @@ struct sbuf : sbuf_head {
 	int buf		(cchar *,int) noex ;
 	int getpoint	(cchar **) noex ;
 	int decl	(long) noex ;
-	template<typename Binary> int bin(Binary) noex ;
-	template<typename Octal> int oct(Octal) noex ;
-	template<typename Decimal> int dec(Decimal) noex ;
-	template<typename Hexadecimal> int hex(Hexadecimal) noex ;
+	template<typename Binary>	int bin(Binary) noex ;
+	template<typename Octal>	int oct(Octal) noex ;
+	template<typename Decimal>	int dec(Decimal) noex ;
+	template<typename Hexadecimal>	int hex(Hexadecimal) noex ;
 	sbuf &operator << (cchar *cp) noex {
 	    strw(cp) ;
 	    return *this ;
