@@ -125,6 +125,7 @@ using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::istream ;			/* type */
 using libu::snvprintf ;			/* subroutine */
+using libu::umem ;			/* variable */
 using std::cin ;			/* variable */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
@@ -311,6 +312,7 @@ namespace {
 
 /* forward references */
 
+[[maybe_unused]]
 local int	mkpdirs(cchar *,mode_t) noex ;
 
 
@@ -1707,27 +1709,31 @@ int proginfo_co::operator () (int) noex {
 /* end method (proginfo_co::operator) */
 
 /* make *parent* directories as needed */
+[[maybe_unused]]
 local int mkpdirs(cchar *tarfname,mode_t dm) noex {
 	int		rs = SR_OK ;
 	int		rs1 ;
 	int		rv = 0 ; /* return-value */
 	cchar		*dp ;
 	if (int dl ; (dl = sfdirname(tarfname,-1,&dp)) > 0) {
-	    if (char *dbuf ; (rs = lm_mp(&dbuf)) >= 0) {
-	        if ((rs = mkpath(dbuf,dp,dl)) >= 0) {
-	            if ((rs = u_unlink(dbuf)) >= 0) {
-		        rs = SR_OK ;
-		    } else if (isNotPresent(rs)) {
-		        rs = SR_OK ;
-		    }
-		    if (rs >= 0) {
-	                rs = u_mkdirs(dbuf,dm) ;
-		        rv = rs ;
-		    }
-	        } /* end if (mkpath) */
-	        rs1 = lm_free(dbuf) ;
-	        if (rs >= 0) rs = rs1 ;
-	    } /* end if (m-a-f) */
+	    if ((rs = maxpathlen) >= 0) {
+		cint dsz = (rs + 1)  ;
+	        if (char *dbuf ; (rs = umem.mall(dsz,&dbuf)) >= 0) {
+	            if ((rs = mkpath(dbuf,dp,dl)) >= 0) {
+	                if ((rs = u_unlink(dbuf)) >= 0) {
+		            rs = SR_OK ;
+		        } else if (isNotPresent(rs)) {
+		            rs = SR_OK ;
+		        }
+		        if (rs >= 0) {
+	                    rs = u_mkdirs(dbuf,dm) ;
+		            rv = rs ;
+		        }
+	            } /* end if (mkpath) */
+	            rs1 = umem.free(dbuf) ;
+	            if (rs >= 0) rs = rs1 ;
+	        } /* end if (m-a-f) */
+	    } /* end if (maxpathlen) */
 	} else {
 	    rs = SR_NOENT ;
 	}
