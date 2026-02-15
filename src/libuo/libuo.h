@@ -295,8 +295,8 @@
 #include	<varray.h>
 #include	<vars.h>
 #include	<vechand.h>
-#include	<vstrcmpx.h>
-#include	<vstrkeycmpx.h>
+#include	<vstrcmp.h>
+#include	<vstrkeycmp.h>
 #include	<willaddover.h>
 #include	<xclustername.h>
 #include	<xfile.h>
