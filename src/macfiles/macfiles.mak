@@ -42,23 +42,6 @@ MODS += modproc.ccm
 LIBS += -luo -lu
 
 
-INCDIRS=
-#INCDIRS= -I$(INCDIR)
-
-LIBDIRS= -L$(LIBDIR)
-
-
-RUNINFO= -rpath $(RUNDIR)
-LIBINFO= $(LIBDIRS) $(LIBS)
-
-# flag setting
-CPPFLAGS	?= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
-CFLAGS		?= $(MAKECFLAGS)
-CXXFLAGS	?= $(MAKECXXFLAGS)
-ARFLAGS		?= $(MAKEARFLAGS)
-LDFLAGS		?= $(MAKELDFLAGS)
-
-
 DEPS_MAIN += cmdutils.o
 DEPS_MAIN += argmgr.o filerec.o 
 DEPS_MAIN += ureserve.o fonce.o
@@ -78,6 +61,22 @@ OBJA= obj0.o obj1.o obj2.o obj3.o
 OBJB= obj4.o
 
 OBJ_MAIN= obja.o objb.o
+
+
+INCDIRS=
+#INCDIRS= -I$(INCDIR)
+
+LIBDIRS= -L$(LIBDIR)
+
+RUNINFO= -rpath $(RUNDIR)
+LIBINFO= $(LIBDIRS) $(LIBS)
+
+# flag setting
+CPPFLAGS	?= $(DEFS) $(INCDIRS) $(MAKECPPFLAGS)
+CFLAGS		?= $(MAKECFLAGS)
+CXXFLAGS	?= $(MAKECXXFLAGS)
+ARFLAGS		?= $(MAKEARFLAGS)
+LDFLAGS		?= $(MAKELDFLAGS)
 
 
 .SUFFIXES:		.hh .ii .iim .ccm
