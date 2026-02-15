@@ -68,7 +68,7 @@
 #include	<cfdec.h>
 #include	<field.h>
 #include	<nulstr.h>
-#include	<vstrcmpx.h>
+#include	<vstrcmp.h>
 #include	<strwcmp.h>
 #include	<nleadstr.h>
 #include	<matxstr.h>
