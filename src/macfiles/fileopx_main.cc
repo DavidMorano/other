@@ -114,10 +114,6 @@ import libutil ;			/* |lenstr(3u)| + |memclear(3u)| */
 
 /* local typedefs */
 
-extern "C" {
-    typedef int (*qsort_f)(cvoid **,cvoid **) noex ;
-}
-
 
 /* external subroutines */
 
