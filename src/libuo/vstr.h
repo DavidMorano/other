@@ -28,6 +28,7 @@
 #include	<vstrcmp.h>
 #include	<vstrkeycmp.h>
 #include	<vstrkeydictcmp.h>
+#include	<vstrsort.h>
 
 
 #endif /* VSTRKEYCMPX_INCLUDE */
