@@ -45,7 +45,8 @@
 #include	<iostream>
 #include	<vector>
 #include	<filesystem>
-#include	<usystem.h>
+#include	<clanguage.h>
+#include	<usysbase.h>
 #include	<localmisc.h>
 
 
@@ -117,10 +118,10 @@ int main(int argc,mainv argv,mainv) {
 
 static int iterate(dirit &dir,veccp &exts) {
 	cnullptr	np{} ;
-	auto		ite = exts.end() ;
+	cauto		ite = exts.end() ;
 	int		rs = SR_OK ;
 	int		c = 0 ;
-        for (auto const &e : dir) {
+        for (cauto &e : dir) {
             path        bn ;
             cchar       *bns ;
             if (e.is_regular_file()) {
@@ -130,11 +131,11 @@ static int iterate(dirit &dir,veccp &exts) {
                 if (cchar *tp ; (tp = strrchr(bns,'.')) != np) {
                     cchar       *ep = (tp + 1) ;
                     if (ep[0]) {
-                        auto fif = rg::find_if ;
-                        auto strmat = [ep] (cc *s) noex -> bool {
+                        cauto fif = rg::find_if ;
+                        cauto strmat = [ep] (cc *s) noex -> bool {
                             return (strcmp(s,ep) == 0) ;
                         } ;
-                        if (auto const &it = fif(exts,strmat) ; it != ite) {
+                        if (cauto &it = fif(exts,strmat) ; it != ite) {
 			    c += 1 ;
                             cout << bns << '\n' ;
                         }
