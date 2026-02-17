@@ -61,8 +61,6 @@ import debug ;
 
 /* local defines */
 
-#define	ARGMGR_MAGIC		0x97873787
-
 
 /* imported namespaces */
 
@@ -85,15 +83,6 @@ typedef string_view		strview ;
 
 /* forward references */
 
-template<typename ... Args>
-local inline int argmgr_magic(argmgr *op,Args ... args) noex {
-	int		rs = SR_FAULT ;
-	if (op && (args && ...)) {
-	    rs = (op->magic == ARGMGR_MAGIC) ? SR_OK : SR_NOTOPEN ;
-	}
-	return rs ;
-} /* end subroutine (argmgr_magic) */
-
 
 /* local variables */
 
@@ -112,7 +101,7 @@ int argmgr::istart() noex {
 	    rs = SR_INVALID ;
 	    if (argc >= 0) ylikely {
 	        if ((rs = amap.start) >= 0) {
-	            magic = ARGMGR_MAGIC ;
+	            magval = argmgr_magicval ;
 	        }
 	    } /* end if (valid) */
 	} /* end if (non-null) */
@@ -122,7 +111,7 @@ int argmgr::istart() noex {
 int argmgr::ifinish() noex {
     	int		rs ;
 	int		rs1 ;
-	if ((rs = argmgr_magic(this)) >= 0) ylikely {
+	if ((rs = magic) >= 0) ylikely {
 	    {
 	        rs1 = amap.finish ;
 	        if (rs >= 0) rs = rs1 ;
@@ -131,14 +120,14 @@ int argmgr::ifinish() noex {
 		argv = nullptr ;
 		argc = 0 ;
 	    }
-	    magic = 0 ;
+	    magval = 0 ;
 	} /* end if (magic) */
 	return rs ;
 } /* end method (argmgr::ifinish) */
 
 int argmgr::iarg() noex {
     	int		rs ;
-	if ((rs = argmgr_magic(this)) >= 0) ylikely {
+	if ((rs = magic) >= 0) ylikely {
 	    rs = int(++ai < argc) ;
 	} /* end if (magic) */
 	return rs ;
@@ -148,7 +137,7 @@ int argmgr::argopt(cchar **rpp) noex {
     	int		rs ;
 	int		klen = 0 ; /* return-value */
 	DEBPR("ent ai=%d c=%d\n",ai,cntpos) ;
-	if ((rs = argmgr_magic(this)) >= 0) ylikely {
+	if ((rs = magic) >= 0) ylikely {
 	    DEBPR("ai=%d c=%d\n",ai,cntpos) ;
 	    if (ai < argc) ylikely { /* valid argument range */
 	        cchar	*ap = argv[ai] ;
@@ -212,7 +201,7 @@ int argmgr::iargopt(cchar *ap,int ch,cchar **kpp) noex {
 int argmgr::argoptlong(cchar **kpp) noex {
     	int		rs ;
 	int		klen = 0 ; /* return-value ("key-length") */
-	if ((rs = argmgr_magic(this)) >= 0) ylikely {
+	if ((rs = magic) >= 0) ylikely {
 	    if (ai < argc) ylikely { /* valid argumen range */
 	        cchar	*ap = argv[ai] ;
 	        if ((ap[0] == '-') && (ap[1] == '-')) {
@@ -243,7 +232,7 @@ int argmgr::argval(cchar **vpp) noex {
     	int		rs ;
 	int		vlen = 0 ; /* return-value ("val-length") */
 	DEBPR("ent\n") ;
-	if ((rs =  argmgr_magic(this)) >= 0) ylikely {
+	if ((rs =  magic) >= 0) ylikely {
     	    rs = SR_INVALID ;
 	    if (ai < argc) ylikely { /* valid arguement range */
 	        cchar *rp = nullptr ;
@@ -324,7 +313,7 @@ int argmgr::get(int ri,ccharpp rpp) noex {
 int argmgr::present(int i) noex {
     	int		rs = SR_OK ;
 	int		f = false ; /* return-value */
-	if ((rs =  argmgr_magic(this)) >= 0) ylikely {
+	if ((rs = magic) >= 0) ylikely {
 	    if ((i > 0) && (i < argc)) {
 	        if (aie > 0) {
 		    if (i < aie) {
@@ -346,7 +335,7 @@ int argmgr::present(int i) noex {
 
 int argmgr::icount() noex {
     	int		rs ;
-	if ((rs = argmgr_magic(this)) >= 0) ylikely {
+	if ((rs = magic) >= 0) ylikely {
     	    rs = cntpos ;
 	} /* end if (magic) */
     	return rs ;
@@ -360,7 +349,7 @@ void argmgr::dtor() noex {
 
 argmgr::operator int () noex {
     	int		rs ;
-	if ((rs = argmgr_magic(this)) >= 0) ylikely {
+	if ((rs = magic) >= 0) ylikely {
 	    rs = argc ;
 	}
 	return rs ;
