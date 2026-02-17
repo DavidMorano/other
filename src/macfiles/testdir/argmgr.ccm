@@ -49,6 +49,8 @@ import vecbool ;
 
 /* local defines */
 
+#define	ARGMGR_MAGIC		0x97873787
+
 #ifndef	CF_DEBUG
 #define	CF_DEBUG	0		/* debugging */
 #endif
@@ -74,7 +76,9 @@ import vecbool ;
 
 /* local variables */
 
-constexpr bool	f_debug = CF_DEBUG ;	/* <- module-linkage */
+constexpr uint		argmgr_magicval = ARGMGR_MAGIC ;
+
+constexpr bool		f_debug = CF_DEBUG ;	/* <- module-linkage */
 
 
 /* exported variables */
@@ -113,6 +117,14 @@ export {
     private:
 	int increment(int = 1) noex ;
     } ; /* end struct (argmgr_iter) */
+    struct argmgr_ma {
+        argmgr          *op = nullptr ;
+        void operator () (argmgr *p,int) noex {
+            op = p ;
+        } ;
+        template<typename ... Args> int operator () (Args ... ) noex ;
+        operator int () noex ;
+    } ; /* end struct (argmgr_ma) */
     struct argmgr_co {
 	argmgr		*op = nullptr ;
 	int		w = -1 ;
@@ -132,12 +144,13 @@ export {
 	argmgr_co	finish ;
 	argmgr_co	arg ;
 	argmgr_co	count ;
+	argmgr_ma	magic ;
 	argmgr_fl	fl ;
 	vecbool		amap ;		/* argument-map */
 	mainv		argv ;
 	ccharp		valp ;		/* value-pointer */
 	ccharp		digvalp{} ;
-	uint		magic{} ;
+	uint		magval{} ;
 	int		argc ;
 	int		ai ;		/* argument-index */
 	int		aie ;		/* argument-index-end - end options */
@@ -149,6 +162,7 @@ export {
 	    finish	(this,argmgrmem_finish) ;
 	    arg		(this,argmgrmem_arg) ;
 	    count	(this,argmgrmem_count) ;
+	    magic	(this,0) ;
 	    ai = 0 ;
 	    aie = 0 ;
 	    cntpos = ((ac > 0) ? (ac - 1) : 0) ;
@@ -169,7 +183,7 @@ export {
 	void dtor() noex ;
 	operator int () noex ;
 	destruct argmgr() {
-	    if (magic) dtor() ;
+	    if (magval) dtor() ;
 	} ;
     private:
 	int istart() noex ;
@@ -179,5 +193,20 @@ export {
 	int icount() noex ;
     } ; /* end struct (argmgr) */
 } /* end export */
+
+/* local subroutines */
+
+template<typename ... Args> int argmgr_ma::operator () (Args ... args) noex {
+        int             rs = SR_FAULT ;
+        if ((... && args)) {
+            rs = (op->magval == argmgr_magicval) ? SR_OK : SR_NOTOPEN ;
+        }
+        return rs ;
+} /* end method (argmgr_ma::operator) */
+
+inline argmgr_ma::operator int () noex {
+        return (op->magval == argmgr_magicval) ? SR_OK : SR_NOTOPEN ;
+} /* end method (argmgr_ma::operator) */
+
 
 
