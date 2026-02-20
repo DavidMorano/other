@@ -67,6 +67,7 @@
 #include	<ccfile.hh>
 #include	<readln.hh>
 #include	<filetype.h>
+#include	<filelinker.hh>
 #include	<matstr.h>
 #include	<mkchar.h>
 #include	<isnot.h>
@@ -177,6 +178,7 @@ namespace {
 	uint		suffix:1 ;		/* have a suffix */
 	uint		modes:1 ;		/* have a file-type */
 	uint		seens:1 ;
+	uint		links:1 ;
 	uint		recs:1 ;
 	uint		mods:1 ;
 	uint		ot:2 ;			/* type-out */
@@ -209,6 +211,7 @@ namespace {
 	tardir		dirs ;		/* target-directories */
 	fonce		seen ;
 	filerec		afs ;		/* argument-files */
+	filelinker	links ;
 	filerec		recs ;
 	modproc		mods ;
 	string		pnstr ;
@@ -275,6 +278,7 @@ namespace {
 	int procdirsubs(custat *,cchar *,int = -1) noex ;
 	int procdirself(custat *,cchar *,int = -1) noex ;
 	int procent(custat *,cchar *,int = -1) noex ;
+	int proclink(cchar *,custat *,cchar *,int) noex ;
 	int procfile(custat *,cchar *,int = -1) noex ;
 	int procfile_list(custat *,cchar *,int = -1) noex ;
 	int procfile_lc(custat *,cchar *,int = -1) noex ;
@@ -571,12 +575,16 @@ int proginfo::iflistbegin() noex {
 		    fl.seens = false ;
 		    seen.finish() ;
 		} /* end if (error) */
-	    }
+	    } /* end if (seen-start) */
 	    break ;
 	case progmode_filesyner:
-	case progmode_filelinker:
 	    if ((rs = recs.start) >= 0) {
 	        fl.recs = true ;
+	    }
+	    break ;
+	case progmode_filelinker:
+	    if ((rs = links.start) >= 0) {
+	        fl.links = true ;
 	    }
 	    break ;
 	} /* end switch */
@@ -591,6 +599,11 @@ int proginfo::iflistend() noex {
 	    rs1 = recs.finish ;
 	    if (rs >= 0) rs = rs1 ;
 	    fl.recs = false ;
+	}
+	if (fl.links) {
+	    rs1 = links.finish ;
+	    if (rs >= 0) rs = rs1 ;
+	    fl.links = false ;
 	}
 	if (fl.seens) {
 	    rs1 = seen.finish ;
@@ -1257,10 +1270,10 @@ int proginfo::procfile_tardirs(custat *sbp,cchar *sp,int sl) noex {
 	    for (cchar *dp ; (rs = dirs.curenum(&cur,&dp)) > 0 ; ) {
 		DEBPRINTF("dir=%s\n",dp,rs) ;
 		switch (pm) {
-#ifdef	COMMENT
 		case progmode_filelinker:
 		    rs = proclink(dp,sbp,sp,sl) ;
 		    break ;
+#ifdef	COMMENT
 		case progmode_filesyner:
 		    rs = procsymc(dp,sbp,sp,sl) ;
 		    break ;
@@ -1469,80 +1482,9 @@ int proginfo::tardiradd(cchar *sp,int sl) noex {
     	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::tardiradd) */
 
-#ifdef	COMMENT
-int proginfo::proclink(cchar *dp,ustat *sbp,cchar *sp,int sl) noex {
-	int		rs = SR_OK ;
-	int		f_linked = false ; /* return-value */
-	if (sbp->st_dev == pip->tardev) {
-	    int		w = 0 ;
-	    cmode	dm = 0775 ;
-	    if ((rs = mkpathw(tbuf,dp,sp,sl)) >= 0) {
-	        bool	f_dolink = true ;
-	        if (ustat tsb ; (rs = u_lstat(tbuf,&tsb)) >= 0) {
-	            if (S_ISDIR(sbp->st_mode)) {
-	                if (S_ISDIR(tsb.st_mode)) {
-	                    f_dolink = false ;
-	                } else {
-	                    w = 3 ;
-	                    rs = u_unlink(tbuf) ;
-	                }
-		    } else {
-	                bool	f = true ;
-	                f = f && (tsb.st_dev == sbp->st_dev) ;
-	                f = f && (tsb.st_ino == sbp->st_ino) ;
-	                if (f) {
-	                    f_linked = true ;
-	                    f_dolink = false ;
-	                } else {
-	                    if (S_ISDIR(tsb.st_mode)) {
-	                        w = 1 ;
-	                        rs = u_rmdirs(tarfname) ;
-	                    } else {
-	                        w = 2 ;
-	                        rs = u_unlink(tarfname) ;
-	                    }
-	                }
-	            } /* end if */
-	        } else if (isNotStat(rs)) {
-	            rs = SR_OK ;
-	        }
-	        if ((rs >= 0) && f_dolink) {
-	            if (S_ISDIR(sbp->st_mode)) {
-	                w = 7 ;
-	                rs = u_mkdir(tbuf,dm) ;
-	                if ((rs == SR_NOTDIR) || (rs == SR_NOENT)) {
-	                    w = 8 ;
-	                    if ((rs = mkpdirs(tbuf,dm)) >= 0) {
-	                        w = 9 ;
-	                        rs = u_mkdir(tbuf,dm) ;
-	                    }
-	                }
-	            } else {
-	                f_linked = true ;
-	                w = 4 ;
-	                rs = u_link(name,tbuf) ;
-	                if ((rs == SR_NOTDIR) || (rs == SR_NOENT)) {
-	                    w = 5 ;
-	                    if ((rs = mkpdirs(tbuf,dm)) >= 0) {
-	                        w = 6 ;
-	                        rs = u_link(name,tbuf) ;
-	                    }
-	                }
-		    } /* end if */
-	        } /* end if (dolink) */
-	        if ((rs == SR_EXIST) && (! pip->fl.quiet)) {
-	    	    bfile	*efp = (bfile *) pip->efp ;
-	            cchar	*pn = pip->progname ;
-	            bprintf(efp,"%s: exists w=%u\n",pn,w) ;
-	        }
-	    } /* end if (mkpathxw) */
-	} else {
-	    pip->c_linkerr += 1 ;
-	    rs = SR_XDEV ;
-	}
-	return (rs >= 0) ? f_linked : rs ;
+int proginfo::proclink(cchar *dp,custat *sbp,cchar *sp,int sl) noex {
+    	return links.linktar(dp,sbp,sp,sl) ;
 } /* end method (proginfo::proclink) */
-#endif /* COMMENT */
 
 int proginfo::fileuniq(custat *sbp)  noex {
     	int		rs = 1 ; /* default indicates "uniq" */
@@ -1630,16 +1572,17 @@ int proginfo::tardirs_albegin() noex {
     	cnullptr	np{} ;
 	cnothrow	nt{} ;
     	int		rs ;
+	int		ai = 2 ;	/* number of allocation subparts */
 	if ((rs = maxpathlen) >= 0) {
 	    cint maxpath = rs ;
-	    cint sz = ((rs + 1) * 2) ;
+	    cint sz = ((rs + 1) * ai) ;
 	    rs = SR_NOMEM ;
 	    if ((axp = new(nt) char[sz]) != np) {
-		int ai = 0 ;
-		pbuf = (axp + ((plen + 1) * ai++)) ;
-		tbuf = (axp + ((plen + 1) * ai++)) ;
+		pbuf = (axp + ((plen + 1) * --ai)) ;
+		tbuf = (axp + ((plen + 1) * --ai)) ;
 		plen = maxpath ;
 	        tlen = maxpath ;
+		rs = SR_OK ;
 	    } /* end if (new-{x}buf) */
 	} /* end if (maxpathlen) */
 	return rs ;
@@ -1647,15 +1590,15 @@ int proginfo::tardirs_albegin() noex {
 
 int proginfo::tardirs_alend() noex {
     	int		rs = SR_OK ;
-	    if (axp) {
-		delete [] axp ;
-		axp = nullptr ;
-		pbuf = nullptr ;
-		tbuf = nullptr ;
-		plen = 0 ;
-		tlen = 0 ;
-	    } /* end if (deleting allocated-memory) */
-	    return rs ;
+	if (axp) {
+	    delete [] axp ;
+	    axp = nullptr ;
+	    pbuf = nullptr ;
+	    tbuf = nullptr ;
+	    plen = 0 ;
+	    tlen = 0 ;
+	} /* end if (deleting allocated-memory) */
+	return rs ;
 } /* end method (proginfo::tardirs_alend) */
 
 int proginfo::tardirs_check() noex {
