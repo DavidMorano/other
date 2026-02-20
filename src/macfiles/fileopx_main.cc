@@ -4678,9 +4678,9 @@ local int procsyncer(PI *pip,cchar *name,ustat *sbp) noex {
 #endif
 
 	if ((! S_ISDIR(sbp->st_mode)) && (sbp->st_nlink > 1)) {
-	    dev_t	dev = sbp->st_dev ;
-	    ino_t	ino = sbp->st_ino ;
-	    mode_t	m = sbp->st_mode ;
+	    const dev_t		dev = sbp->st_dev ;
+	    const ino_t		ino = sbp->st_ino ;
+	    const mode_t	m = sbp->st_mode ;
 
 #if	CF_DEBUG
 	    if (DEBUGLEVEL(3))
@@ -5200,9 +5200,8 @@ local int procsyncer_lnk(PI *pip,cchar *name,ustat *sbp) noex {
 	    cchar	*dnp ;
 	    if ((dnl = sfdirname(dstfname,-1,&dnp)) > 0) {
 	        if ((rs = mkpath1w(tmpfname,dnp,dnl)) >= 0) {
-	            ustat	sb ;
 	            int		f = false ;
-	            if ((rs = u_lstat(tmpfname,&sb)) >= 0) {
+	            if (ustat sb ; (rs = u_lstat(tmpfname,&sb)) >= 0) {
 	                if (S_ISLNK(sb.st_mode)) {
 	                    if ((rs = u_stat(tmpfname,&sb)) >= 0) {
 	                        f = (! S_ISDIR(sb.st_mode)) ;
@@ -5529,27 +5528,10 @@ local int fileidcmp(FILEID *e1p,FILEID *e2p,int len) noex {
 }
 /* end subroutine (fileidcmp) */
 
-local int vcmprstr(cchar **e1pp,cchar **e2pp) noex {
-	int		rc = 0 ;
-	if (*e1pp || *e2pp) {
-	    if (*e1pp) {
-	        if (*e2pp) {
-	            rc = (- strcmp(*e1pp,*e2pp)) ;
-	        } else {
-	            rc = -1 ;
-		}
-	    } else  {
-	        rc = 1 ;
-	    }
-	}
-	return rc ;
-}
-/* end subroutine (vcmprstr) */
-
 local book isNotStat(int rs) noex {
 	return isOneOf(rsnostat,rs) ;
 }
-/* end subroutine (vcmprstr) */
+/* end subroutine (isNotStat) */
 
 
 #if	CF_DEBUG
