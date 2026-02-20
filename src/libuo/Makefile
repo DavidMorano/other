@@ -63,7 +63,7 @@ OBJ07_LUO= strw.o strwcpy.o
 OBJ08_LUO= ccfile.o filer.o filemap.o hdb.o
 OBJ09_LUO= strop.o strmgr.o strfilter.o 
 OBJ10_LUO= fsdirtree.o fsdir.o
-OBJ11_LUO= queue.o field.o nulstr.o
+OBJ11_LUO= queue.o field.o
 
 OBJ12_LUO= tardir.o langx.o
 OBJ13_LUO= nleadx.o matxstr.o 
