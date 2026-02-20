@@ -52,7 +52,7 @@ OBJ0= files_main.o cmdutils.o
 OBJ1= argmgr.o filerec.o tardir.o
 OBJ2= modproc.o langx.o
 OBJ3= shortq.o ischarx.o
-OBJ4= six.o
+OBJ4= six.o filelinker.o
 OBJ5=
 OBJ6=
 OBJ7=
@@ -234,7 +234,14 @@ six.o:			six.dir
 six.dir:
 	makesubdir $@
 
+# FILEOBJ
+fileobj.o:		fileobj.dir
+fileobj.dir:
+	makesubdir $@
+
 shortq.o:		shortq.cc	shortq.h		$(INCS)
 ischarx.o:		ischarx.cc	ischarx.h
+
+filelinker.o:		filelinker.cc	filelinker.hh		$(INCS)
 
 
