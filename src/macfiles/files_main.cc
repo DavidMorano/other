@@ -1464,7 +1464,10 @@ int proginfo::tardiravail() noex {
 int proginfo::tardiradd(cchar *sp,int sl) noex {
     	int		rs ;
 	int		c = 0 ;
-	DEBPRINTF("ent\n") ;
+	{
+	    strnul ds(sp,sl) ;
+	    DEBPRINTF("ent tardir=%s\n",ccp(ds)) ;
+	}
 	if ((rs = tardiravail()) >= 0) {
 	    sif so(sp,sl,',') ;
 	    cchar *cp ;
