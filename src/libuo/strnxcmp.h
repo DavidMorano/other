@@ -20,25 +20,21 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<string.h>		/* |strncmp(3c)| for inline below */
 #include	<clanguage.h>
 #include	<utypedefs.h>
 #include	<utypealiases.h>
 #include	<usysdefs.h>
 
+#include	<strnxxxxcmp.h>
+#include	<strnkeycmp.h>
+
 
 EXTERNC_begin
 
-extern int strnkeycmp	(cchar *,cchar *,int) noex ;
 extern int strnvalcmp	(cchar *,cchar *,int) noex ;
-extern int strnfoldcmp	(cchar *,cchar *,int) noex ;
 extern int strnleadcmp	(cchar *,cchar *,int) noex ;
 extern int strnncmp	(cchar *,int,cchar *,int) noex ;
 extern int strnndictcmp	(cchar *,int,cchar *,int) noex ;
-
-static inline int strnbasecmp(cchar *s1,cchar *s2,int slen) noex {
-	return strncmp(s1,s2,slen) ;
-}
 
 EXTERNC_end
 
