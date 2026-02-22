@@ -259,6 +259,8 @@ namespace {
 	int argpm(argmgr *) noex ;
 	int argfile(argmgr *) noex ;
 	int argfileread(cchar *) noex ;
+	int argoption(argmgr *) noex ;
+	int argprofile(int) noex ;
 	int argsuf(argmgr *) noex ;
 	int argtype(argmgr *) noex ;
 	int argtardir(argmgr *) noex ;
@@ -423,6 +425,34 @@ local int mkpathw(char *rbuf,Args ... args) noex {
 	}
 	return rs ;
 } /* end if (mkpathw) */
+
+enum optnames {
+	optname_code,
+	optname_overlast
+} ; /* end enum (optnames) */
+
+constexpr cpcchar	optnamea[] = {
+    	"code",
+	nullptr
+} ; /* end array (optnamea) */
+
+constexpr cpcchar	codexts[] = {
+    	"c",
+	"cc",
+	"ccm",
+	"h",
+	"hh",
+	"s",
+	"txt",
+	"man",
+	"mm",
+	"ms",
+	"md",
+	"mak",
+	"sh",
+	"ksh",
+	nullptr
+} ; /* end array */
 
 
 /* exported variables */
@@ -746,6 +776,10 @@ int proginfo::argoptchr(argmgr *amp,cchar *sp,int sl) noex {
 	    case 'q':
 		fl.verbose = false ;
 		break ;
+	    case 'o':
+	    case 'p':
+		rs = argoption(amp) ;
+		break ;
 	    case 's':
 	    case 'x':
 		rs = argsuf(amp) ;
@@ -819,6 +853,39 @@ int proginfo::argfileread(cchar *fn) noex {
 	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
     	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::argfileread) */
+
+int proginfo::argoption(argmgr *amp) noex {
+    	int		rs ;
+	if (cc *cp ; (rs = amp->argval(&cp)) >= 0) {
+	    if (int si ; (si = matostr(optnamea,2,cp,rs)) >= 0) {
+	        switch (si) {
+	        case optname_code:
+		    rs = argprofile(si) ;
+		    break ;
+	        default:
+		    rs = SR_INVALID ;
+		    break ;
+		}  /* end switch */
+	    } /* end switch (matostr) */
+	} /* end if (argval) */
+	return rs ;
+} /* end method (proginfo::argoption) */
+
+int proginfo::argprofile(int pi) noex {
+    	int		rs = SR_OK ;
+	int		c = 0 ;
+	switch (pi) {
+	case optname_code:
+	    for (cauto &sn : codexts) {
+	        rs = sufadd(sn) ;
+	        c += rs ;
+	        if (rs < 0) break ;
+	    } /* end for */
+	    break ;
+	} /* end switch */
+	return (rs >= 0) ? c : rs ;
+
+} /* end method (proginfo::argprofile) */
 
 int proginfo::argsuf(argmgr *amp) noex {
     	int		rs ;
