@@ -76,6 +76,7 @@
 #include	<isnot.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>
+#include	<debugprintf.h>		/* LIBDEBUG */
 
 #include	"config.h"
 #include	"proginfo.h"
@@ -121,15 +122,6 @@ extern "C" int	mkpathuser(char *,cchar *,cchar *,int) noex ;
 
 extern "C" int	printhelp(void *,cchar *,cchar *,cchar *) noex ;
 extern "C" int	proginfo_setpiv(PI *,cchar *,const pivars *) noex ;
-
-#if	CF_DEBUGS || CF_DEBUG
-extern "C" int	debugopen(cchar *) noex ;
-extern "C" int	debugprintf(cchar *,...) noex ;
-extern "C" int	debugprinthexblock(cchar *,int,cvoid *,int) noex ;
-extern "C" int	debugclose() noex ;
-extern "C" int	strlinelen(cchar *,int,int) noex ;
-extern "C" int	nprintf(cchar *,cchar *,...) noex ;
-#endif
 
 
 /* external variables */
@@ -693,17 +685,18 @@ int main(int argc,mainv argv,mainv envv) {
 
 /* process program arguments */
 
-	if (rs >= 0) rs = bits_start(&pargs,1) ;
-	if (rs < 0) goto badpargs ;
-
-	rs = keyopt_start(&akopts) ;
-	pip->open.akopts = (rs >= 0) ;
-
+	{
+	    if (rs >= 0) rs = bits_start(&pargs,1) ;
+	    if (rs < 0) goto badpargs ;
+	}
+	{
+	    rs = keyopt_start(&akopts) ;
+	    pip->open.akopts = (rs >= 0) ;
+	}
 	if (rs >= 0) {
 	    rs = paramopt_start(&pip->aparams) ;
 	    pip->open.aparams = (rs >= 0) ;
 	}
-
 	ai_max = 0 ;
 	ai_pos = 0 ;
 	argr = argc ;
@@ -1975,16 +1968,14 @@ local int loadfnos(PI *pip) noex {
 /* end if (loadfnos) */
 
 local int procopts(PI *pip,keyopt *kop) noex {
-	keyopt_cur	kcur ;
 	int		rs = SR_OK ;
 	int		c = 0 ;
 	cchar		*cp ;
-
 	if ((cp = getenv(VAROPTS)) != nullptr) {
 	    rs = keyopt_loads(kop,cp,-1) ;
 	}
-
 	if (rs >= 0) {
+	    keyopt_cur	kcur ;
 	    if ((rs = keyopt_curbegin(kop,&kcur)) >= 0) {
 	        int	oi ;
 	        int	kl, vl ;
