@@ -113,7 +113,7 @@ struct fsdirtree_head {
 	fsdir		*dirp ;		/* directory-pointer */
 	hdb		*dip ;		/* directory-id-pointer */
 	FSDIRTREE_FL	fl ;
-	uint		magic ;
+	uint		magval ;
 	int		opts ;
 	int		bndlen ;
 	int		cdnlen ;
