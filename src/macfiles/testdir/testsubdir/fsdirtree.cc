@@ -196,7 +196,7 @@ template<typename ... Args>
 local inline int fsdirtree_magic(fsdirtree *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) ylikely {
-	    rs = (op->magic == FSDIRTREE_MAGIC) ? SR_OK : SR_NOTOPEN ;
+	    rs = (op->magval == FSDIRTREE_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
 } /* end subroutine (fsdirtree_magic) */
@@ -320,7 +320,7 @@ local int fsdirtree_opener(fsdirtree *op,cchar *dname) noex {
                     }
 		    if ((rs = fsdirtree_trackbegin(op)) >= 0) {
                         op->cdnlen = op->bndlen ;
-                        op->magic = FSDIRTREE_MAGIC ;
+                        op->magval = FSDIRTREE_MAGIC ;
                     }
                     if (rs < 0) {
                         fsdir_close(op->dirp) ;
@@ -370,7 +370,7 @@ int fsdirtree_close(fsdirtree *op) noex {
                 rs1 = fsdirtree_dtor(op) ;
                 if (rs >= 0) rs = rs1 ;
             }
-            op->magic = 0 ;
+            op->magval = 0 ;
 	} /* end if (magic) */
 	return rs ;
 }
