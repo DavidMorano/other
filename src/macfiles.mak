@@ -239,6 +239,11 @@ fileobj.o:		fileobj.dir
 fileobj.dir:
 	makesubdir $@
 
+# KEYOPT
+keyopt.o:		keyopt.dir
+keyopt.dir:
+	makesubdir $@
+
 shortq.o:		shortq.cc	shortq.h		$(INCS)
 ischarx.o:		ischarx.cc	ischarx.h
 
