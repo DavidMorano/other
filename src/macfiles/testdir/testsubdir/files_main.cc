@@ -47,6 +47,7 @@
 #include	<cstdarg>
 #include	<cstdio>
 #include	<new>			/* |nothrow(3c++)| */
+#include	<bit>			/* |countl_zero(3c++)| */
 #include	<string>
 #include	<string_view>
 #include	<filesystem>
@@ -125,6 +126,7 @@ using fs::recursive_directory_iterator ; /* type */
 using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::istream ;			/* type */
+using std::bit_ceil ;			/* subroutine-template */
 using libu::snvprintf ;			/* subroutine */
 using libu::umem ;			/* variable */
 using std::cin ;			/* variable */
@@ -161,6 +163,7 @@ namespace {
     } ; /* end enum (proginfomems) */
     struct proginfo ;
     struct proginfo_fl {
+	uint		ot:4 ;			/* type-out */
 	uint		uniqfile:1 ;		/* 'u' arg-opt */
 	uint		uniqdir:1 ;		/* 'ud' arg-opt */
 	uint		followarg:1 ;		/* 'H' arg-opt */
@@ -181,7 +184,6 @@ namespace {
 	uint		links:1 ;
 	uint		recs:1 ;
 	uint		mods:1 ;
-	uint		ot:2 ;			/* type-out */
 	uint		dup:1 ;			/* duplicate-file-record */
     } ; /* end struct (proginfo_fl) */
     struct proginfo_co {
@@ -217,7 +219,7 @@ namespace {
 	string		pnstr ;
 	mainv		argv ;
 	mainv		envv ;
-	cchar		*pn = nullptr ; /* program-name (derived) */
+	cchar		*progname = nullptr ; /* program-name (derived) */
 	char		*lbuf = nullptr ;
 	char		*pbuf = nullptr ;
 	char		*tbuf = nullptr ;
@@ -259,8 +261,8 @@ namespace {
 	int argpm(argmgr *) noex ;
 	int argfile(argmgr *) noex ;
 	int argfileread(cchar *) noex ;
-	int argoption(argmgr *) noex ;
-	int argprofile(int) noex ;
+	int argprofile(argmgr *) noex ;
+	int argextload(int) noex ;
 	int argsuf(argmgr *) noex ;
 	int argtype(argmgr *) noex ;
 	int argtardir(argmgr *) noex ;
@@ -304,7 +306,7 @@ namespace {
     private:
 	int istart() noex ;
 	int ifinish() noex ;
-	int getpnames(mainv,cc *,int) noex ;
+	int getprogname(mainv,cc *,int) noex ;
 	int getpn(mainv) noex ;
 	int iargbegin() noex ;
 	int iargend() noex ;
@@ -426,32 +428,41 @@ local int mkpathw(char *rbuf,Args ... args) noex {
 	return rs ;
 } /* end if (mkpathw) */
 
-enum optnames {
-	optname_code,
-	optname_overlast
-} ; /* end enum (optnames) */
+enum profnames {
+	profname_code,
+	profname_src,
+	profname_dev,
+	profname_doc,
+	profname_overlast
+} ; /* end enum (profnames) */
 
-constexpr cpcchar	optnamea[] = {
-    	"code",
-	nullptr
-} ; /* end array (optnamea) */
+constexpr cpcchar	profarr[] = {
+	[profname_code]		= "code",
+	[profname_src]		= "src",
+	[profname_dev]		= "dev",
+	[profname_doc]		= "doc",
+	[profname_overlast]	= nullptr
+} ; /* end array (profarr) */
 
-constexpr cpcchar	codexts[] = {
+constexpr cpcchar	exts_code[] = {
     	"c",
 	"cc",
 	"ccm",
 	"h",
 	"hh",
 	"s",
+	"sh",
+	"ksh"
+} ; /* end array */
+
+constexpr cpcchar	exts_doc[] = {
 	"txt",
 	"man",
 	"mm",
 	"ms",
 	"md",
 	"mak",
-	"sh",
-	"ksh",
-	nullptr
+	"map"
 } ; /* end array */
 
 
@@ -471,7 +482,7 @@ int main(int argc,mainv argv,mainv envv) {
 	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
 	    {
                 rs = pi.argproc() ;
-	        spn = (pi.pn) ? pi.pn : "files.x" ;
+	        spn = (pi.progname) ? pi.progname : "files.x" ;
 	    }
 	    rs1 = pi.finish ;
 	    if (rs >= 0) rs = rs1 ;
@@ -541,14 +552,14 @@ int proginfo::ifinish() noex {
 }
 /* end method (proginfo::ifinish) */
 
-int proginfo::getpnames(mainv names,cc *sp,int sl) noex {
+int proginfo::getprogname(mainv names,cc *sp,int sl) noex {
     	int		rs = SR_OK ;
 	if ((pm = matstr(names,sp,sl)) >= 0) {
-	    pn = names[pm] ;
+	    progname = names[pm] ;
 	    rs = pm ;
 	}
 	return rs ;
-} /* end method (proginfo::getpnames) */
+} /* end method (proginfo::getprogname) */
 
 int proginfo::getpn(mainv names) noex {
     	cint		pnlen = intconv(pnstr.size()) ;
@@ -556,12 +567,12 @@ int proginfo::getpn(mainv names) noex {
 	cchar		*bp{} ; /* used-multiple */
 	if (int bl = pnlen ; bl > 0) {
 	    bp = pnstr.c_str() ;
-	    rs = getpnames(names,bp,bl) ;
+	    rs = getprogname(names,bp,bl) ;
 	} else if ((argc > 0) && argv[0]) {
 	    cchar	*argz = argv[0] ;
 	    if ((bl = sfbasename(argz,-1,&bp)) > 0) {
 		if (cint rl = rmchr(bp,bl,'.') ; rl > 0) {
-		    rs = getpnames(names,bp,rl) ;
+		    rs = getprogname(names,bp,rl) ;
 		}
 	    } /* end if (sfbasename) */
 	} /* end if */
@@ -755,7 +766,6 @@ int proginfo::argoptchr(argmgr *amp,cchar *sp,int sl) noex {
 	while (sl-- && *sp) {
 	    switch (cint key = mkchar(*sp++) ; key) {
 	    case 'D':
-		debuglevel = 1 ;
 		rs = argdebug(amp) ;
 		break ;
 	    case 'H':
@@ -776,9 +786,8 @@ int proginfo::argoptchr(argmgr *amp,cchar *sp,int sl) noex {
 	    case 'q':
 		fl.verbose = false ;
 		break ;
-	    case 'o':
 	    case 'p':
-		rs = argoption(amp) ;
+		rs = argprofile(amp) ;
 		break ;
 	    case 's':
 	    case 'x':
@@ -854,29 +863,39 @@ int proginfo::argfileread(cchar *fn) noex {
     	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::argfileread) */
 
-int proginfo::argoption(argmgr *amp) noex {
+int proginfo::argprofile(argmgr *amp) noex {
     	int		rs ;
-	if (cc *cp ; (rs = amp->argval(&cp)) >= 0) {
-	    if (int si ; (si = matostr(optnamea,2,cp,rs)) >= 0) {
-	        switch (si) {
-	        case optname_code:
-		    rs = argprofile(si) ;
-		    break ;
-	        default:
-		    rs = SR_INVALID ;
-		    break ;
-		}  /* end switch */
-	    } /* end switch (matostr) */
+	int		c = 0 ;
+	if (cc *sp ; (rs = amp->argval(&sp)) >= 0) {
+    	    sif		so(sp,rs,',') ;
+	    cchar	*cp ;
+	    for (int cl ; (rs >= 0) && ((cl = so(&cp)) > 0) ; ) {
+	        if (int si ; (si = matostr(profarr,2,cp,cl)) >= 0) {
+		    rs = argextload(si) ;
+		    c += rs ;
+	        } /* end switch (matostr) */
+	    } /* end for (sif) */
 	} /* end if (argval) */
-	return rs ;
-} /* end method (proginfo::argoption) */
+    	return (rs >= 0) ? c : rs ;
+} /* end method (proginfo::argprofile) */
 
-int proginfo::argprofile(int pi) noex {
+int proginfo::argextload(int pi) noex {
     	int		rs = SR_OK ;
 	int		c = 0 ;
 	switch (pi) {
-	case optname_code:
-	    for (cauto &sn : codexts) {
+	case profname_doc:
+	case profname_dev:
+	case profname_src:
+	    for (cauto &sn : exts_doc) {
+	        rs = sufadd(sn) ;
+	        c += rs ;
+	        if (rs < 0) break ;
+	    } /* end for */
+	    if (pi == profname_doc) break ;
+	    fallthrough ;
+	    /* FALLTHROUGH */
+	case profname_code:
+	    for (cauto &sn : exts_code) {
 	        rs = sufadd(sn) ;
 	        c += rs ;
 	        if (rs < 0) break ;
@@ -885,7 +904,7 @@ int proginfo::argprofile(int pi) noex {
 	} /* end switch */
 	return (rs >= 0) ? c : rs ;
 
-} /* end method (proginfo::argprofile) */
+} /* end method (proginfo::argextload) */
 
 int proginfo::argsuf(argmgr *amp) noex {
     	int		rs ;
@@ -946,7 +965,7 @@ int proginfo::preamble() noex {
                 } else {
                     if (debuglevel) {
                         if (rs >= 0) {
-                            rs = printf("pm=%s\n",pn) ;
+                            rs = printf("pm=%s\n",progname) ;
                         }
                         if (rs >= 0) {
                             rs = printf("debuglevel=%d\n",debuglevel) ;
@@ -959,8 +978,9 @@ int proginfo::preamble() noex {
                     case progmode_depmods:
                         if (debuglevel) {
                             cint mi = fl.ot ;
-                            rs = printf("typeout=%s\n",typeouts[mi]) ;
-                        }
+                            cchar *fmt = "modtypeout=%s\n" ;
+                            rs = printf(fmt,modoutnames[mi]) ;
+                        } /* end if (debuglevel) */
                         break ;
                     } /* end switch */
                 } /* end if (ok) */
@@ -1128,12 +1148,12 @@ int proginfo::argprocspec(cchar *sp,int sl) noex {
 } /* end method (proginfo::argprocspec) */
 
 int proginfo::argprocname(cchar *sp,int sl) noex {
-	strnul		s(sp,sl) ;
+	strnul		fn(sp,sl) ;
 	int		rs ;
 	int		c = 0 ;
 	DEBPRINTF("ent\n") ;
-	if (ustat sb ; (rs = argstat(s,&sb)) >= 0) {
-	    switch (cint ft = filetype(sb.st_mode) ; ft) {
+	if (ustat sb ; (rs = argstat(fn,&sb)) >= 0) {
+	    switch (filetypes ft = filetype(sb.st_mode) ; ft) {
 	    case filetype_dir:
 		rs = procdir(&sb,sp,sl) ;
 		c = rs ;
@@ -1148,9 +1168,11 @@ int proginfo::argprocname(cchar *sp,int sl) noex {
 		rs = procfile(&sb,sp,sl) ;
 		c = rs ;
 		break ;
+	    default:
+		break ;
 	    } /* end switch */
 	} else {
-	    printf("not-accessible=%s\n",ccp(s)) ;
+	    printf("not-accessible=%s\n",ccp(fn)) ;
 	} /* end if (argstat) */
 	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
@@ -1373,27 +1395,16 @@ int proginfo::isufavail() noex {
 int proginfo::sufadd(cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
 	int		c = 0 ;
-	if (f_debug && debon) {
-	    strnul se(sp,sl) ;
-	    DEBPRINTF("ent sl=%d s=>%s<\n",sl,ccp(se)) ;
-	}
 	if ((rs = sufavail) >= 0) {
     	    sif		so(sp,sl,',') ;
 	    cchar	*cp ;
 	    for (int cl ; (rs >= 0) && ((cl = so(&cp)) > 0) ; ) {
-	        if (f_debug && debon) {
-	            strnul sone(cp,cl) ;
-	            DEBPRINTF("cl=%d c=>%s<\n",cl,ccp(sone)) ;
-	        }
 	        if ((rs = exts.add(cp,cl)) > 0) {
-		    c += 1 ;
+		    c += rs ;
 		    fl.suffix = true ;
 	        }
 	    } /* end for */
 	} /* end if (sufavail) */
-	if_constexpr (f_debug) {
-	    DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
-	}
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::sufadd) */
 
@@ -1565,27 +1576,19 @@ int proginfo::fileuniq(custat *sbp)  noex {
 } /* end method (proginfo::fileuniq) */
 
 int proginfo::typeout(cchar *cp,int cl)  noex {
+    	constexpr uint	nouts = modout_overlast ;
     	int		rs = SR_INVALID ;
-	if_constexpr (f_debug) {
-	    strnul s(cp,cl) ;
-	    DEBPRINTF("ot=%s\n",ccp(s)) ;
-	}
-	if (int mi ; (mi = matostr(typeouts,1,cp,cl)) >= 0) {
-	    if_constexpr (f_debug) {
-	        DEBPRINTF(__func__,"mi=%d\n",mi) ;
-	    }
+	if (cint mi = matostr(modoutnames,1,cp,cl) ; mi >= 0) {
+	    cint tmask = (bit_ceil(nouts) - 1) ;
 	    rs = SR_OK ;
-	    fl.ot = uchar(mi & 0x03) ;	/* avoiding GCC complaint */
-	} else {
-	    if_constexpr (f_debug) {
-	        DEBPRINTF(__func__,"err mi=%d\n",mi) ;
-	    }
+	    fl.ot = uchar(mi & tmask) ;	/* avoiding GCC complaint */
 	} /* end if (matostr) */
 	return rs ;
 } /* end method (proginfo::typeout) */
 
 int proginfo::argdebug(argmgr *amp) noex {
     	int		rs = SR_OK ;
+	debuglevel = 1 ;
 	if (amp->fargoptval) {
 	    if (cchar *cp ; (rs = amp->argval(&cp)) > 0) {
 		if ((rs = optval(cp,rs)) >= 0) {
@@ -1611,7 +1614,7 @@ int proginfo::printf(cchar *fmt,...) noex {
 		    rs = SR_NOMEM ;
 		    if (char *µlbuf ; (µlbuf = new(nt) char[µllen + 1]) != np) {
 			if ((rs = snvprintf(µlbuf,µllen,fmt,ap)) >= 0) {
-			    cerr << pn << ": " << µlbuf ;
+			    cerr << progname << ": " << µlbuf ;
 			    len = rs ;
 			} /* end if (snvprintf) */
 			delete [] µlbuf ;
