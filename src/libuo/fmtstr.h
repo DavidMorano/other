@@ -27,7 +27,7 @@
 #include	<usysdefs.h>
 #include	<usysrets.h>
 
-#include	<fmtopt.h>
+#include	<fmtopts.h>
 
 
 #ifndef	FMTSTR_NULLSTR
