@@ -30,17 +30,18 @@
 
 #include	<snabbr.h>
 #include	<snadd.h>
+#include	<snclean.h>
 #include	<sncpy.h>
 #include	<sncpyx.h>		/* repeat? */
 #include	<sncpyxc.h>		/* repeat? */
 #include	<sncpyxw.h>		/* repeat? */
 #include	<snflags.h>
 #include	<snflagsx.h>
-#include	<snxxx.h>
+#include	<snshellunder.h>
 #include	<sntmtime.h>
 #include	<snuuid.h>
-#include	<snclean.h>
 #include	<snwx.h>
+#include	<snxxx.h>
 
 
 EXTERNC_begin
