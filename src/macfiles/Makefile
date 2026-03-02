@@ -38,11 +38,12 @@ INCS +=
 MODS += argmgr.ccm filerec.ccm
 MODS += cmdutils.ccm
 MODS += modproc.ccm 
+MODS += strfilter.ccm 
 
 LIBS += -luo -lu
 
 
-DEPS_MAIN += cmdutils.o
+DEPS_MAIN += cmdutils.o strfilter.o
 DEPS_MAIN += argmgr.o filerec.o 
 DEPS_MAIN += ureserve.o fonce.o
 DEPS_MAIN += strfilter.o tardir.o
@@ -53,12 +54,12 @@ OBJ1= argmgr.o filerec.o tardir.o
 OBJ2= modproc.o langx.o
 OBJ3= shortq.o ischarx.o
 OBJ4= six.o filelinker.o
-OBJ5=
+OBJ5= strfilter.o
 OBJ6=
 OBJ7=
 
 OBJA= obj0.o obj1.o obj2.o obj3.o
-OBJB= obj4.o
+OBJB= obj4.o obj5.o
 
 OBJ_MAIN= obja.o objb.o
 
@@ -214,6 +215,11 @@ tardir.o:		tardir.dir
 tardir.dir:
 	makesubdir $@
 
+# FILEOBJ	(libuc)
+fileobj.o:		fileobj.dir
+fileobj.dir:
+	makesubdir $@
+
 # LANGX		(libdam)
 langx.o:		langx.dir
 langx.dir:
@@ -224,24 +230,19 @@ modproc.o:		modproc.dir
 modproc.dir:
 	makesubdir $@
 
-# CMD_UTILS
+# KEYOPT	(libdam)
+keyopt.o:		keyopt.dir
+keyopt.dir:
+	makesubdir $@
+
+# CMD_UTILS	(libdam)
 cmdutils.o:		cmdutils.dir
 cmdutils.dir:
 	makesubdir $@
 
-# SIX
+# SIX		(libdam)
 six.o:			six.dir
 six.dir:
-	makesubdir $@
-
-# FILEOBJ
-fileobj.o:		fileobj.dir
-fileobj.dir:
-	makesubdir $@
-
-# KEYOPT
-keyopt.o:		keyopt.dir
-keyopt.dir:
 	makesubdir $@
 
 shortq.o:		shortq.cc	shortq.h		$(INCS)
