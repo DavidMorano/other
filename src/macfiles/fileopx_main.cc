@@ -76,7 +76,7 @@
 #include	<isnot.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>
-#include	<debugprintf.h>		/* LIBDEBUG */
+#include	<libdebug.h>		/* LIBDEBUG */
 
 #include	"config.h"
 #include	"proginfo.h"
@@ -338,13 +338,13 @@ enum progmodes {
 } ; /* end enum (progmodes) */
 
 constexpr cpcchar	prognames[] = {
-	"filesize",
-	"filefind",
-	"filelinker",
-	"filesyncer",
-	"filerm",
-	"filelines",
-	nullptr
+	[progmode_filesize]	= "filesize",
+	[progmode_filefind]	= "filefind",
+	[progmode_filelinker]	= "filelinker",
+	[progmode_filesyncer]	= "filesyncer",
+	[progmode_filerm]	= "filerm",
+	[progmode_filelines]	= "filelines",
+	[progmode_overlast]	= nullptr
 } ; /* end array (prognames) */
 
 enum argopts {
@@ -563,10 +563,10 @@ enum sufs {
 } ; /* end enum (sufs) */
 
 constexpr cpcchar	sufs[] = {
-	PO_SUFREQ,
-	PO_SUFACC,
-	PO_SUFREJ,
-	nullptr
+	[suf_req]	= PO_SUFREQ,
+	[suf_acc]	= PO_SUFACC,
+	[suf_rej]	= PO_SUFREJ,
+	[suf_overlast]	= nullptr
 } ; /* end array (sufs) */
 
 constexpr int		rsnostat[] = {
