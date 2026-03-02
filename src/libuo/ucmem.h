@@ -87,10 +87,6 @@ EXTERNC_end
 #ifdef	__cplusplus
 namespace libuc {
     struct mems {
-	int malloc	(int,void *) noex ;
-	int valloc	(int,void *) noex ;
-	int calloc	(int,int,void *) noex ;
-	int ralloc	(void *,int,void *) noex ;
 	int strw	(cchar *,int,void *) noex ;
 	int mall	(int,void *) noex ;
 	int vall	(int,void *) noex ;
