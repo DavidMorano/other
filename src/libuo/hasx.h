@@ -28,6 +28,7 @@
 #include	<stdfnames.h>		/* |stdfnames| used below */
 
 #include	<hasall.h>
+#include	<hasbasename.h>
 #include	<hasclass.h>
 #include	<haslead.h>
 #include	<hasmodname.h>
