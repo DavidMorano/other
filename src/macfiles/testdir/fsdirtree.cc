@@ -71,7 +71,6 @@
 #include	<filetype.h>
 #include	<hasx.h>
 #include	<ischarx.h>
-#include	<ismisc.h>
 #include	<isnot.h>
 #include	<localmisc.h>
 
@@ -214,7 +213,7 @@ local int	dirid_finish(dirid *) noex ;
 
 local int	diridcmp(dirid *,dirid *,int) noex ;
 
-static uint	diridhash(cvoid *,int) noex ;
+local uint	diridhash(cvoid *,int) noex ;
 
 local inline bool btst(ushort v,int n) noex {
     	return bool((v >> n) & 1) ;
@@ -420,8 +419,8 @@ reader::operator int () noex {
 	        cchar	*enp = op->nbuf ;
 	        bool	f_proc = true ;
 	        if (hasNotDots(enp,enl)) {
-		    if (op->prune != nullptr) {
-			f_proc = (matstr(op->prune,enp,enl) < 0) ;
+		    if (op->prunearr != nullptr) {
+			f_proc = (matstr(op->prunearr,enp,enl) < 0) ;
 		    }
 		    if (f_proc) {
 	            if ((op->cdnlen > 0) && 
@@ -438,7 +437,7 @@ reader::operator int () noex {
 	                        cchar	*fn = op->bnbuf ;
 	                        char	*lbuf = op->lbuf ;
 	                        if ((rs = uc_readlink(fn,lbuf,llen)) >= 0) {
-				    if (! isDotDir(lbuf)) {
+				    if (hasNotDots(lbuf,rs)) {
 	                                if ((rs = uc_stat(fn,&se)) >= 0) {
 	                                    *sbp = se ;
 	                                } else if (rs == SR_NOENT) {
@@ -525,7 +524,7 @@ reader::operator int () noex {
 int fsdirtree_prune(fsdirtree *op,cchar **prune) noex {
     	int		rs ;
 	if ((rs = fsdirtree_magic(op,prune)) >= 0) ylikely {
-	    op->prune = prune ;
+	    op->prunearr = prune ;
 	}
 	return rs ;
 }
@@ -695,6 +694,30 @@ local int dirid_finish(dirid *dip) noex {
 }
 /* end subroutine (dirid_finish) */
 
+int fsdirtree::open(cchar *dname,int fo) noex {
+	return fsdirtree_open(this,dname,fo) ;
+}
+
+int fsdirtree::prune(cchar **parr) noex {
+	return fsdirtree_prune(this,parr) ;
+}
+
+int fsdirtree::read(ustat *sbp,char *rbuf,int rlen) noex {
+	return fsdirtree_read(this,sbp,rbuf,rlen) ;
+}
+
+fsdirtree_co::operator int () noex {
+	int		rs = SR_BUGCHECK ;
+	if (op) ylikely {
+	    switch (w) {
+	    case fsdirtreemem_close:
+	        rs = fsdirtree_close(op) ;
+	        break ;
+	    } /* end switch */
+	} /* end if (non-null) */
+	return rs ;
+} /* end method (fsdirtree_co::operator) */
+
 vars::operator int () noex {
     	int		rs ;
 	if ((rs = getbufsize(bufsize_mp)) >= 0) ylikely {
@@ -705,7 +728,7 @@ vars::operator int () noex {
 }
 /* end method (vars::operator) */
 
-static uint diridhash(cvoid *vp,int vl) noex {
+local uint diridhash(cvoid *vp,int vl) noex {
 	uint		h = 0 ;
 	ushort		*sa = (ushort *) vp ;
 	h = h ^ ((sa[1] << 16) | sa[0]) ;
