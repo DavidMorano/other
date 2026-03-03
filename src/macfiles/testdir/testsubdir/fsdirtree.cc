@@ -71,7 +71,6 @@
 #include	<filetype.h>
 #include	<hasx.h>
 #include	<ischarx.h>
-#include	<ismisc.h>
 #include	<isnot.h>
 #include	<localmisc.h>
 
@@ -438,7 +437,7 @@ reader::operator int () noex {
 	                        cchar	*fn = op->bnbuf ;
 	                        char	*lbuf = op->lbuf ;
 	                        if ((rs = uc_readlink(fn,lbuf,llen)) >= 0) {
-				    if (! isDotDir(lbuf)) {
+				    if (hasNotDots(lbuf,rs)) {
 	                                if ((rs = uc_stat(fn,&se)) >= 0) {
 	                                    *sbp = se ;
 	                                } else if (rs == SR_NOENT) {
