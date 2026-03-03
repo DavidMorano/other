@@ -104,7 +104,7 @@ struct fsdirtree_flags {
 } ; /* end struct (fsdirtree_flags) */
 
 struct fsdirtree_head {
-	cchar		**prune ;
+	cchar		**prunearr ;
 	char		*bnbuf ;
 	char		*nbuf ;		/* "name" buffer */
 	char		*lbuf ;		/* "link" buffer */
@@ -123,15 +123,52 @@ struct fsdirtree_head {
 	ushort		selset ;	/* selection-set of DTs */
 } ; /* end struct (fsdirtree_head) */
 
+#ifdef	__cplusplus
+enum fsdirtreemems {
+	fsdirtreemem_close,
+	fsdirtreemem_overlast
+} ; /* end enum (fsdirtreemems) */
+struct fsdirtree ;
+struct fsdirtree_co {
+	fsdirtree	*op = nullptr ;
+	int		w = -1 ;
+	void operator () (fsdirtree *p,int m) noex {
+	    op = p ;
+	    w = m ;
+	} ;
+	operator int () noex ;
+	int operator () () noex { 
+	    return operator int () ;
+	} ;
+} ; /* end struct (fsdirtree_co) */
+struct fsdirtree : fsdirtree_head {
+	fsdirtree_co	close ;
+	fsdirtree() noex {
+	    close	(this,fsdirtreemem_close) ;
+	    magval = 0 ;
+	} ; /* end ctor */
+	fsdirtree(const fsdirtree &) = delete ;
+	fsdirtree &operator = (const fsdirtree &) = delete ;
+	int open(cchar *,int = 0) noex ;
+	int prune(cchar **) noex ;
+	int read(ustat *,char *,int) noex ;
+	void dtor() noex ;
+	destruct fsdirtree() {
+	    if (magval) dtor() ;
+	} ;
+} ; /* end struct (fsdirtree) */
+#else	/* __cplusplus */
 typedef FSDIRTREE	fsdirtree ;
+#endif /* __cplusplus */
+
 typedef	FSDIRTREE_FL	fsdirtree_fl ;
 
 EXTERNC_begin
 
-extern int fsdirtree_open(fsdirtree *,cchar *,int) noex ;
-extern int fsdirtree_prune(fsdirtree *,cchar **) noex ;
-extern int fsdirtree_read(fsdirtree *,ustat *,char *,int) noex ;
-extern int fsdirtree_close(fsdirtree *) noex ;
+extern int fsdirtree_open	(fsdirtree *,cchar *,int) noex ;
+extern int fsdirtree_prune	(fsdirtree *,cchar **) noex ;
+extern int fsdirtree_read	(fsdirtree *,ustat *,char *,int) noex ;
+extern int fsdirtree_close	(fsdirtree *) noex ;
 
 EXTERNC_end
 
