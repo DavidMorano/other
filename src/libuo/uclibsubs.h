@@ -298,7 +298,6 @@
 #include	<ucsysmisc.h>
 #include	<uctc.h>
 #include	<uctc.h>		/* terminal interface */
-#include	<uctim.h>
 #include	<uctimeconv.h>
 #include	<uctimer.h>
 #include	<ucuserattr.h>
