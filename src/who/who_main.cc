@@ -77,14 +77,14 @@
 #include	<fcntl.h>
 #include	<locale.h>
 #include	<libintl.h>		/* |gettext(3local)| */
-#include	<cerrno>
+#include	<pwd.h>
 #include	<ctime>
+#include	<cerrno>
 #include	<climits>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
 #include	<cstdio>
 #include	<cstring>
-#include	<pwd.h>
 #include	<utmpx.h>
 #include	<permx.h>
 #include	<localmisc.h>
@@ -104,10 +104,6 @@
 /* this next declaration is needed in certain compilation environments */
 extern "C" {
     extern int	cftime(char *, char *,custime *) noex ;
-}
-
-extern "C" {
-    extern char	*strbasename(char *) ;
 }
 
 
