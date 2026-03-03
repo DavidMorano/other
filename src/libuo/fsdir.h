@@ -35,10 +35,10 @@
 #include	<usysrets.h>
 
 
-#define	FSDIR_MAGIC	0x31415926
 #define	FSDIR		struct fsdir_head
 #define	FSDIR_FL	struct fsdir_flags
 #define	FSDIR_ENT	struct fsdir_entry
+#define	FSDIR_MAGIC	0x31415926
 
 
 struct fsdir_entry {
