@@ -40,6 +40,8 @@
 #include	<hasuniq.h>
 #include	<hasvarprefix.h>
 
+#include	<hasallof.h>		/* special (different return) */
+
 
 EXTERNC_begin
 
