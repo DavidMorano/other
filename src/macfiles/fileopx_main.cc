@@ -2756,7 +2756,7 @@ local int procdir(PI *pip,cchar *np,ustat *sbp) noex {
 }
 /* end subroutine (procdir) */
 
-local int procdirs(PI *pip,cchar *sp,int nl,ustat *sbp) noex {
+local int procdirs(PI *pip,cchar *namp,int naml,ustat *sbp) noex {
 	bfile		*efp = (bfile *) pip->efp ;
 	cint		sz = (nl + 1 + MAXPATHLEN + 1) ;
 	int		rs ;
@@ -2768,25 +2768,25 @@ local int procdirs(PI *pip,cchar *sp,int nl,ustat *sbp) noex {
 	    debugprintf("main/procdirs: ent\n") ;
 #endif
 	if ((rs = lm_mall(sz,&p)) >= 0) {
-	    ustat	fsb ;
 	    int		opts = 0 ;
 	    cchar	*pn = pip->progname ;
 	    cchar	*fmt ;
 	    char	*fname = p ;
 	    char	*bp ;
 
-	    bp = strwcpy(fname,sp,nl) ;
+	    bp = strwcpy(fname,namp,naml) ;
 	    *bp++ = '/' ;
 
 	    if (pip->fl.follow) {
-	        opts |= FSDIRTREE_MFOLLOW ;
-	        opts |= FSDIRTREE_MUNIQDIR ;
+	        fdo |= fsdirtreem.follow ;
+	        fdo |= fsdirtreem.uniqdir ;
 	    }
 	    if (pip->fl.f_uniq) {
-	        opts |= FSDIRTREE_MUNIQDIR ;
+	        fdo |= fsdirtreem.uniqdir ;
 	    }
 
-	    if (fsdirtree d ; (rs = fsdirtree_open(&d,sp,opts)) >= 0) {
+	    ustat	fsb ;
+	    if (fsdirtree d ; (rs = fsdirtree_open(&d,namp,fdo)) >= 0) {
 	        cint	mpl = MAXPATHLEN ;
 	        if (pip->fl.prune) {
 	            rs = fsdirtree_prune(&d,pip->prune) ;
@@ -2848,7 +2848,7 @@ local int procdirs(PI *pip,cchar *sp,int nl,ustat *sbp) noex {
 /* end subroutine (procdirs) */
 
 local int procother(PI *pip,cchar *name,ustat *sbp) noex {
-	FILEINFO	ck, *ckp = &ck ;
+	FILEINFO	ck{}, *ckp = &ck ;
 #if	CF_FOLLOWFILES
 	ustat		ssb ;
 #endif
@@ -2860,8 +2860,6 @@ local int procother(PI *pip,cchar *name,ustat *sbp) noex {
 	int		f_islink = false ;
 	int		f_suf ;
 	cchar		*bnp ;
-
-	memclear(ckp,szof(FILEINFO)) ;
 
 #if	CF_DEBUG
 	if (DEBUGLEVEL(4)) {
