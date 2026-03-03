@@ -1,10 +1,13 @@
-/* main */
+/* main SUPPORT */
+/* charset=ISO8859-1 */
+/* lang=C++20 */
 
+/* this ia a version of the client side of the RSH facility */
+/* version %I% last-modified %G% */
 
 #define	DAM		1		/* David.A.Morano */
 #define	CF_DEBUGS	0		/* compile-time debugging */
 #define	CF_DEBUG	0		/* run-time debugging */
-
 
 /*	Copyright (c) 1984, 1986, 1987, 1988, 1989 AT&T	*/
 /*	  All Rights Reserved  	*/
@@ -72,26 +75,29 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include <syslog.h>
 #include <unistd.h>
+#include <netdb.h>
+#include <cerrno>
 #include <csignal>
+#include	<cstddef>		/* |nullptr_t| */
+#include	<cstdlib>		/* |getenv(3c)| */
 #include <cstdarg>
 #include <cstring>
-#include <cerrno>
 #include <pwd.h>
 #include <grp.h>
 #include <cstdio>
-#include <netdb.h>
-#include <syslog.h>
+#include <cstdlib>
 
 #ifdef SYSV
 #include <security/pam_appl.h>
 #include <sys/resource.h>
 #include <sys/filio.h>
 #include <shadow.h>
-#include <cstdlib>
 #endif	/* SYSV */
 
-#include	<usystem.h>
+#include	<clanguage.h>
+#include	<usysbase.h>
 #include	<vecstr.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>
@@ -119,19 +125,9 @@
 
 /* external subroutines */
 
-extern int	snses(char *,int,const char *,const char *) ;
-extern int	sncpy2(char *,int,const char *,const char *,const char *) ;
-
 extern int	proginfo_setpiv(struct proginfo *,const char *,
 			const struct pivars *) ;
 extern int	printhelp(void *,const char *,const char *,const char *) ;
-
-#if	CF_DEBUGS || CF_DEBUG
-extern int	debugopen(const char *) ;
-extern int	debugprintf(const char *,...) ;
-extern int	debugclose() ;
-extern int	strlinelen(const char *,int,int) ;
-#endif
 
 
 /* local structures */
@@ -161,14 +157,9 @@ static int retval;
 
 /*ARGSUSED*/
 
-int main(argc,argv,envv)
-int	argc ;
-char	*argv[] ;
-char	*envv[] ;
-{
-	struct proginfo	pi, *pip = &pi ;
-
-	struct linger linger;
+int main(int argc,mainv argv,mainv envv) {
+	proginfo	pi, *pip = &pi ;
+	LINGER		ling ;
 	struct sockaddr_storage from;
 
 	int	rs ;
@@ -195,10 +186,10 @@ char	*envv[] ;
 	debugprintf("main: progname=%s\n",pip->progname) ;
 #endif
 
-	openlog("rsh", LOG_PID | LOG_ODELAY, LOG_DAEMON);
+	openlog("rsh",(LOG_PID | LOG_ODELAY, LOG_DAEMON)) ;
 	(void) audit_rshd_setup();	/* BSM */
 	fromlen = sizeof (from);
-	if (getpeername(0, (struct sockaddr *)&from, (socklen_t *)&fromlen)
+	if (getpeername(0, (SOCKADDR*)&from, (socklen_t *)&fromlen)
 	    < 0) {
 		(void) fprintf(stderr, "%s: ", argv[0]);
 		perror("getpeername");
@@ -213,10 +204,10 @@ char	*envv[] ;
 	if (setsockopt(0, SOL_SOCKET, SO_KEEPALIVE, (char *)&on,
 	    sizeof (on)) < 0)
 		syslog(LOG_WARNING, "setsockopt (SO_KEEPALIVE): %m");
-	linger.l_onoff = 1;
-	linger.l_linger = 60;			/* XXX */
-	if (setsockopt(0, SOL_SOCKET, SO_LINGER, (char *)&linger,
-	    sizeof (linger)) < 0)
+	ling.l_onoff = 1;
+	ling.l_linger = 60;			/* XXX */
+	if (setsockopt(0, SOL_SOCKET, SO_LINGER, (char *)&ling,
+	    sizeof(ling)) < 0)
 		syslog(LOG_WARNING, "setsockopt (SO_LINGER): %m");
 	doit(pip,dup(0), &from);
 	/* NOTREACHED */
