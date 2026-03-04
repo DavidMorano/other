@@ -169,7 +169,7 @@ template<typename ... Args>
 local inline int shortq_magic(shortq *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) ylikely {
-	    rs = (op->magic == SHORTQ_MAGIC) ? SR_OK : SR_NOTOPEN ;
+	    rs = (op->magval == SHORTQ_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
 } /* end subroutine (shortq_magic) */
@@ -190,12 +190,12 @@ int shortq_start(shortq *op,int a) noex {
 	if (op) ylikely {
 	    rs = SR_INVALID ;
 	    op->qvp = nullptr ;
-	    op->magic = 0 ;
+	    op->magval = 0 ;
 	    if (a >= 0) ylikely {
 	        rs = SR_NOMEM ;
 	        if (bmgr *qvp ; (qvp = new(nt) bmgr(a)) != np) ylikely {
 	            op->qvp = qvp ;
-	            op->magic = SHORTQ_MAGIC ;
+	            op->magval = SHORTQ_MAGIC ;
 	            rs = SR_OK ;
 	        } /* end if (new-bmgr) */
 	    } /* end if (valid) */
@@ -213,7 +213,7 @@ int shortq_finish(shortq *op) noex {
 	    } else {
 	        rs = SR_BUGCHECK ;
 	    } /* end if (non-null) */
-	    op->magic = 0 ;
+	    op->magval = 0 ;
 	} /* end if (magic) */
 	return rs ;
 } /* end subroutine (shortq_finish) */
