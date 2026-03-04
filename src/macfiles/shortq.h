@@ -30,7 +30,7 @@
 
 struct shortq_head {
     	void		*qvp ;		/* queue-value-pointer */
-	uint		magic ;
+	uint		magval ;
 } ; /* end struct (shortq_head) */
 
 #ifdef	__cplusplus
@@ -70,7 +70,7 @@ struct shortq : shortq_head {
 	    count	(this,shortqmem_count) ;
 	    len		(this,shortqmem_len) ;
 	    finish	(this,shortqmem_finish) ;
-	    magic = 0 ;
+	    magval = 0 ;
 	} ; /* end ctor */
 	shortq(const shortq &) = delete ;
 	shortq &operator = (const shortq &) = delete ;
@@ -85,7 +85,7 @@ struct shortq : shortq_head {
 	int operator [] (int) noex ;
 	operator int () noex ;
 	destruct shortq() {
-	    if (magic) dtor() ;
+	    if (magval) dtor() ;
 	} ;
 } ; /* end struct (shortq) */
 #else	/* __cplusplus */
