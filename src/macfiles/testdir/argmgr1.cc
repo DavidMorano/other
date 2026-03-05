@@ -142,13 +142,13 @@ int argmgr::argopt(cchar **rpp) noex {
 	    if (ai < argc) ylikely { /* valid argument range */
 	        cchar	*ap = argv[ai] ;
 	        DEBPR("arg=>%s<\n",ap) ;
-	        if (isplusminus(ap[0])) {
+	        if (ispm(ap[0])) {
 		    fl.plus = (ap[0] == '+') ;
 		    if (cint ch = mkchar(ap[1]) ; ch) {
 		        rs = iargopt(ap,ch,rpp) ;
 			klen = rs ;
 		    } /* end if (have option) */
-	        } /* end if (isplusminus) */ 
+	        } /* end if (ispm) */ 
 		/**** debug block begin */
 		if_constexpr (f_debug) {
 	            if (rs >= 0) ylikely {
