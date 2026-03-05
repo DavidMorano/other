@@ -84,7 +84,7 @@ extern "C" {
 
 /* forward references */
 
-static char *strcpyxc(toxc_f toxc,char *dp,cchar *sp) noex {
+local char *strcpyxc(toxc_f toxc,char *dp,cchar *sp) noex {
     	if (dp && sp) ylikely {
 	    while (*sp) {
 	        *dp++ = char(toxc(*sp++)) ;
@@ -94,8 +94,7 @@ static char *strcpyxc(toxc_f toxc,char *dp,cchar *sp) noex {
 	    dp = nullptr ;
 	} /* end if (non-null) */
 	return dp ;
-}
-/* end subroutine (strcpyxc) */
+} /* end subroutine (strcpyxc) */
 
 
 /* local variables */
