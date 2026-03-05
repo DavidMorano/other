@@ -67,7 +67,7 @@
 #include	<strnul.hh>
 #include	<ccfile.hh>
 #include	<readln.hh>
-#include	<filetype.h>
+#include	<filetypes.h>
 #include	<filelinker.hh>
 #include	<matstr.h>
 #include	<mkchar.h>
