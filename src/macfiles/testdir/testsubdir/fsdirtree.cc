@@ -68,7 +68,7 @@
 #include	<fifostr.h>
 #include	<strwcpy.h>
 #include	<matxstr.h>
-#include	<filetype.h>
+#include	<filetypes.h>
 #include	<hasx.h>
 #include	<ischarx.h>
 #include	<isnot.h>
