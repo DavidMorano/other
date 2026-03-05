@@ -30,6 +30,7 @@
 #include	<hasall.h>
 #include	<hasbasename.h>
 #include	<hasclass.h>
+#include	<hasinet.h>
 #include	<haslead.h>
 #include	<hasmodname.h>
 #include	<hasnon.h>
@@ -45,25 +46,22 @@
 
 EXTERNC_begin
 
-static inline bool hascontent(cchar *fp,int fl) noex {
+local inline bool hascontent(cchar *fp,int fl) noex {
 	return hasnotempty(fp,fl) ;
 }
-static inline bool hasfnamespecial(cchar *fp,int fl) noex {
+local inline bool hasfnamespecial(cchar *fp,int fl) noex {
 	return (matstr(stdfnames,fp,fl) >= 0) ;
 }
-static inline bool hasValidMagic(cchar *sp,int sl,cchar *ms) noex  {
+local inline bool hasValidMagic(cchar *sp,int sl,cchar *ms) noex  {
 	return hasvalidmagic(sp,sl,ms) ;
 }
-static inline bool hasEOH(cchar *sp,int sl) noex {
+local inline bool hasEOH(cchar *sp,int sl) noex {
 	return haseoh(sp,sl) ;
 }
-static inline bool hasMeAlone(cchar *sp,int sl) noex {
-	return hasmealone(sp,sl) ;
-}
-static inline bool hasDotDir(cchar *sp,int sl) noex {
+local inline bool hasDotDir(cchar *sp,int sl) noex {
 	return hasdots(sp,sl) ;
 }
-static inline bool hasINET4AddrStr(cchar *sp,int sl) noex {
+local inline bool hasINET4AddrStr(cchar *sp,int sl) noex {
 	return hasinet4addrstr(sp,sl) ;
 }
 
