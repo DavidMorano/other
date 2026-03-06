@@ -1,6 +1,7 @@
 Library-Order
 
 ----------------
+liblkcmd
 libprog
 libpr
 libpcs
