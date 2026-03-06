@@ -148,6 +148,7 @@
 #include	<mkx.h>
 #include	<modload.h>
 #include	<namecache.h>
+#include	<nchr.h>
 #include	<ncol.h>
 #include	<ndig.h>
 #include	<ndigit.h>
