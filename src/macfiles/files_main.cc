@@ -451,6 +451,7 @@ constexpr cpcchar	exts_code[] = {
 	"h",
 	"hh",
 	"s",
+	"S",
 	"sh",
 	"ksh"
 } ; /* end array */
@@ -1118,12 +1119,21 @@ int proginfo::argreadin() noex {
 	cnothrow	nt{} ;
 	int		rs ;
 	int		c = 0 ;
+	DEBPRINTF("ent\n") ;
 	if ((rs = maxpathlen) >= 0) {
 	    cint rlen = rs ;
 	    rs = SR_NOMEM ;
 	    if (char *rbuf ; (rbuf = new(nt) char[rlen + 1]) != np) {
 	        while ((rs = readln(&cin,rbuf,rlen)) > 0) {
-		    if (cint rl = rmeol(pbuf,rs) ; rl > 0) {
+			{
+			    strnul reads(rbuf,rs) ;
+			    DEBPRINTF("line=>%s<\n",ccp(reads)) ;
+		        }
+		    if (cint rl = rmeol(rbuf,rs) ; rl > 0) {
+			{
+			    strnul ls(rbuf,rl) ;
+			    DEBPRINTF("line=>%s<\n",ccp(ls)) ;
+		        }
 		        rs = argprocspec(rbuf,rl) ;
 			c += rs ;
 		    }
@@ -1132,6 +1142,7 @@ int proginfo::argreadin() noex {
 	        delete [] rbuf ;
 	    } /* end if (m-a-f) */
 	} /* end if (maxpathlen) */
+	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 }
 /* end method (proginfo::argreadin) */
