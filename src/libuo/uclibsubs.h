@@ -331,11 +331,6 @@ EXTERNC_begin
 /* system group */
 extern int	uc_nprocs(int) noex ;
 
-/* time group */
-extern int	uc_clockset(clockid_t,const TIMESPEC *) noex ;
-extern int	uc_clockget(clockid_t,TIMESPEC *) noex ;
-extern int	uc_clockres(clockid_t,TIMESPEC *) noex ;
-
 /* process group */
 extern int	uc_atfork(void_f,void_f,void_f) noex ;
 
