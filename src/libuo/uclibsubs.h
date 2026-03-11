@@ -75,12 +75,12 @@
 #include	<estrings.h>
 #include	<exitcodes.h>
 #include	<expcook.h>
-#include	<ffbs.h>
 #include	<fibonacci.h>
 #include	<field.h>
 #include	<filegrp.h>
 #include	<filemap.h>
 #include	<filer.h>
+#include	<findbit.h>
 #include	<findfilepath.h>
 #include	<findinline.h>
 #include	<findxfile.h>
