@@ -37,6 +37,7 @@ extern bool	iswhitelatin(int) noex ;
 extern bool	islowerlatin(int) noex ;
 extern bool	isupperlatin(int) noex ;
 extern bool	isprintlatin(int) noex ;
+extern bool	istermlatin(int) noex ;
 extern bool	isprintterm(int) noex ;
 extern bool	isprintbad(int) noex ;
 extern bool	isdict(int) noex ;
