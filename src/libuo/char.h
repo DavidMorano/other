@@ -40,7 +40,7 @@
 	CHAR_ISDEC
 	CHAR_ISHEX
 	CHAR_ISWHT
-	CHAR_ISSPACETAB
+	CHAR_ISBLK
 	CHAR_DICTORDER
 	CHAR_TOBC
 	CHAR_TOLC
@@ -99,7 +99,7 @@ extern const unsigned char	chardata_tofc[] ;
 #define	CHAR_ISDEC(c)		char_isdec(c)
 #define	CHAR_ISHEX(c)		char_ishex(c)
 #define	CHAR_ISWHT(c)		char_iswht(c)
-#define	CHAR_ISSPACETAB(c)	(((c) == ' ') || ((c) == '\t'))
+#define	CHAR_ISBLK(c)		char_isblk(c)
 
 /* dictionary-collating-ordinal */
 #define	CHAR_DICTORDER(c)	(chardata_dictorder[(c) & UCHAR_MAX])
@@ -136,27 +136,23 @@ extern bool char_islc(int) noex ;
 extern bool char_isuc(int) noex ;
 extern bool char_isfc(int) noex ;
 
-local inline bool char_isdig(int ch) noex {
-	return ((ch >= '0') && (ch <= '9')) ;
-}
 local inline bool char_isoct(int ch) noex {
 	return ((ch >= '0') && (ch <= '7')) ;
+}
+local inline bool char_isdig(int ch) noex {
+	return ((ch >= '0') && (ch <= '9')) ;
 }
 local inline bool char_isdec(int ch) noex {
 	return ((ch >= '0') && (ch <= '9')) ;
 }
 local inline bool char_ishex(int ch) noex {
-    	bool f = false ;
-	f = f || ((ch >= '0') && (ch <= '9')) ;
-	f = f || ((ch >= 'A') && (ch <= 'Z')) ;
-	f = f || ((ch >= 'a') && (ch <= 'z')) ;
-	return f ;
+    	return char_isdigex(ch) ;
 }
 local inline bool char_iswht(int ch) noex {
     	return char_iswhite(ch) ;
 }
-local inline bool char_isspacetab(int ch) noex {
-	return CHAR_ISSPACETAB(ch) ;
+local inline bool char_isblk(int ch) noex {
+    	return char_isblank(ch) ;
 }
 local inline short char_dictorder(int ch) noex {
 	return chardata_dictorder[ch & UCHAR_MAX] ;
