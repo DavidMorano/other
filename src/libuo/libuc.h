@@ -75,12 +75,12 @@
 #include	<estrings.h>
 #include	<exitcodes.h>
 #include	<expcook.h>
-#include	<ffbs.h>
 #include	<fibonacci.h>
 #include	<field.h>
 #include	<filegrp.h>
 #include	<filemap.h>
 #include	<filer.h>
+#include	<findbit.h>
 #include	<findfilepath.h>
 #include	<findinline.h>
 #include	<findxfile.h>
@@ -148,6 +148,7 @@
 #include	<mkx.h>
 #include	<modload.h>
 #include	<namecache.h>
+#include	<nchr.h>
 #include	<ncol.h>
 #include	<ndig.h>
 #include	<ndigit.h>
@@ -329,11 +330,6 @@ EXTERNC_begin
 
 /* system group */
 extern int	uc_nprocs(int) noex ;
-
-/* time group */
-extern int	uc_clockset(clockid_t,const TIMESPEC *) noex ;
-extern int	uc_clockget(clockid_t,TIMESPEC *) noex ;
-extern int	uc_clockres(clockid_t,TIMESPEC *) noex ;
 
 /* process group */
 extern int	uc_atfork(void_f,void_f,void_f) noex ;
