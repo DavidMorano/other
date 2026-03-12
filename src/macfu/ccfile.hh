@@ -33,7 +33,7 @@ enum ccfilemems {
 	ccfilemem_rewind,
 	ccfilemem_close,
 	ccfilemem_overlast
-} ;
+} ; /* end enum (ccfilemems) */
 
 struct ccfile ;
 
@@ -54,7 +54,7 @@ struct ccfile_fl {
 	uint		fnulling:1 ;
 	uint		freading:1 ;
 	uint		fopened:1 ;
-} ;
+} ; /* end struct (ccfile_fl) */
 
 struct ccfile : std::fstream {
 	typedef std::string_view	strview ;
