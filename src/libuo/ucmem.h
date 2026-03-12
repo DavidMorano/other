@@ -71,13 +71,19 @@ extern int uc_malloc		(int,void *) noex ;
 extern int uc_valloc		(int,void *) noex ;
 extern int uc_calloc		(int,int,void *) noex ;
 extern int uc_realloc		(void *,int,void *) noex ;
-extern int uc_free		(void *vp) noex ;
+extern int uc_free		(void *) noex ;
 extern int uc_mallset		(int) noex ;
 extern int uc_mallcount		(ulong *) noex ;
 extern int uc_mallout		(ulong *) noex ;
 extern int uc_mallstats		(ucmem_stats *) noex ;
 extern int uc_mallpresent	(cvoid *) noex ;
 extern int uc_mincoreset	(void *,size_t,char *) noex ;
+extern int mem_strw		(cchar *,int,cchar **) noex ;
+extern int mem_mall		(int,void *) noex ;
+extern int mem_vall		(int,void *) noex ;
+extern int mem_call		(int,int,void *) noex ;
+extern int mem_rall		(void *,int,void *) noex ;
+extern int mem_free		(void *) noex ;
 extern int ucmem_curbegin	(ucmem_cur *) noex ;
 extern int ucmem_curend		(ucmem_cur *) noex ;
 extern int ucmem_curenum	(ucmem_cur *,ucmem_ent *) noex ;
@@ -87,7 +93,7 @@ EXTERNC_end
 #ifdef	__cplusplus
 namespace libuc {
     struct mems {
-	int strw	(cchar *,int,void *) noex ;
+	int strw	(cchar *,int,cchar **) noex ;
 	int mall	(int,void *) noex ;
 	int vall	(int,void *) noex ;
 	int call	(int,int,void *) noex ;
