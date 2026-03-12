@@ -39,13 +39,10 @@
 EXTERNC_begin
 
 /* copy */
-static inline char *strnwcpy(char *dp,int dl,cchar *sp,int sl) noex {
+local inline char *strnwcpy(char *dp,int dl,cchar *sp,int sl) noex {
     	return strnwcpybc(dp,dl,sp,sl) ;
 }
-static inline char *strnblanks(char *dp,int n) noex {
-	return strnset(dp,' ',n) ;
-}
-static inline char *strnncpy(char *dp,cchar *sp,int sl,int sz) noex {
+local inline char *strnncpy(char *dp,cchar *sp,int sl,int sz) noex {
     	return strnwcpy(dp,sz,sp,sl) ;
 }
 
