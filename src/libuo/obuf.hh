@@ -85,7 +85,6 @@ public:
 	obuf(const obuf &) = delete ;
 	obuf &operator = (const obuf &) = delete ;
 	obuf(cchar * = nullptr,int = -1) noex ;
-	int operator [] (int) const noex ;
 	int add		(cchar *,int = -1) noex ;
 	int add		(int) noex ;
 	int at		(int) const noex ;
@@ -93,6 +92,7 @@ public:
 	int read	(char *,int) const noex ;
 	int adv		(int) noex ;
 	void dtor() noex ;
+	int operator [] (int) const noex ;
 	operator int () const noex {
 	    return ilen() ;
 	} ;
