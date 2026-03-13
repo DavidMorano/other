@@ -61,6 +61,9 @@ EXTERNC_end
 
 #ifdef	__cplusplus
 
+constexpr inline bool	isbinarlatin(int ch) noex {
+	return (ch >= '0') && (ch <= '1') ;
+}
 constexpr inline bool	isoctallatin(int ch) noex {
 	return (ch >= '0') && (ch <= '7') ;
 }
@@ -69,6 +72,9 @@ constexpr inline bool	isblanklatin(int ch) noex {
 }
 constexpr inline bool	isdiglatin(int ch) noex {
 	return (ch >= '0') && (ch <= '9') ;
+}
+constexpr inline bool	isbinlatin(int ch) noex {
+	return (ch >= '0') && (ch <= '1') ;
 }
 constexpr inline bool	isoctlatin(int ch) noex {
 	return (ch >= '0') && (ch <= '7') ;
@@ -113,6 +119,9 @@ constexpr inline bool	iswht(int ch) noex {
 
 #else /* __cplusplus */
 
+local inline bool	isbinarlatin(int ch) noex {
+	return (ch >= '0') && (ch <= '1') ;
+}
 local inline bool	isoctallatin(int ch) noex {
 	return (ch >= '0') && (ch <= '7') ;
 }
@@ -121,6 +130,9 @@ local inline bool	isblanklatin(int ch) noex {
 }
 local inline bool	isdiglatin(int ch) noex {
 	return (ch >= '0') && (ch <= '9') ;
+}
+local inline bool	isbinlatin(int ch) noex {
+	return (ch >= '0') && (ch <= '1') ;
 }
 local inline bool	isoctlatin(int ch) noex {
 	return (ch >= '0') && (ch <= '7') ;
