@@ -22,15 +22,13 @@
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<stdarg.h>		/* |va_list(3c)| */
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<usysbase.h>
 #include	<ascii.h>
 #include	<stdintx.h>
 
 
 #define	BUFFER		struct buffer_head
+#define	BUFFER_STARTLEN	50		/* starting buffer length */
 
 
 struct buffer_head {
@@ -115,6 +113,12 @@ extern int	buffer_adv	(buffer *,int) noex ;
 extern int	buffer_strw	(buffer *,cchar *,int) noex ;
 extern int	buffer_chr	(buffer *,int) noex ;
 extern int	buffer_buf	(buffer *,cchar *,int) noex ;
+extern int	buffer_printf	(buffer *,cchar *,...) noex ;
+extern int	buffer_vprintf	(buffer *,cchar *,va_list) noex ;
+extern int	buffer_get	(buffer *,cchar **) noex ;
+extern int	buffer_getprev	(buffer *) noex ;
+extern int	buffer_len	(buffer *) noex ;
+extern int	buffer_finish	(buffer *) noex ;
 
 extern int	buffer_bini	(buffer *,int) noex ;
 extern int	buffer_binl	(buffer *,long) noex ;
@@ -146,29 +150,26 @@ extern int	buffer_hexui	(buffer *,uint) noex ;
 extern int	buffer_hexul	(buffer *,ulong) noex ;
 extern int	buffer_hexull	(buffer *,ulonglong) noex ;
 
-extern int	buffer_printf	(buffer *,cchar *,...) noex ;
-extern int	buffer_vprintf	(buffer *,cchar *,va_list) noex ;
-extern int	buffer_get	(buffer *,cchar **) noex ;
-extern int	buffer_getprev	(buffer *) noex ;
-extern int	buffer_len	(buffer *) noex ;
-extern int	buffer_finish	(buffer *) noex ;
-
 extern int	buffer_strcompact(buffer *,cchar *,int) noex ;
 extern int	buffer_stropaque(buffer *,cchar *,int) noex ;
 extern int	buffer_strquote	(buffer *,cchar *,int) noex ;
 extern int	buffer_chrs	(buffer *,int,int) noex ;
 extern int	buffer_blanks	(buffer *,int) noex ;
 
-static inline int buffer_backs(buffer *op,int n) noex {
+local inline int buffer_backs(buffer *op,int n) noex {
 	return buffer_chrs(op,CH_BS,n) ;
 }
-static inline int buffer_str(buffer *op,cchar *sp) noex {
+local inline int buffer_str(buffer *op,cchar *sp) noex {
 	return buffer_strw(op,sp,-1) ;
 }
 
 EXTERNC_end
 
 #ifdef	__cplusplus
+
+namespace buffer_ns {
+    int buffer_ext(buffer *,int) noex ;
+} /* end namespace */
 
 inline int buffer_bin(buffer *op,int v) noex {
 	return buffer_bini(op,v) ;
