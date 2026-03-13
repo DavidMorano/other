@@ -29,6 +29,7 @@
 	shortq_get
 	shortq_readat
 	shortq_read
+	shortq_adv
 	shortq_size
 	shortq_count
 	shortq_finish
@@ -335,6 +336,24 @@ int shortq_read(shortq *op,short *rbuf,int rlen) noex {
     	return shortq_readat(op,0,rbuf,rlen) ;
 } /* end subroutine (shortq_read) */
 
+int shortq_adv(shortq *op,int n) noex {
+    	int		rs ;
+	int		c = 0 ; /* return-value */
+	if ((rs = shortq_magic(op)) >= 0) ylikely {
+	    rs = SR_BUGCHECK ;
+	    if (bmgr *qvp = resumelife<bmgr>(op->qvp) ; qvp) {
+		rs = SR_OK ;
+		for (int i = 0 ; (rs >= 0) && (i < n) ; i += 1) {
+		    if (short dummy ; (rs = qvp->rem(&dummy)) >= 0) ylikely {
+		        (void) dummy ;
+		        c += 1 ;
+		    } /* end if (rem) */
+		} /* end for */
+	    } /* end if (non-null) */
+	} /* end if (magic) */
+	return (rs >= 0) ? c : rs ;
+} /* end subroutine (shortq_adv) */
+
 int shortq_size(shortq *op) noex {
     	cnullptr	np{} ;
 	int		rs ;
@@ -349,16 +368,22 @@ int shortq_size(shortq *op) noex {
 	return (rs >= 0) ? c : rs ;
 } /* end subroutine (shortq_size) */
 
+local int shortq_ilen(shortq *op) noex {
+    	int		rs = SR_BUGCHECK ;
+	int		c = 0 ;
+	if (bmgr *qvp = resumelife<bmgr>(op->qvp) ; qvp) {
+	    rs = qvp->count() ;
+	    c = rs ;
+	} /* end if (non-null) */
+	return (rs >= 0) ? c : rs ;
+} /* end subroutine (shortq_ilen) */
+
 int shortq_count(shortq *op) noex {
-    	cnullptr	np{} ;
 	int		rs ;
 	int		c = 0 ; /* return-value */
 	if ((rs = shortq_magic(op)) >= 0) ylikely {
-	    rs = SR_BUGCHECK ;
-	    if (bmgr *qvp ; (qvp = resumelife<bmgr>(op->qvp)) != np) ylikely {
-		rs = qvp->count() ;
-		c = rs ;
-	    } /* end if (non-null) */
+	    rs = shortq_ilen(op) ;
+	    c = rs ;
 	} /* end if (magic) */
 	return (rs >= 0) ? c : rs ;
 } /* end subroutine (shortq_count) */
@@ -392,20 +417,24 @@ int shortq::rem(short *rp) noex {
     return shortq_rem(this,rp) ;
 }
 
-int shortq::remread(short *rbuf,int rlen) noex {
-    return shortq_remread(this,rbuf,rlen) ;
+int shortq::readat(int ei,short *rbuf,int rlen) noex {
+	return shortq_readat(this,ei,rbuf,rlen) ;
 }
 
 int shortq::get(int ei) noex {
     return shortq_get(this,ei) ;
 }
 
-int shortq::readat(int ei,short *rbuf,int rlen) noex {
-	return shortq_readat(this,ei,rbuf,rlen) ;
-}
-
 int shortq::read(short *rbuf,int rlen) noex {
 	return shortq_readat(this,0,rbuf,rlen) ;
+}
+
+int shortq::remread(short *rbuf,int rlen) noex {
+    return shortq_remread(this,rbuf,rlen) ;
+}
+
+int shortq::adv(int n) noex {
+    return shortq_adv(this,n) ;
 }
 
 void shortq::dtor() noex {
@@ -436,8 +465,6 @@ int shortq_co::operator () (int a) noex {
 	        rs = shortq_size(op) ;
 	        break ;
 	    case shortqmem_count:
-	        rs = shortq_count(op) ;
-	        break ;
 	    case shortqmem_len:
 	        rs = shortq_count(op) ;
 	        break ;
