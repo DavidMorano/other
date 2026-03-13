@@ -36,6 +36,7 @@
 	CHAR_ISUC
 	CHAR_ISFC
 	CHAR_ISDIG
+	CHAR_ISBIN
 	CHAR_ISOCT
 	CHAR_ISDEC
 	CHAR_ISHEX
@@ -88,6 +89,7 @@ extern const unsigned char	chardata_tofc[] ;
 #define	CHAR_ISALNUM(c)		char_isalnum(c)
 #define	CHAR_ISDIGIT(c)		char_isdigit(c)
 #define	CHAR_ISDIGEX(c)		char_isdigex(c)
+#define	CHAR_ISBINAR(c)		char_isbinar(c)
 #define	CHAR_ISOCTAL(c)		char_isoctal(c)
 #define	CHAR_ISWHITE(c)		char_iswhite(c)
 #define	CHAR_ISBLANK(c)		char_isblank(c)
@@ -95,6 +97,7 @@ extern const unsigned char	chardata_tofc[] ;
 #define	CHAR_ISUC(c)		char_isuc(c)
 #define	CHAR_ISFC(c)		char_isfc(c)
 #define	CHAR_ISDIG(c)		char_isdig(c)
+#define	CHAR_ISBIN(c)		char_isbin(c)
 #define	CHAR_ISOCT(c)		char_isoct(c)
 #define	CHAR_ISDEC(c)		char_isdec(c)
 #define	CHAR_ISHEX(c)		char_ishex(c)
@@ -125,6 +128,9 @@ local inline bool char_isdigex(int ch) noex {
 	f = f || ((ch >= 'a') && (ch <= 'z')) ;
 	return f ;
 }
+local inline bool char_isbinar(int ch) noex {
+	return ((ch >= '0') && (ch <= '1')) ;
+}
 local inline bool char_isoctal(int ch) noex {
 	return ((ch >= '0') && (ch <= '7')) ;
 }
@@ -136,6 +142,9 @@ extern bool char_islc(int) noex ;
 extern bool char_isuc(int) noex ;
 extern bool char_isfc(int) noex ;
 
+local inline bool char_isbin(int ch) noex {
+	return ((ch >= '0') && (ch <= '1')) ;
+}
 local inline bool char_isoct(int ch) noex {
 	return ((ch >= '0') && (ch <= '7')) ;
 }
