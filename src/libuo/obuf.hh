@@ -36,13 +36,11 @@
 #include	<cstdlib>
 #include	<string>		/* |string(3c++)| */
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<usysbase.h>
 
 enum obufmems {
 	obufmem_start,
+	obufmem_adv,
 	obufmem_count,
 	obufmem_len,
 	obufmem_finish,
@@ -55,6 +53,17 @@ struct obuf_fl {
 
 struct obuf ;
 
+struct obuf_rem {
+	obuf		*op = nullptr ;
+	void operator () (obuf *p,int) noex {
+	    op = p ;
+	} ;
+	int operator () (char * = nullptr) noex ;
+	operator int () noex {
+	    return operator () (nullptr) ;
+	} ;
+} ; /* end struct (obuf_rem) */
+
 struct obuf_co {
 	obuf		*op = nullptr ;
 	int		w = -1 ;
@@ -62,35 +71,44 @@ struct obuf_co {
 	    op = p ;
 	    w = m ;
 	} ;
-	operator int () noex ;
-	int operator () () noex { 
-	    return operator int () ;
+	int operator () (int = -1) noex ;
+	operator int () noex {
+	    return operator () (-1) ;
 	} ;
 } ; /* end struct (obuf_co) */
 
 class obuf {
     	friend		obuf_co ;
+    	friend		obuf_rem ;
 	std::string	b ;
 	int		oi ;		/* output index */
-	int push(int) noex ;
 	int istart() noex ;
 	int ifinish() noex ;
 	int ilen() const noex ;
+	int iadv(int) noex ;
+	int iremove(char *) noex ;
 public:
 	obuf_co		start ;
 	obuf_co		finish ;
+	obuf_co		adv ;
 	obuf_co		count ;
 	obuf_co		len ;
+	obuf_rem	rem ;
 	obuf_fl		fl{} ;
 	obuf(const obuf &) = delete ;
 	obuf &operator = (const obuf &) = delete ;
 	obuf(cchar * = nullptr,int = -1) noex ;
+	int push	(int) noex ;
+	int ins		(int ch) noex {
+	    return push(ch) ;
+	} ;
+	int add		(int ch) noex {
+	    return push(ch) ;
+	} ;
 	int add		(cchar *,int = -1) noex ;
-	int add		(int) noex ;
 	int at		(int) const noex ;
 	int readat	(int,char *,int) const noex ;
 	int read	(char *,int) const noex ;
-	int adv		(int) noex ;
 	void dtor() noex ;
 	int operator [] (int) const noex ;
 	operator int () const noex {
