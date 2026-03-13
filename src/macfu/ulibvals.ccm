@@ -68,7 +68,9 @@ export {
 	static const int	groupnamelen ;
 	static const int	projnamelen ;
 	static const int	nodenamelen ;
-	static const int	hostnamelen ;
+	static const int	protnamelen ;	/* network protocol-name */
+	static const int	hostnamelen ;	/* network host-name */
+	static const int	servnamelen ;	/* network service-name */
 	static const int	binbuflen ;	/* for |int256_t| */
 	static const int	octbuflen ;	/* for |int256_t| */
 	static const int	decbuflen ;	/* for |int256_t| */
