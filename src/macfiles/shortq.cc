@@ -67,7 +67,6 @@ using std::deque ;			/* type */
 using std::min ;			/* subroutine-template */
 using std::max ;			/* subroutine-template */
 using libuc::libmem ;			/* variable */
-using std::nothrow ;			/* constant */
 
 
 /* local typedefs */
@@ -116,24 +115,23 @@ namespace {
 	    return rs ;
 	} ; /* end method (ins) */
 	int rem(short *rp) noex {
-	    int		rs = SR_FAULT ;
-	    if (rp) ylikely {
-		if (! b.empty()) {
+	    int		rs = SR_EMPTY ;
+	    if (csize sz = b.size() ; sz > 0) {
+		rs = intsat(sz) - 1 ;
+	        if (rp) {
 	            cshort v = b.front() ;
-		    rs = SR_OK ;
-	            *rp = v ;
-		    b.pop_front() ;
-		} else {
-		    rs = SR_EMPTY ;
+		    *rp = v ;
 		}
-	    } /* end if (non-null) */
+		b.pop_front() ;
+	    } /* end if (was not empty) */
 	    return rs ;
 	} ; /* end method (rem) */
 	int remall() noex {
 	    int		rs = SR_OK ;
-	    if (! b.empty()) {
+	    if (csize sz = b.size() ; sz > 0) {
+		rs = intsat(sz) ;
 		b.clear() ;
-	    }
+	    } /* end if (not-empty) */
 	    return rs ;
 	} ; /* end method (remall) */
 	int get(int ei) const noex {
@@ -343,12 +341,17 @@ int shortq_adv(shortq *op,int n) noex {
 	    rs = SR_BUGCHECK ;
 	    if (bmgr *qvp = resumelife<bmgr>(op->qvp) ; qvp) {
 		rs = SR_OK ;
-		for (int i = 0 ; (rs >= 0) && (i < n) ; i += 1) {
-		    if (short dummy ; (rs = qvp->rem(&dummy)) >= 0) ylikely {
-		        (void) dummy ;
-		        c += 1 ;
-		    } /* end if (rem) */
-		} /* end for */
+		if (n > 0) {
+		    for (int i = 0 ; (rs >= 0) && (i < n) ; i += 1) {
+		        if (short dummy ; (rs = qvp->rem(&dummy)) >= 0) {
+		            (void) dummy ;
+		            c += 1 ;
+		        } /* end if (rem) */
+		    } /* end for */
+		} else if (n < 0) {
+		    rs = qvp->remall() ;
+		    c = rs ;
+		}
 	    } /* end if (non-null) */
 	} /* end if (magic) */
 	return (rs >= 0) ? c : rs ;
