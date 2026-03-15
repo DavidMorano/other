@@ -1,4 +1,4 @@
-#!/usr/extra/bin/ksh
+#!/usr/local/bin/ksh
 # INSTALL-DAM
 
 : ${HOME:=$( userhome )}
@@ -53,4 +53,5 @@ for LIB in ${LIBS} ; do
     done
   fi
 done
+
 
