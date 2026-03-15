@@ -23,6 +23,7 @@
 
 	Names:
 	shortq_start
+	shortq_load
 	shortq_ins
 	shortq_rem
 	shortq_remread
@@ -147,14 +148,18 @@ namespace {
 	    return rs ;
 	} ; /* end method (get) */
 	int size() const noex {
-	    cint	cnt = intsat(b.max_size()) ;
-	    return cnt ;
+	    csize	bsize = b.max_size() ;
+	    int		rs ;
+	    {
+	        rs = intsat(bsize) ;
+	    }
+	    return rs ;
 	} ; /* end method (size) */
 	int count() const noex {
 	    csize	bsize = b.size() ;
 	    int		rs ;
 	    {
-		rs = intconv(bsize) ;
+		rs = intsat(bsize) ;
 	    }
 	    return rs ;
 	} ; /* end method (count) */
@@ -203,10 +208,9 @@ int shortq_start(shortq *op,int a) noex {
 } /* end subroutine (shortq_start) */
 
 int shortq_finish(shortq *op) noex {
-    	cnullptr	np{} ;
 	int		rs ;
 	if ((rs = shortq_magic(op)) >= 0) ylikely {
-	    if (bmgr *qvp ; (qvp = resumelife<bmgr>(op->qvp)) != np) ylikely {
+	    if (bmgr *qvp = resumelife<bmgr>(op->qvp) ; qvp) ylikely {
 	        delete qvp ;
 	        op->qvp = nullptr ;
 	    } else {
@@ -218,12 +222,11 @@ int shortq_finish(shortq *op) noex {
 } /* end subroutine (shortq_finish) */
 
 int shortq_ins(shortq *op,short v) noex {
-    	cnullptr	np{} ;
 	int		rs ;
 	int		c = 0 ; /* return-value */
 	if ((rs = shortq_magic(op)) >= 0) ylikely {
 	    rs = SR_BUGCHECK ;
-	    if (bmgr *qvp ; (qvp = resumelife<bmgr>(op->qvp)) != np) ylikely {
+	    if (bmgr *qvp = resumelife<bmgr>(op->qvp) ; qvp) ylikely {
 		if ((rs = qvp->ins(v)) >= 0) ylikely {
 		    rs = qvp->count() ;
 		    c = rs ;
@@ -234,12 +237,11 @@ int shortq_ins(shortq *op,short v) noex {
 } /* end subroutine (shortq_ins) */
 
 int shortq_rem(shortq *op,short *rp) noex {
-    	cnullptr	np{} ;
 	int		rs ;
 	int		c = 0 ; /* return-value */
-	if ((rs = shortq_magic(op,rp)) >= 0) ylikely {
+	if ((rs = shortq_magic(op)) >= 0) ylikely {
 	    rs = SR_BUGCHECK ;
-	    if (bmgr *qvp ; (qvp = resumelife<bmgr>(op->qvp)) != np) ylikely {
+	    if (bmgr *qvp = resumelife<bmgr>(op->qvp) ; qvp) ylikely {
 		if ((rs = qvp->rem(rp)) >= 0) ylikely {
 		    rs = qvp->count() ;
 		    c = rs ;
@@ -250,13 +252,12 @@ int shortq_rem(shortq *op,short *rp) noex {
 } /* end subroutine (shortq_rem) */
 
 int shortq_remread(shortq *op,short *rbuf,int rlen) noex {
-	cnullptr	np{} ;
 	int		rs ;
 	int		i = 0 ; /* return-value */
 	if ((rs = shortq_magic(op,rbuf)) >= 0) ylikely {
 	    if (rlen > 0) ylikely {
 		int	ml ;
-	        if (bmgr *qvp ; (qvp = resumelife<bmgr>(op->qvp)) != np) {
+	        if (bmgr *qvp = resumelife<bmgr>(op->qvp) ; qvp) ylikely {
 	            cint	len = qvp->count() ;
 	            ml = min(len,rlen) ;
 	            for (i = 0 ; (rs >= 0) && (i < ml) ; i += 1) {
@@ -277,12 +278,11 @@ int shortq_remread(shortq *op,short *rbuf,int rlen) noex {
 } /* end subroutine (shortq_remread) */
 
 int shortq_remall(shortq *op) noex {
-    	cnullptr	np{} ;
 	int		rs ;
 	int		c = 0 ; /* return-value */
 	if ((rs = shortq_magic(op)) >= 0) ylikely {
 	    rs = SR_BUGCHECK ;
-	    if (bmgr *qvp ; (qvp = resumelife<bmgr>(op->qvp)) != np) ylikely {
+	    if (bmgr *qvp = resumelife<bmgr>(op->qvp) ; qvp) ylikely {
 		rs = qvp->remall() ;
 	    } /* end if (non-null) */
 	} /* end if (magic) */
@@ -290,12 +290,11 @@ int shortq_remall(shortq *op) noex {
 } /* end subroutine (shortq_remall) */
 
 int shortq_get(shortq *op,int ei) noex {
-    	cnullptr	np{} ;
 	int		rs ;
 	int		rv = 0 ; /* return-value */
 	if ((rs = shortq_magic(op)) >= 0) ylikely {
 	    rs = SR_BUGCHECK ;
-	    if (bmgr *qvp ; (qvp = resumelife<bmgr>(op->qvp)) != np) ylikely {
+	    if (bmgr *qvp = resumelife<bmgr>(op->qvp) ; qvp) ylikely {
 		rs = qvp->get(ei) ;
 		rv = rs ;
 	    } /* end if (non-null) */
@@ -304,27 +303,27 @@ int shortq_get(shortq *op,int ei) noex {
 } /* end subroutine (shortq_get) */
 
 int shortq_readat(shortq *op,int ei,short *rbuf,int rlen) noex {
-    	cnullptr	np{} ;
     	int		rs ;
 	int		rl = 0 ; /* return-value */
 	if ((rs = shortq_magic(op,rbuf)) >= 0) ylikely {
-	    if (bmgr *qvp ; (qvp = resumelife<bmgr>(op->qvp)) != np) ylikely {
-		if ((rs = qvp->count()) > 0) {
-		    cint cnt = rs ;
-		    if ((ei >= 0) && (ei < cnt)) {
-			while (rlen-- && (rl < (cnt - ei))) {
-			    if ((rs = qvp->get(ei++)) >= 0) {
-				rbuf[rl++] = short(rs) ;
-			    }
-			    if (rs < 0) break ;
-			} /* end while */
-		    } else {
-		        rs = SR_INVALID ;
-		    } /* end if (valid) */
-		} /* end if (count - non-zero positive) */
-	    } else {
-	        rs = SR_BUGCHECK ;
-	    } /* end if (non-null) */
+	    rs = SR_INVALID ;
+	    if (ei >= 0) {
+		rs = SR_BUGCHECK ;
+	        if (bmgr *qvp = resumelife<bmgr>(op->qvp) ; qvp) ylikely {
+		    if ((rs = qvp->count()) > 0) {
+		        if (cint cnt = rs ; ei < cnt) {
+			    while (rlen-- && (ei < cnt)) {
+			        if ((rs = qvp->get(ei++)) >= 0) {
+				    rbuf[rl++] = short(rs) ;
+			        }
+			        if (rs < 0) break ;
+			    } /* end while */
+		        } else {
+		            rs = SR_INVALID ;
+		        } /* end if (valid) */
+		    } /* end if (count - non-zero positive) */
+	        } /* end if (porinter-grab) */
+	    } /* end if (valid) */
 	    rbuf[rl] = 0 ;
 	} /* end if (magic) */
 	return (rs >= 0) ? rl : rs ;
@@ -339,12 +338,12 @@ int shortq_adv(shortq *op,int n) noex {
 	int		c = 0 ; /* return-value */
 	if ((rs = shortq_magic(op)) >= 0) ylikely {
 	    rs = SR_BUGCHECK ;
-	    if (bmgr *qvp = resumelife<bmgr>(op->qvp) ; qvp) {
+	    if (bmgr *qvp = resumelife<bmgr>(op->qvp) ; qvp) ylikely {
 		rs = SR_OK ;
 		if (n > 0) {
 		    for (int i = 0 ; (rs >= 0) && (i < n) ; i += 1) {
-		        if (short dummy ; (rs = qvp->rem(&dummy)) >= 0) {
-		            (void) dummy ;
+		        if (short v ; (rs = qvp->rem(&v)) >= 0) {
+		            (void) v ;
 		            c += 1 ;
 		        } /* end if (rem) */
 		    } /* end for */
@@ -358,12 +357,11 @@ int shortq_adv(shortq *op,int n) noex {
 } /* end subroutine (shortq_adv) */
 
 int shortq_size(shortq *op) noex {
-    	cnullptr	np{} ;
 	int		rs ;
 	int		c = 0 ; /* return-value */
 	if ((rs = shortq_magic(op)) >= 0) ylikely {
 	    rs = SR_BUGCHECK ;
-	    if (bmgr *qvp ; (qvp = resumelife<bmgr>(op->qvp)) != np) ylikely {
+	    if (bmgr *qvp = resumelife<bmgr>(op->qvp) ; qvp) ylikely {
 		rs = qvp->size() ;
 		c = rs ;
 	    } /* end if (non-null) */
@@ -374,7 +372,7 @@ int shortq_size(shortq *op) noex {
 local int shortq_ilen(shortq *op) noex {
     	int		rs = SR_BUGCHECK ;
 	int		c = 0 ;
-	if (bmgr *qvp = resumelife<bmgr>(op->qvp) ; qvp) {
+	if (bmgr *qvp = resumelife<bmgr>(op->qvp) ; qvp) ylikely {
 	    rs = qvp->count() ;
 	    c = rs ;
 	} /* end if (non-null) */
@@ -392,12 +390,11 @@ int shortq_count(shortq *op) noex {
 } /* end subroutine (shortq_count) */
 
 int shortq_load(shortq *op,short *sp,int µsl) noex {
-	cnullptr	np{} ;
 	int		rs ;
 	int		c = 0 ; /* return-value */
 	if ((rs = shortq_magic(op,sp)) >= 0) ylikely {
 	    if (int sl ; (sl = getlen(sp,µsl)) >= 0) ylikely {
-	        if (bmgr *qvp ; (qvp = resumelife<bmgr>(op->qvp)) != np) {
+	        if (bmgr *qvp = resumelife<bmgr>(op->qvp) ; qvp) ylikely {
 	            while ((rs >= 0) && (sl-- > 0)) {
 			rs = qvp->ins(sp[c++]) ;
 	           } /* end while */
@@ -448,11 +445,11 @@ void shortq::dtor() noex {
 
 int shortq::operator [] (int ei) noex {
     return shortq_get(this,ei) ;
-}
+} /* end method (shortq::operator) */
 
 shortq::operator int () noex {
     	return shortq_count(this) ;
-}
+} /* end method (shortq::operator) */
 
 int shortq_co::operator () (int a) noex {
 	int		rs = SR_BUGCHECK ;
