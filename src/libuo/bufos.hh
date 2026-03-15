@@ -40,10 +40,11 @@
 
 enum bufosmems {
 	bufosmem_start,
+	bufosmem_finish,
 	bufosmem_adv,
 	bufosmem_count,
 	bufosmem_len,
-	bufosmem_finish,
+	bufosmem_extent,
 	bufosmem_overlast
 } ; /* end enum (bufosmems) */
 
@@ -84,17 +85,19 @@ class bufos {
 	int		oi ;		/* output index */
 	int istart() noex ;
 	int ifinish() noex ;
-	int ilen() const noex ;
 	int iadv(int) noex ;
 	int iremove(char *) noex ;
+	int ilen() const noex ;
+	int iextent() const noex ;
 public:
-	bufos_co		start ;
-	bufos_co		finish ;
-	bufos_co		adv ;
-	bufos_co		count ;
-	bufos_co		len ;
+	bufos_co	start ;
+	bufos_co	finish ;
+	bufos_co	adv ;
+	bufos_co	count ;
+	bufos_co	len ;
+	bufos_co	extent ;
 	bufos_rem	rem ;
-	bufos_fl		fl{} ;
+	bufos_fl	fl{} ;
 	bufos(const bufos &) = delete ;
 	bufos &operator = (const bufos &) = delete ;
 	bufos(cchar * = nullptr,int = -1) noex ;
