@@ -205,6 +205,16 @@ sif.o:			sif.dir
 sif.dir:
 	makesubdir $@
 
+# SIX		(libuc)
+six.o:			six.dir
+six.dir:
+	makesubdir $@
+
+# QUEUE		(libuc)
+queue.o:		queue.dir
+queue.dir:
+	makesubdir $@
+
 # ARGMGR	(libuc)
 argmgr.o:		argmgr.dir
 argmgr.dir:
@@ -238,11 +248,6 @@ keyopt.dir:
 # CMD_UTILS	(libdam)
 cmdutils.o:		cmdutils.dir
 cmdutils.dir:
-	makesubdir $@
-
-# SIX		(libdam)
-six.o:			six.dir
-six.dir:
 	makesubdir $@
 
 shortq.o:		shortq.cc	shortq.h		$(INCS)
