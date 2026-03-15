@@ -1,34 +1,32 @@
-/* process */
+/* process SUPPORT */
+/* charset=ISO8859-1 */
+/* lang=C++20 */
 
 /* process a name */
-
+/* version %I% last-modified %G% */
 
 #define	CF_DEBUG	1
 
-
 /* revision history:
 
-	= 96/03/01, David A­D­ Morano
-
+	= 1996-03-01, David A­D­ Morano
 	The subroutine was adapted from others programs that
 	did similar types of functions.
 
-
 */
 
+/* Copyright © 1996 David A­D­ Morano.  All rights reserved. */
+/* Use is subject to license terms. */
 
 /******************************************************************************
 
+  	Description:
 	This module just provides optional expansion of directories.
 	The real work is done by the 'checkname' module.
 
-
-
 ******************************************************************************/
 
-
-
-
+#include	<envstandards.h>	/* ordered first to configure */
 #include	<sys/types.h>
 #include	<sys/param.h>
 #include	<sys/stat.h>
@@ -37,44 +35,40 @@
 #include	<signal.h>
 #include	<termios.h>
 #include	<ctime>
-#include	<stdlib.h>
-#include	<string.h>
-
-#include	<usystem.h>
+#include	<cstddef>		/* |nullptr_t| */
+#include	<cstdlib>		/* |getenv(3c)| */
+#include	<cstring>
+#include	<clanguage.h>
+#include	<usysbase.h>
 #include	<baops.h>
+#include	<localmisc.h>
 
-#include	"localmisc.h"
 #include	"config.h"
 #include	"defs.h"
-
 
 
 /* local defines */
 
 
-
 /* external subroutines */
 
-extern int	uc_ftruncate64(int,off_t) ;
-
-extern int	cfdecmfui(const char *,int,int *) ;
-
-extern char	*strbasename(char *) ;
-
-
-/* local forward references */
-
 
 /* external variables */
 
 
-/* external variables */
+/* local structures */
+
+
+/* forward references */
 
 
 /* local variables */
 
 
+/* exported variables */
 
+
+/* exported subroutines */
 
 int process(pip,namespec,trunclen)
 struct proginfo	*pip ;
