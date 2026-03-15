@@ -76,6 +76,9 @@ struct shortq : shortq_head {
 	shortq &operator = (const shortq &) = delete ;
 	int load	(short *,int) noex ;
 	int ins		(short) noex ;
+	int add		(short *sp,int sl) noex {
+	    return load(sp,sl) ;
+	} ;
 	int rem		(short *) noex ;
 	int remread	(short *,int) noex ;
 	int get		(int) noex ;
