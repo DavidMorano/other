@@ -31,20 +31,20 @@ EXTERNC_begin
 extern int	rmeol(cchar *,int) noex ;
 extern int	rmwht(cchar *,int) noex ;
 extern int	rmblk(cchar *,int) noex ;
-extern int	rmclass(cchar *,int,cchar *) noex ;
+extern int	rmtrailclass(cchar *,int,cchar *) noex ;
 extern int	rmtrailchr(cchar *,int,int) noex ;
 extern int	rmochr(cchar *,int,int) noex ;
 extern int	rmrchr(cchar *,int,int) noex ;
 extern int	rmext(cchar *,int) noex ;
 extern int	rmcomment(cchar *,int) noex ;
 
-static inline int rmchr(cchar *sp,int sl,int sch) noex {
+local inline int rmchr(cchar *sp,int sl,int sch) noex {
 	return rmochr(sp,sl,sch) ;
 }
-static inline int rmdot(cchar *sp,int sl) noex {
+local inline int rmdot(cchar *sp,int sl) noex {
 	return rmrchr(sp,sl,'.') ;
 }
-static inline int rmcom(cchar *sp,int sl) noex {
+local inline int rmcom(cchar *sp,int sl) noex {
 	return rmcomment(sp,sl) ;
 }
 
@@ -52,7 +52,7 @@ EXTERNC_end
 
 #ifdef	__cplusplus
 
-static inline int rmdot(cchar *sp) noex {
+local inline int rmdot(cchar *sp) noex {
 	return rmrchr(sp,-1,'.') ;
 }
 
