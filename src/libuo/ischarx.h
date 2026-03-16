@@ -110,11 +110,14 @@ constexpr inline bool	isabbr(int ch) noex {
 	ch &= UCHAR_MAX ;
 	return (ch == '.') || (ch == ('­' & UCHAR_MAX)) || (ch == '-') ;
 }
-constexpr inline bool	isspacetab(int ch) noex {
-	return isblanklatin(ch) ;
-}
 constexpr inline bool	iswht(int ch) noex {
 	return iswhitelatin(ch) ;
+}
+constexpr inline bool	isblk(int ch) noex {
+	return isblanklatin(ch) ;
+}
+constexpr inline bool	isspacetab(int ch) noex {
+	return isblanklatin(ch) ;
 }
 
 #else /* __cplusplus */
@@ -152,10 +155,10 @@ local inline bool	iswhite(int ch) noex {
 local inline bool	isnumlatin(int ch) noex {
     	return isdigexlatin(ch) || (ch == '\\') || (ch == 'x') ;
 }
-constexpr inline bool   islclatin(int ch) noex {
+local inline bool   islclatin(int ch) noex {
         return islowerlatin(ch) ;
 }
-constexpr inline bool   isuclatin(int ch) noex {
+local inline bool   isuclatin(int ch) noex {
         return isupperlatin(ch) ;
 }
 local inline bool	iseol(int ch) noex {
@@ -168,11 +171,14 @@ local inline bool	isabbr(int ch) noex {
 	ch &= UCHAR_MAX ;
 	return (ch == '.') || (ch == ('­' & UCHAR_MAX)) || (ch == '-') ;
 }
-local inline bool	isspacetab(int ch) noex {
-	return isblanklatin(ch) ;
-}
 local inline bool	iswht(int ch) noex {
 	return iswhitelatin(ch) ;
+}
+local inline bool	isblk(int ch) noex {
+	return isblanklatin(ch) ;
+}
+local inline bool	isspacetab(int ch) noex {
+	return isblanklatin(ch) ;
 }
 
 #endif /* __cplusplus */
