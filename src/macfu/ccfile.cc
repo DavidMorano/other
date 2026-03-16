@@ -109,12 +109,13 @@ typedef	ios_base::openmode	omode ;
 
 namespace {
     struct devnames {
-	cchar	*name[stdfile_overlast] ;
-	constexpr devnames() noex {
+	cchar	*name[stdfile_overlast] = {} ;
+	consteval devnames() noex {
 	    name[stdfile_in]	= "/dev/fd/0" ;
 	    name[stdfile_out]	= "/dev/fd/1" ;
 	    name[stdfile_err]	= "/dev/fd/2" ;
-	    name[stdfile_log]	= "/dev/fd/3" ;
+	    name[stdfile_null]	= "/dev/null" ;
+	    name[stdfile_zero]	= "/dev/zero" ;
 	} ; /* end ctor */
     } ; /* end struct (devnames) */
 } /* end namespace */
@@ -122,14 +123,18 @@ namespace {
 
 /* forward references */
 
-static ios_base::openmode getopenmode(cchar *) noex ;
+local inline int getstd(cchar *fn) noex {
+        return matstr(stdfnames,fn,-1) ;
+} /* end subroutine (getstd) */
 
-static bool	isnomode(omode) noex ;
+local ios_base::openmode mkmode(cchar *) noex ;
+
+local bool	isnomode(openmode) noex ;
 
 
 /* local variables */
 
-static const devnames	dev ;
+constexpr devnames	dev ;
 
 
 /* exported variables */
@@ -137,54 +142,93 @@ static const devnames	dev ;
 
 /* exported subroutines */
 
+namespace {
+    struct opener {
+	ccfile		*op ;
+	cchar		*fn ;
+	openmode	of{} ;
+	opener(ccfile *p,cchar *n) noex : op(p), fn(n) { } ;
+	int operator () (cchar *) noex ;
+	int getmode(cchar *) noex ;
+	int specials() noex ;
+	int openfile() noex ;
+    } ; /* end struct (opener) */
+} /* end namespace */
+
 int ccfile::open(cchar *fn,cchar *ofs,mode_t) noex {
 	int		rs = SR_FAULT ;
 	if (fn) ylikely {
 	    rs = SR_INVALID ;
 	    if (fn[0]) ylikely {
-		openmode	of{} ;
-		rs = SR_OK ;
-		if (ofs) {
-		    rs = SR_INVALID ;
-		    if (ofs[0]) {
-			rs = SR_OK ;
-			of = getopenmode(ofs) ;
-		    }
-		} /* end if (had open-flags) */
-		if (rs >= 0) ylikely {
-		    mainv	sfn = stdfnames ;
-		    if (int fni ; (fni = matstr(sfn,fn,-1)) >= 0) ylikely {
-			fn = dev.name[fni] ;
-			switch (fni) {
-			case stdfile_in:
-			    if (isnomode(of)) of |= ios::in ;
-			    break ;
-			case stdfile_out:
-			case stdfile_err:
-			case stdfile_log:
-			    if (isnomode(of)) of |= ios::out ;
-			    break ;
-			case stdfile_null:
-			    fl.fnulling = true ;
-			    break ;
-			} /* end switch */
-		    } /* end if (match on special names) */
-		    if (! fl.fnulling) {
-		        if (isnomode(of)) of |= ios::in ;
-			fstream::open(fn,of) ;
-		        rs = SR_NOENT ;
-		        if (good()) {
-			    if (of & ios::in) fl.freading = true ;
-			    fl.fopened = true ;
-		            rs = SR_OK ;
-		        }
-		    } /*& end if (not fnulling) */
-		} /* end if (ok) */
+		opener oo(this,fn) ;
+		rs = oo(ofs) ;
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return rs ;
 }
 /* end method (ccfile::open) */
+
+int opener::operator () (cchar *ofs) noex {
+	int		rs ;
+	if ((rs = getmode(ofs)) >= 0) ylikely {
+	    if ((rs = specials()) >= 0) {
+		rs = openfile() ;
+	    }
+	}
+	return rs ;
+} /* end method (operner::operator) */
+
+int opener::getmode(cchar *ofs) noex {
+    	int		rs = SR_OK ;
+	if (ofs) {
+	    rs = SR_INVALID ;
+	    if (ofs[0]) {
+	        rs = SR_OK ;
+		of = mkmode(ofs) ;
+	    } /* end if (valid) */
+	} /* end if (had open-flags) */
+	return rs ;
+} /* end method (opener::getmode) */
+
+int opener::specials() noex {
+    	int		rs = SR_OK ;
+        if (cint fni = getstd(fn) ; fni >= 0) ylikely {
+            fn = dev.name[fni] ;
+            switch (fni) {
+            case stdfile_in:
+                if (isnomode(of)) of |= ios::in ;
+                break ;
+            case stdfile_out:
+            case stdfile_err:
+            case stdfile_log:
+                if (isnomode(of)) of |= ios::out ;
+                break ;
+            case stdfile_null:
+                op->fl.fnulling = true ;
+                break ;
+	    default:
+		break ;
+            } /* end switch */
+        } /* end if (match on special names) */
+	return rs ;
+} /* end method (opener::specials) */
+
+int opener::openfile() noex {
+    	int		rs = SR_OK ;
+        if (! op->fl.fnulling) {
+            if (isnomode(of)) of |= ios::in ;
+            op->fstream::open(fn,of) ;
+            rs = SR_NOENT ;
+            if (op->good()) {
+                if (of & ios::in) {
+		    op->fl.freading = true ;
+		}
+                op->fl.fopened = true ;
+                rs = SR_OK ;
+            }
+        } /* end if (not fnulling) */
+	return rs ;
+} /* end method (opener::openfile) */
 
 int ccfile::open(const strview &sv,cchar *ofs,mode_t om) noex {
 	csize		svz = sv.length() ;
@@ -194,6 +238,21 @@ int ccfile::open(const strview &sv,cchar *ofs,mode_t om) noex {
 	    cint	svl = int(svz) ;
 	    {
 	        strnul	fn(svp,svl) ;
+		rs = open(fn,ofs,om) ;
+	    } /* end block */
+	} /* end if (non-null) */
+	return rs ;
+}
+/* end method (ccfile::open) */
+
+int ccfile::open(const string &str,cchar *ofs,mode_t om) noex {
+	csize		ssz = str.length() ;
+	cchar		*sp = str.c_str() ;
+	int		rs = SR_FAULT ;
+	if (sp && ofs) ylikely {
+	    cint	sl = int(ssz) ;
+	    {
+	        strnul	fn(sp,sl) ;
 		rs = open(fn,ofs,om) ;
 	    } /* end block */
 	} /* end if (non-null) */
@@ -243,7 +302,7 @@ int ccfile::readln(string &s,int dch) noex {
 }
 /* end method (ccfile::readln) */
 
-static inline bool iscont(cchar *lp,int li) noex {
+local inline bool iscont(cchar *lp,int li) noex {
     	bool	f = true ;
 	f = f && (li >= 2) ;
 	f = f && (lp[li - 1] == '\n') ;
@@ -367,7 +426,7 @@ int ccfile_co::operator () (int) noex {
 }
 /* end method (ccfile_co::operator) */
 
-static openmode getopenmode(cchar *sp) noex {
+local openmode mkmode(cchar *sp) noex {
 	openmode	om{} ;
 	for (int ch ; (ch = mkchar(*sp++)) > 0 ; ) {
 	    switch (ch) {
@@ -385,9 +444,9 @@ static openmode getopenmode(cchar *sp) noex {
 	} /* end for */
 	return om ;
 }
-/* end subroutine (getopenmode) */
+/* end subroutine (mkmode) */
 
-static bool isnomode(omode of) noex {
+local bool isnomode(openmode of) noex {
 	return ((! (of & ios::in)) && (! (of & ios::out))) ;
 } /* end subroutine (isnomode) */
 
