@@ -70,6 +70,7 @@ struct ccfile : std::fstream {
 	ccfile &operator = (const ccfile &) = delete ;
 	int open(cchar *,cchar * = nullptr,mode_t = 0) noex ;
 	int open(const strview &,cchar * = nullptr,mode_t = 0) noex ;
+	int open(const std::string &,cchar * = nullptr,mode_t = 0) noex ;
 	int readln(char *,int,int = 0) noex ;
 	int readln(std::string &,int = 0) noex ;
 	int readlns(char *,int,int = -1,int * = nullptr) noex ;
