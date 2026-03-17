@@ -84,7 +84,7 @@ struct shortq : shortq_head {
 	int get		(int) noex ;
 	int readat	(int,short *,int) noex ;
 	int read	(short *,int) noex ;
-	int adv		(int) noex ;
+	int adv		(int = -1) noex ;
 	void dtor() noex ;
 	int operator [] (int) noex ;
 	operator int () noex ;
