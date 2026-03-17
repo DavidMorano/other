@@ -417,12 +417,12 @@ int shortq::rem(short *rp) noex {
     return shortq_rem(this,rp) ;
 }
 
-int shortq::readat(int ei,short *rbuf,int rlen) noex {
-	return shortq_readat(this,ei,rbuf,rlen) ;
-}
-
 int shortq::get(int ei) noex {
     return shortq_get(this,ei) ;
+}
+
+int shortq::readat(int ei,short *rbuf,int rlen) noex {
+	return shortq_readat(this,ei,rbuf,rlen) ;
 }
 
 int shortq::read(short *rbuf,int rlen) noex {
