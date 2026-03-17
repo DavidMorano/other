@@ -56,7 +56,7 @@ struct filer_head {
 	char		*bp ;		/* goes up with use */
 	off_t		off ;		/* virtual file pointer */
 	FILER_FL	fl ;
-	uint		magic ;
+	uint		magval ;
 	int		fd ;		/* file-descriptor */
 	int		of ;		/* open-flags */
 	int		dt ;		/* file-type ("DT_XXX" values)*/
@@ -113,7 +113,7 @@ struct filer : filer_head {
 	    writeblanks	(this,filermem_writeblanks) ;
 	    writealign	(this,filermem_writealign) ;
 	    writezero	(this,filermem_writezero) ;
-	    magic = 0 ;
+	    magval = 0 ;
 	} ; /* end ctor */
 	filer(const filer &) = delete ;
 	filer &operator = (const filer &) = delete ;
@@ -135,7 +135,7 @@ struct filer : filer_head {
 	int lockbegin	(int,int) noex ;
 	void dtor() noex ;
 	destruct filer() {
-	    if (magic) dtor() ;
+	    if (magval) dtor() ;
 	} ;
 } ; /* end struct (filer) */
 #else	/* __cplusplus */
@@ -183,7 +183,7 @@ template<typename ... Args>
 static inline int filer_magic(filer *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) {
-	    rs = (op->magic == FILER_MAGIC) ? SR_OK : SR_NOTOPEN ;
+	    rs = (op->magval == FILER_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
 }
