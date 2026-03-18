@@ -214,7 +214,7 @@ EXTERNC_end
 
 #ifdef	__cplusplus
 template<typename ... Args>
-static inline int tmpx_magic(tmpx *op,Args ... args) noex {
+local inline int tmpx_magic(tmpx *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) {
 	    rs = (op->magic == TMPX_MAGIC) ? SR_OK : SR_NOTOPEN ;
