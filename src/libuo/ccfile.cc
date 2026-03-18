@@ -17,7 +17,7 @@
 
 */
 
-/* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
+/* Copyright © 1998,2023 David A­D­ Morano.  All rights reserved. */
 
 /******************************************************************************* 
 	object:
@@ -90,8 +90,6 @@ using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::nothrow ;			/* constant */
 
-using openmode = std::ios_base::openmode ; /* type */
-
 
 /* local typedefs */
 
@@ -129,7 +127,7 @@ local inline int getstd(cchar *fn) noex {
 
 local ios_base::openmode mkmode(cchar *) noex ;
 
-local bool	isnomode(openmode) noex ;
+local bool	isnomode(omode) noex ;
 
 
 /* local variables */
@@ -146,7 +144,7 @@ namespace {
     struct opener {
 	ccfile		*op ;
 	cchar		*fn ;
-	openmode	of{} ;
+	omode		of{} ;
 	opener(ccfile *p,cchar *n) noex : op(p), fn(n) { } ;
 	int operator () (cchar *) noex ;
 	int getmode(cchar *) noex ;
@@ -426,8 +424,8 @@ int ccfile_co::operator () (int) noex {
 }
 /* end method (ccfile_co::operator) */
 
-local openmode mkmode(cchar *sp) noex {
-	openmode	om{} ;
+local omode mkmode(cchar *sp) noex {
+	omode		om{} ;
 	for (int ch ; (ch = mkchar(*sp++)) > 0 ; ) {
 	    switch (ch) {
 	    case 'r': om |= ios::in ; break ; 		/* input */
@@ -446,7 +444,7 @@ local openmode mkmode(cchar *sp) noex {
 }
 /* end subroutine (mkmode) */
 
-local bool isnomode(openmode of) noex {
+local bool isnomode(omode of) noex {
 	return ((! (of & ios::in)) && (! (of & ios::out))) ;
 } /* end subroutine (isnomode) */
 
