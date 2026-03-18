@@ -152,14 +152,13 @@ EXTERNC_end
 #ifdef	__cplusplus
 
 template<typename ... Args>
-static int ema_magic(ema *op,Args ... args) noex {
+local int ema_magic(ema *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) {
 	    rs = (op->magic == EMA_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
-}
-/* end subroutine (ema_magic) */
+} /* end subroutine (ema_magic) */
 
 namespace ema_ns {
     extern int	ema_starter(ema *,cchar *,int) noex ;
