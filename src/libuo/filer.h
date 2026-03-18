@@ -180,13 +180,13 @@ EXTERNC_end
 #if	__cplusplus
 
 template<typename ... Args>
-static inline int filer_magic(filer *op,Args ... args) noex {
+local inline int filer_magic(filer *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) {
 	    rs = (op->magval == FILER_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
-}
+} /* end subroutine (filer_magic) */
 
 #endif /* __cplusplus */
 
