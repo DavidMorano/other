@@ -463,7 +463,8 @@ constexpr cpcchar	exts_doc[] = {
 	"ms",
 	"md",
 	"mak",
-	"map"
+	"map",
+	"hlp"
 } ; /* end array */
 
 
