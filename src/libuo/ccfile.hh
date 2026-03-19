@@ -21,7 +21,6 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<unistd.h>		/* for |off_t| */
 #include	<fstream>
 #include	<string>
 #include	<string_view>
