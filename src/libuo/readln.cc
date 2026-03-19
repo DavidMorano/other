@@ -13,13 +13,25 @@
         This code was originally written.
 
 	= 2023-12-28, David A­D­ Morano
-	This is refactored.  I went from using |std::getline(3c++)|
-	to |std::istream::getline(3c++)|.  Why?  I do not really
-	know.
+	This is refactored.  I changed this subroutine from using
+	|std::getline(3c++)| to |std::istream::getline(3c++)|.  I
+	did this for so-called performance reasons.  The former
+	(|std::getline|) reads the charaters into a |string(3c++)|
+	object and then the data needs to be copied to the
+	caller-supplied buffer.  Using |std::istream::getline(3c++)|
+	reads the data intocaller-supplied buffer directly.
+
+	= 2026-03-17, David A­D­ Morano
+	I changed this again (rather radically) to read my own
+	"line" out of a more primitive function from |istream(3c++|.
+	Switching to |std::istream::getline(3c+)| was a mistake
+	because it does not handle reading lines the way that we
+	always had in the past (for 40+ years).  Some notes below
+	may be outdates now.
 
 */
 
-/* Copyright © 1998,2023 David A­D­ Morano.  All rights reserved. */
+/* Copyright © 1998,2023,2026 David A­D­ Morano.  All rights reserved. */
 
 /******************************************************************************* 
 	Name:
@@ -54,9 +66,9 @@
 	1. The C++ standard streams interface is real garbage!  More
 	specifically, but not only, the various "failure" states
 	(EOF is consided a "failure") are very confusing in and of
-	themselves without varefully examining the conditions under
+	themselves without carefully examining the conditions under
 	which each can occur.  One should carefully only check the
-	"failure" states in the following order: EOF, then BAD",
+	"failure" states in the following order: EOF, then BAD,
 	then FAIL.
 	2. Since the (stupid) |std::istream::getline(3c++)| 
 	interface is screwed up (by design because they thought
@@ -85,13 +97,13 @@
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
+#include	<cstdio>
 #include	<istream>
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<usysbase.h>
+#include	<mkchar.h>
 #include	<localmisc.h>		/* |eol(3local)| */
+#include	<dprintf.h>		/* debugging */
 
 #include	"readln.hh"
 
@@ -102,7 +114,7 @@ import debug ;
 /* local defines */
 
 #ifndef	CF_DEBUG
-#define	CF_DEBUG	1		/* debugging */
+#define	CF_DEBUG	0		/* debugging */
 #endif
 
 
@@ -126,6 +138,8 @@ using std::streamsize ;			/* type */
 
 /* forward references */
 
+local int reader(istream *,char *,int,int) noex ;
+
 
 /* local variables */
 
@@ -141,51 +155,19 @@ int readln(istream *isp,char *ibuf,int ilen,int dch) noex {
 	int		rs = SR_FAULT ;
 	int		len = 0 ; /* return-value */
 	if (dch <= 0) dch = eol ;
+	DPRINTF("ent ilen=%d\n",ilen) ;
 	if (isp && ibuf) ylikely {
 	    rs = SR_INVALID ;
-	    if_constexpr (f_debug) {
-		debprintf(__func__,"ent ilen=%d\n",ilen) ;
-	    }
 	    if (ilen >= 0) {
-		streamsize isize = streamsize(ilen + 1) ;
-	        try {
-		    rs = SR_BADFMT ;
-	            if (bool(isp->getline(ibuf,isize,char(dch)))) ylikely {
-		        csize	qsize = isp->gcount() ;
-	    		if_constexpr (f_debug) {
-			    debprintf(__func__,"qsize=%ld\n",qsize) ;
-	    		}
-		        if ((rs = int(qsize)) <= ilen) ylikely {
-			    len = rs ;
-			    if ((len > 0) && (ibuf[len - 1] == '\0')) {
-			        ibuf[len - 1] = char(dch) ;
-			        ibuf[len] = '\0' ;
-			    }
-		        } else {
-			    rs = SR_OVERFLOW ;
-		        } /* end if (adding delimiter to input buffer) */
-		    } else {
-		        cbool	feof	= isp->eof() ;
-			if (feof) {
-		            rs = SR_OK ;
-		        } else {
-		            cbool	fbad	= isp->bad() ;
-		            cbool	ffail	= isp->fail() ;
-			    if (fbad) {
-		                rs = SR_IO ;
-		            } else if (ffail) {
-		                rs = SR_NOMSG ;
-		            }
-			} /* end if */
-	            } /* end if (good or failure) */
-	        } catch (...) {
-		    rs = SR_NOMEM ;
-	        }
+		rs = SR_OK ;
+		if (ilen > 0) {
+		    rs = reader(isp,ibuf,ilen,dch) ;
+		    len = rs ;
+		} /* end if (non-zero positive) */
+		ibuf[len] = '\0' ;
 	    } /* end if (valid) */
 	} /* end if (non-null) */
-	if_constexpr (f_debug) {
-	    debprintf(__func__,"ret rs=%d len=%d\n",rs,len) ;
-	}
+	DPRINTF("ret rs=%d len=%d\n",rs,len) ;
 	return (rs >= 0) ? len : rs ;
 }
 /* end subroutine (readln) */
@@ -193,5 +175,31 @@ int readln(istream *isp,char *ibuf,int ilen,int dch) noex {
 extern int istr_readln(istream *isp,char *ibuf,int ilen,int dch) noex {
 	return readln(isp,ibuf,ilen,dch) ;
 }
+
+
+/* local subroutines */
+
+local int reader(istream *isp,char *rbuf,int rlen,int delim) noex {
+    	int		rs = SR_OK ;
+	int		len = 0 ; /* return-value */
+	try {
+	    char	c{} ;
+	    bool	feof = false ;
+	    bool	ffail = false ;
+	    while ((rs >= 0) && (len < rlen)) {
+		isp->get(c) ;
+	        if ((feof = isp->eof())) break ;
+	        if ((ffail = isp->fail())) break ;
+	        rbuf[len++] = c ;
+	        if (mkchar(c) == delim) break ;
+	    } /* end for */
+	    if (ffail) {
+	        rs = SR_IO ;
+	    }
+	} catch (...) {
+	    rs = SR_NOMEM ;
+	} /* end if (error) */
+	return (rs >= 0) ? len : rs ;
+} /* end subroutine (reader) */
 
 
