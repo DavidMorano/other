@@ -63,10 +63,10 @@
 #include	<usyscalls.h>		/* |ulogerror(3u)| */
 #include	<strnul.hh>
 #include	<stdfnames.h>
-#include	<matstr.h>
 #include	<readln.hh>
 #include	<mkchar.h>
 #include	<localmisc.h>
+#include	<dprintf.h>		/* debugging */
 
 #include	"ccfile.hh"
 
@@ -88,7 +88,7 @@ using std::error_code ;			/* type */
 using std::ios ;			/* type (|basic_ios<char>|) */
 using std::string ;			/* type */
 using std::string_view ;		/* type */
-using std::nothrow ;			/* constant */
+using libu::matstr ;			/* subroutine */
 
 
 /* local typedefs */
@@ -112,8 +112,10 @@ namespace {
 	    name[stdfile_in]	= "/dev/fd/0" ;
 	    name[stdfile_out]	= "/dev/fd/1" ;
 	    name[stdfile_err]	= "/dev/fd/2" ;
+	    name[stdfile_log]	= "/dev/fd/3" ;
 	    name[stdfile_null]	= "/dev/null" ;
 	    name[stdfile_zero]	= "/dev/zero" ;
+	    name[stdfile_minus]	= "/dev/stdin" ;
 	} ; /* end ctor */
     } ; /* end struct (devnames) */
 } /* end namespace */
@@ -133,6 +135,8 @@ local bool	isnomode(omode) noex ;
 /* local variables */
 
 constexpr devnames	dev ;
+
+cbool			f_debug = false ;
 
 
 /* exported variables */
@@ -188,12 +192,26 @@ int opener::getmode(cchar *ofs) noex {
 	return rs ;
 } /* end method (opener::getmode) */
 
+local void stdprint() noex {
+        if_constexpr (f_debug) {
+	    for (int i = 0 ; stdfnames[i] ; i += 1) {
+		DPRINTF("stdfile %d %s\n",i,stdfnames[i]) ;
+	    }
+	}
+}
+
 int opener::specials() noex {
     	int		rs = SR_OK ;
+	DPRINTF("ent fn=%s\n",fn) ;
+	stdprint() ;
         if (cint fni = getstd(fn) ; fni >= 0) ylikely {
+	    rs = 1 ;
             fn = dev.name[fni] ;
+	    DPRINTF("getstd fni=%d fn=%s\n",fni,fn) ;
             switch (fni) {
             case stdfile_in:
+            case stdfile_zero:
+            case stdfile_minus:
                 if (isnomode(of)) of |= ios::in ;
                 break ;
             case stdfile_out:
@@ -208,11 +226,13 @@ int opener::specials() noex {
 		break ;
             } /* end switch */
         } /* end if (match on special names) */
+	DPRINTF("ret rs=%d\n",rs) ;
 	return rs ;
 } /* end method (opener::specials) */
 
 int opener::openfile() noex {
     	int		rs = SR_OK ;
+	DPRINTF("ent fn=%s\n",fn) ;
         if (! op->fl.fnulling) {
             if (isnomode(of)) of |= ios::in ;
             op->fstream::open(fn,of) ;
