@@ -66,7 +66,7 @@
 #include	<readln.hh>
 #include	<mkchar.h>
 #include	<localmisc.h>
-#include	<dprintf.h>		/* debugging */
+#include	<dprintf.hh>		/* debugging */
 
 #include	"ccfile.hh"
 
@@ -198,7 +198,7 @@ local void stdprint() noex {
 		DPRINTF("stdfile %d %s\n",i,stdfnames[i]) ;
 	    }
 	}
-}
+} /* end subroutine (stdprint) */
 
 int opener::specials() noex {
     	int		rs = SR_OK ;
@@ -243,7 +243,7 @@ int opener::openfile() noex {
 		}
                 op->fl.fopened = true ;
                 rs = SR_OK ;
-            }
+            } /* end if (succeeded) */
         } /* end if (not fnulling) */
 	return rs ;
 } /* end method (opener::openfile) */
@@ -454,7 +454,7 @@ local omode mkmode(cchar *sp) noex {
 	    case 't': om |= ios::trunc ; break ;	/* truncate */
 	    case 'e': om |= ios::noreplace ; break ;	/* exclusive-open */
 	    case 'b': om |= ios::binary ; break ;	/* binary-file */
-	    case 'T': om |= ios::ate ; break ;		/* seek-end at open */
+	    case 'A': om |= ios::ate ; break ;		/* seek-end at open */
 	   } /* end switch */
 	   if (om == 0) {
 		om |= ios::in ;
