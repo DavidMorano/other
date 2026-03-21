@@ -103,7 +103,7 @@
 #include	<usysbase.h>
 #include	<mkchar.h>
 #include	<localmisc.h>		/* |eol(3local)| */
-#include	<dprintf.h>		/* debugging */
+#include	<dprintf.hh>		/* debugging */
 
 #include	"readln.hh"
 
