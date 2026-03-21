@@ -260,7 +260,7 @@
 #include	<ucfiledesc.h>
 #include	<ucfileop.h>
 #include	<ucfork.h>
-#include	<ucfuncodes.h>
+#include	<funcodes.h>
 #include	<ucget.h>
 #include	<ucgethost.h>
 #include	<ucgetloadavg.h>
