@@ -29,7 +29,7 @@
 #include	<ucenum.h>
 #include	<ucfdmanip.h>
 #include	<ucfiledesc.h>
-#include	<ucfuncodes.h>
+#include	<funcodes.h>
 #include	<ucget.h>
 #include	<ucgethost.h>
 #include	<ucgetloadavg.h>
