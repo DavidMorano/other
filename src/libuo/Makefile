@@ -56,7 +56,7 @@ OBJ02_LUO= sfx.o rmx.o snx.o snwcpy.o
 OBJ03_LUO= isx.o ismisc.o hasx.o 
 
 OBJ04_LUO= sif.o ctx.o cfx.o
-OBJ05_LUO= strdcpy.o strx.o 
+OBJ05_LUO= strcpyx.o strdcpy.o strx.o 
 OBJ06_LUO= strkeyx.o
 OBJ07_LUO= strw.o strwcpy.o
 
@@ -427,6 +427,10 @@ strdcpy.dir:
 
 strwcpy.o:		strwcpy.dir
 strwcpy.dir:
+	makesubdir $@
+
+strcpyx.o:		strcpyx.dir
+strcpyx.dir:
 	makesubdir $@
 
 strx.o:			strx.dir
@@ -810,7 +814,6 @@ calstrs.o:		calstrs.cc calstrs.h
 char.o:			char.cc char.h
 toxc.o:			toxc.cc toxc.h
 inetconv.o:		inetconv.cc inetconv.h
-strcpyxc.o:		strcpyxc.cc strcpyxc.h strcpy.h strcpyx.h
 bitrotate.o:		bitrotate.cc bitrotate.h		$(INCS)
 
 # SINGLES
