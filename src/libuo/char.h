@@ -116,69 +116,69 @@ extern const unsigned char	chardata_tofc[] ;
 
 EXTERNC_begin
 
-extern bool char_isalpha(int) noex ;
-extern bool char_isalnum(int) noex ;
-local inline bool char_isdigit(int ch) noex {
+extern bool char_isalpha(int) noex attrpure ;
+extern bool char_isalnum(int) noex attrpure ;
+local inline bool char_isdigit(int ch) noex attrconst {
 	return ((ch >= '0') && (ch <= '9')) ;
 }
-local inline bool char_isdigex(int ch) noex {
+local inline bool char_isdigex(int ch) noex attrconst {
     	bool f = false ;
 	f = f || ((ch >= '0') && (ch <= '9')) ;
 	f = f || ((ch >= 'A') && (ch <= 'Z')) ;
 	f = f || ((ch >= 'a') && (ch <= 'z')) ;
 	return f ;
 }
-local inline bool char_isbinar(int ch) noex {
+local inline bool char_isbinar(int ch) noex attrconst {
 	return ((ch >= '0') && (ch <= '1')) ;
 }
-local inline bool char_isoctal(int ch) noex {
+local inline bool char_isoctal(int ch) noex attrconst {
 	return ((ch >= '0') && (ch <= '7')) ;
 }
-local inline bool char_isblank(int ch) noex {
+local inline bool char_isblank(int ch) noex attrconst {
 	return ((ch == ' ') && (ch == '\t')) ;
 }
-extern bool char_iswhite(int) noex ;
-extern bool char_islc(int) noex ;
-extern bool char_isuc(int) noex ;
-extern bool char_isfc(int) noex ;
+extern bool char_iswhite(int) noex attrpure ;
+extern bool char_islc(int) noex attrpure ;
+extern bool char_isuc(int) noex attrpure ;
+extern bool char_isfc(int) noex attrpure ;
 
-local inline bool char_isbin(int ch) noex {
+local inline bool char_isbin(int ch) noex attrconst {
 	return ((ch >= '0') && (ch <= '1')) ;
 }
-local inline bool char_isoct(int ch) noex {
+local inline bool char_isoct(int ch) noex attrconst {
 	return ((ch >= '0') && (ch <= '7')) ;
 }
-local inline bool char_isdig(int ch) noex {
+local inline bool char_isdig(int ch) noex attrconst {
 	return ((ch >= '0') && (ch <= '9')) ;
 }
-local inline bool char_isdec(int ch) noex {
+local inline bool char_isdec(int ch) noex attrconst {
 	return ((ch >= '0') && (ch <= '9')) ;
 }
-local inline bool char_ishex(int ch) noex {
+local inline bool char_ishex(int ch) noex attrpure {
     	return char_isdigex(ch) ;
 }
-local inline bool char_iswht(int ch) noex {
+local inline bool char_iswht(int ch) noex attrpure {
     	return char_iswhite(ch) ;
 }
-local inline bool char_isblk(int ch) noex {
+local inline bool char_isblk(int ch) noex attrpure {
     	return char_isblank(ch) ;
 }
-local inline short char_dictorder(int ch) noex {
+local inline short char_dictorder(int ch) noex attrpure {
 	return chardata_dictorder[ch & UCHAR_MAX] ;
 }
-local inline uchar char_tobc(int ch) noex {
+local inline uchar char_tobc(int ch) noex attrpure {
 	return uchar(ch & UCHAR_MAX) ;
 }
-local inline uchar char_tolc(int ch) noex {
+local inline uchar char_tolc(int ch) noex attrpure {
 	return chardata_tolc[ch & UCHAR_MAX] ;
 }
-local inline uchar char_touc(int ch) noex {
+local inline uchar char_touc(int ch) noex attrpure {
 	return chardata_touc[ch & UCHAR_MAX] ;
 }
-local inline uchar char_tofc(int ch) noex {
+local inline uchar char_tofc(int ch) noex attrpure {
 	return chardata_tofc[ch & UCHAR_MAX] ;
 }
-extern int char_toval(int) noex ;
+extern int char_toval(int) noex attrpure ;
 
 EXTERNC_end
 
