@@ -353,31 +353,31 @@ const short	chardata_dictorder[] = {
 
 /* exported subroutines */
 
-bool char_isalpha(int ch) noex {
+bool char_isalpha(int ch) noex attrpure {
 	return char_data.isalpha[ch & UCHAR_MAX] ;
 }
 
-bool char_isalnum(int ch) noex {
+bool char_isalnum(int ch) noex attrpure {
 	return char_data.isalnum[ch & UCHAR_MAX] ;
 }
 
-bool char_iswhite(int ch) noex {
+bool char_iswhite(int ch) noex attrpure {
 	return char_data.iswhite[ch & UCHAR_MAX] ;
 }
 
-bool char_islc(int ch) noex {
+bool char_islc(int ch) noex attrpure {
 	return char_data.islc[ch & UCHAR_MAX] ;
 }
 
-bool char_isuc(int ch) noex {
+bool char_isuc(int ch) noex attrpure {
 	return char_data.isuc[ch & UCHAR_MAX] ;
 }
 
-bool char_isfc(int ch) noex {
+bool char_isfc(int ch) noex attrpure {
 	return char_data.isfc[ch & UCHAR_MAX] ;
 }
 
-int char_toval(int ch) noex {
+int char_toval(int ch) noex attrpure {
 	return char_data.toval[ch & UCHAR_MAX] ;
 }
 
