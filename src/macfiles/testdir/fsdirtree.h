@@ -55,22 +55,22 @@ enum fsdirtreeos {
 /* masks */
 #ifdef	__cplusplus
 struct fsdirtreems {
-    constexpr static cint	pipe		= (1 << fsdirtreeo_pipe) ;
-    constexpr static cint	chr		= (1 << fsdirtreeo_chr) ;
-    constexpr static cint	dir		= (1 << fsdirtreeo_dir) ;
-    constexpr static cint	name		= (1 << fsdirtreeo_name) ;
-    constexpr static cint	blk		= (1 << fsdirtreeo_blk) ;
-    constexpr static cint	reg		= (1 << fsdirtreeo_reg) ;
-    constexpr static cint	lnk		= (1 << fsdirtreeo_lnk) ;
-    constexpr static cint	sock		= (1 << fsdirtreeo_sock) ;
-    constexpr static cint	door		= (1 << fsdirtreeo_door) ;
-    constexpr static cint	wht		= (1 << fsdirtreeo_wht) ;
-    constexpr static cint	follow		= (1 << fsdirtreeo_follow) ;
-    constexpr static cint	noent		= (1 << fsdirtreeo_noent) ;
-    constexpr static cint	uniqfile	= (1 << fsdirtreeo_uniqfile) ;
-    constexpr static cint	uniqdir		= (1 << fsdirtreeo_uniqdir) ;
-    constexpr static cint	igndotfile	= (1 << fsdirtreeo_igndotfile) ;
-    constexpr static cint	igndotdir	= (1 << fsdirtreeo_igndotdir) ;
+    inline static cint	pipe		= (1 << fsdirtreeo_pipe) ;
+    inline static cint	chr		= (1 << fsdirtreeo_chr) ;
+    inline static cint	dir		= (1 << fsdirtreeo_dir) ;
+    inline static cint	name		= (1 << fsdirtreeo_name) ;
+    inline static cint	blk		= (1 << fsdirtreeo_blk) ;
+    inline static cint	reg		= (1 << fsdirtreeo_reg) ;
+    inline static cint	lnk		= (1 << fsdirtreeo_lnk) ;
+    inline static cint	sock		= (1 << fsdirtreeo_sock) ;
+    inline static cint	door		= (1 << fsdirtreeo_door) ;
+    inline static cint	wht		= (1 << fsdirtreeo_wht) ;
+    inline static cint	follow		= (1 << fsdirtreeo_follow) ;
+    inline static cint	noent		= (1 << fsdirtreeo_noent) ;
+    inline static cint	uniqfile	= (1 << fsdirtreeo_uniqfile) ;
+    inline static cint	uniqdir		= (1 << fsdirtreeo_uniqdir) ;
+    inline static cint	igndotfile	= (1 << fsdirtreeo_igndotfile) ;
+    inline static cint	igndotdir	= (1 << fsdirtreeo_igndotdir) ;
 } ; /* end struct (fsdirtreems) */
 #endif /* __cplusplus */
 
