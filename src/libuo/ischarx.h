@@ -29,31 +29,31 @@
 
 EXTERNC_begin
 
-extern bool	isalphalatin(int) noex ;
-extern bool	isalnumlatin(int) noex ;
-extern bool	isdigitlatin(int) noex ;
-extern bool	isdigexlatin(int) noex ;
-extern bool	iswhitelatin(int) noex ;
-extern bool	islowerlatin(int) noex ;
-extern bool	isupperlatin(int) noex ;
-extern bool	isprintlatin(int) noex ;
-extern bool	istermlatin(int) noex ;
-extern bool	isprintterm(int) noex ;
-extern bool	isprintbad(int) noex ;
-extern bool	isdict(int) noex ;
-extern bool	iscmdstart(int) noex ;
-extern bool	ishdrkey(int) noex ;
+extern bool	isalphalatin	(int) noex attrpure ;
+extern bool	isalnumlatin	(int) noex attrpure ;
+extern bool	isdigitlatin	(int) noex attrpure ;
+extern bool	isdigexlatin	(int) noex attrpure ;
+extern bool	iswhitelatin	(int) noex attrpure ;
+extern bool	islowerlatin	(int) noex attrpure ;
+extern bool	isupperlatin	(int) noex attrpure ;
+extern bool	isprintlatin	(int) noex attrpure ;
+extern bool	istermlatin	(int) noex attrpure ;
+extern bool	isprintterm	(int) noex attrpure ;
+extern bool	isprintbad	(int) noex attrpure ;
+extern bool	isdict		(int) noex attrpure ;
+extern bool	iscmdstart	(int) noex attrpure ;
+extern bool	ishdrkey	(int) noex attrpure ;
 
-local inline bool	ispl(int ch) noex {
+local inline bool	ispl	(int ch) noex attrconst {
 	return (ch == '+') ;
 }
-local inline bool	ismi(int ch) noex {
+local inline bool	ismi	(int ch) noex attrconst {
 	return (ch == '-') ;
 }
-local inline bool	ispm(int ch) noex {
+local inline bool	ispm	(int ch) noex attrconst {
 	return (ch == '+') || (ch == '-') ;
 }
-local inline bool	isme(int ch) noex {
+local inline bool	isme	(int ch) noex attrconst {
 	return (ch == '+') || (ch == '-') || (ch == '!') ;
 }
 
@@ -61,123 +61,123 @@ EXTERNC_end
 
 #ifdef	__cplusplus
 
-constexpr inline bool	isbinarlatin(int ch) noex {
+constexpr inline bool	isbinarlatin	(int ch) noex {
 	return (ch >= '0') && (ch <= '1') ;
 }
-constexpr inline bool	isoctallatin(int ch) noex {
+constexpr inline bool	isoctallatin	(int ch) noex {
 	return (ch >= '0') && (ch <= '7') ;
 }
-constexpr inline bool	isblanklatin(int ch) noex {
+constexpr inline bool	isblanklatin	(int ch) noex {
 	return (ch == ' ') || (ch == '\t') ;
 }
-constexpr inline bool	isdiglatin(int ch) noex {
+constexpr inline bool	isdiglatin	(int ch) noex {
 	return (ch >= '0') && (ch <= '9') ;
 }
-constexpr inline bool	isbinlatin(int ch) noex {
+constexpr inline bool	isbinlatin	(int ch) noex {
 	return (ch >= '0') && (ch <= '1') ;
 }
-constexpr inline bool	isoctlatin(int ch) noex {
+constexpr inline bool	isoctlatin	(int ch) noex {
 	return (ch >= '0') && (ch <= '7') ;
 }
-constexpr inline bool	isdeclatin(int ch) noex {
+constexpr inline bool	isdeclatin	(int ch) noex {
 	return (ch >= '0') && (ch <= '9') ;
 }
-constexpr inline bool	ishexlatin(int ch) noex {
+constexpr inline bool	ishexlatin	(int ch) noex {
     	return isdigexlatin(ch) ;
 }
-constexpr inline bool	iswhtlatin(int ch) noex {
+constexpr inline bool	iswhtlatin	(int ch) noex {
     	return iswhitelatin(ch) ;
 }
-constexpr inline bool	iswhite(int ch) noex {
+constexpr inline bool	iswhite		(int ch) noex {
     	return iswhitelatin(ch) ;
 }
-constexpr inline bool	isnumlatin(int ch) noex {
+constexpr inline bool	isnumlatin	(int ch) noex {
     	return isdigexlatin(ch) || (ch == '\\') || (ch == 'x') ;
 }
-constexpr inline bool	islclatin(int ch) noex {
+constexpr inline bool	islclatin	(int ch) noex {
 	return islowerlatin(ch) ;
 }
-constexpr inline bool	isuclatin(int ch) noex {
+constexpr inline bool	isuclatin	(int ch) noex {
 	return isupperlatin(ch) ;
 }
-constexpr inline bool	iseol(int ch) noex {
+constexpr inline bool	iseol		(int ch) noex {
 	return (ch == '\n') || (ch == '\r') ;
 }
-constexpr inline bool	iszero(int ch) noex {
+constexpr inline bool	iszero		(int ch) noex {
 	return (ch == '0') ;
 }
-constexpr inline bool	isabbr(int ch) noex {
+constexpr inline bool	isabbr		(int ch) noex {
 	ch &= UCHAR_MAX ;
 	return (ch == '.') || (ch == ('­' & UCHAR_MAX)) || (ch == '-') ;
 }
-constexpr inline bool	iswht(int ch) noex {
+constexpr inline bool	iswht		(int ch) noex {
 	return iswhitelatin(ch) ;
 }
-constexpr inline bool	isblk(int ch) noex {
+constexpr inline bool	isblk		(int ch) noex {
 	return isblanklatin(ch) ;
 }
-constexpr inline bool	isspacetab(int ch) noex {
+constexpr inline bool	isspacetab	(int ch) noex {
 	return isblanklatin(ch) ;
 }
 
 #else /* __cplusplus */
 
-local inline bool	isbinarlatin(int ch) noex {
+local inline bool	isbinarlatin(int ch) noex attrconst {
 	return (ch >= '0') && (ch <= '1') ;
 }
-local inline bool	isoctallatin(int ch) noex {
+local inline bool	isoctallatin(int ch) noex attrconst {
 	return (ch >= '0') && (ch <= '7') ;
 }
-local inline bool	isblanklatin(int ch) noex {
+local inline bool	isblanklatin(int ch) noex attrconst {
 	return (ch == ' ') || (ch == '\t') ;
 }
-local inline bool	isdiglatin(int ch) noex {
+local inline bool	isdiglatin(int ch) noex attrconst {
 	return (ch >= '0') && (ch <= '9') ;
 }
-local inline bool	isbinlatin(int ch) noex {
+local inline bool	isbinlatin(int ch) noex attrconst {
 	return (ch >= '0') && (ch <= '1') ;
 }
-local inline bool	isoctlatin(int ch) noex {
+local inline bool	isoctlatin(int ch) noex attrconst {
 	return (ch >= '0') && (ch <= '7') ;
 }
-local inline bool	isdeclatin(int ch) noex {
+local inline bool	isdeclatin(int ch) noex attrconst {
 	return (ch >= '0') && (ch <= '9') ;
 }
-local inline bool	ishexlatin(int ch) noex {
+local inline bool	ishexlatin(int ch) noex attrpure {
     	return isdigexlatin(ch) ;
 }
-local inline bool	iswhtlatin(int ch) noex {
+local inline bool	iswhtlatin(int ch) noex attrpure {
     	return iswhitelatin(ch) ;
 }
-local inline bool	iswhite(int ch) noex {
+local inline bool	iswhite(int ch) noex attrpure {
     	return iswhitelatin(ch) ;
 }
-local inline bool	isnumlatin(int ch) noex {
+local inline bool	isnumlatin(int ch) noex attrpure {
     	return isdigexlatin(ch) || (ch == '\\') || (ch == 'x') ;
 }
-local inline bool   islclatin(int ch) noex {
+local inline bool   islclatin(int ch) noex attrpure {
         return islowerlatin(ch) ;
 }
-local inline bool   isuclatin(int ch) noex {
+local inline bool   isuclatin(int ch) noex attrpure {
         return isupperlatin(ch) ;
 }
-local inline bool	iseol(int ch) noex {
+local inline bool	iseol(int ch) noex attrconst {
 	return (ch == '\n') || (ch == '\r') ;
 }
-local inline bool	iszero(int ch) noex {
+local inline bool	iszero(int ch) noex attrconst {
 	return (ch == '0') ;
 }
-local inline bool	isabbr(int ch) noex {
+local inline bool	isabbr(int ch) noex attrconst {
 	ch &= UCHAR_MAX ;
 	return (ch == '.') || (ch == ('­' & UCHAR_MAX)) || (ch == '-') ;
 }
-local inline bool	iswht(int ch) noex {
+local inline bool	iswht(int ch) noex attrpure {
 	return iswhitelatin(ch) ;
 }
-local inline bool	isblk(int ch) noex {
+local inline bool	isblk(int ch) noex attrpure {
 	return isblanklatin(ch) ;
 }
-local inline bool	isspacetab(int ch) noex {
+local inline bool	isspacetab(int ch) noex attrpure {
 	return isblanklatin(ch) ;
 }
 
@@ -185,7 +185,7 @@ local inline bool	isspacetab(int ch) noex {
 
 EXTERNC_begin
 
-local inline bool	isAbbr(int ch) noex {
+local inline bool	isAbbr(int ch) noex attrpure {
     	return isabbr(ch) ;
 }
 
