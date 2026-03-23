@@ -71,7 +71,7 @@ cpcchar	calstrs_months[] = {
 	"November", 
 	"December", 
 	nullptr
-} ;
+} ; /* end array */
 
 cpcchar	calstrs_days[] = {
 	"Sunday", 
@@ -82,7 +82,7 @@ cpcchar	calstrs_days[] = {
 	"Friday", 
 	"Saturday", 
 	nullptr
-} ;
+} ; /* end array */
 
 cpcchar	calstrs_daytypes[] = {
 	"First", 
@@ -92,7 +92,7 @@ cpcchar	calstrs_daytypes[] = {
 	"Fifth", 
 	"Last", 
 	nullptr
-} ;
+} ; /* end array */
 
 
 /* exported subroutines */
