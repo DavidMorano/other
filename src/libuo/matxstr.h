@@ -30,13 +30,7 @@
 #include	<matpstr.h>
 #include	<matkeystr.h>
 #include	<matsubstr.h>
-
-
-EXTERNC_begin
-
-extern int	matlocalfs(cchar *,int) noex ;
-
-EXTERNC_end
+#include	<matlocalfs.h>
 
 
 #endif /* MATXSTR_INCLUDE */
