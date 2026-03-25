@@ -109,7 +109,7 @@ struct tmpx_head {
 	size_t		fsize ;		/* file total size */
 	TMPX_FL		fl ;
 	uint		mapoff ;	/* file mapping starting offset */
-	uint		magic ;
+	uint		magval ;
 	int		pagesz ;
 	int		oflags ;	/* open flags */
 	int		operms ;	/* open permissions */
@@ -166,7 +166,7 @@ struct tmpx : tmpx_head {
 	    getrunlevel	(this,tmpxmem_getrunlevel) ;
 	    nusers	(this,tmpxmem_nusers) ;
 	    close	(this,tmpxmem_close) ;
-	    magic = 0 ;
+	    magval = 0 ;
 	} ; /* end ctor */
 	tmpx(const tmpx &) = delete ;
 	tmpx &operator = (const tmpx &) = delete ;
@@ -183,7 +183,7 @@ struct tmpx : tmpx_head {
 	int getuserterms(vecstr *,cchar *) noex ;
 	void dtor() noex ;
 	destruct tmpx() {
-	    if (magic) dtor() ;
+	    if (magval) dtor() ;
 	} ;
 } ; /* end struct (tmpx) */
 #else	/* __cplusplus */
@@ -217,7 +217,7 @@ template<typename ... Args>
 local inline int tmpx_magic(tmpx *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) {
-	    rs = (op->magic == TMPX_MAGIC) ? SR_OK : SR_NOTOPEN ;
+	    rs = (op->magval == TMPX_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
 }
