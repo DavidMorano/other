@@ -49,7 +49,7 @@ enum emaparts {
 
 struct ema_head {
 	vechand		*elp ;
-	uint		magic ;
+	uint		magval ;
 	int		n ;
 } ; /* end struct (ema_head) */
 
@@ -114,7 +114,7 @@ struct ema : ema_head {
 	    start(this,emamem_start) ;
 	    count(this,emamem_count) ;
 	    finish(this,emamem_finish) ;
-	    magic = 0 ;
+	    magval = 0 ;
 	} ; /* end ctor */
 	ema(const ema &) = delete ;
 	ema &operator = (const ema &) = delete ;
@@ -127,7 +127,7 @@ struct ema : ema_head {
 	int first(cchar **) noex ;
 	void dtor() noex ;
 	destruct ema() {
-	    if (magic) dtor() ;
+	    if (magval) dtor() ;
 	} ;
 } ; /* end struct (ema) */
 #else	/* __cplusplus */
@@ -155,7 +155,7 @@ template<typename ... Args>
 local int ema_magic(ema *op,Args ... args) noex {
 	int		rs = SR_FAULT ;
 	if (op && (args && ...)) {
-	    rs = (op->magic == EMA_MAGIC) ? SR_OK : SR_NOTOPEN ;
+	    rs = (op->magval == EMA_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
 } /* end subroutine (ema_magic) */
