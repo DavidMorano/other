@@ -37,9 +37,15 @@ EXTERNC_begin
 
 extern int	strwildsub(cchar *,cchar *) noex ;
 
+/* this ( |strochr(3c)| ) is the companion subroutine of |strrchr(3c)| */
+#ifndef	SUBROUTINE_STROCHR
+#define	SUBROUTINE_STROCHR
+EXTERNC_begin
 local inline char *strochr(cchar *sp,int sch) noex {
     	return strchr(sp,sch) ;
 }
+EXTERNC_end
+#endif /* SUBROUTINE_STROCHR */
 
 /* deprecated (can give erroneous result) */
 [[deprecated("can give erroneous result")]] 
