@@ -1,6 +1,8 @@
-#!/usr/extra/bin/ksh
-# MKCTAGS
+#!/usr/local/bin/ksh
+# MKTAGS
 
 ctags -R --c++-kinds=+p --fields=+iaS --extras=+q .
-
+if [[ -f tags ]] ; then
+  chmod g+rw,o+r tags
+fi
 
