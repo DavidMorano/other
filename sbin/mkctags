@@ -1,7 +1,22 @@
 #!/usr/local/bin/ksh
 # MKTAGS
 
-ctags -R --c++-kinds=+p --fields=+iaS --extras=+q .
+# Notes:
+# We actually try to find a program named "uctags" rather than 
+# the traditional 'ctags'.  The name 'uctags' stands for 
+# 'Universal C-Tags'.
+#
+
+OPTS=
+OPTS+=" --map-C++=+.ccm "
+#OPTS+=" --c++-kinds=+p --fields=+iaS --extras=+q "
+
+if [[ $# -gt 0 ]] ; then
+   files -p code ${*} | ctags -L - ${OPTS}
+else
+   files -p code * | ctags -L - ${OPTS}
+fi
+
 if [[ -f tags ]] ; then
   chmod g+rw,o+r tags
 fi
