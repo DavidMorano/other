@@ -6,6 +6,13 @@
 /* version %I% last-modified %G% */
 
 
+/* revision history:
+
+	= 1998-03-01, David A­D­ Morano
+	This code was originally written.
+
+*/
+
 /* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
 
 #ifndef	STRX_INCLUDE
@@ -22,6 +29,7 @@
 #include	<usysdefs.h>
 
 #include	<strsub.h>
+#include	<strwildsub.h>
 #include	<strxbrk.h>
 #include	<strxcmp.h>
 #include	<strabbrerr.h>
@@ -34,8 +42,6 @@
 
 
 EXTERNC_begin
-
-extern int	strwildsub(cchar *,cchar *) noex ;
 
 /* this ( |strochr(3c)| ) is the companion subroutine of |strrchr(3c)| */
 #ifndef	SUBROUTINE_STROCHR
