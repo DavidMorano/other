@@ -292,29 +292,25 @@ int main(int argc,mainv argv,mainv envv) {
                 break ;
             case progmode_pe:
                 pi.pm = progmode_pathenum ;
-		fallthrough ;
-                /* FALLTHROUGH */
+		falldown ;
             case progmode_pathenum:
                 rs = pi.pathenum() ;
                 break ;
             case progmode_pt:
                 pi.pm = progmode_pathto ;
-		fallthrough ;
-                /* FALLTHROUGH */
+		falldown ;
             case progmode_pathto:
                 rs = pi.pathtox() ;
                 break ;
             case progmode_ft:
                 pi.pm = progmode_fpathto ;
-		fallthrough ;
-                /* FALLTHROUGH */
+		falldown ;
             case progmode_fpathto:
                 rs = pi.pathtox() ;
                 break ;
 	    case progmode_mt:
 		pi.pm = progmode_manto ;
-		fallthrough ;
-		/* FALLTHROUGH */
+		falldown ;
             case progmode_manto:
                 rs = SR_NOSYS ;
                 break ;
