@@ -286,24 +286,19 @@ int main(int argc,mainv argv,mainv) {
 		break ;
 	    case progmode_logid:
 		if (!fpm++) pm = progmode_utmpid ;
-		fallthrough ;
-		/* FALLTHROUGH */
+		falldown ;
 	    case progmode_logname:
 		if (!fpm++) pm = progmode_utmpname ;
-		fallthrough ;
-		/* FALLTHROUGH */
+		falldown ;
 	    case progmode_logline:
 		if (!fpm++) pm = progmode_utmpline ;
-		fallthrough ;
-		/* FALLTHROUGH */
+		falldown ;
 	    case progmode_loghost:
 		if (!fpm++) pm = progmode_utmphost ;
-		fallthrough ;
-		/* FALLTHROUGH */
+		falldown ;
 	    case progmode_logsid:
 		if (!fpm++) pm = progmode_utmpsid ;
-		fallthrough ;
-		/* FALLTHROUGH */
+		falldown ;
 	    default:
 	        if ((rs = findsid(pm)) == rsn) {
 	            if ((rs = findstdin(pm)) == rsn) {
