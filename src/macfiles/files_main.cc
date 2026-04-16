@@ -909,8 +909,7 @@ int proginfo::argextload(int pi) noex {
 	        if (rs < 0) break ;
 	    } /* end for */
 	    if (pi == profname_doc) break ;
-	    fallthrough ;
-	    /* FALLTHROUGH */
+	    falldown ;
 	case profname_code:
 	    for (cauto &sn : exts_code) {
 	        rs = sufadd(sn) ;
