@@ -88,9 +88,6 @@ constexpr inline bool	ishexlatin	(int ch) noex {
 constexpr inline bool	iswhtlatin	(int ch) noex {
     	return iswhitelatin(ch) ;
 }
-constexpr inline bool	iswhite		(int ch) noex {
-    	return iswhitelatin(ch) ;
-}
 constexpr inline bool	isnumlatin	(int ch) noex {
     	return isdigexlatin(ch) || (ch == '\\') || (ch == 'x') ;
 }
