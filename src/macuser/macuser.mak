@@ -46,9 +46,7 @@ OBJ_MACUSER= user_main.o
 
 
 INCDIRS +=
-
 LIBDIRS += -L$(LIBDIR)
-
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
