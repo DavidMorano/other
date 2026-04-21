@@ -60,6 +60,7 @@
 #include	<varnames.hh>
 #include	<strn.h>
 #include	<strw.h>		/* |strwcmp(3uc)| */
+#include	<strx.h>		/* |strabbrerr(3uc)| */
 #include	<sfx.h>			/* |sfbasename(3uc)| + |sfext(3uc)| */
 #include	<six.h>			/* |sisub(3uc)| */
 #include	<rmx.h>
@@ -222,7 +223,7 @@ namespace {
 	string		pnstr ;
 	mainv		argv ;
 	mainv		envv ;
-	cchar		*pname = "xxx" ; /* program-name (derived) */
+	cchar		*pname = nullptr; /* program-name (derived) */
 	char		*lbuf = nullptr ;
 	char		*pbuf = nullptr ;
 	char		*tbuf = nullptr ;
@@ -483,7 +484,7 @@ constexpr cpcchar	exts_doc[] = {
 
 int main(int argc,mainv argv,mainv envv) {
     	constexpr int	dfd = (f_debug) ? FD_STDERR : -1 ;
-	string		spn ;
+	cchar		*spn = "files.x" ;
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;
@@ -492,14 +493,14 @@ int main(int argc,mainv argv,mainv envv) {
 	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
 	    {
                 rs = pi.argproc() ;
-	        spn = (pi.pname) ? pi.pname : "files.x" ;
+	        if (pi.pname) spn = pi.pname ;
 	    }
 	    rs1 = pi.finish ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (proginfo) */
 	if ((ex == EX_OK) && (rs < 0)) {
-	    cchar *cp = spn.c_str() ;
-            fprintf(stderr,"%s: error (%d)\n",cp,rs) ;
+            cchar fmt[] = "%s: error %s (%d)\n" ;
+            fprintf(stderr,fmt,spn,strabbrerr(rs),rs) ;
 	    ex = mapex(mapexs,rs) ;
 	}
 	DEBPRINTF("ret ex=%d\n",ex) ;
@@ -563,7 +564,7 @@ int proginfo::ifinish() noex {
 /* end method (proginfo::ifinish) */
 
 int proginfo::getprogname(mainv names,cc *sp,int sl) noex {
-    	int		rs = SR_OK ;
+    	int		rs = SR_NOMSG ;
 	if ((pm = matstr(names,sp,sl)) >= 0) {
 	    pname = names[pm] ;
 	    rs = pm ;
@@ -575,6 +576,7 @@ int proginfo::getpn(mainv names) noex {
     	cint		pnlen = intconv(pnstr.size()) ;
 	int		rs = SR_NOMSG ;
 	cchar		*bp{} ; /* used-multiple */
+	DEBPRINTF("ent\n") ;
 	if (int bl = pnlen ; bl > 0) {
 	    bp = pnstr.c_str() ;
 	    rs = getprogname(names,bp,bl) ;
@@ -586,6 +588,7 @@ int proginfo::getpn(mainv names) noex {
 		}
 	    } /* end if (sfbasename) */
 	} /* end if */
+	DEBPRINTF("ret rs=%d\n",rs) ;
 	return rs ;
 } /* end method (proginfo::getpn) */
 
