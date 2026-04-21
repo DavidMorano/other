@@ -1,32 +1,46 @@
-/* debug HEADER */
+/* debprintf HEADER */
 /* charset=ISO8859-1 */
 /* lang=C20 */
 
-/* cheapo debugging */
 /* version %I% last-modified %G% */
+/* C-language defines */
 
 
 /* revision history:
 
-	= 1998-11-01, David A­D­ Morano
-	This subroutine was written for Rightcore Network Services.
+	= 1998-03-21, David A­D­ Morano
+	This module was originally written.
 
 */
 
 /* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
 
-#ifndef	DEBUG_INCLUDE
-#define	DEBUG_INCLUDE
+/*******************************************************************************
+
+  	Name:
+	debprintf
+
+	Description:
+	This header file is associated with the DEBUG module.
+	Access of the DEBUG module is gained with the importation
+	of the module; like:
+	{
+		import debug ;
+	}
+	Enjoy.
+
+*******************************************************************************/
+
+#ifndef	DEBPRINTF_INCLUDE
+#define	DEBPRINTF_INCLUDE
 
 
-#include	<envstandards.h>	/* ordered first to configure */
-#include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<envstandards.h>	/* MUST be first to configure */
 
 
-#endif /* DEBUG_INCLUDE */
+#define DEBPRINTF(FMT, ...) debprintf(__func__, FMT __VA_OPT__(,) __VA_ARGS__)
+
+
+#endif /* DEBPRINTF_INCLUDE */
 
 
