@@ -54,7 +54,7 @@ OBJ1= argmgr.o filerec.o tardir.o
 OBJ2= modproc.o langx.o
 OBJ3= shortq.o ischarx.o
 OBJ4= six.o filelinker.o
-OBJ5= strfilter.o
+OBJ5= strfilter.o strx.o
 OBJ6=
 OBJ7=
 
@@ -228,6 +228,11 @@ tardir.dir:
 # FILEOBJ	(libuc)
 fileobj.o:		fileobj.dir
 fileobj.dir:
+	makesubdir $@
+
+# STRX		(libuc)
+strx.o:			strx.dir
+strx.dir:
 	makesubdir $@
 
 # LANGX		(libdam)
