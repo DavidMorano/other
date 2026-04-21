@@ -23,10 +23,7 @@
 #include	<sys/types.h>		/* system types (see below) */
 #include        <pthread.h>		/* |pthread_t| */
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<usysbase.h>
 
 #include	<snabbr.h>
 #include	<snadd.h>
