@@ -44,13 +44,13 @@ OBJ0= uctc.o ucttyname.o
 OBJ1= ucstrftime.o
 OBJ2= uckvamatch.o
 OBJ3= uctimeconv.o ucinetconv.o
-OBJ4= 
+OBJ4= ucaddrinfo.o
 OBJ5= 
 OBJ6= 
 OBJ7= 
 
-OBJA= obj0.o obj1.o obj2.o 
-OBJB= obj3.o
+OBJA= obj0.o obj1.o obj2.o obj3.o
+OBJB= obj4.o
 
 OBJ= obja.o objb.o
 
@@ -152,14 +152,16 @@ objb.o:			$(OBJB)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
-ucinetconv.o:		ucinetconv.cc		ucinetconv.h	$(INCS)
-uctimeconv.o:		uctimeconv.cc		uctimeconv.h	$(INCS)
-uclibmem.o:		uclibmem.cc		uclibmem.h	$(INCS)
-ucstrftime.o:		ucstrftime.cc		ucstrftime.h	$(INCS)
-uctc.o:			uctc.cc			uctc.h		$(INCS)
-ucttyname.o:		ucttyname.cc		ucttyname.h	$(INCS)
-uckvamatch.o:		uckvamatch.cc		uckvamatch.h	$(INCS)
+uclibmem.o:		uclibmem.cc	uclibmem.h	$(INCS)
+uctc.o:			uctc.cc		uctc.h		$(INCS)
+ucaddrinfo.o:		ucaddrinfo.cc	ucaddrinfo.h	$(INCS)
+ucinetconv.o:		ucinetconv.cc	ucinetconv.h	$(INCS)
+uctimeconv.o:		uctimeconv.cc	uctimeconv.h	$(INCS)
+ucstrftime.o:		ucstrftime.cc	ucstrftime.h	$(INCS)
+ucttyname.o:		ucttyname.cc	ucttyname.h	$(INCS)
+uckvamatch.o:		uckvamatch.cc	uckvamatch.h	$(INCS)
 
-ucmemalloc.o:		ucmemalloc.cc		ucmemalloc.h	$(INCS)
+# obsoleted
+ucmemalloc.o:		ucmemalloc.cc	ucmemalloc.h	$(INCS)
 
 
