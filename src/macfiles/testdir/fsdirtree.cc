@@ -706,6 +706,12 @@ int fsdirtree::read(ustat *sbp,char *rbuf,int rlen) noex {
 	return fsdirtree_read(this,sbp,rbuf,rlen) ;
 }
 
+void fsdirtree::dtor() noex {
+	if (cint rs = close ; rs < 0) {
+	    ulogerror("fsdirtree",rs,"fini-close") ;
+	}
+} /* end method (vecstr::dtor) */
+
 fsdirtree_co::operator int () noex {
 	int		rs = SR_BUGCHECK ;
 	if (op) ylikely {
