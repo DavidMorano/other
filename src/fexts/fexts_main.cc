@@ -79,7 +79,7 @@ typedef	vector<cchar *>		veccp ;
 
 /* forward references */
 
-static int iterate(dirit &,veccp &) ;
+local int iterate(dirit &,veccp &) ;
 
 
 /* local constants */
@@ -116,7 +116,7 @@ int main(int argc,mainv argv,mainv) {
 
 /* local subroutines */
 
-static int iterate(dirit &dir,veccp &exts) {
+local int iterate(dirit &dir,veccp &exts) {
 	cnullptr	np{} ;
 	cauto		ite = exts.end() ;
 	int		rs = SR_OK ;
@@ -144,7 +144,6 @@ static int iterate(dirit &dir,veccp &exts) {
             } /* end if (regular-file) */
         } /* end for */
 	return (rs >= 0) ? c : rs ;
-}
-/* end subroutine (iterate) */
+} /* end subroutine (iterate) */
 
 
