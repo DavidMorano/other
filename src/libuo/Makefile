@@ -47,8 +47,8 @@ OBJUC01= ucsig.o ucsysconf.o ucx.o
 OBJUC02= ucstrto.o uclibmem.o ucids.o
 OBJUC03= ucsupport.o ucstream.o
 
-OBJUC04= ucfileop.o
-OBJUC05= 
+OBJUC04= ucfileop.o ucsock.o
+OBJUC05= ucaddrinfo.o
 OBJUC06= 
 OBJUC07= 
 
@@ -67,7 +67,7 @@ OBJ06_LUO= strxcmp.o
 OBJ07_LUO= strw.o strwcpy.o
 
 OBJ08_LUO= filer.o filemap.o hdb.o
-OBJ09_LUO= strop.o strmgr.o strfilter.o 
+OBJ09_LUO= strfilter.o 
 OBJ10_LUO= fsdirtree.o fsdir.o
 OBJ11_LUO= queue.o field.o
 
@@ -77,7 +77,7 @@ OBJ14_LUO= char.o toxc.o
 OBJ15_LUO= dictdiff.o strnxcmp.o
 
 OBJ16_LUO= checkbase.o matparam.o
-OBJ17_LUO= bitrotate.o
+OBJ17_LUO= bitrotate.o stdorder.o
 OBJ18_LUO= mapex.o ncolx.o hash.o permx.o
 OBJ19_LUO= inetconv.o inetaddrx.o 
 
@@ -91,7 +91,7 @@ OBJ25_LUO= wsnx.o
 OBJ26_LUO= wsix.o
 OBJ27_LUO= wswcpyx.o
 
-OBJ28_LUO= bufsize.o open.o
+OBJ28_LUO= bufsize.o openx.o
 OBJ29_LUO= sysval.o path.o termx.o
 OBJ30_LUO= vstr.o xfile.o
 OBJ31_LUO= randlc.o pow.o calstrs.o
@@ -108,8 +108,13 @@ OBJ39_LUO= filex.o getxx.o bufos.o bufslide.o optval.o
 
 OBJ40_LUO= dirs.o dirseen.o sockaddress.o 
 OBJ41_LUO= envx.o strpack.o strobj.o
-OBJ42_LUO= chrono.o timestr.o
-OBJ43_LUO=
+OBJ42_LUO= chrono.o timestr.o lockfile.o
+OBJ43_LUO= hostinfo.o hostent.o clusterdb.o
+
+OBJ44_LUO=
+OBJ45_LUO=
+OBJ46_LUO=
+OBJ47_LUO=
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
@@ -121,11 +126,13 @@ OBJG_LUO= obj24_luo.o obj25_luo.o obj26_luo.o obj27_luo.o
 OBJH_LUO= obj28_luo.o obj29_luo.o obj30_luo.o obj31_luo.o
 OBJI_LUO= obj32_luo.o obj33_luo.o obj34_luo.o obj35_luo.o
 OBJJ_LUO= obj36_luo.o obj37_luo.o obj38_luo.o obj39_luo.o
-OBJK_LUO= obj40_luo.o obj41_luo.o obj42_luo.o
+OBJK_LUO= obj40_luo.o obj41_luo.o obj42_luo.o obj43_luo.o
+OBJL_LUO= obj44_luo.o obj45_luo.o obj46_luo.o obj47_luo.o
+OBJM_LUO=
 
 OBJ_LUO += obja_luo.o objb_luo.o objc_luo.o objd_luo.o
 OBJ_LUO += obje_luo.o objf_luo.o objg_luo.o objh_luo.o
-OBJ_LUO += obji_luo.o objj_luo.o objk_luo.o
+OBJ_LUO += obji_luo.o objj_luo.o objk_luo.o 
 
 OBJ += objuc_a.o objuc_b.o 
 OBJ += obj_luo.o
@@ -421,6 +428,9 @@ objl_luo.o:		$(OBJL_LUO)
 objm_luo.o:		$(OBJM_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
+objn_luo.o:		$(OBJN_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
 
 obj_luo.o:		$(OBJ_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
@@ -598,6 +608,11 @@ ucids.dir:
 # UCFILEOP
 ucfileop.o:		ucfileop.dir
 ucfileop.dir:
+	makesubdir $@
+
+# UCSOCK
+ucsock.o:		ucsock.dir
+ucsock.dir:
 	makesubdir $@
 
 # UCX		(libuc)
@@ -830,6 +845,10 @@ open.o:			open.dir
 open.dir:
 	makesubdir $@
 
+openx.o:		openx.dir
+openx.dir:
+	makesubdir $@
+
 # MKTMP
 mktmp.o:		mktmp.dir
 mktmp.dir:
@@ -876,10 +895,9 @@ serialbuf.o:		serialbuf.cc	serialbuf.h		$(INCS)
 dupstr.o:		dupstr.cc	dupstr.h		$(INCS)
 comparse.o:		comparse.cc	comparse.h		$(INCS)
 posname.o:		posname.cc	posname.h		$(INCS)
-
-# Temporary Objects
-strop.o:		strop.cc	strop.h			$(INCS)
-strmgr.o:		strmgr.cc	strmgr.h		$(INCS)
+hostinfo.o:		hostinfo.cc	hostinfo.h		$(INCS)
+hostent.o:		hostent.cc	hostent.h		$(INCS)
+clusterdb.o:		clusterdb.cc	clusterdb.h		$(INCS)
 
 # GROUPS
 uinfo.o:		uinfo.cc	uinfo.h			$(INCS)
@@ -888,24 +906,26 @@ char.o:			char.cc		char.h
 toxc.o:			toxc.cc		toxc.h
 inetconv.o:		inetconv.cc	inetconv.h
 bitrotate.o:		bitrotate.cc	bitrotate.h		$(INCS)
+stdorder.o:		stdorder.cc	stdorder.h		$(ICNS)
 
 # SINGLES
 mapex.o:		mapex.cc	mapex.h			$(INCS)
 dictdiff.o:		dictdiff.cc	dictdiff.h		$(INCS)
 inet4int.o:		inet4int.cc	inet4int.h		$(INCS)
 getourenv.o:		getourenv.cc	getourenv.h		$(INCS)
-optval.o:		optval.cc	optval.h	$(INCS)
-getbufsize.o:		getbufsize.cc	getbufsize.h	$(INCS)
-sysval.o:		sysval.cc	sysval.hh	$(INCS)
-randlc.o:		randlc.cc	randlc.h	$(INCS)
-calstrs.o:		calstrs.cc	calstrs.h	$(INCS)
-checkbase.o:		checkbase.cc	checkbase.h	$(INCS)
-strlibval.o:		strlibval.cc	strlibval.hh	$(INCS)
-matparam.o:		matparam.cc	matparam.h	$(INCS)
-sysdbfn.o:		sysdbfn.cc	sysdbfn.h	$(INCS)
-sysdbfiles.o:		sysdbfiles.c	sysdbfiles.h	$(INCS)
-mallocstuff.o:		mallocstuff.cc	mallocstuff.h	$(INCS)
-xfile.o:		xfile.cc	xfile.h		$(INCS)
-sockaddress.o:		sockaddress.cc	sockaddress.h	$(INCS)
+optval.o:		optval.cc	optval.h		$(INCS)
+getbufsize.o:		getbufsize.cc	getbufsize.h		$(INCS)
+sysval.o:		sysval.cc	sysval.hh		$(INCS)
+randlc.o:		randlc.cc	randlc.h		$(INCS)
+calstrs.o:		calstrs.cc	calstrs.h		$(INCS)
+checkbase.o:		checkbase.cc	checkbase.h		$(INCS)
+strlibval.o:		strlibval.cc	strlibval.hh		$(INCS)
+matparam.o:		matparam.cc	matparam.h		$(INCS)
+sysdbfn.o:		sysdbfn.cc	sysdbfn.h		$(INCS)
+sysdbfiles.o:		sysdbfiles.c	sysdbfiles.h		$(INCS)
+mallocstuff.o:		mallocstuff.cc	mallocstuff.h		$(INCS)
+xfile.o:		xfile.cc	xfile.h			$(INCS)
+sockaddress.o:		sockaddress.cc	sockaddress.h		$(INCS)
+lockfile.o:		lockfile.cc	lockfile.h		$(INCS)
 
 
