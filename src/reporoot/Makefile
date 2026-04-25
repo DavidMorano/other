@@ -42,7 +42,7 @@ LIBS += -luo -lu
 
 DEPS_MAIN += ulibvals.o umisc.o
 
-OBJ0= reporoot_prime.o
+OBJ0= reporoot_main.o
 OBJ1= pathxx.o storebufxx.o
 OBJ2= 
 OBJ3=
@@ -151,7 +151,7 @@ objb.o:			$(OBJB)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
-reporoot_prime.o:	reporoot_prime.cc $(DEPS_MAIN) 		$(INCS)
+reporoot_main.o:	reporoot_main.cc $(DEPS_MAIN) 		$(INCS)
 
 storebufxx.o:		storebufxx.cc	storebuf.h
 
