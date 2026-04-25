@@ -257,7 +257,7 @@
 #include	<ucent.h>
 #include	<ucenum.h>
 #include	<ucfdmanip.h>
-#include	<ucfiledesc.h>
+#include	<ucdesc.h>
 #include	<ucfileop.h>
 #include	<ucfork.h>
 #include	<funcodes.h>
@@ -286,9 +286,7 @@
 #include	<ucpts.h>		/* pseudo-terminal management */
 #include	<ucpwcache.h>
 #include	<ucrand.h>
-#include	<ucread.h>
 #include	<ucsig.h>
-#include	<ucsock.h>
 #include	<ucsthr.h>
 #include	<ucstrtof.h>
 #include	<ucstrtof.h>		/* |float| + |double| + |longdouble| */
@@ -303,7 +301,6 @@
 #include	<uctimer.h>
 #include	<ucuserattr.h>
 #include	<ucutility.h>
-#include	<ucwrite.h>
 #include	<udomain.h>
 #include	<uinfo.h>
 #include	<umask.h>
