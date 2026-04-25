@@ -263,7 +263,7 @@ constexpr cbool		f_utmpwrite	= CF_UTMPWRITE ;
 
 /* exported subroutines */
 
-int main(int argc,mainv argv,mainv) {
+int main(int argc,con mainv argv,con mainv) {
 	int		ex = EXIT_SUCCESS ;
 	int		rs ;
 	if ((rs = getpm(argc,argv,prognames)) >= 0) {
