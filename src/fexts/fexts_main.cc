@@ -90,7 +90,7 @@ local int iterate(dirit &,veccp &) ;
 
 /* exported subroutines */
 
-int main(int argc,mainv argv,mainv) {
+int main(int argc,con mainv argv,con mainv) {
 	int		ex = EXIT_FAILURE ;
 	int		rs = SR_OK ;
 	if (argc > 1) {
