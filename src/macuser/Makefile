@@ -42,7 +42,14 @@ LIBS += -luo -lu
 
 DEPS_MAIN += libutil.o umisc.o
 
-OBJ_MACUSER= user_main.o
+OBJ0= user_main.o
+OBJ1= umisc.o
+OBJ2= sncpyx.o
+OBJ3=
+
+OBJ= obj0.o
+
+OBJ_MACUSER= obj.o
 
 
 INCDIRS +=
@@ -92,8 +99,8 @@ all:			$(ALL)
 	makemodule $(*)
 
 
-$(T).x:			$(OBJ_MACUSER)
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACUSER) $(LIBINFO)
+$(T).x:			obj.o
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) obj.o $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).x > $(T).nm
@@ -114,12 +121,56 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
+obj0.o:			$(OBJ0)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj1.o:			$(OBJ1)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj2.o:			$(OBJ2)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj3.o:			$(OBJ3)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj4.o:			$(OBJ4)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj5.o:			$(OBJ5)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj6.o:			$(OBJ6)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj7.o:			$(OBJ7)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+obja.o:			$(OBJA)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objb.o:			$(OBJB)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+obj.o:			$(OBJ)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
 user_main.o:		user_main.cc			$(INCS)
 
-libutil.ccm:
-	makemodcurrent $@
+libutil.o:		libutil.dir
+libutil.dir:
+	makesubdir $@
 
-umisc.ccm:
-	makemodcurrent $@
+umisc.o:		umisc.dir
+umisc.dir:
+	makesubdir $@
+
+snx.o:			snx.dir
+snx.dir:
+	makesubdir $@
+
+sncpyx.o:		sncpyx.cc	sncpyx.h
 
 
