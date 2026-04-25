@@ -240,7 +240,7 @@ namespace {
 	int		intyoung = 0 ;	/* younger inteval */
 	ushort		modes = 0 ;	/* file-modes (matched) */
 	bool		fexit = false ;
-	proginfo(int c,mainv a,mainv e) noex : argc(c), argv(a), envv(e) { 
+	proginfo(int c,con mainv a,con mainv e) noex : argc(c) {
 	    start	(this,proginfomem_start) ;
 	    finish	(this,proginfomem_finish) ;
 	    argbegin	(this,proginfomem_argbegin) ;
@@ -249,6 +249,8 @@ namespace {
 	    flistend	(this,proginfomem_flistend) ;
 	    sufavail	(this,proginfomem_sufavail) ;
 	    sufready	(this,proginfomem_sufready) ;
+	    argv = a ;
+	    envv = e ;
 	    fl.verbose = true ;
 	    ofp = stdout ;
 	} ; /* end ctor */
@@ -482,7 +484,7 @@ constexpr cpcchar	exts_doc[] = {
 
 /* exported subroutines */
 
-int main(int argc,mainv argv,mainv envv) {
+int main(int argc,con mainv argv,con mainv envv) {
     	constexpr int	dfd = (f_debug) ? FD_STDERR : -1 ;
 	cchar		*spn = "files.x" ;
 	int		ex = EX_OK ;
