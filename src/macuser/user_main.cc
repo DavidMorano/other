@@ -108,7 +108,11 @@
 #include	<string>
 #include	<fstream>
 #include	<iostream>
-#include	<usystem.h>
+#include	<clanguage.h>
+#include	<usysbase.h>
+#include	<usyscalls.h>
+#include	<usupport.h>
+#include	<ucx.h>
 #include	<getfdfile.h>		/* |FD_STDIN| */
 #include	<sfx.h>
 #include	<rmx.h>
@@ -122,6 +126,7 @@
 #include	<isoneof.h>
 #include	<isnot.h>
 #include	<localmisc.h>
+#include	<dprintf.hh>		/* LIBU |DPRINTF(3u)| */
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/umisc.ccm"
@@ -228,7 +233,7 @@ constexpr cpcchar	prognames[] = {
 	[progmode_overlast]	= nullptr
 } ; /* end array (prognames) */
 
-constexpr cpcchar	envs[] = {
+constexpr cpcchar	envnames[] = {
 	"USERNAME",
 	"USER",
 	"LOGNAME",
@@ -266,12 +271,12 @@ constexpr bool		f_getusershell	= CF_GETUSERSHELL ;
 
 /* forward references */
 
-static int	getpn(int,mainv,mainv) noex ;
-static int	procgroup(int,const userinfo *) noex ;
-static int	printgroup(const userinfo *) noex ;
-static int	printshells() noex ;
-static int	printuserents() noex ;
-static int	printgroupents() noex ;
+local int	getpn(int,mainv,mainv) noex ;
+local int	procgroup(int,const userinfo *) noex ;
+local int	printgroup(const userinfo *) noex ;
+local int	printshells() noex ;
+local int	printuserents() noex ;
+local int	printgroupents() noex ;
 
 static UTMPX	*getutxliner(UTMPX *) noex ;
 
@@ -281,7 +286,7 @@ static UTMPX	*getutxliner(UTMPX *) noex ;
 constexpr cpcchar	utmpvars[] = {
 	VARUTMPLINE,
 	VARLOGLINE
-} ;
+} ; /* end array (utmpvars) */
 
 constexpr gid_t		gidend = gid_t(-1) ;
 
@@ -299,21 +304,15 @@ constexpr cchar		devprefix[] = DEVPREFIX ;
 
 /* exported subroutines */
 
-int main(int argc,mainv argv,mainv) {
+int main(int argc,con mainv argv,con mainv) {
 	const uid_t	uid = getuid() ;
 	int		ex = EXIT_SUCCESS ;
 	int		rs ;
-	if_constexpr (f_debug) {
-	    cerr << "func=" << __func__ << eol ;
-	    fprintf(stderr,"%s: ent\n",__func__) ;
-	}
+	DPRINTF("ent\n") ;
 	if ((rs = getpn(argc,argv,prognames)) >= 0) {
-	    if_constexpr (f_debug) {
-	        fprintf(stderr,"%s: getpn() rs=%d\n",__func__,rs) ;
-	        fprintf(stderr,"%s: getpn() pn=%s\n",__func__,prognames[rs]) ;
-	    }
 	    userinfo	ui ;
 	    cint	pm = rs ;
+	    DPRINTF("getpn() rs=%d pn=%s\n",rs,prognames[rs]) ;
 	    switch (pm) {
 	    case progmode_uid:
 		cout << uid << eol ;
@@ -340,6 +339,7 @@ int main(int argc,mainv argv,mainv) {
 	    } /* end switch */
 	} /* end if (getpn) */
 	if (rs < 0) ex = EXIT_FAILURE ;
+	DPRINTF("ret rs=%d ex=%d\n",rs,ex) ;
 	return ex ;
 }
 /* end subroutine (main) */
@@ -397,7 +397,7 @@ int userinfo::printone(int pm,uid_t uid) noex {
 }
 /* end method (userinfo::printone) */
 
-static int getpn(int argc,mainv argv,mainv names) noex {
+local int getpn(int argc,mainv argv,mainv names) noex {
 	int		rs = SR_FAULT ;
 	if (argv) {
 	    rs = SR_NOMSG ;
@@ -416,7 +416,7 @@ static int getpn(int argc,mainv argv,mainv names) noex {
 }
 /* end subroutine (getpn) */
 
-static int procgroup(int pm,const userinfo *uip) noex {
+local int procgroup(int pm,const userinfo *uip) noex {
 	int		rs = SR_INVALID ;
 	if (uip->gid != gidend) {
 	    switch (pm) {
@@ -435,7 +435,7 @@ static int procgroup(int pm,const userinfo *uip) noex {
 }
 /* end subroutine (procgroup) */
 
-static int printgroup(const userinfo *uip) noex {
+local int printgroup(const userinfo *uip) noex {
 	int		rs = SR_NOTFOUND ;
 	const GROUP	*grp = getgrgid(uip->gid) ;
 	if (grp) {
@@ -446,7 +446,7 @@ static int printgroup(const userinfo *uip) noex {
 }
 /* end subroutine (printgroup) */
 
-static int printshells() noex {
+local int printshells() noex {
 	char		*lbuf ;
 	int		rs = SR_NOMEM ;
 	int		rs1 ;
@@ -478,7 +478,7 @@ static int printshells() noex {
 }
 /* end subroutine (printshells) */
 
-static int printuserents() noex {
+local int printuserents() noex {
 	unordered_set<string>	seen ;
 	pair<setiter,bool>	ret ;
 	int		rs = SR_OK ;
@@ -495,7 +495,7 @@ static int printuserents() noex {
 }
 /* end subroutine (printuserents) */
 
-static int printgroupents() noex {
+local int printgroupents() noex {
 	unordered_set<string>	seen ;
 	pair<setiter,bool>	ret ;
 	int		rs = SR_OK ;
@@ -512,7 +512,7 @@ static int printgroupents() noex {
 }
 /* end subroutine (printgroupents) */
 
-static bool isourtype(const UTMPX *up) noex {
+local bool isourtype(const UTMPX *up) noex {
 	bool	f = false ;
 	f = f || (up->ut_type == INIT_PROCESS) ;
 	f = f || (up->ut_type == LOGIN_PROCESS) ;
@@ -548,7 +548,7 @@ int userinfo::findhint(uid_t) noex {
 int userinfo::findenv(uid_t uid) noex {
 	int		rs = SR_OK ;
 	int		len = 0 ;
-	for (cauto &vn : envs) {
+	for (cauto &vn : envnames) {
 	    if (cchar *rp ; (rp = getenv(vn)) != nullptr) {
 		cchar	*cp{} ;
 		if (int cl ; (cl = sfbasename(rp,-1,&cp)) > 0) {
