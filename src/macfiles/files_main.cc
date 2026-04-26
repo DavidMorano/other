@@ -486,7 +486,7 @@ constexpr cpcchar	exts_doc[] = {
 
 int main(int argc,con mainv argv,con mainv envv) {
     	constexpr int	dfd = (f_debug) ? FD_STDERR : -1 ;
-	cchar		*spn = "files.x" ;
+	strnul		spn = "files.x" ;
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;
@@ -502,7 +502,7 @@ int main(int argc,con mainv argv,con mainv envv) {
 	} /* end if (proginfo) */
 	if ((ex == EX_OK) && (rs < 0)) {
             cchar fmt[] = "%s: error %s (%d)\n" ;
-            fprintf(stderr,fmt,spn,strabbrerr(rs),rs) ;
+            fprintf(stderr,fmt,ccp(spn),strabbrerr(rs),rs) ;
 	    ex = mapex(mapexs,rs) ;
 	}
 	DEBPRINTF("ret ex=%d\n",ex) ;
