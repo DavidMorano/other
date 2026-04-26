@@ -66,7 +66,7 @@
 #include	<readln.hh>
 #include	<mkchar.h>
 #include	<localmisc.h>
-#include	<dprintf.hh>		/* debugging */
+#include	<dprint.hh>		/* debugging */
 
 #include	"ccfile.hh"
 
