@@ -2,7 +2,7 @@
 /* charset=ISO8859-1 */
 /* lang=C20 */
 
-/* get certain system IDs based on a specified name */
+/* retrieve various system and user information */
 /* version %I% last-modified %G% */
 
 
