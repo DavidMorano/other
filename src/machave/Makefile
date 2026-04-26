@@ -37,18 +37,21 @@ INCS += usyscalls.h localmisc.h
 
 MODS += libutil.ccm umisc.ccm ulibvals.ccm
 
-LIBS += -luo -lu
+LIBS += -lf -luo -lu
 
 
 DEPS_MAIN += libutil.o umisc.o
 
-OBJ_MACHAVE= have_main.o
+OBJ0= have_main.o
+OBJ1= strnul.o
+OBJ2=
+OBJ3=
+
+OBJ= obj0.o obj1.o
 
 
 INCDIRS=
-
 LIBDIRS= -L$(LIBDIR)
-
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -94,8 +97,44 @@ all:			$(ALL)
 	makemodule $(*)
 
 
-$(T).x:			$(OBJ_MACHAVE)
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACHAVE) $(LIBINFO)
+obj0.o:			$(OBJ0)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj1.o:			$(OBJ1)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj2.o:			$(OBJ2)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj3.o:			$(OBJ3)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj4.o:			$(OBJ4)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj5.o:			$(OBJ5)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj6.o:			$(OBJ6)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj7.o:			$(OBJ7)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+obja.o:			$(OBJA)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objb.o:			$(OBJB)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+obj.o:			$(OBJ)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+$(T).x:			obj.o
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) obj.o $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).x > $(T).nm
@@ -126,5 +165,7 @@ umisc.dir:
 ulibvals.o:		ulibvals.dir
 ulibvals.dir:
 	makesubdir $@
+
+strnul.o:		strnul.cc	strnul.hh
 
 
