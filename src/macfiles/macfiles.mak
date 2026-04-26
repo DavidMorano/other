@@ -40,7 +40,7 @@ MODS += cmdutils.ccm
 MODS += modproc.ccm 
 MODS += strfilter.ccm 
 
-LIBS += -luo -lu
+LIBS += -lf -luo -lu
 
 
 DEPS_MAIN += cmdutils.o strfilter.o
@@ -55,19 +55,19 @@ OBJ2= modproc.o langx.o
 OBJ3= shortq.o ischarx.o
 OBJ4= six.o filelinker.o
 OBJ5= strfilter.o strx.o
-OBJ6=
+OBJ6= strnul.o
 OBJ7=
 
 OBJA= obj0.o obj1.o obj2.o obj3.o
-OBJB= obj4.o obj5.o
+OBJB= obj4.o obj5.o obj6.o
 
-OBJ_MAIN= obja.o objb.o
+OBJ= obja.o objb.o
 
 
 INCDIRS=
 #INCDIRS= -I$(INCDIR)
 
-LIBDIRS= -L$(LIBDIR)
+LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -113,8 +113,8 @@ all:			$(ALL)
 	makemodule $(*)
 
 
-$(T).x:			$(OBJ_MAIN)
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MAIN) $(LIBINFO)
+$(T).x:			obj.o
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) obj.o $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).x > $(T).nm
@@ -165,6 +165,10 @@ obja.o:			$(OBJA)
 	$(CXX) -r -o $@ $(LDFLAGS) $^
 
 objb.o:			$(OBJB)
+	$(CXX) -r -o $@ $(LDFLAGS) $^
+
+
+obj.o:			$(OBJ)
 	$(CXX) -r -o $@ $(LDFLAGS) $^
 
 
@@ -259,5 +263,6 @@ shortq.o:		shortq.cc	shortq.h		$(INCS)
 ischarx.o:		ischarx.cc	ischarx.h
 
 filelinker.o:		filelinker.cc	filelinker.hh		$(INCS)
+strnuk.o:		strnul.cc	strnul.hh
 
 
