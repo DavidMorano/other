@@ -1,6 +1,6 @@
-# MAKEFILE (machello)
+# MAKEFILE (hello)
 
-T= machello
+T= hello
 
 ALL= $(T).x
 
@@ -49,7 +49,7 @@ DEPS_MAIN += ureserve.o fonce.o
 DEPS_MAIN += strfilter.o tardir.o
 DEPS_MAIN += langx.o modproc.o
 
-OBJ0= machello_main.o
+OBJ0= hello_main.o
 OBJ1= prognamevar.o
 OBJ2= shellunder.o
 OBJ3= 
@@ -169,10 +169,9 @@ obj.o:			$(OBJ)
 	$(CXX) -r -o $@ $(LDFLAGS) $^
 
 
-machello_main.o:	machello_main.cc			$(INCS)
+hello_main.o:		hello_main.cc			$(INCS)
 
 prognamevar.o:		prognamevar.cc	prognamevar.hh
-
 shellunder.o:		shellunder.cc	shellunder.h
 
 
