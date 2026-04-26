@@ -2,7 +2,7 @@
 /* charset=ISO8859-1 */
 /* lang=C20 */
 
-/* get an environment variable from our local (passed) environment */
+/* get an environment variable value from the passed environment array */
 /* version %I% last-modified %G% */
 
 
