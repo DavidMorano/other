@@ -126,7 +126,7 @@
 #include	<isoneof.h>
 #include	<isnot.h>
 #include	<localmisc.h>
-#include	<dprintf.hh>		/* LIBU |DPRINTF(3u)| */
+#include	<dprint.hh>		/* LIBU |DPRINTF(3u)| */
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/umisc.ccm"
