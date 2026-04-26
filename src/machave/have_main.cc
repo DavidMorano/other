@@ -63,10 +63,11 @@
 #include	<string_view>
 #include	<vector>
 #include	<iostream>
-#include	<usystem.h>
+#include	<clanguage.h>
+#include	<usysbase.h>
+#include	<usyscalls.h>
 #include	<getourenv.h>
 #include        <getfdfile.h>           /* |FD_STDERR| */
-#include	<varnames.hh>
 #include	<strn.h>
 #include	<sfx.h>
 #include	<rmx.h>
@@ -79,10 +80,13 @@
 #include	<exitcodes.h>
 #include	<localmisc.h>
 
+#pragma		GCC dependency		"mod/uconstants.ccm"
 #pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/umisc.ccm"
 #pragma		GCC dependency		"mod/ulibvals.ccm"
+#pragma		GCC dependency		"mod/debug.ccm"
 
+import uconstants ;			/* |varname(3u)| */
 import libutil ;			/* |lenstr(3u)| */
 import umisc ;				/* |mknpath(3u)| */
 import ulibvals ;
@@ -142,7 +146,7 @@ namespace {
 	proginfomem_finish,
 	proginfomem_pathend,
 	proginfomem_overlast
-    } ;
+    } ; /* end enum */
     struct proginfo ;
     struct proginfo_co {
 	proginfo	*op = nullptr ;
@@ -185,13 +189,13 @@ namespace {
 	    finish	(this,proginfomem_finish) ;
 	    pathend	(this,proginfomem_pathend) ;
 	    pathbegin.init(this) ;
-	} ;
+	} ; /* end ctor */
 	proginfo() noex : proginfo(0,nullptr,nullptr) { } ;
 	void operator () (int c,mainv a,mainv e) noex {
 	    argc = c ;
 	    argv = a ;
 	    envv = e ;
-	} ;
+	} ; /* end method */
 	int pathcandidate(cchar *,int) noex ;
 	int pathalready(dev_t,ino_t) noex ;
 	int pathadd(dev_t,ino_t,cchar *,int) noex ;
@@ -335,13 +339,11 @@ int proginfo::istart() noexcept {
 	    debprintf(__func__,"rs=%d pn=%s\n",rs,pn) ;
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo::istart) */
+} /* end method (proginfo::istart) */
 
 int proginfo::ifinish() noex {
 	return SR_OK ;
-}
-/* end method (proginfo::ifinish) */
+} /* end method (proginfo::ifinish) */
 
 int proginfo::getpn(mainv names) noex {
 	int		rs = SR_FAULT ;
@@ -360,8 +362,7 @@ int proginfo::getpn(mainv names) noex {
 	    } /* end if (have first argument) */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo::getpn) */
+} /* end method (proginfo::getpn) */
 
 int proginfo::ipathbegin(cchar *vn) noex {
     	cnullptr	np{} ;
@@ -388,8 +389,7 @@ int proginfo::ipathbegin(cchar *vn) noex {
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo::ipathbegin) */
+} /* end method (proginfo::ipathbegin) */
 
 int proginfo::pathcandidate(cchar *sp,int µsl) noex {
 	int		rs ;
@@ -414,14 +414,12 @@ int proginfo::pathcandidate(cchar *sp,int µsl) noex {
 	    rs = SR_NOMEM ;
 	} /* end if */
 	return rs ;
-}
-/* end method (proginfo::pathcandidate) */
+} /* end method (proginfo::pathcandidate) */
 
 int proginfo::ipathend() noex {
 	plist.clear() ;
 	return SR_OK ;
-}
-/* end method (proginfo::ipathend) */
+} /* end method (proginfo::ipathend) */
 
 int proginfo::pathalready(dev_t d,ino_t i) noex {
 	int		rs = SR_OK ;
@@ -431,8 +429,7 @@ int proginfo::pathalready(dev_t d,ino_t i) noex {
 	    if (f) break ;
 	} /* end for */
 	return (rs >= 0) ? f : rs ;
-}
-/* end method (proginfo::pathalready) */
+} /* end method (proginfo::pathalready) */
 
 int proginfo::pathadd(dev_t d,ino_t i,cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
@@ -463,8 +460,7 @@ int proginfo::pathenum() noex {
 	    rs = pathenumone(vn) ;
 	} /* end if (program arguments) */
 	return rs ;
-}
-/* end subroutine (proginfo::pathenum) */
+} /* end subroutine (proginfo::pathenum) */
 
 int proginfo::pathenumone(cchar *vn) noex {
 	cchar		*manpath = varname.manpath ;
@@ -484,8 +480,7 @@ int proginfo::pathenumone(cchar *vn) noex {
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (proginfo::path) */
 	return rs ;
-}
-/* end subroutine (proginfo::pathenumone) */
+} /* end subroutine (proginfo::pathenumone) */
 
 int proginfo::pathtox() noex {
 	int		rs ;
@@ -493,8 +488,7 @@ int proginfo::pathtox() noex {
 	    rs = pathto(vn) ;
 	} /* end if (getvn) */
 	return rs ;
-}
-/* end subroutine (proginfo::pathtox) */
+} /* end subroutine (proginfo::pathtox) */
 
 int proginfo::pathto(cchar *vn) noex {
     	cnothrow	nt{} ;
@@ -632,8 +626,7 @@ int proginfo::getvn(cchar **rpp) noex {
 	    *rpp = (rs >= 0) ? vn : nullptr ;
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo::getvn) */
+} /* end method (proginfo::getvn) */
 
 int proginfo_co::operator () (int) noex {
 	int	rs = SR_BUGCHECK ;
@@ -651,8 +644,7 @@ int proginfo_co::operator () (int) noex {
 	    } /* end switch */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo_co::operator) */
+} /* end method (proginfo_co::operator) */
 
 int proginfo_pabeg::operator () (cchar *vn) noex {
 	int	rs = SR_BUGCHECK ;
@@ -661,7 +653,6 @@ int proginfo_pabeg::operator () (cchar *vn) noex {
 	    rs = op->ipathbegin(vn) ;
 	}
 	return rs ;
-}
-/* end method (proginfo_pabeg::operator) */
+} /* end method (proginfo_pabeg::operator) */
 
 
