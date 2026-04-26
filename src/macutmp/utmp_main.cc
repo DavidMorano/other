@@ -310,7 +310,9 @@ int main(int argc,con mainv argv,con mainv) {
 		break ;
 	    } /* end switch */
 	} /* end if (getpm) */
-	if ((rs < 0) && (ex == 0)) ex = EXIT_FAILURE ;
+	if ((rs < 0) && (ex == 0)) {
+	    ex = EXIT_FAILURE ;
+	}
 	return ex ;
 }
 /* end subroutine (main) */
