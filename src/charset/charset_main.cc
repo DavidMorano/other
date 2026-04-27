@@ -60,7 +60,6 @@
 #include	<sfx.h>
 #include	<matstr.h>
 #include	<strwcpy.h>
-#include	<strnul.hh>
 #include	<readln.hh>
 #include	<strnul.hh>
 #include	<rmx.h>
@@ -68,17 +67,17 @@
 #include	<mapex.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>
-#include	<debprintf.h>
+#include	<deb.hh>		/* |DEBPRINT(3uc)| */
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/fonce.ccm"
 #pragma		GCC dependency		"mod/ulibvals.ccm"
-#pragma		GCC dependency		"mod/debug.ccm"
+#pragma		GCC dependency		"mod/deb.ccm"
 
 import libutil ;			/* |getlenstr(3u)| */
 import fonce ;
 import ulibvals ;			/* |maxpathlen(3u)| */
-import debug ;				/* |debprintf(3u)| */
+import deb ;				/* |debprintf(3u)| */
 
 /* local defines */
 
@@ -332,24 +331,25 @@ int proginfo::filecheck(char *vbuf,int vlen,cc *fp,int µfl) noex {
     	int		rs = SR_OK ;
 	int		c = 0 ; /* return-value */
 	if (int fl ; (fl = getlenstr(fp,µfl)) >= 0) {
-	    strnul fn(fp,fl) ;
-	    if (ustat sb ; (rs = u_lstat(fn,&sb)) >= 0) {
-		if (S_ISREG(sb.st_mode)) {
-    	            if ((rs = seen.checkin(&sb)) > 0) {
-	                if ((rs = fileproc(vbuf,vlen,fp,fl)) >= 0) {
-		            c += rs ;
-			} else {
-			    printf("proc file=%s (%d)\n",ccp(fn),rs) ;
-			}
-		    } /* end if (seen-checkin) */
-	        } /* end if (regular file) */
-	    } else if (isNotPresent(rs)) {
-		printf("stat file=%s (%d)\n",ccp(fn),rs) ;
-		rs = SR_OK ;
-	    } /* end if (u_lstat) */
-	    if_constexpr (f_debug) {
-		debprintf(__func__,"done fn=%s rs=%d\n",ccp(fn),rs) ;
-	    }
+	    if (strnul fn(fp,fl) ; fn.fok) {
+	        if (ustat sb ; (rs = u_lstat(fn,&sb)) >= 0) {
+		    if (S_ISREG(sb.st_mode)) {
+    	                if ((rs = seen.checkin(&sb)) > 0) {
+	                    if ((rs = fileproc(vbuf,vlen,fp,fl)) >= 0) {
+		                c += rs ;
+			    } else {
+			        printf("proc file=%s (%d)\n",ccp(fn),rs) ;
+			    }
+		        } /* end if (seen-checkin) */
+	            } /* end if (regular file) */
+	        } else if (isNotPresent(rs)) {
+		    printf("stat file=%s (%d)\n",ccp(fn),rs) ;
+		    rs = SR_OK ;
+	        } /* end if (u_lstat) */
+	        if_constexpr (f_debug) {
+		    debprintf(__func__,"done fn=%s rs=%d\n",ccp(fn),rs) ;
+	        }
+	    } /* end if (valid) */
 	} /* end if (getlenstr) */
 	return (rs >= 0) ? c : rs ;
 } /* end subroutine (proginfo::filecheck) */
