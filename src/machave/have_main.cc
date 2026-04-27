@@ -84,13 +84,13 @@
 #pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/umisc.ccm"
 #pragma		GCC dependency		"mod/ulibvals.ccm"
-#pragma		GCC dependency		"mod/debug.ccm"
+#pragma		GCC dependency		"mod/deb.ccm"
 
 import uconstants ;			/* |varname(3u)| */
 import libutil ;			/* |lenstr(3u)| */
 import umisc ;				/* |mknpath(3u)| */
 import ulibvals ;
-import debug ;
+import deb ;
 
 /* local defines */
 
