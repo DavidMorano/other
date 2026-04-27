@@ -108,7 +108,7 @@ int main(int argc,con mainv argv,con mainv) {
 	            ex = EXIT_SUCCESS ;
 		}
 	    } /* end if */
-	}
+	} /* end if (arguments) */
 	return ex ;
 }
 /* end subroutine (main) */
