@@ -45,7 +45,7 @@ OBJ_MACFU= sysdata_main.o
 
 INCDIRS= -I$(INCDIR)
 
-LIBDIRS= -L$(LIBDIR)
+LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
