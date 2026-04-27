@@ -60,6 +60,7 @@
 #include	<varnames.hh>
 #include	<strn.h>
 #include	<strw.h>		/* |strwcmp(3uc)| */
+#include	<strx.h>		/* |strabbrerr(3uc)| */
 #include	<sfx.h>			/* |sfbasename(3uc)| + |sfext(3uc)| */
 #include	<six.h>			/* |sisub(3uc)| */
 #include	<rmx.h>
@@ -75,7 +76,7 @@
 #include	<mapex.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>
-#include	<debprintf.h>		/* |DEBPRINTF| */
+#include	<deb.hh>		/* |DEBPRINTF| */
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/ulibvals.ccm"
@@ -89,7 +90,7 @@
 #pragma		GCC dependency		"mod/filerec.ccm"
 #pragma		GCC dependency		"mod/modproc.ccm"
 #pragma		GCC dependency		"mod/cmdutils.ccm"
-#pragma		GCC dependency		"mod/debug.ccm"
+#pragma		GCC dependency		"mod/deb.ccm"
 
 import libutil ;			/* |lenstr(3u)| + |getlenstr(3u)| */
 import ulibvals ;
@@ -100,7 +101,7 @@ import argmgr ;
 import fonce ;
 import sif ;
 import bitop ;
-import debug ;				/* |debprintf(3uc)| */
+import deb ;				/* |debprintf(3uc)| */
 import tardir ;
 import filerec ;
 import modproc ;
@@ -128,6 +129,9 @@ using std::string_view ;		/* type */
 using std::istream ;			/* type */
 using std::bit_ceil ;			/* subroutine-template */
 using libu::snvprintf ;			/* subroutine */
+using libu::cfdec ;			/* subroutine */
+using libu::cfdeci ;			/* subroutine */
+using libu::cfdect ;			/* subroutine */
 using libu::umem ;			/* variable */
 using std::cin ;			/* variable */
 using std::cout ;			/* variable */
@@ -219,12 +223,13 @@ namespace {
 	string		pnstr ;
 	mainv		argv ;
 	mainv		envv ;
-	cchar		*pname = "xxx" ; /* program-name (derived) */
+	cchar		*pname = nullptr; /* program-name (derived) */
 	char		*lbuf = nullptr ;
 	char		*pbuf = nullptr ;
 	char		*tbuf = nullptr ;
 	char		*axp = nullptr ; /* allocated-memory */
 	FILE		*ofp ;		/* output-file-pointer */
+	time_t		tinow ;
 	int		argc ;
 	int		pm = -1 ;
 	int		debuglevel = 0 ;
@@ -232,9 +237,10 @@ namespace {
 	int		plen = 0 ;
 	int		tlen = 0 ;
 	int		lines = 0 ;
+	int		intyoung = 0 ;	/* younger inteval */
 	ushort		modes = 0 ;	/* file-modes (matched) */
 	bool		fexit = false ;
-	proginfo(int c,mainv a,mainv e) noex : argc(c), argv(a), envv(e) { 
+	proginfo(int c,con mainv a,con mainv e) noex : argc(c) {
 	    start	(this,proginfomem_start) ;
 	    finish	(this,proginfomem_finish) ;
 	    argbegin	(this,proginfomem_argbegin) ;
@@ -243,6 +249,8 @@ namespace {
 	    flistend	(this,proginfomem_flistend) ;
 	    sufavail	(this,proginfomem_sufavail) ;
 	    sufready	(this,proginfomem_sufready) ;
+	    argv = a ;
+	    envv = e ;
 	    fl.verbose = true ;
 	    ofp = stdout ;
 	} ; /* end ctor */
@@ -253,6 +261,7 @@ namespace {
 	    envv = e ;
 	} ;
 	int fileuniq(custat *) noex ;
+	int fileyounger(custat *) noex ;
 	int argproc() noex ;
 	int args(argmgr *) noex ;
 	int argoptstr(argmgr *,int) noex ;
@@ -263,6 +272,7 @@ namespace {
 	int argfileread(cchar *) noex ;
 	int argprofile(argmgr *) noex ;
 	int argextload(int) noex ;
+	int argyounger(argmgr *) noex ;
 	int argsuf(argmgr *) noex ;
 	int argtype(argmgr *) noex ;
 	int argtardir(argmgr *) noex ;
@@ -284,6 +294,7 @@ namespace {
 	int procent(custat *,cchar *,int = -1) noex ;
 	int proclink(cchar *,custat *,cchar *,int) noex ;
 	int procfile(custat *,cchar *,int = -1) noex ;
+	int procfiler(custat *,cchar *,int = -1) noex ;
 	int procfile_list(custat *,cchar *,int = -1) noex ;
 	int procfile_lc(custat *,cchar *,int = -1) noex ;
 	int procfile_mods(custat *,cchar *,int = -1) noex ;
@@ -473,9 +484,9 @@ constexpr cpcchar	exts_doc[] = {
 
 /* exported subroutines */
 
-int main(int argc,mainv argv,mainv envv) {
+int main(int argc,con mainv argv,con mainv envv) {
     	constexpr int	dfd = (f_debug) ? FD_STDERR : -1 ;
-	string		spn ;
+	strnul		spn = "files.x" ;
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;
@@ -484,14 +495,14 @@ int main(int argc,mainv argv,mainv envv) {
 	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
 	    {
                 rs = pi.argproc() ;
-	        spn = (pi.pname) ? pi.pname : "files.x" ;
+	        if (pi.pname) spn = pi.pname ;
 	    }
 	    rs1 = pi.finish ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (proginfo) */
 	if ((ex == EX_OK) && (rs < 0)) {
-	    cchar *cp = spn.c_str() ;
-            fprintf(stderr,"%s: error (%d)\n",cp,rs) ;
+            cchar fmt[] = "%s: error %s (%d)\n" ;
+            fprintf(stderr,fmt,ccp(spn),strabbrerr(rs),rs) ;
 	    ex = mapex(mapexs,rs) ;
 	}
 	DEBPRINTF("ret ex=%d\n",ex) ;
@@ -555,7 +566,7 @@ int proginfo::ifinish() noex {
 /* end method (proginfo::ifinish) */
 
 int proginfo::getprogname(mainv names,cc *sp,int sl) noex {
-    	int		rs = SR_OK ;
+    	int		rs = SR_NOMSG ;
 	if ((pm = matstr(names,sp,sl)) >= 0) {
 	    pname = names[pm] ;
 	    rs = pm ;
@@ -567,6 +578,7 @@ int proginfo::getpn(mainv names) noex {
     	cint		pnlen = intconv(pnstr.size()) ;
 	int		rs = SR_NOMSG ;
 	cchar		*bp{} ; /* used-multiple */
+	DEBPRINTF("ent\n") ;
 	if (int bl = pnlen ; bl > 0) {
 	    bp = pnstr.c_str() ;
 	    rs = getprogname(names,bp,bl) ;
@@ -578,6 +590,7 @@ int proginfo::getpn(mainv names) noex {
 		}
 	    } /* end if (sfbasename) */
 	} /* end if */
+	DEBPRINTF("ret rs=%d\n",rs) ;
 	return rs ;
 } /* end method (proginfo::getpn) */
 
@@ -804,6 +817,9 @@ int proginfo::argoptchr(argmgr *amp,cchar *sp,int sl) noex {
 	    case 'v':
 		fl.verbose = true ;
 		break ;
+	    case 'y':
+		rs = argyounger(amp) ;
+		break ;
 	    default:
 		rs = SR_INVALID ;
 		break ;
@@ -872,8 +888,8 @@ int proginfo::argprofile(argmgr *amp) noex {
     	    sif		so(sp,rs,',') ;
 	    cchar	*cp ;
 	    for (int cl ; (rs >= 0) && ((cl = so(&cp)) > 0) ; ) {
-	        if (int si ; (si = matostr(profarr,2,cp,cl)) >= 0) {
-		    rs = argextload(si) ;
+	        if (int mi ; (mi = matostr(profarr,2,cp,cl)) >= 0) {
+		    rs = argextload(mi) ;
 		    c += rs ;
 		} else {
 		    strnul ps(cp,cl) ;
@@ -898,8 +914,7 @@ int proginfo::argextload(int pi) noex {
 	        if (rs < 0) break ;
 	    } /* end for */
 	    if (pi == profname_doc) break ;
-	    fallthrough ;
-	    /* FALLTHROUGH */
+	    falldown ;
 	case profname_code:
 	    for (cauto &sn : exts_code) {
 	        rs = sufadd(sn) ;
@@ -910,6 +925,19 @@ int proginfo::argextload(int pi) noex {
 	} /* end switch */
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::argextload) */
+
+int proginfo::argyounger(argmgr *amp) noex {
+    	int		rs = SR_OK ;
+	if (cc *sp ; (rs = amp->argval(&sp)) >= 0) {
+	    if (int v ; (rs = cfdect(sp,rs,&v)) >= 0) {
+		if (v > 0) {
+		    tinow = time(nullptr) ;
+		    intyoung = v ;
+		}
+	    } /* end if (cfdec) */
+	} /* end if (get-arg-value) */
+	return rs ;
+} /* end method (proginfo::argyounger) */
 
 int proginfo::argsuf(argmgr *amp) noex {
     	int		rs ;
@@ -1263,30 +1291,35 @@ int proginfo::procfile(custat *sbp,cchar *sp,int sl) noex {
 	if ((! fl.modes) || (rs = modehave(sbp)) > 0) {
 	    if ((! fl.suffix) || ((rs = sufhave(sp,sl)) > 0)) {
 	        if ((! fl.uniqfile) || ((rs = fileuniq(sbp)) > 0)) {
-	            switch (pm) {
-	            case progmode_files:
-		        rs = procfile_list(sbp,sp,sl) ;
-		        c = rs ;
-	                break ;
-	            case progmode_filelines:
-		        rs = procfile_lc(sbp,sp,sl) ;
-		        c = rs ;
-	                break ;
-	            case progmode_depmods:
-		        rs = procfile_mods(sbp,sp,sl) ;
-		        c = rs ;
-	                break ;
-	            case progmode_filesyner:
-		    case progmode_filelinker:
-			rs = procfile_tardirs(sbp,sp,sl) ;
+		    if ((intyoung == 0) || (rs = fileyounger(sbp)) > 0) {
+			rs = procfiler(sbp,sp,sl) ;
 			c = rs ;
-			break ;
-	            } /* end switch */
+		    } /* end if (fileyounger) */
 	        } /* end if (fileuniq) */
 	    } /* end if (sufhave) */
 	} /* end if (modehave) */
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::procfile) */
+
+int proginfo::procfiler(custat *sbp,cchar *sp,int sl) noex {
+    	int		rs = SR_OK ;
+        switch (pm) {
+        case progmode_files:
+            rs = procfile_list(sbp,sp,sl) ;
+            break ;
+        case progmode_filelines:
+            rs = procfile_lc(sbp,sp,sl) ;
+            break ;
+        case progmode_depmods:
+            rs = procfile_mods(sbp,sp,sl) ;
+            break ;
+        case progmode_filesyner:
+        case progmode_filelinker:
+            rs = procfile_tardirs(sbp,sp,sl) ;
+            break ;
+        } /* end switch */
+	return rs ;
+} /* end method (proginfo::procfiler) */
 
 int proginfo::procfile_list(custat *,cchar *sp,int sl) noex {
 	int		rs = SR_OK ;
@@ -1589,6 +1622,18 @@ int proginfo::fileuniq(custat *sbp)  noex {
 	}
 	return rs ;
 } /* end method (proginfo::fileuniq) */
+
+int proginfo::fileyounger(custat *sbp)  noex {
+    	int		rs = 1 ; /* default indicates YES */
+	if (intyoung) {
+	    custime timod = sbp->st_mtime ;
+	    rs = 0 ;		/* NO */
+	    if (double tdiff = difftime(tinow,timod) ; tdiff < intyoung) {
+		rs = 1 ;	/* YES */
+	    }
+	}
+	return rs ;
+} /* end method (proginfo::fileyounger) */
 
 int proginfo::modtypeout(cchar *cp,int cl)  noex {
     	constexpr uint	nouts = modout_overlast ;
