@@ -42,12 +42,17 @@ LIBS += -luo -lu
 
 DEPS_MAIN +=
 
-OBJ_CHARSET= charset_main.o
+OBJ0= charset_main.o
+OBJ1= strnul.o deb.o
+OBJ2=
+OBJ3=
+
+OBJ= obj0.o obj1.o
 
 
 INCDIRS=
 
-LIBDIRS= -L$(LIBDIR)
+LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -90,8 +95,8 @@ all:			$(ALL)
 	makemodule $(*)
 
 
-$(T).x:			$(OBJ_CHARSET)
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_CHARSET) $(LIBINFO)
+$(T).x:			obj.o
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) obj.o $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).x > $(T).nm
@@ -106,12 +111,54 @@ control:
 	(uname -n ; date) > Control
 
 
-charset_main.o:		charset_main.cc $(DEPS_MAIN)		$(INCS)
+obj0.o:			$(OBJ0)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
+obj1.o:			$(OBJ1)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj2.o:			$(OBJ2)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj3.o:			$(OBJ3)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj4.o:			$(OBJ4)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj5.o:			$(OBJ5)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj6.o:			$(OBJ6)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj7.o:			$(OBJ7)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+obja.o:			$(OBJA)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objb.o:			$(OBJB)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+obj.o:			$(OBJ)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+charset_main.o:		charset_main.cc $(DEPS_MAIN)		$(INCS)
 
 # FONCE		(libu)
 fonce.o:		fonce.dir
 fonce.dir:
 	makesubdir $@
+
+# DEB		(libuc)
+deb.o:			deb.dir
+deb.dir:
+	makesubdir $@
+
+strnul.o:		strnul.cc	strnul.hh
 
 
