@@ -55,7 +55,7 @@ OBJ2= modproc.o langx.o
 OBJ3= shortq.o ischarx.o
 OBJ4= six.o filelinker.o
 OBJ5= strfilter.o strx.o
-OBJ6= strnul.o
+OBJ6= strnul.o deb.o
 OBJ7=
 
 OBJA= obj0.o obj1.o obj2.o obj3.o
@@ -195,8 +195,8 @@ filerec.dir:
 	makesubdir $@
 
 # DEBUG		(libu)
-debug.o:		debug.dir
-debug.dir:
+deb.o:		deb.dir
+deb.dir:
 	makesubdir $@
 
 # STRFILER	(libuc)
