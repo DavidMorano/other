@@ -56,7 +56,7 @@ OBJUC_A= objuc00.o objuc01.o objuc02.o objuc03.o
 OBJUC_B= objuc04.o 
 #OBJUC_B= objuc04.o objuc05.o objuc06.o objuc07.o
 
-OBJ00_LUO= debug.o
+OBJ00_LUO= deb.o
 OBJ01_LUO= strn.o six.o mkx.o mnw.o
 OBJ02_LUO= sfx.o rmx.o snx.o snwcpy.o
 OBJ03_LUO= isx.o ismisc.o hasx.o 
@@ -636,8 +636,8 @@ strxcmp.dir:
 	makesubdir $@
 
 # DEBUG		(libu)
-debug.o:		debug.dir
-debug.dir:
+deb.o:		deb.dir
+deb.dir:
 	makesubdir $@
 
 # ADDRSET	(libuc)
