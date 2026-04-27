@@ -26,7 +26,7 @@
 
 EXTERNC_begin
 
-extern cchar	*getourenv(mainv,cchar *) noex ;
+extern cchar	*getourenv(con mainv,cchar *) noex ;
 
 EXTERNC_end
 
