@@ -48,7 +48,7 @@
 #include	<getportnum.h>
 #include	<getprogpath.h>
 #include	<getproto.h>
-#include	<getprotofamily.h>
+#include	<getpf.h>
 #include	<getpwd.h>
 #include	<getpwentry.h>
 #include	<getrand.h>
