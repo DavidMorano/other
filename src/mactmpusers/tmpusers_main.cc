@@ -85,19 +85,19 @@
 #include	<mapex.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>		/* |MAXPATHLEN| + |USERNAMELEN| */
-#include	<debprintf.h>
+#include	<deb.hh>
 
 #pragma		GCC dependency		"mod/umisc.ccm"
 #pragma		GCC dependency		"mod/usysconf.ccm"
 #pragma		GCC dependency		"mod/ulibvals.ccm"
 #pragma		GCC dependency		"mod/uconstants.ccm"
-#pragma		GCC dependency		"mod/debug.ccm"
+#pragma		GCC dependency		"mod/deb.ccm"
 
 import umisc ;				/* |snadd{x}(3u)| */
 import usysconf ;			/* |usysconfstr(3u)| */
 import ulibvals ;
 import uconstants ;			/* |varname(3u)| */
-import debug ;
+import deb ;
 
 /* local defines */
 
