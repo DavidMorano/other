@@ -76,7 +76,7 @@
 #include	<mapex.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>
-#include	<debprintf.h>		/* |DEBPRINTF| */
+#include	<deb.hh>		/* |DEBPRINTF| */
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/ulibvals.ccm"
@@ -90,7 +90,7 @@
 #pragma		GCC dependency		"mod/filerec.ccm"
 #pragma		GCC dependency		"mod/modproc.ccm"
 #pragma		GCC dependency		"mod/cmdutils.ccm"
-#pragma		GCC dependency		"mod/debug.ccm"
+#pragma		GCC dependency		"mod/deb.ccm"
 
 import libutil ;			/* |lenstr(3u)| + |getlenstr(3u)| */
 import ulibvals ;
@@ -101,7 +101,7 @@ import argmgr ;
 import fonce ;
 import sif ;
 import bitop ;
-import debug ;				/* |debprintf(3uc)| */
+import deb ;				/* |debprintf(3uc)| */
 import tardir ;
 import filerec ;
 import modproc ;
