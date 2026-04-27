@@ -1,6 +1,6 @@
-# MAKEFILE (machostid)
+# MAKEFILE (hostid)
 
-T= machostid
+T= hostid
 
 ALL= $(T).x
 
@@ -44,9 +44,7 @@ OBJ_HOSTID= hostid_main.o
 
 
 INCDIRS=
-
-LIBDIRS= -L$(LIBDIR)
-
+LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
