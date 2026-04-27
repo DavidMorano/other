@@ -37,7 +37,7 @@
 #include	<clanguage.h>
 #include	<usysbase.h>
 #include	<localmisc.h>
-#include	<dprintf.hh>		/* debugging */
+#include	<dprint.hh>		/* debugging */
 
 
 #define	BASE	16
