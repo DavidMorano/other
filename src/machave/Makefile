@@ -43,7 +43,7 @@ LIBS += -lf -luo -lu
 DEPS_MAIN += libutil.o umisc.o
 
 OBJ0= have_main.o
-OBJ1= strnul.o
+OBJ1= strnul.o deb.o
 OBJ2=
 OBJ3=
 
@@ -164,6 +164,10 @@ umisc.dir:
 
 ulibvals.o:		ulibvals.dir
 ulibvals.dir:
+	makesubdir $@
+
+deb.o:			deb.dir
+deb.dir:
 	makesubdir $@
 
 strnul.o:		strnul.cc	strnul.hh
