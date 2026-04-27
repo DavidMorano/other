@@ -82,15 +82,15 @@
 
 /* exported subroutines */
 
-cchar *getourenv(mainv envv,cchar *key) noex {
-	cchar		*vp = nullptr ;
+cchar *getourenv(con mainv envv,cchar *key) noex {
+	cchar		*vp = nullptr ; /* return-value */
 	if (envv && key && (key[0] != '\0')) {
 	    if (int ei ; (ei = matkeystr(envv,key,-1)) >= 0) {
 		if ((vp = strchr(envv[ei],'=')) != nullptr) {
 		    vp += 1 ;
 		}
 	    }
-	}
+	} /* end if */
 	return vp ;
 } 
 /* end subroutine (getourenv) */
