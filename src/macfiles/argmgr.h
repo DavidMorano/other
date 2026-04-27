@@ -46,7 +46,7 @@
 #include	<utypealiases.h>
 #include	<usysdefs.h>
 #include	<usysrets.h>
-#include	<debprintf.h>
+#include	<deb.hh>
 
 
 #define DEBPR(FMT, ...) ({						\
