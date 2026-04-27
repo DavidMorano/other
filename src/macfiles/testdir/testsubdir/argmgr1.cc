@@ -52,12 +52,12 @@ module ;
 #include	"argmgr.h"
 
 #pragma		GCC dependency	"mod/libutil.ccm"
-#pragma		GCC dependency	"mod/debug.ccm"
+#pragma		GCC dependency	"mod/deb.ccm"
 
 module argmgr ;
 
 import libutil ;
-import debug ;
+import deb ;
 
 /* local defines */
 
