@@ -1,5 +1,5 @@
 #!/usr/local/bin/ksh
-# MKTAGS
+# MKCTAGS
 
 # Notes:
 # We actually try to find a program named "uctags" rather than 
