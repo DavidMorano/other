@@ -32,7 +32,6 @@
 
 #include	<absfn.h>
 #include	<acceptpass.h>
-#include	<altzone.h>
 #include	<ascii.h>
 #include	<attachso.h>
 #include	<baops.h>
@@ -323,6 +322,8 @@
 #include	<xfile.h>
 
 
+#ifdef	COMMENT
+
 EXTERNC_begin
 
 /* system group */
@@ -382,7 +383,6 @@ extern int	uc_fgid(int) noex ;
 extern int	uc_seeko(int,off_t,int,off_t *) noex ;
 extern int	uc_seek(int,off_t,int) noex ;
 extern int	uc_tell(int,off_t *) noex ;
-extern int	uc_rewind(int) noex ;
 
 extern int	uc_copy(int,int,int) noex ;
 extern int	uc_peek(int,void *,int) noex ;
@@ -393,7 +393,6 @@ extern int	uc_nonblock(int,int) noex ;
 extern int	uc_msgdiscard(int) noex ;
 extern int	uc_setappend(int,int) noex ;
 extern int	uc_closeonexec(int,int) noex ;
-extern int	uc_close(int) noex ;
 
 extern int	uc_remove(cchar *) noex ;
 extern int	uc_link(cchar *,cchar *) noex ;
@@ -405,12 +404,7 @@ extern int	uc_access(cchar *,int) noex ;
 extern int	uc_pathconf(cchar *,int,long *) noex ;
 
 /* special */
-extern int	uc_safesleep(int) noex ;
 extern int	uc_ttyname(int,char *,int) noex ;
-extern int	uc_mkfifo(cchar *,mode_t) noex ;
-
-/* project related */
-extern int	uc_inproj(cchar *,cchar *,char *,int) noex ;
 
 /* POSIX® shared memory operations */
 extern int	uc_unlinkshm(cchar *) noex ;
@@ -419,6 +413,8 @@ extern int	uc_unlinkshm(cchar *) noex ;
 extern int	uc_unlinksem(cchar *) noex ;
 
 EXTERNC_end
+
+#endif /* COMMENT */
 
 
 #endif /* UCLIBSUBS_INCLUDE */
