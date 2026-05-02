@@ -79,7 +79,7 @@ struct ccfile : std::fstream {
 	destruct ccfile() {
 	    if (fl.fopened) dtor() ;
 	} ;
-private:
+    private:
 	int irewind() noex ;
 	int iclose() noex ;
 } ; /* end class (ccfile) */
