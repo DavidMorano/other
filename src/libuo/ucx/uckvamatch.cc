@@ -93,7 +93,7 @@ int uc_kvamatch(kva_t *kva,cchar *keyname,cchar **rpp) noex {
 	    rs = SR_INVALID ;
 	    if (keyname[0]) {
 	        if (syshas.userattr) {
-		    char	*kp = charp(keyname) ;
+		    char *kp = cast_const<charp>(keyname) ;
 	            if ((rp = kva_match(kva,kp)) != np) {
 	                rs = lenstr(rp) ;
 	            } else {
@@ -104,7 +104,9 @@ int uc_kvamatch(kva_t *kva,cchar *keyname,cchar **rpp) noex {
 	        } /* end if (have capability) */
 	    } /* end if (valid) */
 	} /* end if (non-null) */
-	if (rpp) *rpp = (rs >= 0) ? rp : nullptr ;
+	if (rpp) {
+	    *rpp = (rs >= 0) ? rp : nullptr ;
+	}
 	return rs ;
 }
 /* end subroutine (uc_kvamatch) */
