@@ -183,8 +183,8 @@ enum progmodes {
 } ; /* end enum (progmodes) */
 
 constexpr cpcchar	prognames[] = {
-	[progmode_charset]	= "charset",
-	[progmode_overlast]	= nullptr
+	"charset",
+	nullptr
 } ; /* end array (prognames) */
 
 constexpr MAPEX		mapexs[] = {
