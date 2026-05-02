@@ -342,17 +342,19 @@ enum progmodes {
 	progmode_filelines,
 	progmode_filesyner,
 	progmode_filelinker,
+	progmode_filemods,
 	progmode_depmods,
 	progmode_overlast
 } ; /* end enum (progmodes) */
 
 constexpr cpcchar	prognames[] = {
-	[progmode_files]	= "files",
-	[progmode_filelines]	= "filelines",
-	[progmode_filesyner]	= "filesyncer",
-	[progmode_filelinker]	= "filelinker",
-	[progmode_depmods]	= "depmods",
-	[progmode_overlast]	= nullptr
+	"files",
+	"filelines",
+	"filesyncer",
+	"filelinker",
+	"filemods",
+	"depmods",
+	nullptr
 } ; /* end array (prognames) */
 
 enum argopts {
@@ -370,17 +372,17 @@ enum argopts {
 } ; /* end enum (argopts) */
 
 constexpr cpcchar	argopts[] = {
-    	[argopt_debug]		= "DEBUG",
-    	[argopt_help]		= "HELP",
-    	[argopt_version]	= "VERSION",
-    	[argopt_pm]		= "pm",
-    	[argopt_sn]		= "sn",
-    	[argopt_ef]		= "ef",
-    	[argopt_of]		= "of",
-    	[argopt_af]		= "af",
-    	[argopt_ud]		= "ud",
-    	[argopt_ot]		= "ot",
-	[argopt_overlast]	= nullptr
+    	"DEBUG",
+    	"HELP",
+    	"VERSION",
+    	"pm",
+    	"sn",
+    	"ef",
+    	"of",
+    	"af",
+    	"ud",
+    	"ot",
+	nullptr
 } ; /* end array (argopts) */
 
 enum argoptlongs {
@@ -389,8 +391,8 @@ enum argoptlongs {
 } ; /* end enum (argoptlongs) */
 
 constexpr cpcchar	argoptlongs[] = {
-    	[argoptlong_version]	= "version",
-	[argoptlong_overlast]	= nullptr
+    	"version",
+	nullptr
 } ; /* end array (argoptlongs) */
 
 constexpr MAPEX		mapexs[] = {
@@ -621,6 +623,7 @@ int proginfo::iflistbegin() noex {
 	        fl.seens = true ;
 	    }
 	    break ;
+	case progmode_filemods:
 	case progmode_depmods:
 	    if ((rs = seen.start(nents)) >= 0) {
 	        fl.seens = true ;
@@ -1008,6 +1011,7 @@ int proginfo::preamble() noex {
                 } /* end if */
                 if (rs >= 0) {
                     switch (pm) {
+                    case progmode_filemods:
                     case progmode_depmods:
                         if (debuglevel) {
                             cint mi = fl.ot ;
@@ -1310,6 +1314,7 @@ int proginfo::procfiler(custat *sbp,cchar *sp,int sl) noex {
         case progmode_filelines:
             rs = procfile_lc(sbp,sp,sl) ;
             break ;
+        case progmode_filemods:
         case progmode_depmods:
             rs = procfile_mods(sbp,sp,sl) ;
             break ;
