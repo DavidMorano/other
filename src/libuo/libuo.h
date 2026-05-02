@@ -23,13 +23,12 @@
 #include	<usysdefs.h>
 #include	<usysrets.h>
 
+#include	<funcodes.h>
 #include	<ucclock.h>
 #include	<ucclustername.h>
 #include	<ucent.h>
 #include	<ucenum.h>
 #include	<ucfdmanip.h>
-#include	<ucfiledesc.h>
-#include	<funcodes.h>
 #include	<ucget.h>
 #include	<ucgethost.h>
 #include	<ucgetloadavg.h>
@@ -37,18 +36,13 @@
 #include	<ucgetrandom.h>
 #include	<ucgetx.h>
 #include	<ucinetconv.h>
-#include	<uclibmemalloc.h>
-#include	<uclibsubs.h>
-#include	<uclock.h>
 #include	<ucmem.h>
 #include	<ucmemla.h>
 #include	<ucopen.h>
 #include	<ucopeninfo.h>
-#include	<ucpeek.h>
-#include	<ucprochave.h>
-#include	<ucproctypes.h>
-#include	<ucprogdata.h>
-#include	<ucproguser.h>
+#include	<ucdesc.h>
+#include	<ucproc.h>
+#include	<ucdata.h>
 #include	<ucpts.h>
 #include	<ucpwcache.h>
 #include	<ucrand.h>
@@ -69,7 +63,6 @@
 
 #include	<absfn.h>
 #include	<acceptpass.h>
-#include	<altzone.h>
 #include	<ascii.h>
 #include	<attachso.h>
 #include	<baops.h>
@@ -265,6 +258,7 @@
 #include	<sysnoise.h>
 #include	<sysval.hh>
 
+#include	<kvsfile.h>
 #include	<tabcols.h>
 #include	<tabexpand.h>
 #include	<tcx.h>
