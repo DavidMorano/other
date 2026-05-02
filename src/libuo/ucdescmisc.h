@@ -1,1 +1,55 @@
-../../../system/src/libuc/ucdescmisc.h
+/* ucdescmisc HEADER */
+/* charset=ISO8859-1 */
+/* lang=C20 */
+
+/* additional UNIX® support */
+/* version %I% last-modified %G% */
+
+
+/* revision history:
+
+	= 1998-03-21, David A­D­ Morano
+	This module was originally written.
+
+	= 2017-08-01, David A­D­ Morano
+	Updated for lack of interfaces in Apple-Darwin.
+
+*/
+
+/* Copyright © 1998,2017 David A­D­ Morano.  All rights reserved. */
+
+/*******************************************************************************
+
+  	Names:
+	uc_seeko
+	uc_fcntl
+
+  	Description:
+	Additional (or supplemental) support for UNIX® limits.
+
+*******************************************************************************/
+
+#ifndef	UCDESCMISC_INCLUDE
+#define	UCDESCMISC_INCLUDE
+
+
+#include	<envstandards.h>	/* ordered first to configure */
+#include	<unistd.h>		/* types? */
+#include	<fcntl.h>		/* types? */
+#include	<stddef.h>		/* |nullptr_t| */
+#include	<stdlib.h>
+#include	<clanguage.h>
+#include	<usysbase.h>
+
+#include	<ucdescmiscers.h>
+#include	<uccloseonexec.h>
+#include	<ucftruncate.h>
+#include	<ucfminmod.h>
+#include	<ucfstat.h>
+#include	<ucnonblock.h>
+#include	<ucclose.h>
+
+
+#endif /* UCDESCMISC_INCLUDE */
+
+
