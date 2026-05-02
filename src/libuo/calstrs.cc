@@ -1,4 +1,4 @@
-/* calstrs SUPPORT */
+/* calstrs SUPPORT (Calendar-Strings) */
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
@@ -57,7 +57,7 @@
 
 /* exported variables */
 
-cpcchar	calstrs_months[] = {
+cpcchar		calstrs_months[] = {
 	"January", 
 	"February", 
 	"March", 
@@ -73,7 +73,7 @@ cpcchar	calstrs_months[] = {
 	nullptr
 } ; /* end array */
 
-cpcchar	calstrs_days[] = {
+cpcchar		calstrs_days[] = {
 	"Sunday", 
 	"Monday", 
 	"Tuesday", 
@@ -84,7 +84,7 @@ cpcchar	calstrs_days[] = {
 	nullptr
 } ; /* end array */
 
-cpcchar	calstrs_daytypes[] = {
+cpcchar		calstrs_daytypes[] = {
 	"First", 
 	"Second", 
 	"Third", 
