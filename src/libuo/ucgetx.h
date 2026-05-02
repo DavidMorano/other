@@ -30,6 +30,7 @@
 #include	<ucgetrandom.h>
 #include	<ucgethost.h>
 #include	<ucgetnetname.h>
+#include	<ucgetipnodeby.h>
 
 
 EXTERNC_begin
@@ -41,10 +42,6 @@ extern int	uc_getarchitecture(char *,int) noex ;
 extern int	uc_getnisdomain(char *,int) noex ;
 extern int	uc_getloadavg(double *,int) noex ;
 extern int	uc_gettimeofday(TIMEVAL *,void *) noex ;
-
-/* NETWORK IPNODE database */
-extern int	uc_getipnodebyname(HOSTENT **,cchar *,int,int) noex ;
-extern int	uc_getipnodebyaddr(HOSTENT **,cvoid *,int,int) noex ;
 
 extern int	uc_getcwd(char *,int) noex ;
 extern int	uc_getauid() noex ;
