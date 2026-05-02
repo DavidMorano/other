@@ -59,7 +59,6 @@ INCDIRS +=
 
 LIBDIRS += -L$(LIBDIR)
 
-
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
 
@@ -152,6 +151,10 @@ objb.o:			$(OBJB)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
+obj.o:			$(OBJ)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
 uclibmem.o:		uclibmem.cc	uclibmem.h	$(INCS)
 uctc.o:			uctc.cc		uctc.h		$(INCS)
 ucaddrinfo.o:		ucaddrinfo.cc	ucaddrinfo.h	$(INCS)
@@ -160,6 +163,7 @@ uctimeconv.o:		uctimeconv.cc	uctimeconv.h	$(INCS)
 ucstrftime.o:		ucstrftime.cc	ucstrftime.h	$(INCS)
 ucttyname.o:		ucttyname.cc	ucttyname.h	$(INCS)
 uckvamatch.o:		uckvamatch.cc	uckvamatch.h	$(INCS)
+uaddrinfo.o:		uaddrinfo.cc	uaddrifo.h	$(INCS)
 
 # obsoleted
 ucmemalloc.o:		ucmemalloc.cc	ucmemalloc.h	$(INCS)
