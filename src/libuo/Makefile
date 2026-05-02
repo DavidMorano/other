@@ -39,27 +39,34 @@ INCS= libuc.h
 MODS += libutil.ccm argmgr.ccm strfilter.ccm sif.ccm 
 MODS += tardir.ccm
 
-LIBS= -lu -lsecdb
+LIBS= -lu -lsecdb -lnss
 
 
 OBJUC00= ucsys.o ucent.o ucget.o ucenum.o
 OBJUC01= ucsig.o ucsysconf.o ucx.o 
-OBJUC02= ucstrto.o uclibmem.o ucids.o
+OBJUC02= ucstrto.o uclibmem.o
 OBJUC03= ucsupport.o ucstream.o
 
-OBJUC04= ucfileop.o ucsock.o
-OBJUC05= ucaddrinfo.o
-OBJUC06= 
-OBJUC07= 
+OBJUC04= ucdescbase.o ucdescmisc.o
+OBJUC05= ucdescread.o ucdescwrite.o
+OBJUC06= ucdescsock.o ucdesclock.o
+OBJUC07= ucgetx.o ucsysmisc.o
+
+OBJUC08= ucproc.o ucdata.o ucsysauxinfo.o
+OBJUC09= ucfileop.o
+OBJUC10= ucrand.o
+OBJUC11=
 
 OBJUC_A= objuc00.o objuc01.o objuc02.o objuc03.o
-OBJUC_B= objuc04.o 
-#OBJUC_B= objuc04.o objuc05.o objuc06.o objuc07.o
+OBJUC_B= objuc04.o objuc05.o objuc06.o objuc07.o
+OBJUC_C= objuc08.o objuc09.o objuc10.o
+
+OBJUC= objuc_a.o objuc_b.o objuc_c.o
 
 OBJ00_LUO= deb.o
 OBJ01_LUO= strn.o six.o mkx.o mnw.o
 OBJ02_LUO= sfx.o rmx.o snx.o snwcpy.o
-OBJ03_LUO= isx.o ismisc.o hasx.o 
+OBJ03_LUO= isx.o ismisc.o isfiledesc.o hasx.o 
 
 OBJ04_LUO= sif.o ctx.o cfx.o
 OBJ05_LUO= strcpyx.o strdcpy.o strx.o 
@@ -93,8 +100,8 @@ OBJ27_LUO= wswcpyx.o
 
 OBJ28_LUO= bufsize.o openx.o
 OBJ29_LUO= sysval.o path.o termx.o
-OBJ30_LUO= vstr.o xfile.o
-OBJ31_LUO= randlc.o pow.o calstrs.o
+OBJ30_LUO= vstr.o xfile.o absfn.o
+OBJ31_LUO= randlc.o pow.o calstrs.o digval.o
 
 OBJ32_LUO= realname.o nodedb.o
 OBJ33_LUO= ema.o tmpx.o getxname.o
@@ -111,8 +118,8 @@ OBJ41_LUO= envx.o strpack.o strobj.o
 OBJ42_LUO= chrono.o timestr.o lockfile.o
 OBJ43_LUO= hostinfo.o hostent.o clusterdb.o
 
-OBJ44_LUO=
-OBJ45_LUO=
+OBJ44_LUO= kvsfile.o memtrack.o randomvar.o
+OBJ45_LUO= varray.o
 OBJ46_LUO=
 OBJ47_LUO=
 
@@ -127,14 +134,15 @@ OBJH_LUO= obj28_luo.o obj29_luo.o obj30_luo.o obj31_luo.o
 OBJI_LUO= obj32_luo.o obj33_luo.o obj34_luo.o obj35_luo.o
 OBJJ_LUO= obj36_luo.o obj37_luo.o obj38_luo.o obj39_luo.o
 OBJK_LUO= obj40_luo.o obj41_luo.o obj42_luo.o obj43_luo.o
-OBJL_LUO= obj44_luo.o obj45_luo.o obj46_luo.o obj47_luo.o
-OBJM_LUO=
+#OBJL_LUO= obj44_luo.o obj45_luo.o obj46_luo.o obj47_luo.o
+OBJL_LUO= obj44_luo.o obj45_luo.o
+OBJM_MUO=
 
 OBJ_LUO += obja_luo.o objb_luo.o objc_luo.o objd_luo.o
 OBJ_LUO += obje_luo.o objf_luo.o objg_luo.o objh_luo.o
-OBJ_LUO += obji_luo.o objj_luo.o objk_luo.o 
+OBJ_LUO += obji_luo.o objj_luo.o objk_luo.o objl_luo.o
 
-OBJ += objuc_a.o objuc_b.o 
+OBJ += objuc.o
 OBJ += obj_luo.o
 
 
@@ -241,11 +249,30 @@ objuc07.o:		$(OBJUC07)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
+objuc08.o:		$(OBJUC08)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objuc09.o:		$(OBJUC09)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objuc10.o:		$(OBJUC10)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objuc11.o:		$(OBJUC11)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
 
 objuc_a.o:		$(OBJUC_A)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 objuc_b.o:		$(OBJUC_B)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objuc_c.o:		$(OBJUC_C)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+objuc.o:		$(OBJUC)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
@@ -389,6 +416,19 @@ obj43_luo.o:		$(OBJ43_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
+obj44_luo.o:		$(OBJ44_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj45_luo.o:		$(OBJ45_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj46_luo.o:		$(OBJ46_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj47_luo.o:		$(OBJ47_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
 obja_luo.o:		$(OBJA_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
@@ -450,6 +490,10 @@ isx.dir:
 
 ismisc.o:		ismisc.dir
 ismisc.dir:
+	makesubdir $@
+
+isfiledesc.o:		isfiledesc.dir
+isfiledesc.dir:
 	makesubdir $@
 
 mkx.o:			mkx.dir
@@ -550,6 +594,8 @@ nleadx.o:		nleadx.dir
 nleadx.dir:
 	makesubdir $@
 
+ucsysmisc.o:		ucsysmisc.cc	ucsysmisc.h		$(INCS)
+
 # UCSUPPORT	(libuc)
 ucsupport.o:		ucsupport.dir
 ucsupport.dir:
@@ -573,6 +619,11 @@ ucget.dir:
 # UCENUM		(libuc)
 ucenum.o:		ucenum.dir
 ucenum.dir:
+	makesubdir $@
+
+# UCGETX		(libuc)
+ucgetx.o:		ucgetx.dir
+ucgetx.dir:
 	makesubdir $@
 
 # UCSIG		(libuc)
@@ -600,9 +651,14 @@ ucmem.o:		ucmem.dir
 ucmem.dir:
 	makesubdir $@
 
-# UCIDS		(libuc)
-ucids.o:		ucids.dir
-ucids.dir:
+# UCPROC	(libuc)
+ucproc.o:		ucproc.dir
+ucproc.dir:
+	makesubdir $@
+
+# UCDATA	(libuc)
+ucdata.o:		ucdata.dir
+ucdata.dir:
 	makesubdir $@
 
 # UCFILEOP
@@ -610,9 +666,31 @@ ucfileop.o:		ucfileop.dir
 ucfileop.dir:
 	makesubdir $@
 
-# UCSOCK
-ucsock.o:		ucsock.dir
-ucsock.dir:
+ucdescbase.o:		ucdescbase.cc	ucdescbase.hh		$(INCS)
+
+# UCDESCREAD
+ucdescread.o:		ucdescread.dir
+ucdescread.dir:
+	makesubdir $@
+
+# UCDESCWRITE
+ucdescwrite.o:		ucdescwrite.dir
+ucdescwrite.dir:
+	makesubdir $@
+
+# UCESCSOCK
+ucdescsock.o:		ucdescsock.dir
+ucdescsock.dir:
+	makesubdir $@
+
+# UCESCMISC
+ucdescmisc.o:		ucdescmisc.dir
+ucdescmisc.dir:
+	makesubdir $@
+
+# UCESCLOCK
+ucdesclock.o:		ucdesclock.dir
+ucdesclock.dir:
 	makesubdir $@
 
 # UCX		(libuc)
@@ -636,7 +714,7 @@ strxcmp.dir:
 	makesubdir $@
 
 # DEBUG		(libu)
-deb.o:		deb.dir
+deb.o:			deb.dir
 deb.dir:
 	makesubdir $@
 
@@ -676,7 +754,7 @@ sif.dir:
 	makesubdir $@
 
 # STRFILTER	(libuc)
-strfilter.o:		strfilter.dir sif.o
+strfilter.o:		strfilter.dir	sif.o
 strfilter.dir:
 	makesubdir $@
 
@@ -795,6 +873,11 @@ fmtstr.o:		fmtstr.dir
 fmtstr.dir:
 	makesubdir $@
 
+# GETXX
+getxx.o:		getxx.dir
+getxx.dir:
+	makesubdir $@
+
 # GETX
 getx.o:			getx.dir
 getx.dir:
@@ -823,11 +906,6 @@ caches.dir:
 # FILEREAD
 filex.o:		filex.dir
 filex.dir:
-	makesubdir $@
-
-# GETXX
-getxx.o:		getxx.dir
-getxx.dir:
 	makesubdir $@
 
 # BUFOS
@@ -879,6 +957,11 @@ envx.o:			envx.dir
 envx.dir:
 	makesubdir $@
 
+# DIAL
+dial.o:			dial.dir
+dial.dir:
+	makesubdir $@
+
 # Objects
 storebuf.o:		storebuf.cc	storebuf.h		$(INCS)
 storeitem.o:		storeitem.cc	storeitem.h		$(INCS)
@@ -898,13 +981,16 @@ posname.o:		posname.cc	posname.h		$(INCS)
 hostinfo.o:		hostinfo.cc	hostinfo.h		$(INCS)
 hostent.o:		hostent.cc	hostent.h		$(INCS)
 clusterdb.o:		clusterdb.cc	clusterdb.h		$(INCS)
+absfn.o:		absfn.cc	absfn.h			$(INCS)
+kvsfile.o:		kvsfile.cc	kvsfile.h		$(INCS)
+varray.o:		varray.cc	varray.h		$(INCS)
 
 # GROUPS
 uinfo.o:		uinfo.cc	uinfo.h			$(INCS)
-calstrs.o:		calstrs.cc	calstrs.h
-char.o:			char.cc		char.h
-toxc.o:			toxc.cc		toxc.h
-inetconv.o:		inetconv.cc	inetconv.h
+calstrs.o:		calstrs.cc	calstrs.h		$(INCS)
+char.o:			char.cc		char.h			$(INCS)
+toxc.o:			toxc.cc		toxc.h			$(INCS)
+inetconv.o:		inetconv.cc	inetconv.h		$(INCS)
 bitrotate.o:		bitrotate.cc	bitrotate.h		$(INCS)
 stdorder.o:		stdorder.cc	stdorder.h		$(ICNS)
 
@@ -922,10 +1008,11 @@ checkbase.o:		checkbase.cc	checkbase.h		$(INCS)
 strlibval.o:		strlibval.cc	strlibval.hh		$(INCS)
 matparam.o:		matparam.cc	matparam.h		$(INCS)
 sysdbfn.o:		sysdbfn.cc	sysdbfn.h		$(INCS)
-sysdbfiles.o:		sysdbfiles.c	sysdbfiles.h		$(INCS)
+sysdbfiles.o:		sysdbfiles.cc	sysdbfiles.h		$(INCS)
 mallocstuff.o:		mallocstuff.cc	mallocstuff.h		$(INCS)
 xfile.o:		xfile.cc	xfile.h			$(INCS)
 sockaddress.o:		sockaddress.cc	sockaddress.h		$(INCS)
 lockfile.o:		lockfile.cc	lockfile.h		$(INCS)
+digval.o:		digval.cc	digval.h		$(INCS)
 
 
