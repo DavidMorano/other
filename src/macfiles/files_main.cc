@@ -77,6 +77,7 @@
 #include	<exitcodes.h>
 #include	<localmisc.h>
 #include	<deb.hh>		/* |DEBPRINTF| */
+#include	<dprint.hh>		/* |DPRINT| */
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/ulibvals.ccm"
@@ -450,12 +451,27 @@ enum profnames {
 } ; /* end enum (profnames) */
 
 constexpr cpcchar	profarr[] = {
-	[profname_code]		= "code",
-	[profname_src]		= "src",
-	[profname_dev]		= "dev",
-	[profname_doc]		= "doc",
-	[profname_overlast]	= nullptr
+	"code",
+	"src",
+	"dev",
+	"doc",
+	nullptr
 } ; /* end array (profarr) */
+
+constexpr cpcchar	exts_src[] = {
+	"ee",
+} ; /* end array */
+
+constexpr cpcchar	exts_doc[] = {
+	"txt",
+	"man",
+	"mm",
+	"ms",
+	"md",
+	"mak",
+	"map",
+	"hlp"
+} ; /* end array */
 
 constexpr cpcchar	exts_code[] = {
     	"c",
@@ -469,16 +485,6 @@ constexpr cpcchar	exts_code[] = {
 	"ksh"
 } ; /* end array */
 
-constexpr cpcchar	exts_doc[] = {
-	"txt",
-	"man",
-	"mm",
-	"ms",
-	"md",
-	"mak",
-	"map",
-	"hlp"
-} ; /* end array */
 
 
 /* exported variables */
@@ -821,6 +827,7 @@ int proginfo::argoptchr(argmgr *amp,cchar *sp,int sl) noex {
 		fl.verbose = true ;
 		break ;
 	    case 'y':
+		DPRINTF("younger\n") ;
 		rs = argyounger(amp) ;
 		break ;
 	    default:
@@ -908,9 +915,15 @@ int proginfo::argextload(int pi) noex {
     	int		rs = SR_OK ;
 	int		c = 0 ; /* return-value */
 	switch (pi) {
+	case profname_src:
+	    for (cauto &sn : exts_src) {
+	        rs = sufadd(sn) ;
+	        c += rs ;
+	        if (rs < 0) break ;
+	    } /* end for */
+	    falldown ;
 	case profname_doc:
 	case profname_dev:
-	case profname_src:
 	    for (cauto &sn : exts_doc) {
 	        rs = sufadd(sn) ;
 	        c += rs ;
@@ -932,7 +945,9 @@ int proginfo::argextload(int pi) noex {
 int proginfo::argyounger(argmgr *amp) noex {
     	int		rs = SR_OK ;
 	if (cc *sp ; (rs = amp->argval(&sp)) >= 0) {
+	    DPRINTF("got sp=>%s<\n",sp) ;
 	    if (int v ; (rs = cfdect(sp,rs,&v)) >= 0) {
+	        DPRINTF("got v=>%d<\n",v) ;
 		if (v > 0) {
 		    tinow = time(nullptr) ;
 		    intyoung = v ;
