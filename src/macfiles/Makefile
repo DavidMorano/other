@@ -199,6 +199,8 @@ deb.o:		deb.dir
 deb.dir:
 	makesubdir $@
 
+usupport_cfdect.o:	usupport_cfdect.cc	usupport_cfdect.hh
+
 # STRFILER	(libuc)
 strfilter.o:		strfilter.dir
 strfilter.dir:
