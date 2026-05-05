@@ -33,7 +33,6 @@
 #include	<getprojname.h>
 #include	<getrealname.h>
 #include	<getsysname.h>
-#include	<gettmpdname.h>
 #include	<getusername.h>
 #include	<getpwx.h>
 
