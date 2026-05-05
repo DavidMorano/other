@@ -30,7 +30,6 @@
 #include	<getchostname.h>
 #include	<getdefzdata.h>
 #include	<geteaddrinfo.h>
-#include	<getenver.h>
 #include	<getev.h>
 #include	<getfdfile.h>
 #include	<gethz.h>
@@ -63,6 +62,9 @@
 #include	<getxid.h>
 #include	<getopendial.h>
 #include	<getseed.h>
+
+#include	<getenver.h>
+#include	<gettmpdir.h>
 
 
 #endif /* GETX_INCLUDE */
