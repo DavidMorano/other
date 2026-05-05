@@ -8,7 +8,7 @@
 
 /* revision history:
 
-	= 2003-11-04, David A­D­ Morano
+	= 1998-11-01, David A­D­ Morano
 	This code is generalized from one of my old programs.  Why
 	the need for this?  Because with the introduction of loadable
 	commands in Korn Shell (KSH), we also needed a local source
@@ -17,7 +17,7 @@
 
 */
 
-/* Copyright © 2003 David A­D­ Morano.  All rights reserved. */
+/* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
 
 /*******************************************************************************
 
