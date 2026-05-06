@@ -35,18 +35,18 @@
 
 EXTERNC_begin
 
-extern int	uc_getprojdef	(PROJECT *,char *,int,cchar *) noex ;
-extern int	uc_gethostid	(ulong *) noex ;
-extern int	uc_gethostname	(char *,int) noex ;
-extern int	uc_getarch	(char *,int) noex ;
-extern int	uc_getnisdomain	(char *,int) noex ;
-extern int	uc_getloadavg	(double *,int) noex ;
-extern int	uc_gettimeofday	(TIMEVAL *,void *) noex ;
-extern int	uc_getcwd	(char *,int) noex ;
-extern int	uc_getauid	() noex ;
-extern int	uc_getpriority	(int,id_t,int *) noex ;
-extern int	uc_getpuid	(pid_t) noex ;
-extern int	uc_getrusage	(int,RUSAGE *) noex ;
+extern int	uc_getprojdef	(PROJECT *,char *,int,cchar *)	noex ;
+extern int	uc_gethostid	(ulong *)			noex ;
+extern int	uc_gethostname	(char *,int)			noex ;
+extern int	uc_getarch	(char *,int)			noex ;
+extern int	uc_getnisdomain	(char *,int)			noex ;
+extern int	uc_getloadavg	(double *,int)			noex ;
+extern int	uc_gettimeofday	(TIMEVAL *,void *)		noex ;
+extern int	uc_getcwd	(char *,int)			noex ;
+extern int	uc_getauid	()				noex ;
+extern int	uc_getpriority	(int,id_t,int *)		noex ;
+extern int	uc_getpuid	(pid_t)				noex ;
+extern int	uc_getrusage	(int,RUSAGE *)			noex ;
 
 /* NETWORK SOCKADDR combined database */
 extern int	uc_getnameinfo(CSOCKADDR *,int,char *,int,char *,int,int) noex ;
