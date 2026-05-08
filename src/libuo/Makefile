@@ -109,9 +109,9 @@ OBJ34_LUO= sbuf.o buffer.o
 OBJ35_LUO= storebuf.o storeitem.o
 
 OBJ36_LUO= fmtflag.o fmtstr.o sysdbfiles.o
-OBJ37_LUO= getx.o sysdbfn.o strlibval.o
-OBJ38_LUO= utmpxx.o uinfo.o caches.o
-OBJ39_LUO= filex.o getxx.o bufos.o bufslide.o optval.o
+OBJ37_LUO= getx.o gethe.o sysdbfn.o strlibval.o
+OBJ38_LUO= utmpxx.o uinfo.o caches.o optval.o
+OBJ39_LUO= filex.o getxx.o bufos.o bufslide.o 
 
 OBJ40_LUO= dirs.o dirseen.o sockaddress.o 
 OBJ41_LUO= envx.o strpack.o strobj.o
@@ -119,7 +119,7 @@ OBJ42_LUO= chrono.o timestr.o lockfile.o
 OBJ43_LUO= hostinfo.o hostent.o clusterdb.o
 
 OBJ44_LUO= kvsfile.o memtrack.o randomvar.o
-OBJ45_LUO= varray.o
+OBJ45_LUO= varray.o nonpath.o
 OBJ46_LUO=
 OBJ47_LUO=
 
@@ -952,6 +952,11 @@ timestr.o:		timestr.dir
 timestr.dir:
 	makesubdir $@
 
+# GETHE
+gethe.o:		gethe.dir
+gethe.dir:
+	makesubdir $@
+
 # ENVX
 envx.o:			envx.dir
 envx.dir:
@@ -1014,5 +1019,6 @@ xfile.o:		xfile.cc	xfile.h			$(INCS)
 sockaddress.o:		sockaddress.cc	sockaddress.h		$(INCS)
 lockfile.o:		lockfile.cc	lockfile.h		$(INCS)
 digval.o:		digval.cc	digval.h		$(INCS)
+nonpath.o:		nonpath.cc	nonpath.h		$(INCS)
 
 
