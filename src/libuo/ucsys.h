@@ -42,8 +42,7 @@
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<clanguage.h>
 #include	<usysbase.h>
-
-#include	<ucsys_sup.h>
+#include	<ucsys_sup.hh>
 
 #include	<spwd.h>		/* <- special */
 #include	<userattr.h>		/* <- special */
