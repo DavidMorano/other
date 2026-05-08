@@ -1511,13 +1511,13 @@ int proginfo::modeadd(cchar *sp,int sl) noex {
 	cchar		*cp ;
 	if_constexpr (f_debug) {
 	    strnul s(sp,sl) ;
-	    DEBPRINTF("ent s=>%s<\n",ccp(s)) ;
+	    DEBPRINTF("ent sl=%d s=>%s<\n",sl,ccp(s)) ;
 	}
 	for (int cl ; (rs >= 0) && ((cl = so(&cp)) > 0) ; ) {
 	    int	dt = -1 ;
 	    if (f_debug && debon) {
 		strnul sm(cp,cl) ;
-	        DEBPRINTF("cl=%d mode=>%s<\n",cl,ccp(sm)) ;
+	        DEBPRINTF("piece cl=%d cp=>%s<\n",cl,ccp(sm)) ;
 	    }
 	    switch (cint ch = mkchar(*cp) ; ch) {
 	    case 'f':
