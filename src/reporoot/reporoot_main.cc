@@ -2,7 +2,7 @@
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
-/* filter filenames */
+/* find and print the repository (repo) root */
 /* version %I% last-modified %G% */
 
 
@@ -53,22 +53,22 @@
 #include	<string_view>
 #include	<vector>
 #include	<iostream>
-#include	<usystem.h>
+#include	<clanguage.h>
+#include	<usysbase.h>
+#include	<usyscalls.h>
 #include	<strnul.hh>
-#include	<sfx.h>
-#include	<rmx.h>
-#include	<matstr.h>
-#include	<isnot.h>
 #include	<mapex.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/umisc.ccm"
+#pragma		GCC dependency		"mod/ureserve.ccm"
 #pragma		GCC dependency		"mod/fonce.ccm"
 
 import ulibvals ;
 import umisc ;
+import ureserve ;			/* |sfdirname(3u)| */
 import fonce ;
 
 /* local defines */
@@ -80,6 +80,8 @@ import fonce ;
 
 using std::string_view ;		/* type */
 using std::istream ;			/* type */
+using libu::matstr ;			/* subroutine */
+using libu::rmchr ;			/* subroutine */
 using std::cout ;			/* variable */
 using std::nothrow ;			/* constant */
 
@@ -104,7 +106,7 @@ namespace {
 	proginfomem_flistbegin,
 	proginfomem_flistend,
 	proginfomem_overlast
-    } ;
+    } ; /* end enum */
     struct proginfo ;
     struct proginfo_co {
 	proginfo	*op = nullptr ;
@@ -140,7 +142,7 @@ namespace {
 	    flistend	(this,proginfomem_flistend) ;
 	} ; /* end ctor */
 	proginfo() noex : proginfo(0,nullptr,nullptr) { } ;
-	void operator () (int c,mainv a,mainv e) noex {
+	void operator () (int c,con mainv a,con mainv e) noex {
 	    argc = c ;
 	    argv = a ;
 	    envv = e ;
@@ -170,19 +172,19 @@ enum progmodes {
 	progmode_reporoot,
 	progmode_reponame,
 	progmode_overlast
-} ;
+} ; /* end enum */
 
 constexpr cpcchar	prognames[] = {
-	[progmode_reporoot]	= "reporoot",
-	[progmode_reponame]	= "reponame",
-	[progmode_overlast]	= nullptr
-} ;
+	"reporoot",
+	"reponame",
+	nullptr
+} ; /* end array */
 
 constexpr cpcchar	repomarks[] = {
     	".git",
 	".repo",
 	".reporoot"
-} ;
+} ; /* end array */
 
 constexpr MAPEX		mapexs[] = {
 	{ SR_NOENT,	EX_NOUSER },
@@ -232,7 +234,7 @@ int main(int argc,con mainv argv,con mainv envv) {
 	    rs1 = pi.finish ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (proginfo) */
-	if ((rs < 0) && (ex == EX_OK)) {
+	if ((ex == EX_OK) && (rs < 0)) {
 	    ex = mapex(mapexs,rs) ;
 	}
 	return ex ;
@@ -248,13 +250,11 @@ int proginfo::istart() noex {
 	    rs = 0 ;
 	} /* end if (proginfo::getpn) */
 	return rs ;
-}
-/* end method (proginfo::istart) */
+} /* end method (proginfo::istart) */
 
 int proginfo::ifinish() noex {
 	return SR_OK ;
-}
-/* end method (proginfo::ifinish) */
+} /* end method (proginfo::ifinish) */
 
 int proginfo::getpn(mainv names) noex {
 	int		rs = SR_FAULT ;
@@ -274,18 +274,15 @@ int proginfo::getpn(mainv names) noex {
 	    } /* end if (have first argument) */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo::getpn) */
+} /* end method (proginfo::getpn) */
 
 int proginfo::iflistbegin() noex {
 	return seen.start(nents) ;
-}
-/* end method (proginfo::iflistbegin) */
+} /* end method (proginfo::iflistbegin) */
 
 int proginfo::iflistend() noex {
 	return seen.finish ;
-}
-/* end method (proginfo::iflistend) */
+} /* end method (proginfo::iflistend) */
 
 int proginfo::process() noex {
     	cnothrow	nt{} ;
@@ -308,8 +305,7 @@ int proginfo::process() noex {
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (process_pm) */
 	return (rs >= 0) ? c : rs ;
-}
-/* end subroutine (proginfo::process) */
+} /* end subroutine (proginfo::process) */
 
 int proginfo::process_loop(char *pbuf,int plen,int pl) noex {
     	int		rs = SR_OK ;
@@ -327,8 +323,7 @@ int proginfo::process_loop(char *pbuf,int plen,int pl) noex {
 	    } /* end if */
 	} /* end while */
 	return (rs >= 0) ? f : rs ;
-}
-/* end subroutine (proginfo::process_loop) */
+} /* end subroutine (proginfo::process_loop) */
 
 int proginfo::process_check(char *pbuf,int plen,int pl) noex {
     	int		rs = SR_OK ;
@@ -345,8 +340,7 @@ int proginfo::process_check(char *pbuf,int plen,int pl) noex {
 	} /* end for */
 	pbuf[pl] = '\0' ; /* restore original */
 	return (rs >= 0) ? f : rs ;
-}
-/* end subroutine (proginfo::process_check) */
+} /* end subroutine (proginfo::process_check) */
 
 int proginfo::process_print(cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
@@ -368,8 +362,7 @@ int proginfo::process_print(cchar *sp,int sl) noex {
 	    break ;
 	} /* end switch */
 	return rs ;
-}
-/* end subroutine (proginfo::process_print) */
+} /* end subroutine (proginfo::process_print) */
 
 int proginfo::process_pmbegin() noex {
 	int		rs = SR_OK ;
@@ -388,8 +381,7 @@ int proginfo::process_pmbegin() noex {
 	    break ;
 	} /* end switch */
 	return rs ;
-}
-/* end subroutine (proginfo::process_pmbegin) */
+} /* end subroutine (proginfo::process_pmbegin) */
 
 int proginfo::process_pmend() noex {
 	int		rs = SR_OK ;
@@ -404,8 +396,7 @@ int proginfo::process_pmend() noex {
 	    break ;
 	} /* end switch */
 	return rs ;
-}
-/* end subroutine (proginfo::process_pmend) */
+} /* end subroutine (proginfo::process_pmend) */
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
@@ -426,7 +417,6 @@ int proginfo_co::operator () (int) noex {
 	    } /* end switch */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo_co::operator) */
+} /* end method (proginfo_co::operator) */
 
 
