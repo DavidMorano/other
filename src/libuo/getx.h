@@ -25,7 +25,7 @@
 
 #include	<getaddr.h>
 #include	<getaf.h>
-#include	<getarchitecture.h>
+#include	<getarch.h>
 #include	<getbufsize.h>
 #include	<getchostname.h>
 #include	<getdefzdata.h>
