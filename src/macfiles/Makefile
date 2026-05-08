@@ -47,7 +47,7 @@ DEPS_MAIN += cmdutils.o strfilter.o
 DEPS_MAIN += argmgr.o filerec.o 
 DEPS_MAIN += ureserve.o fonce.o
 DEPS_MAIN += strfilter.o tardir.o
-DEPS_MAIN += langx.o modproc.o
+DEPS_MAIN += langx.o modproc.o sif.o
 
 OBJ0= files_main.o cmdutils.o
 OBJ1= argmgr.o filerec.o tardir.o
@@ -56,10 +56,10 @@ OBJ3= shortq.o ischarx.o
 OBJ4= six.o filelinker.o
 OBJ5= strfilter.o strx.o
 OBJ6= strnul.o deb.o
-OBJ7=
+OBJ7= sif.o
 
 OBJA= obj0.o obj1.o obj2.o obj3.o
-OBJB= obj4.o obj5.o obj6.o
+OBJB= obj4.o obj5.o obj6.o obj7.o
 
 OBJ= obja.o objb.o
 
