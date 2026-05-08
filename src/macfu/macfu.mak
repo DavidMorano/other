@@ -35,15 +35,18 @@ DEFS +=
 
 INCS +=
 
-MODS += fonce.ccm ulibvals.ccm
+MODS +=
 
-LIBS += -luo -lu
+LIBS += -lf -luo -lu
+
+
+DEPS_MAIN= fonce.o
+
+OBJ_MACFU= fu_main.o
 
 
 INCDIRS= -I$(INCDIR)
-
 LIBDIRS= -L$(LIBDIR)
-
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -56,12 +59,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-DEPS_MAIN= fonce.o ulibvals.o
-
-OBJ_MACFU= fu_main.o
-
-
-.SUFFIXES:		.hh .ii .ccm
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).x
@@ -74,6 +72,9 @@ all:			$(ALL)
 
 .cc.ii:
 	$(CPP) $(CPPFLAGS) $< > $(*).ii
+
+.ccm.iim:
+	$(CPP) $(CPPFLAGS) $< > $(*).iim
 
 .c.s:
 	$(CC) -S $(CPPFLAGS) $(CFLAGS) $<
@@ -112,13 +113,9 @@ install:		$(T).x
 
 fu_main.o:		fu_main.cc $(DEPS_MAIN) 		$(INCS)
 
-fonce.ccm:
-	makemodcurrent $@
-
-ulibvals.ccm:
-	makemodcurrent $@
-
-fonce.o:		fonce.ccm
-ulibvals.o:		ulibvals.ccm
+# FONCE		(libu)
+fonce.o:		fonce.dir
+fonce.dir:
+	makesubdir $@
 
 
