@@ -37,17 +37,17 @@ INCS +=
 
 MODS +=
 
-LIBS += -luo -lu
+LIBS += -lf -lu
 
 
 DEPS_MAIN += ulibvals.o umisc.o
 
 OBJ0= reporoot_main.o
 OBJ1= pathxx.o storebufxx.o
-OBJ2= 
+OBJ2= mapex.o
 OBJ3=
 
-OBJA= obj0.o obj1.o
+OBJA= obj0.o obj1.o obj2.o
 
 OBJ_MAIN= obja.o
 
@@ -154,6 +154,7 @@ objb.o:			$(OBJB)
 reporoot_main.o:	reporoot_main.cc $(DEPS_MAIN) 		$(INCS)
 
 storebufxx.o:		storebufxx.cc	storebuf.h
+mapex.o:		mapex.cc	mapex.h
 
 ulibvals.o:		ulibvals.dir
 ulibvals.dir:
