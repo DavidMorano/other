@@ -123,10 +123,6 @@ namespace {
 
 /* forward references */
 
-local inline int getstd(cchar *fn) noex {
-        return matstr(stdfname,fn,-1) ;
-} /* end subroutine (getstd) */
-
 local ios_base::openmode mkmode(cchar *) noex ;
 
 local bool	isnomode(omode) noex ;
@@ -192,19 +188,10 @@ int opener::getmode(cchar *ofs) noex {
 	return rs ;
 } /* end method (opener::getmode) */
 
-local void stdprint() noex {
-        if_constexpr (f_debug) {
-	    for (int i = 0 ; stdfname[i] ; i += 1) {
-		DPRINTF("stdfile %d %s\n",i,stdfname[i]) ;
-	    } /* end for */
-	} /* end if */
-} /* end subroutine (stdprint) */
-
 int opener::specials() noex {
     	int		rs = SR_OK ;
 	DPRINTF("ent fn=%s\n",fn) ;
-	stdprint() ;
-        if (cint fni = getstd(fn) ; fni >= 0) ylikely {
+        if (cint fni = getstdfname(fn) ; fni >= 0) ylikely {
 	    rs = 1 ;
             fn = dev.name[fni] ;
 	    DPRINTF("getstd fni=%d fn=%s\n",fni,fn) ;
