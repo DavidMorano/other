@@ -270,7 +270,6 @@
 #include	<ucinetconv.h>
 #include	<uckvamatch.h>
 #include	<uclibmem.h>
-#include	<uclock.h>
 #include	<ucmem.h>
 #include	<ucmemla.h>
 #include	<ucontext.h>
