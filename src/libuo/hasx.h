@@ -36,6 +36,7 @@
 #include	<hasnot.h>
 #include	<hasonly.h>
 #include	<hasourmjd.h>
+#include	<haspath.h>
 #include	<hasprint.h>
 #include	<hasmisc.h>
 #include	<hasuniq.h>
