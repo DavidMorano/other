@@ -37,10 +37,15 @@ INCS +=
 
 MODS += umisc.ccm usysconf.ccm ulibvals.ccm
 
-LIBS += -luo -lu
+LIBS += -lu
 
 
-OBJ= tmpusers_main.o
+OBJ0= tmpusers_main.o
+OBJ1= deb.o
+OBJ2= mapex.o
+OBJ3=
+
+OBJ= obj0.o obj1.o obj2.o
 
 
 INCDIRS +=
@@ -155,5 +160,11 @@ usysconf.dir:
 
 ulibvals.o:		ulibvals.dir
 ulibvals.dir:
+
+deb.o:			deb.dir
+deb.dir:
+	makesubdir $@
+
+mapex.o:		mapex.cc	mapex.h
 
 
