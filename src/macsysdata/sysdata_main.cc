@@ -50,20 +50,22 @@
 #include	<string_view>
 #include	<iostream>
 #include	<iomanip>		/* |hex(3c++)| + |setw(3c++)| */
-#include	<usystem.h>
-#include	<sfx.h>
-#include	<rmx.h>			/* |rmchr(3uc)| */
-#include	<matstr.h>
+#include	<clanguage.h>
+#include	<usysbase.h>
+#include	<usyscalls.h>
+#include	<usupport.h>
 #include	<strnul.hh>
 #include	<mapex.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>		/* |DIGBUFLEN| + |REALNAMELEN| */
 
-#pragma		GCC dependency	"mod/ulibvals.ccm"
-#pragma		GCC dependency	"mod/usysconf.ccm"
+#pragma		GCC dependency		"mod/ulibvals.ccm"
+#pragma		GCC dependency		"mod/usysconf.ccm"
 
 import ulibvals ;
 import usysconf ;
+import umisc ;				/* |snadd{x}(3u)| */
+import ureserve ;			/* |sfbasename(2)| */
 
 /* local defines */
 
@@ -81,6 +83,13 @@ using std::hex ;			/* subroutine */
 using std::setw ;			/* subroutine? */
 using libu::uloadavgd ;			/* subroutine */
 using libu::snloadavgd ;		/* subroutine */
+using libu::sncpy ;			/* subroutine */
+using libu::matstr ;			/* subroutine */
+using libu::snwcpy ;			/* subroutine */
+using libu::rmchr ;			/* subroutine */
+using libu::rmtrailchr ;		/* subroutine */
+using libu::strwcpy ;			/* subroutine */
+using libu::hasnotempty ;		/* subroutine */
 using std::nothrow ;			/* constant */
 
 
@@ -103,7 +112,7 @@ namespace {
 	proginfomem_finish,
 	proginfomem_nproc,
 	proginfomem_overlast
-    } ;
+    } ; /* end enum */
     struct proginfo ;
     struct proginfo_co {
 	proginfo	*op = nullptr ;
@@ -132,13 +141,13 @@ namespace {
 	    start	(this,proginfomem_start) ;
 	    finish	(this,proginfomem_finish) ;
 	    nproc	(this,proginfomem_nproc) ;
-	} ;
+	} ; /* end ctor */
 	proginfo() noex : proginfo(0,nullptr,nullptr) { } ;
 	void operator () (int c,mainv a,mainv e) noex {
 	    argc = c ;
 	    argv = a ;
 	    envv = e ;
-	} ;
+	} ; /* end method */
 	int uname() noex ;
 	int sysoutstr() noex ;
 	int sysoutnum(cchar *) noex ;
@@ -186,35 +195,35 @@ enum progmodes {
 	progmode_overlast
 } ; /* end enum (progmodes) */
 
-static constexpr cpcchar	prognames[] = {
-	[progmode_sysname]	= "sysname",
-	[progmode_systype]	= "systype",
-	[progmode_sysrelease]	= "sysrelease",
-	[progmode_sysversion]	= "sysversion",
-	[progmode_sysversionx]	= "sysversionx",
-	[progmode_systime]	= "systime",
-	[progmode_sysuuid]	= "sysuuid",
-	[progmode_sysid]	= "sysid",
-	[progmode_release]	= "release",
-	[progmode_nodename]	= "nodename",
-	[progmode_version]	= "version",
-	[progmode_architecture]	= "architecture",
-	[progmode_machine]	= "machine",
-	[progmode_platform]	= "platform",
-	[progmode_provider]	= "provider",
-	[progmode_cpuvendor]	= "cpuvendor",
-	[progmode_nisdomain]	= "nisdomain",
-	[progmode_symfile]	= "symfile",
-	[progmode_hostid]	= "hostid",
-	[progmode_lax]		= "lax",
-	[progmode_unixtime]	= "unixtime",
-	[progmode_nproc]	= "nproc",
-	[progmode_navail]	= "navail",
-	[progmode_ncpu]		= "ncpu",
-	[progmode_overlast]	= nullptr
+constexpr cpcchar	prognames[] = {
+	"sysname",
+	"systype",
+	"sysrelease",
+	"sysversion",
+	"sysversionx",
+	"systime",
+	"sysuuid",
+	"sysid",
+	"release",
+	"nodename",
+	"version",
+	"architecture",
+	"machine",
+	"platform",
+	"provider",
+	"cpuvendor",
+	"nisdomain",
+	"symfile",
+	"hostid",
+	"lax",
+	"unixtime",
+	"nproc",
+	"navail",
+	"ncpu",
+	nullptr
 } ; /* end array (prognames) */
 
-static constexpr MAPEX	mapexs[] = {
+constexpr MAPEX		mapexs[] = {
 	{ SR_NOENT,	EX_NOUSER },
 	{ SR_AGAIN,	EX_TEMPFAIL },
 	{ SR_DEADLK,	EX_TEMPFAIL },
@@ -240,7 +249,7 @@ constexpr int		nlas = 3 ;	/* by long convention */
 
 /* exported subroutines */
 
-int main(int argc,mainv argv,mainv envv) {
+int main(int argc,con mainv argv,con mainv envv) {
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;
@@ -322,13 +331,11 @@ int proginfo::istart() noex {
 	    rs = 0 ;
 	} /* end if (proginfo::getpn) */
 	return rs ;
-}
-/* end method (proginfo::istart) */
+} /* end method (proginfo::istart) */
 
 int proginfo::ifinish() noex {
 	return SR_OK ;
-}
-/* end method (proginfo::ifinish) */
+} /* end method (proginfo::ifinish) */
 
 int proginfo::inproc() noex {
     	cnullptr	np{} ;
@@ -341,8 +348,7 @@ int proginfo::inproc() noex {
 	    rs = (- errno) ;
 	}
 	return rs ;
-}
-/* end method (proginfo::inproc) */
+} /* end method (proginfo::inproc) */
 
 int proginfo::getpn(mainv names) noex {
 	int		rs = SR_FAULT ;
@@ -362,8 +368,7 @@ int proginfo::getpn(mainv names) noex {
 	    } /* end if (have first argument) */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo::getpn) */
+} /* end method (proginfo::getpn) */
 
 static int printnodename(cchar *valp) noex {
 	int		rs = SR_OK ;
@@ -399,8 +404,7 @@ int proginfo::uname() noex {
 	    }
 	} /* end if (u_uname) */
 	return rs ;
-}
-/* end subroutine (proginfo::uname) */
+} /* end subroutine (proginfo::uname) */
 
 int proginfo::sysoutstr() noex {
 	cnullptr	np{} ;
@@ -491,8 +495,7 @@ int proginfo::lax() noex {
 	    }
 	} /* end if (uloadavgd) */
 	return rs ;
-}
-/* end subroutine (proginfo::lax) */
+} /* end subroutine (proginfo::lax) */
 
 int proginfo::navail() noex {
 	cint		cmd = _SC_NPROCESSORS_ONLN ;
@@ -519,7 +522,6 @@ int proginfo_co::operator () (int) noex {
 	    } /* end switch */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo_co::operator) */
+} /* end method (proginfo_co::operator) */
 
 
