@@ -37,10 +37,15 @@ INCS=
 
 MODS += 
 
-LIBS= -luo -lu
+LIBS= -lf -lu
 
 
-OBJ_MACFU= sysdata_main.o
+OBJ0= sysdata_main.o
+OBJ1= mapex.o
+OBJ2=
+ONK3=
+
+OBJ_MACFU= obj0.o obj1.o
 
 
 INCDIRS= -I$(INCDIR)
@@ -110,6 +115,40 @@ strip:			$(T).x
 	strip $(T).x
 
 
+obj0.o:			$(OBJ0)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj1.o:			$(OBJ1)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj2.o:			$(OBJ2)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj3.o:			$(OBJ3)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj4.o:			$(OBJ4)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj5.o:			$(OBJ5)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj6.o:			$(OBJ6)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj7.o:			$(OBJ7)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+obja.o:			$(OBJA)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objb.o:			$(OBJB)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
 sysdata_main.o:		sysdata_main.cc $(INCS)
+
+mapex.o:		mapex.cc	mapex.h
 
 
