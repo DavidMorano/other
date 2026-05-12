@@ -35,10 +35,7 @@
 #include	<cstring>		/* |strlcpy(3c)| */
 #include	<cstdarg>		/* |va_list(3c)| */
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<usysbase.h>
 #include	<localmisc.h>
 
 #include	"mknpathu.h"
@@ -64,7 +61,7 @@
 
 /* forward references */
 
-static int cstrlcpy(char *dp,cchar *sp,int sl) noex {
+local int cstrlcpy(char *dp,cchar *sp,int sl) noex {
     	csize	ssize = size_t(sl) ;
 	return int(strlcpy(dp,sp,ssize)) ;
 }
@@ -137,7 +134,7 @@ int mknpathu(char *pbuf,int plen,int n,...) noex {
 		        } else {
 	                    rs = SR_NAMETOOLONG ;
 		        }
-		    } /* end if */
+		    } /* end if (ok) */
 	        } /* end for */
 	        va_end(ap) ;
 	    } /* end if (getrlen) */
