@@ -1,7 +1,8 @@
 #!/usr/extra/bin/ksh
 # MKLINKS (macfiles)
 
-CMDS=" files filelines depmods filelinker "
+CMDS+=" files filelines depmods filelinker "
+CMDS+=" showlines "
 
 LOCPROG=files.x
 TDIRS=" /usr/extra /usr/local "
