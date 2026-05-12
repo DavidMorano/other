@@ -40,7 +40,7 @@ MODS += cmdutils.ccm
 MODS += modproc.ccm 
 MODS += strfilter.ccm 
 
-LIBS += -lf -luo -lu
+LIBS += -luo -lf -lu
 
 
 DEPS_MAIN += cmdutils.o strfilter.o
@@ -49,14 +49,14 @@ DEPS_MAIN += ureserve.o fonce.o
 DEPS_MAIN += strfilter.o tardir.o
 DEPS_MAIN += langx.o modproc.o sif.o
 
-OBJ0= files_main.o cmdutils.o
+OBJ0= files_main.o files_show.o
 OBJ1= argmgr.o filerec.o tardir.o
 OBJ2= modproc.o langx.o
 OBJ3= shortq.o ischarx.o
 OBJ4= six.o filelinker.o
 OBJ5= strfilter.o strx.o
 OBJ6= strnul.o deb.o
-OBJ7= sif.o
+OBJ7= sif.o cmdutils.o
 
 OBJA= obj0.o obj1.o obj2.o obj3.o
 OBJB= obj4.o obj5.o obj6.o obj7.o
@@ -173,6 +173,7 @@ obj.o:			$(OBJ)
 
 
 files_main.o:		files_main.cc $(DEPS_MAIN)		$(INCS)
+files_show.o:		files_show.cc $(DEPS_MAIN)		$(INCS)
 files_helpdata.o:	files_helpdata.cc			$(INCS)
 
 # MODS
