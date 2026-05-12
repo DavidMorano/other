@@ -52,12 +52,9 @@
 #include	<string_view>
 #include	<filesystem>
 #include	<iostream>
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<usyscalls.h>
-#include	<uclibmem.h>
-#include	<getfdfile.h>		/* |FD_STDERR| */
-#include	<varnames.hh>
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU */
 #include	<strn.h>
 #include	<strw.h>		/* |strwcmp(3uc)| */
 #include	<strx.h>		/* |strabbrerr(3uc)| */
@@ -65,19 +62,21 @@
 #include	<six.h>			/* |sisub(3uc)| */
 #include	<rmx.h>
 #include	<strwcpy.h>
-#include	<strnul.hh>
-#include	<ccfile.hh>
-#include	<readln.hh>
-#include	<filetypes.h>
+#include	<strnul.hh>		/* LIBU */
+#include	<ccfile.hh>		/* LIBU */
+#include	<readln.hh>		/* LIBU */
+#include	<filetypes.h>		/* LIBU */
 #include	<filelinker.hh>
 #include	<matstr.h>
-#include	<mkchar.h>
+#include	<mkchar.h>		/* LIBU */
 #include	<isnot.h>
 #include	<mapex.h>
-#include	<exitcodes.h>
-#include	<localmisc.h>
+#include	<exitcodes.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
 #include	<deb.hh>		/* |DEBPRINTF| */
 #include	<dprint.hh>		/* |DPRINT| */
+
+#include	"files_show.h"
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/ulibvals.ccm"
@@ -218,8 +217,8 @@ namespace {
 	tardir		dirs ;		/* target-directories */
 	fonce		seen ;
 	filerec		afs ;		/* argument-files */
-	filelinker	links ;
 	filerec		recs ;
+	filelinker	links ;
 	modproc		mods ;
 	string		pnstr ;
 	mainv		argv ;
@@ -239,6 +238,7 @@ namespace {
 	int		tlen = 0 ;
 	int		lines = 0 ;
 	int		intyoung = 0 ;	/* younger inteval */
+	int		mll = 76 ;
 	ushort		modes = 0 ;	/* file-modes (matched) */
 	bool		fexit = false ;
 	proginfo(int c,con mainv a,con mainv e) noex : argc(c) {
@@ -298,6 +298,7 @@ namespace {
 	int procfiler(custat *,cchar *,int = -1) noex ;
 	int procfile_list(custat *,cchar *,int = -1) noex ;
 	int procfile_lc(custat *,cchar *,int = -1) noex ;
+	int procfile_show(custat *,cchar *,int = -1) noex ;
 	int procfile_mods(custat *,cchar *,int = -1) noex ;
 	int procfile_tardirs(custat *,cchar *,int = -1) noex ;
 	int sufadd(cchar *,int = -1) noex ;
@@ -345,6 +346,7 @@ enum progmodes {
 	progmode_filelinker,
 	progmode_filemods,
 	progmode_depmods,
+	progmode_showlines,
 	progmode_overlast
 } ; /* end enum (progmodes) */
 
@@ -355,6 +357,7 @@ constexpr cpcchar	prognames[] = {
 	"filelinker",
 	"filemods",
 	"depmods",
+	"showlines",
 	nullptr
 } ; /* end array (prognames) */
 
@@ -625,6 +628,7 @@ int proginfo::iflistbegin() noex {
 	switch (pm) {
 	case progmode_files:
 	case progmode_filelines:
+	case progmode_showlines:
 	    if ((rs = seen.start(nents)) >= 0) {
 	        fl.seens = true ;
 	    }
@@ -1121,6 +1125,7 @@ int proginfo::process_pmbegin() noex {
         case progmode_files:
 	    break ;
         case progmode_filelines:
+        case progmode_showlines:
 	    if ((rs = maxlinelen) >= 0) {
 	        llen = rs ;
 		rs = SR_NOMEM ;
@@ -1144,10 +1149,12 @@ int proginfo::process_pmend(bool ferr) noex {
 	int		rs = SR_OK ;
 	switch (pm) {
         case progmode_filelines:
-	    if (lbuf) {
 		if ((! ferr) && fl.verbose) {
 		    cout << lines << eol ;
 		}
+		falldown ;
+        case progmode_showlines:
+	    if (lbuf) {
 		delete [] lbuf ;
 		lbuf = nullptr ;
 	        llen = 0 ;
@@ -1329,6 +1336,9 @@ int proginfo::procfiler(custat *sbp,cchar *sp,int sl) noex {
         case progmode_filelines:
             rs = procfile_lc(sbp,sp,sl) ;
             break ;
+        case progmode_showlines:
+            rs = procfile_show(sbp,sp,sl) ;
+            break ;
         case progmode_filemods:
         case progmode_depmods:
             rs = procfile_mods(sbp,sp,sl) ;
@@ -1346,9 +1356,10 @@ int proginfo::procfile_list(custat *,cchar *sp,int sl) noex {
 	int		c = 0 ;
 	if (sp) {
 	    if (fl.verbose) {
-	        strnul fn(sp,sl) ;
-	        cout << ccp(fn) << eol ;
-	    }
+	        if (strnul fn(sp,sl) ; fn.fok) {
+	            cout << ccp(fn) << eol ;
+		}
+	    } /* end if (verbose) */
 	    c += 1 ;
 	} /* end if (non-null) */
 	return (rs >= 0) ? c : rs ;
@@ -1374,20 +1385,36 @@ int proginfo::procfile_lc(custat *sbp,cchar *sp,int sl) noex {
 	int		c = 0 ;
 	if (sbp && sp && sl) ylikely {
 	    if (S_ISREG(sbp->st_mode)) {
-	        strnul fn(sp,sl) ;
-		c += 1 ;
-		if_constexpr (f_filelines) {
-		    rs = filelines(fn) ;
-		    lines += rs ;
-		} else {
-		    rs = findlines(lbuf,llen,fn) ;
-		    lines += rs ;
-		} /* end if_constexpr (f_filelines) */
+	        if (strnul fn(sp,sl) ; fn.fok) {
+		    c += 1 ;
+		    if_constexpr (f_filelines) {
+		        rs = filelines(fn) ;
+		        lines += rs ;
+		    } else {
+		        rs = findlines(lbuf,llen,fn) ;
+		        lines += rs ;
+		    } /* end if_constexpr (f_filelines) */
+		} /* end if (strnul) */
 	    } /* end if (is-reg) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? c : rs ;
 }
 /* end method (proginfo::procfile_lc) */
+
+int proginfo::procfile_show(custat *sbp,cchar *sp,int sl) noex {
+	int		rs = SR_OK ;
+	int		c = 0 ;
+	if (sbp && sp && sl) ylikely {
+	    if (S_ISREG(sbp->st_mode)) {
+	        if (strnul fn(sp,sl) ; fn.fok) {
+		    c += 1 ;
+		    rs = files_show(fn,mll) ;
+		} /* end if (strnul) */
+	    } /* end if (is-reg) */
+	} /* end if (non-null) */
+	return (rs >= 0) ? c : rs ;
+}
+/* end method (proginfo::procfile_show) */
 
 int proginfo::procfile_mods(custat *sbp,cchar *sp,int sl) noex {
 	int		rs = SR_FAULT ;
