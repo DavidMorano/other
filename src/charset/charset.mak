@@ -37,13 +37,13 @@ INCS +=
 
 MODS +=
 
-LIBS += -luo -lu
+LIBS += -lf -lu
 
 
 DEPS_MAIN +=
 
 OBJ0= charset_main.o
-OBJ1= strnul.o deb.o
+OBJ1= mapex.o deb.o
 OBJ2=
 OBJ3=
 
@@ -159,6 +159,6 @@ deb.o:			deb.dir
 deb.dir:
 	makesubdir $@
 
-strnul.o:		strnul.cc	strnul.hh
+mapex.o:		mapex.cc		mapex.h
 
 
