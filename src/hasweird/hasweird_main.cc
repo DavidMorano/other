@@ -50,8 +50,9 @@
 #include	<unordered_set>
 #include	<vector>
 #include	<iostream>
-#include	<usystem.h>
-#include	<varnames.hh>
+#include	<clanguage.h>
+#include	<usysbase.h>
+#include	<usyscalls.h>
 #include	<strn.h>
 #include	<sfx.h>
 #include	<six.h>
@@ -59,7 +60,6 @@
 #include	<strwcpy.h>
 #include	<strnul.hh>
 #include	<sncpyx.h>
-#include	<getourenv.h>
 #include	<readln.hh>
 #include	<ccfile.hh>
 #include	<rmx.h>
