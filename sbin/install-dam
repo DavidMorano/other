@@ -1,0 +1,56 @@
+#!/usr/local/bin/ksh
+# INSTALL-DAM
+
+: ${HOME:=$( userhome )}
+: ${EXTRA:=/usr/extra}
+: ${USRLCOAL:=/usr/local}
+
+GH=${HOME}/github
+
+ma all
+
+LIBNAMES="$( basename ${PWD} )"
+
+  typeset -a dirs
+  integer i=0
+  for RN in common system other test ; do
+    REPO=${GH}/${RN}
+    if [[ -d "${REPO}" ]] ; then
+      dirs[i++]=${REPO}
+    fi
+  done
+  dirs[i++]=${EXTRA}
+  dirs[i++]=${USRLOCAL}
+  TDIRS=
+  for (( i = 0 ; i < ${#dirs[@]} ; i += 1 )) ; do
+    D="${dirs[i]}/lib"
+    if [[ -d "${D}" ]] ; then
+        TDIRS+=" ${D}"
+    fi
+  done
+
+LIBS=
+for LN in ${LIBNAMES} ; do
+  for SUF in o so a ; do
+    LIB=${LN}.${SUF}
+    if [[ -r ${LIB} ]] ; then
+      LIBS+=" ${LIB}"
+    fi
+  done
+done
+
+for LIB in ${LIBS} ; do
+  if [[ -r "${LIB}" ]] ; then
+    for TD in ${TDIRS} ; do
+      if [[ -d "${TD}" ]] ; then
+        M=0664
+	if [[ ${LIB} == *.so ]] ; then
+	  M=0775
+        fi
+        lnx ${LIB} ${TD}
+      fi
+    done
+  fi
+done
+
+
