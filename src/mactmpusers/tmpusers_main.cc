@@ -58,6 +58,8 @@
 #include	<sys/types.h>
 #include	<sys/param.h>
 #include	<unistd.h>		/* |getusershell(3c)| */
+#include	<pwd.h>
+#include	<grp.h>
 #include	<climits>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>		/* |getenv(3c)| */
@@ -70,34 +72,24 @@
 #include	<usysbase.h>
 #include	<usyscalls.h>
 #include	<usupport.h>
-#include	<uclibmem.h>
 #include	<ucsysconf.h>
-#include        <getfdfile.h>           /* |FD_STDERR| */
-#include	<sfx.h>
-#include	<rmx.h>
-#include	<strwcpy.h>
-#include	<pwd.h>
-#include	<grp.h>
-#include	<matstr.h>
-#include	<hasx.h>
-#include	<isoneof.h>
-#include	<isnot.h>
-#include	<mapex.h>
-#include	<exitcodes.h>
-#include	<localmisc.h>		/* |MAXPATHLEN| + |USERNAMELEN| */
-#include	<deb.hh>
+#include	<mapex.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU |MAXPATHLEN| + |USERNAMELEN| */
+#include	<deb.hh>		/* LIBU debugging */
 
+#pragma		GCC dependency		"mod/uconstants.ccm"
 #pragma		GCC dependency		"mod/umisc.ccm"
+#pragma		GCC dependency		"mod/ureserve.ccm"
 #pragma		GCC dependency		"mod/usysconf.ccm"
 #pragma		GCC dependency		"mod/ulibvals.ccm"
-#pragma		GCC dependency		"mod/uconstants.ccm"
 #pragma		GCC dependency		"mod/deb.ccm"
 
+import uconstants ;			/* |varname(3u)| */
 import umisc ;				/* |snadd{x}(3u)| */
+import ureserve ;			/* |sfbasename(2)| */
 import usysconf ;			/* |usysconfstr(3u)| */
 import ulibvals ;
-import uconstants ;			/* |varname(3u)| */
-import deb ;
+import deb ;				/* debugging */
 
 /* local defines */
 
@@ -111,8 +103,11 @@ import deb ;
 using std::string ;			/* type (C++STD library) */
 using std::min ;			/* subroutine-template (C++STD) */
 using std::max ;			/* subroutine-template (C++STD) */
-using libu::snwcpy ;			/* subroutine (internal from LIBU) */
-using std::nothrow ;			/* constant */
+using libu::matstr ;			/* subroutine */
+using libu::snwcpy ;			/* subroutine */
+using libu::rmchr ;			/* subroutine */
+using libu::rmtrailchr ;		/* subroutine */
+using libu::strwcpy ;			/* subroutine */
 
 
 /* local typedefs */
@@ -136,7 +131,7 @@ namespace {
 	proginfomem_userbegin,
 	proginfomem_userend,
 	proginfomem_overlast
-    } ;
+    } ; /* end enum */
     struct proginfo ;
     struct proginfo_co {
 	proginfo	*op = nullptr ;
@@ -182,13 +177,13 @@ namespace {
 	    pmend	(this,proginfomem_pmend) ;
 	    userbegin	(this,proginfomem_userbegin) ;
 	    userend	(this,proginfomem_userend) ;
-	} ;
+	} ; /* end ctor */
 	proginfo() noex : proginfo(0,nullptr,nullptr) { } ;
 	void operator () (int c,mainv a,mainv e) noex {
 	    argc = c ;
 	    argv = a ;
 	    envv = e ;
-	} ;
+	} ; /* end method */
 	int tmpusers() noex ;
 	int tmpusers_present() noex ;
 	int tmpusers_wait() noex ;
@@ -220,7 +215,7 @@ namespace {
     struct confstritem {
 	cchar		*dname ;
 	int		req ;
-    } ;
+    } ; /* end struct */
 } /* end namaespace */
 
 
@@ -238,11 +233,11 @@ enum progmodes {
 } ; /* end enum (progmodes) */
 
 constexpr cpcchar	prognames[] = {
-	[progmode_mktmpusers]	= "mktmpusers",
-	[progmode_tmpusers]	= "tmpusers",
-	[progmode_tmpmounts]	= "tmpmounts",
-	[progmode_tmpuserdir]	= "tmpuserdir",
-	[progmode_overlast]	= nullptr
+	"mktmpusers",
+	"tmpusers",
+	"tmpmounts",
+	"tmpuserdir",
+	nullptr
 } ; /* end array (prognames) */
 
 constexpr MAPEX		mapexs[] = {
@@ -336,9 +331,10 @@ int main(int argc,con mainv argv,con mainv envv) {
 	    rs1 = pi.finish ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (proginfo) */
-	if ((rs < 0) && (ex == EX_OK)) {
+	if ((ex == EX_OK) && (rs < 0)) {
 	    ex = mapex(mapexs,rs) ;
 	}
+        DEBPRINTF("ret ex=%d rs=%d\n",ex,rs) ;
 	return ex ;
 }
 /* end subroutine (main) */
@@ -369,8 +365,7 @@ int proginfo::istart() noex {
 	    } /* end if (maxpathlen) */
 	} /* end if (proginfo::getpn) */
 	return rs ;
-}
-/* end method (proginfo::istart) */
+} /* end method (proginfo::istart) */
 
 int proginfo::ifinish() noex {
 	int		rs = SR_OK ;
@@ -387,8 +382,7 @@ int proginfo::ifinish() noex {
 	    pl = 0 ;
 	}
 	return rs ;
-}
-/* end method (proginfo::ifinish) */
+} /* end method (proginfo::ifinish) */
 
 int proginfo::ipmbegin() noex {
 	int		rs = SR_OK ;
@@ -398,15 +392,13 @@ int proginfo::ipmbegin() noex {
 	    break ;
 	} /* end switch */
 	return rs ;
-}
-/* end method (proginfo::ipmbegin) */
+} /* end method (proginfo::ipmbegin) */
 
 int proginfo::ipmend() noex {
 	int		rs = SR_OK ;
 	/* nothing to do */
 	return rs ;
-}
-/* end method (proginfo::ipmend) */
+} /* end method (proginfo::ipmend) */
 
 int proginfo::iuserbegin() noex {
     	cnothrow	nt{} ;
@@ -436,8 +428,7 @@ int proginfo::iuserbegin() noex {
 	    } /* end for */
 	} /* end if (new-char) */
 	return (rs >= 0) ? ul : rs ;
-}
-/* end method (proginfo::iuserbegin) */
+} /* end method (proginfo::iuserbegin) */
 
 int proginfo::iuserend() noex {
 	int		rs = SR_OK ;
@@ -447,8 +438,7 @@ int proginfo::iuserend() noex {
 	    ulen = 0 ;
 	}
 	return rs ;
-}
-/* end method (proginfo::iuserend) */
+} /* end method (proginfo::iuserend) */
 
 int proginfo::getpn(mainv names) noex {
 	int		rs = SR_FAULT ;
@@ -468,8 +458,7 @@ int proginfo::getpn(mainv names) noex {
 	    } /* end if (have first argument) */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo::getpn) */
+} /* end method (proginfo::getpn) */
 
 int proginfo::revertuser() noex {
 	const uid_t	uid = getuid() ;
@@ -479,8 +468,7 @@ int proginfo::revertuser() noex {
 	    rs = u_seteuid(uid) ; /* revert effective to real ID */
 	} /* end if */
 	return rs ;
-}
-/* end method (proginfo::revertuser) */
+} /* end method (proginfo::revertuser) */
 
 int proginfo::tmpusers() noex {
 	int		rs = SR_OK ;
@@ -489,8 +477,7 @@ int proginfo::tmpusers() noex {
 	    if (rs < 0) break ;
 	} /* end for */
 	return rs ;
-}
-/* end method (proginfo::tmpusers) */
+} /* end method (proginfo::tmpusers) */
 
 int proginfo::tmpusers_present() noex {
 	int		rs = SR_BUGCHECK ;
@@ -505,8 +492,7 @@ int proginfo::tmpusers_present() noex {
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? fpresent : rs ;
-}
-/* end method (proginfo::tmpusers_present) */
+} /* end method (proginfo::tmpusers_present) */
 
 int proginfo::tmpusers_wait() noex {
 	int		rs ;
@@ -524,8 +510,7 @@ int proginfo::tmpusers_wait() noex {
 	    }
 	} /* end if (snadd) */
 	return rs ;
-}
-/* end subroutine (proginfo::tmpusers_wait) */
+} /* end subroutine (proginfo::tmpusers_wait) */
 
 int proginfo::tmpusers_make() noex {
 	int		rs ;
@@ -545,8 +530,7 @@ int proginfo::tmpusers_make() noex {
 	    }
 	} /* end if (snadd) */
 	return (rs >= 0) ? c : rs ;
-}
-/* end subroutine (proginfo::tmpusers_make) */
+} /* end subroutine (proginfo::tmpusers_make) */
 
 int proginfo::tmpusers_mode() noex {
 	int		rs = SR_OK ;
@@ -557,8 +541,7 @@ int proginfo::tmpusers_mode() noex {
 	    c = 1 ;
 	} /* end if (fix mode) */
 	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::tmpusers_mode) */
+} /* end method (proginfo::tmpusers_mode) */
 
 int proginfo::tmpmounts() noex {
 	int		rs ;
@@ -571,8 +554,7 @@ int proginfo::tmpmounts() noex {
 	    } /* end for */
 	} /* end if (tmpmounts_vardir) */
 	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::tmpmounts) */
+} /* end method (proginfo::tmpmounts) */
 
 int proginfo::tmpmounts_one(const confstritem *itp) noex {
 	int		rs ;
@@ -586,8 +568,7 @@ int proginfo::tmpmounts_one(const confstritem *itp) noex {
 	    }
 	} /* end if (snadd) */
 	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::tmpmounts_one) */
+} /* end method (proginfo::tmpmounts_one) */
 
 int proginfo::tmpmounts_oner(const confstritem *itp) noex {
 	int		rs = SR_OK ;
@@ -610,8 +591,7 @@ int proginfo::tmpmounts_oner(const confstritem *itp) noex {
 	    }
 	} /* end if (valid-request) */
 	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::tmpmounts_oner) */
+} /* end method (proginfo::tmpmounts_oner) */
 
 int proginfo::tmpmounts_oners() noex {
 	int		rs ;
@@ -632,8 +612,7 @@ int proginfo::tmpmounts_oners() noex {
 	    c = rs ;
 	}
 	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::tmpmounts_oners) */
+} /* end method (proginfo::tmpmounts_oners) */
 
 int proginfo::tmpmounts_mklink() noex {
 	int		rs ;
@@ -643,8 +622,7 @@ int proginfo::tmpmounts_mklink() noex {
 	    rs = SR_OK ;
 	}
 	return rs ;
-}
-/* end method (proginfo::tmpmounts_mklink) */
+} /* end method (proginfo::tmpmounts_mklink) */
 
 int proginfo::tmpmounts_cklink() noex {
     	cnothrow	nt{} ;
@@ -669,8 +647,7 @@ int proginfo::tmpmounts_cklink() noex {
 	    } /* end if (new-char) */
 	} /* end if (maxpathlen) */
 	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::tmpmounts_cklink) */
+} /* end method (proginfo::tmpmounts_cklink) */
 
 int proginfo::tmpmounts_same(cchar *lbuf) noex {
 	int		rs = SR_OK ;
@@ -689,8 +666,7 @@ int proginfo::tmpmounts_same(cchar *lbuf) noex {
 	    fsame = (strcmp(lbuf,pbuf) == 0) ;
 	} /* end if (absolute path or not) */
 	return (rs >= 0) ? fsame : rs ;
-}
-/* end method (proginfo::tmpmounts_same) */
+} /* end method (proginfo::tmpmounts_same) */
 
 int proginfo::tmpmounts_vardir() noex {
 	static cchar	*homedname = getenv(varname.home) ;
@@ -710,8 +686,7 @@ int proginfo::tmpmounts_vardir() noex {
 	    fprintf(stderr,fmt,pn,rs) ;
 	}
 	return (rs >= 0) ? fok : rs ;
-}
-/* end method (proginfo::tmpmounts_vardir) */
+} /* end method (proginfo::tmpmounts_vardir) */
 
 int proginfo::tmpmounts_vardirs(cchar *homedname) noex {
 	int		rs ;
@@ -737,14 +712,13 @@ int proginfo::tmpmounts_vardirs(cchar *homedname) noex {
 	    } /* end if (snadd) */
 	} /* end if (snadd) */
 	return (rs >= 0) ? fok : rs ;
-}
-/* end method (proginfo::tmpmounts_vardirs) */
+} /* end method (proginfo::tmpmounts_vardirs) */
 
 int proginfo::tmpuserdir() noex {
 	int		rs ;
 	int		rs1 ;
 	int		fdone = false ; /* return-value */
-	debprintf(__func__,"ent\n") ;
+	DEBPRINTF("ent\n") ;
 	if ((rs = userbegin) > 0) ylikely {
 	    for (cauto &m : tmpuserdir_mems) {
 		if (rs > 0) {
@@ -758,15 +732,14 @@ int proginfo::tmpuserdir() noex {
 	} else if (rs == 0) {
 	    fprintf(stderr,"%s: no-user\n",pn) ;
 	} /* end if (user-) */
-	debprintf(__func__,"ret rs=%d\n",rs) ;
+	DEBPRINTF("ret rs=%d\n",rs) ;
 	return (rs >= 0) ? fdone : rs ;
-}
-/* end method (proginfo::tmpuserdir) */
+} /* end method (proginfo::tmpuserdir) */
 
 int proginfo::tmpuserdir_base() noex {
 	int		rs ;
 	int		fcontinue = false ; /* return-value */
-	debprintf(__func__,"ent\n") ;
+	DEBPRINTF("ent\n") ;
 	if ((rs = snadd(pbuf,plen,pl,"/tmp/users")) >= 0) ylikely {
 	    pl += rs ;
 	    if ((rs = u_stat(pbuf,&sb)) >= 0) ylikely {
@@ -776,50 +749,40 @@ int proginfo::tmpuserdir_base() noex {
 		if ((rs = tmpusers()) >= 0) {
 		    fcontinue = true ;
 		}
-	    }
+	    } /* end if */
 	} /* end if (snadd) */
-	debprintf(__func__,"ret rs=%d\n",rs) ;
+	DEBPRINTF("ret rs=%d\n",rs) ;
 	return (rs >= 0) ? fcontinue : rs ;
-}
-/* end method (proginfo::tmpuserdir_base) */
+} /* end method (proginfo::tmpuserdir_base) */
 
 int proginfo::tmpuserdir_already() noex {
 	int		rs ;
 	int		fdone = false ; /* return-value */
-	debprintf(__func__,"ent\n") ;
+	DEBPRINTF("ent\n") ;
 	if ((rs = revertuser()) >= 0) ylikely {
-	debprintf(__func__,"1\n") ;
 	    if ((rs = snadd(pbuf,plen,pl,"/",ubuf)) >= 0) ylikely {
-	debprintf(__func__,"2\n") ;
 	        pl += rs ;
 	        if ((rs = u_stat(pbuf,&sb)) == SR_NOEXIST) {
-	debprintf(__func__,"3\n") ;
 		    rs = tmpuserdir_link() ;
 		    fdone = rs ;
 	        }
 	    } /* end if (snadd) */
 	} /* end if (revertuser) */
-	debprintf(__func__,"ret rs=%d\n",rs) ;
+	DEBPRINTF("ret rs=%d\n",rs) ;
 	return (rs >= 0) ? fdone : rs ;
-}
-/* end method (proginfo::tmpuserdir_already) */
+} /* end method (proginfo::tmpuserdir_already) */
 
 int proginfo::tmpuserdir_link() noex {
 	cint		req = _CS_TMPDIR ;
 	int		rs ;
 	int		fmade = false ; /* return-value */
-	debprintf(__func__,"ent\n") ;
+	DEBPRINTF("ent\n") ;
 	if ((rs = u_sysconfstr(req,dbuf,dlen)) > 0) ylikely {
-	debprintf(__func__,"2\n") ;
 	    if (cint rl = rmtrailchr(dbuf,rs,'/') ; rl > 1) ylikely {
-	debprintf(__func__,"3\n") ;
 	        dbuf[rl] = '\0' ;
 	        if ((rs = u_stat(dbuf,&sb)) >= 0) ylikely {
-	debprintf(__func__,"4\n") ;
 		    if (S_ISDIR(sb.st_mode)) ylikely {
-	debprintf(__func__,"5\n") ;
     			if ((rs = u_symlink(dbuf,pbuf)) >= 0) ylikely {
-	debprintf(__func__,"6\n") ;
 			    fmade = true ;
 			} else if (rs == SR_EXISTS) {
 			    rs = SR_OK ;
@@ -832,8 +795,7 @@ int proginfo::tmpuserdir_link() noex {
 	} /* end if (u_sysconfstr) */
 	DEBPRINTF("ret rs=%d\n",rs) ;
 	return (rs >= 0) ? fmade : rs ;
-}
-/* end method (proginfo::tmpuserdir_link) */
+} /* end method (proginfo::tmpuserdir_link) */
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
@@ -860,7 +822,6 @@ int proginfo_co::operator () (int) noex {
 	    } /* end switch */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo_co::operator) */
+} /* end method (proginfo_co::operator) */
 
 
