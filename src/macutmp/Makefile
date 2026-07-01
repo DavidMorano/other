@@ -4,6 +4,7 @@ T= macutmp
 
 ALL= $(T).x
 EXTRA ?= /usr/extra
+LOCAL ?= /usr/local
 
 
 BINDIR		?= $(REPOROOT)/bin
@@ -38,21 +39,24 @@ INCS +=
 
 MODS +=
 
-LIBS += -luo -lu
+LIBS += -lf -lu -lsecdb -lnss
 
-ELIBS += -luo -lproc -liconv
+ELIBS += -lproc -liconv
 
 
-DEPMODS += libutil.o
-DEPMODS += umisc.o ureserve.o
+DEPMODS += 
+DEPMODS += 
 
-OBJ_UTMP= utmp_main.o
+OBJ00= utmp_main.o utmp_support.o
+OBJ01= ucx.o
+OBJ02= 
+OBJ03=
+
+OBJ_UTMP= obj00.o obj01.o
 
 
 INCDIRS=
-
-LIBDIRS= -L$(LIBDIR)
-
+LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -124,34 +128,33 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
-obj00_luo.o:		$(OBJ00_LUO)
+obj00.o:		$(OBJ00)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
-obj01_luo.o:		$(OBJ01_LUO)
+obj01.o:		$(OBJ01)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
-obj02_luo.o:		$(OBJ02_LUO)
+obj02.o:		$(OBJ02)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
-obj03_luo.o:		$(OBJ03_LUO)
+obj03.o:		$(OBJ03)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
-obja_luo.o:		$(OBJA_LUO)
+obja.o:		$(OBJA)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
-objb_luo.o:		$(OBJB_LUO)
+objb.o:		$(OBJB)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
-objc_luo.o:		$(OBJC_LUO)
+objc.o:		$(OBJC)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
-objd_luo.o:		$(OBJD_LUO)
+objd.o:		$(OBJD)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
 utmp_main.o:		utmp_main.cc $(DEPMODS)
-
 utmp_support.o:		utmp_support.cc
 
 libutil.o:		libutil.dir
@@ -164,6 +167,10 @@ umisc.dir:
 
 ureserve.o:		ureserve.dir
 ureserve.dir:
+	makesubdir $@
+
+ucx.o:			ucx.dir
+ucx.dir:
 	makesubdir $@
 
 
