@@ -31,7 +31,6 @@
 #include	<ucstrftime.h>
 #include	<uctc.h>
 #include	<uctimeconv.h>
-#include	<ucttyname.h>
 
 
 #endif /* UCX_INCLUDE */
