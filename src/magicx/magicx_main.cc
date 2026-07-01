@@ -60,9 +60,8 @@
 #include	<matstr.h>
 #include	<strnul.hh>
 #include	<isnot.h>		/* |isNotPresent(3uc)| */
-#include	<mapex.h>
-#include	<exitcodes.h>
-#include	<localmisc.h>
+#include	<mapex.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/fonce.ccm"
