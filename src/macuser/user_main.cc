@@ -32,8 +32,8 @@
 	username
 	userhome
 	usershell
-	gid
 	groupname
+	gid
 	uid
 	sid
 	sessionid
@@ -97,6 +97,9 @@
 #include	<sys/types.h>
 #include	<sys/param.h>
 #include	<unistd.h>		/* |getusershell(3c)| */
+#include	<utmpx.h>
+#include	<pwd.h>
+#include	<grp.h>
 #include	<climits>
 #include	<cstddef>		/* |nullptr_t| */
 #include	<cstdlib>
@@ -108,36 +111,28 @@
 #include	<string>
 #include	<fstream>
 #include	<iostream>
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<usyscalls.h>
-#include	<usupport.h>
-#include	<ucx.h>
-#include	<getfdfile.h>		/* |FD_STDIN| */
-#include	<sfx.h>
-#include	<rmx.h>
-#include	<strwcpy.h>
-#include	<utmpx.h>
-#include	<pwd.h>
-#include	<grp.h>
-#include	<ccfile.hh>
-#include	<matstr.h>
-#include	<hasx.h>
-#include	<isoneof.h>
-#include	<isnot.h>
-#include	<localmisc.h>
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU */
+#include	<usupport.h>		/* LIBU */
+#include	<ccfile.hh>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
 #include	<dprint.hh>		/* LIBU |DPRINTF(3u)| */
+#include	<ucx.h>			/* LOCAL |misc(3local)| */
+#include	<ucttyname.h>		/* LOCAL |uc_ttyname(3local)| */
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/umisc.ccm"
+#pragma		GCC dependency		"mod/ureserve.ccm"
 
 import libutil ;
 import umisc ;				/* |snadd{x}(3u)| */
+import ureserve ;			/* |sfbasename(2)| */
 
 /* local defines */
 
 #ifndef	CF_DEBUG
-#define	CF_DEBUG	1		/* debugging */
+#define	CF_DEBUG	0		/* debugging */
 #endif
 
 #define	MAXLINE		(4*1024)
@@ -183,6 +178,12 @@ using std::ifstream ;			/* type */
 using std::unordered_set ;		/* type */
 using std::pair ;			/* type */
 using libu::sncpy ;			/* subroutine */
+using libu::matstr ;			/* subroutine */
+using libu::snwcpy ;			/* subroutine */
+using libu::rmchr ;			/* subroutine */
+using libu::rmtrailchr ;		/* subroutine */
+using libu::strwcpy ;			/* subroutine */
+using libu::hasnotempty ;		/* subroutine */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
 using std::nothrow ;			/* constant */
@@ -201,36 +202,31 @@ using setiter = std::unordered_set<string>::iterator ;
 
 /* local structures */
 
+#define	PROGMODES	\
+    	X(username,	"username"	) \
+    	X(userhome,	"userhome"	) \
+    	X(usergecos,	"usergecos"	) \
+    	X(usershell,	"usershell"	) \
+    	X(groupname,	"groupname"	) \
+    	X(uid,		"uid"		) \
+    	X(gid,		"gid"		) \
+    	X(sid,		"sid"		) \
+    	X(sessionid,	"sessionid"	) \
+    	X(shells,	"shells"	) \
+    	X(userents,	"userents"	) \
+    	X(groupents,	"groupents"	) \
+    	X(overlast,	nullptr		)
+
 enum prognames {
-	progmode_username,
-	progmode_usergecos,
-	progmode_userhome,
-	progmode_usershell,
-	progmode_gid,
-	progmode_groupname,
-	progmode_uid,
-	progmode_sid,
-	progmode_sessionid,
-	progmode_shells,
-	progmode_userents,
-	progmode_groupents,
-	progmode_overlast
+#define	X(e,n)	progmode_##e,
+    	PROGMODES
+#undef	X
 } ; /* end enum (prognames) */
 
 constexpr cpcchar	prognames[] = {
-	[progmode_username]	= "username",
-	[progmode_usergecos]	= "usergecos",
-	[progmode_userhome]	= "userhome",
-	[progmode_usershell]	= "usershell",
-	[progmode_gid]		= "gid",
-	[progmode_groupname]	= "groupname",
-	[progmode_uid]		= "uid",
-	[progmode_sid]		= "sid",
-	[progmode_sessionid]	= "sessionid",
-	[progmode_shells]	= "shells",
-	[progmode_userents]	= "userents",
-	[progmode_groupents]	= "groupents",
-	[progmode_overlast]	= nullptr
+#define	X(e,n)	n,
+    	PROGMODES
+#undef	X
 } ; /* end array (prognames) */
 
 constexpr cpcchar	envnames[] = {
@@ -278,7 +274,7 @@ local int	printshells() noex ;
 local int	printuserents() noex ;
 local int	printgroupents() noex ;
 
-static UTMPX	*getutxliner(UTMPX *) noex ;
+local UTMPX	*getutxliner(UTMPX *) noex ;
 
 
 /* local variables */
@@ -338,7 +334,9 @@ int main(int argc,con mainv argv,con mainv) {
 		break ;
 	    } /* end switch */
 	} /* end if (getpn) */
-	if (rs < 0) ex = EXIT_FAILURE ;
+	if ((ex == EXIT_SUCCESS) && (rs < 0)) {
+	    ex = EXIT_FAILURE ;
+	}
 	DPRINTF("ret rs=%d ex=%d\n",rs,ex) ;
 	return ex ;
 }
@@ -365,8 +363,7 @@ int userinfo::printdef(int pm,int argc,mainv argv,uid_t uid) noex {
 	    rs = printone(pm,uid) ;
 	}
 	return rs ;
-}
-/* end method (userinfo::printdef) */
+} /* end method (userinfo::printdef) */
 
 int userinfo::printone(int pm,uid_t uid) noex {
 	int		rs ;
@@ -394,8 +391,7 @@ int userinfo::printone(int pm,uid_t uid) noex {
             } /* end switch */
         } /* end if (userinfo::find) */
 	return rs ;
-}
-/* end method (userinfo::printone) */
+} /* end method (userinfo::printone) */
 
 local int getpn(int argc,mainv argv,mainv names) noex {
 	int		rs = SR_FAULT ;
@@ -413,8 +409,7 @@ local int getpn(int argc,mainv argv,mainv names) noex {
 	    } /* end if (have first argument) */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end subroutine (getpn) */
+} /* end subroutine (getpn) */
 
 local int procgroup(int pm,const userinfo *uip) noex {
 	int		rs = SR_INVALID ;
@@ -432,8 +427,7 @@ local int procgroup(int pm,const userinfo *uip) noex {
 	    } /* end switch */
 	} /* end if (valid) */
 	return rs ;
-}
-/* end subroutine (procgroup) */
+} /* end subroutine (procgroup) */
 
 local int printgroup(const userinfo *uip) noex {
 	int		rs = SR_NOTFOUND ;
@@ -443,8 +437,7 @@ local int printgroup(const userinfo *uip) noex {
 	    rs = SR_OK ;
 	} /* end if */
 	return rs ;
-}
-/* end subroutine (printgroup) */
+} /* end subroutine (printgroup) */
 
 local int printshells() noex {
 	char		*lbuf ;
@@ -475,8 +468,7 @@ local int printshells() noex {
 	    } /* end if (m-a-f) */
 	} /* end if_constexpr (f_getusershell) */
 	return rs ;
-}
-/* end subroutine (printshells) */
+} /* end subroutine (printshells) */
 
 local int printuserents() noex {
 	unordered_set<string>	seen ;
@@ -492,8 +484,7 @@ local int printuserents() noex {
 	    rs = SR_NOMEM ;
 	}
 	return rs ;
-}
-/* end subroutine (printuserents) */
+} /* end subroutine (printuserents) */
 
 local int printgroupents() noex {
 	unordered_set<string>	seen ;
@@ -509,8 +500,7 @@ local int printgroupents() noex {
 	    rs = SR_NOMEM ;
 	}
 	return rs ;
-}
-/* end subroutine (printgroupents) */
+} /* end subroutine (printgroupents) */
 
 local bool isourtype(const UTMPX *up) noex {
 	bool	f = false ;
@@ -518,8 +508,7 @@ local bool isourtype(const UTMPX *up) noex {
 	f = f || (up->ut_type == LOGIN_PROCESS) ;
 	f = f || (up->ut_type == USER_PROCESS) ;
 	return f ;
-}
-/* end subroutine (isourtype) */
+} /* end subroutine (isourtype) */
 
 int userinfo::find(uid_t uid) noex {
 	int		rs ;
@@ -531,8 +520,7 @@ int userinfo::find(uid_t uid) noex {
 	    }
 	}
 	return rs ;
-}
-/* end method (userinfo::find) */
+} /* end method (userinfo::find) */
 
 int userinfo::findhint(uid_t) noex {
 	int		rs = SR_OK ;
@@ -542,8 +530,7 @@ int userinfo::findhint(uid_t) noex {
 	    len = load(hintpwp) ;
 	}
 	return (rs >= 0) ? len : rs ;
-}
-/* end method (userinfo::findhint) */
+} /* end method (userinfo::findhint) */
 
 int userinfo::findenv(uid_t uid) noex {
 	int		rs = SR_OK ;
@@ -562,8 +549,7 @@ int userinfo::findenv(uid_t uid) noex {
 	    if ((rs < 0) || (len > 0)) break ;
 	} /* end for */
 	return (rs >= 0) ? len : rs ;
-}
-/* end method (userinfo::findenv) */
+} /* end method (userinfo::findenv) */
 
 int userinfo::findutmp(uid_t uid) noex {
 	int		rs ;
@@ -575,8 +561,7 @@ int userinfo::findutmp(uid_t uid) noex {
 	    }
 	}
 	return rs ;
-}
-/* end method (userinfo::findutmp) */
+} /* end method (userinfo::findutmp) */
 
 int userinfo::findutmp_sid(uid_t uid) noex {
 	const pid_t	sid = getsid(0) ;
@@ -600,8 +585,7 @@ int userinfo::findutmp_sid(uid_t uid) noex {
 	} /* end while */
 	endutxent() ;
 	return (rs >= 0) ? len : rs ;
-}
-/* end method (userinfo::findutmp_sid) */
+} /* end method (userinfo::findutmp_sid) */
 
 int userinfo::findutmp_stdin(uid_t uid) noex {
     	cnullptr	np{} ;
@@ -634,8 +618,7 @@ int userinfo::findutmp_stdin(uid_t uid) noex {
 	    rs = SR_OK ;
 	} /* end if (stat) */
 	return (rs >= 0) ? len : rs ;
-}
-/* end method (userinfo::findtmp_stdin) */
+} /* end method (userinfo::findtmp_stdin) */
 
 int userinfo::findutmp_env(uid_t uid) noex {
     	cnullptr	np{} ;
@@ -660,8 +643,7 @@ int userinfo::findutmp_env(uid_t uid) noex {
 	    if ((rs < 0) || (len > 0)) break ;
 	} /* end for (utmpvars) */
 	return (rs >= 0) ? len : rs ;
-}
-/* end method (userinfo::findtmp_env) */
+} /* end method (userinfo::findtmp_env) */
 
 int userinfo::findutmp_stat(uid_t uid) noex {
     	cnullptr	np{} ;
@@ -708,8 +690,7 @@ int userinfo::findutmp_stat(uid_t uid) noex {
 	    } /* end for */
 	} /* end if (sncpy) */
 	return (rs >= 0) ? len : rs ;
-}
-/* end method (userinfo::findutmp_stat) */
+} /* end method (userinfo::findutmp_stat) */
 
 int userinfo::finduid(uid_t uid) noex {
 	int		rs = SR_OK ;
@@ -718,8 +699,7 @@ int userinfo::finduid(uid_t uid) noex {
 	    len = load(pwp) ;
 	} /* end if */
 	return (rs >= 0) ? len : rs ;
-}
-/* end method (userinfo::finduid) */
+} /* end method (userinfo::finduid) */
 
 int userinfo::load(PASSWD *pwp) noex {
 	int		rs = SR_NOTFOUND ;
@@ -732,12 +712,11 @@ int userinfo::load(PASSWD *pwp) noex {
 	    us = pwp->pw_shell ;
 	    gid = pwp->pw_gid ;
 	    len = intconv(un.length()) ;
-	}
+	} /* end if (non-null) */
 	return (rs >= 0) ? len : rs ;
-}
-/* end method (userinfo::load) */
+} /* end method (userinfo::load) */
 
-static UTMPX *getutxliner(UTMPX *sup) noex {
+local UTMPX *getutxliner(UTMPX *sup) noex {
 	static const uid_t	uid = getuid() ;
 	cnullptr	np{} ;
 	UTMPX		*up ; /* return-value */
@@ -758,7 +737,6 @@ static UTMPX *getutxliner(UTMPX *sup) noex {
 	   } /* end if (our type) */
 	} /* end while */
 	return up ;
-}
-/* end subroutine (getutxliner) */
+} /* end subroutine (getutxliner) */
 
 
