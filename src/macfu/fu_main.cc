@@ -47,28 +47,23 @@
 #include	<string_view>
 #include	<vector>
 #include	<iostream>
-#include	<usystem.h>
-#include	<varnames.hh>
-#include	<getourenv.h>
-#include	<strn.h>
-#include	<sfx.h>
-#include	<rmx.h>
-#include	<sncpyx.h>
-#include	<strwcpy.h>
-#include	<strnul.hh>
-#include	<ccfile.hh>
-#include	<readln.hh>
-#include	<matstr.h>
-#include	<isnot.h>
-#include	<mapex.h>
-#include	<exitcodes.h>
-#include	<localmisc.h>
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU */
+#include	<usupport.h>		/* LIBU */
+#include	<strnul.hh>		/* LIBU */
+#include	<ccfile.hh>		/* LIBU */
+#include	<readln.hh>		/* LIBU */
+#include	<mapex.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
 
-#pragma		GCC dependency	"mod/fonce.ccm"
 #pragma		GCC dependency	"mod/ulibvals.ccm"
+#pragma		GCC dependency	"mod/ureserve.ccm"
+#pragma		GCC dependency	"mod/fonce.ccm"
 
-import fonce ;
 import ulibvals ;
+import ureserve ;
+import fonce ;
 
 /* local defines */
 
@@ -81,6 +76,11 @@ using std::nullptr_t ;			/* type */
 using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::istream ;			/* type */
+using libu::snvprintf ;			/* subroutine */
+using libu::rmchr ;			/* subroutine */
+using libu::rmtrailchr ;		/* subroutine */
+using libu::matstr;			/* subroutine */
+using libu::strnchr ;			/* subroutine */
 using std::cin;				/* variable */
 using std::cout ;			/* variable */
 using std::nothrow ;			/* constant */
@@ -106,7 +106,7 @@ namespace {
 	proginfomem_flistbegin,
 	proginfomem_flistend,
 	proginfomem_overlast
-    } ;
+    } ; /* end enum */
     struct proginfo ;
     struct proginfo_co {
 	proginfo	*op = nullptr ;
@@ -142,13 +142,13 @@ namespace {
 	    finish	(this,proginfomem_finish) ;
 	    flistbegin	(this,proginfomem_flistbegin) ;
 	    flistend	(this,proginfomem_flistend) ;
-	} ;
+	} ; /* end ctor */
 	proginfo() noex : proginfo(0,nullptr,nullptr) { } ;
 	void operator () (int c,mainv a,mainv e) noex {
 	    argc = c ;
 	    argv = a ;
 	    envv = e ;
-	} ;
+	} ; /* end method */
 	int filecheck(custat *) noex ;
 	int process() noex ;
 	int process_pmbegin() noex ;
@@ -180,15 +180,15 @@ enum progmodes {
 	progmode_lc,
 	progmode_charset,
 	progmode_overlast
-} ;
+} ; /* end enum (progmodes) */
 
 constexpr cpcchar	prognames[] = {
-	[progmode_fileuniq]	= "fileuniq",
-	[progmode_fu]		= "fu",
-	[progmode_lc]		= "lc",
-	[progmode_charset]	= "charset",
-	[progmode_overlast]	= nullptr
-} ;
+	"fileuniq",
+	"fu",
+	"lc",
+	"charset",
+	nullptr
+} ; /* end array */
 
 constexpr MAPEX		mapexs[] = {
 	{ SR_NOENT,	EX_NOUSER },
@@ -204,7 +204,7 @@ constexpr MAPEX		mapexs[] = {
 	{ SR_NOMSG,	EX_OSERR },
 	{ SR_NOSYS,	EX_OSFILE },
 	{ 0, 0 }
-} ;
+} ; /* end array */
 
 static cint		maxpathlen = ulibval.maxpathlen ;
 static cint		maxlinelen = ulibval.maxline ;
@@ -217,7 +217,7 @@ constexpr int		nents = NENTS ;
 
 /* exported subroutines */
 
-int main(int argc,mainv argv,mainv envv) {
+int main(int argc,con mainv argv,con mainv envv) {
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;
@@ -255,13 +255,11 @@ int proginfo::istart() noex {
 	    rs = 0 ;
 	} /* end if (proginfo::getpn) */
 	return rs ;
-}
-/* end method (proginfo::istart) */
+} /* end method (proginfo::istart) */
 
 int proginfo::ifinish() noex {
 	return SR_OK ;
-}
-/* end method (proginfo::ifinish) */
+} /* end method (proginfo::ifinish) */
 
 int proginfo::getpn(mainv names) noex {
 	int		rs = SR_FAULT ;
@@ -281,18 +279,15 @@ int proginfo::getpn(mainv names) noex {
 	    } /* end if (have first argument) */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo::getpn) */
+} /* end method (proginfo::getpn) */
 
 int proginfo::iflistbegin() noex {
 	return seen.start(nents) ;
-}
-/* end method (proginfo::iflistbegin) */
+} /* end method (proginfo::iflistbegin) */
 
 int proginfo::iflistend() noex {
 	return seen.finish ;
-}
-/* end method (proginfo::iflistend) */
+} /* end method (proginfo::iflistend) */
 
 int proginfo::process() noex {
 	int		rs ;
@@ -321,8 +316,7 @@ int proginfo::process() noex {
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (process_pm) */
 	return (rs >= 0) ? c : rs ;
-}
-/* end subroutine (proginfo::process) */
+} /* end subroutine (proginfo::process) */
 
 int proginfo::process_stdin() noex {
 	int		rs = SR_OK ;
@@ -343,8 +337,7 @@ int proginfo::process_stdin() noex {
 	    break ;
 	} /* end switch */
 	return (rs >= 0) ? c : rs ;
-}
-/* end subroutine (proginfo::process_stdin) */
+} /* end subroutine (proginfo::process_stdin) */
 
 int proginfo::process_pmbegin() noex {
 	int		rs = SR_OK ;
@@ -367,8 +360,7 @@ int proginfo::process_pmbegin() noex {
 	    break ;
 	} /* end switch */
 	return rs ;
-}
-/* end subroutine (proginfo::process_pmbegin) */
+} /* end subroutine (proginfo::process_pmbegin) */
 
 int proginfo::process_pmend() noex {
 	int		rs = SR_OK ;
@@ -383,8 +375,7 @@ int proginfo::process_pmend() noex {
 	    break ;
 	} /* end switch */
 	return rs ;
-}
-/* end subroutine (proginfo::process_pmend) */
+} /* end subroutine (proginfo::process_pmend) */
 
 int proginfo::readin() noex {
 	istream		*isp = &cin ;
@@ -408,8 +399,7 @@ int proginfo::readin() noex {
 	    } /* end if (m-a-f) */
 	} /* end if (maxpathlen) */
 	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::readin) */
+} /* end method (proginfo::readin) */
 
 int proginfo::fileproc(cchar *sp,int sl) noex {
 	strnul		s(sp,sl) ;
@@ -424,8 +414,7 @@ int proginfo::fileproc(cchar *sp,int sl) noex {
 	    rs = SR_OK ;
 	}
 	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::fileproc) */
+} /* end method (proginfo::fileproc) */
 
 int proginfo::fileproc_fu(custat *,cchar *sp,int sl) noex {
 	int		rs = SR_OK ;
@@ -436,8 +425,7 @@ int proginfo::fileproc_fu(custat *,cchar *sp,int sl) noex {
 	    c += 1 ;
 	}
 	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::fileproc_fu) */
+} /* end method (proginfo::fileproc_fu) */
 
 int proginfo::fileproc_lc(custat *sbp,cchar *sp,int sl) noex {
 	int		rs = SR_OK ;
@@ -459,8 +447,7 @@ int proginfo::fileproc_lc(custat *sbp,cchar *sp,int sl) noex {
 	    } /* end if (is-reg) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::fileproc_lc) */
+} /* end method (proginfo::fileproc_lc) */
 
 int proginfo::fileproc_lines() noex {
 	istream		*isp = &cin ;
@@ -472,13 +459,11 @@ int proginfo::fileproc_lines() noex {
 	} /* end if (reading lines) */
 	lines += nl ;
 	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::fileproc_lines) */
+} /* end method (proginfo::fileproc_lines) */
 
 int proginfo::filecheck(custat *sbp)  noex {
 	return seen.checkin(sbp) ;
-}
-/* end method (proginfo::filecheck) */
+} /* end method (proginfo::filecheck) */
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
@@ -499,7 +484,6 @@ int proginfo_co::operator () (int) noex {
 	    } /* end switch */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo_co::operator) */
+} /* end method (proginfo_co::operator) */
 
 
