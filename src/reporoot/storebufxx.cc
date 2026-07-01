@@ -65,7 +65,7 @@
 #include	<usysbase.h>
 #include	<localmisc.h>		/* |DIGBUFLEN| */
 
-#include	"storebuf.h"
+#include	"storebufxx.h"
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 
