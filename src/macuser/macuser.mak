@@ -37,23 +37,23 @@ INCS +=
 
 MODS += libutil.ccm umisc.ccm
 
-LIBS += -luo -lu
+LIBS += -lf -lu -lsecdb -lnss
 
 
 DEPS_MAIN += libutil.o umisc.o
 
 OBJ0= user_main.o
-OBJ1= umisc.o
-OBJ2= sncpyx.o
+OBJ1= ucx.o ucttyname.o
+OBJ2=
 OBJ3=
 
-OBJ= obj0.o
+OBJ= obj0.o obj1.o
 
 OBJ_MACUSER= obj.o
 
 
 INCDIRS +=
-LIBDIRS += -L$(LIBDIR)
+LIBDIRS += -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -167,10 +167,15 @@ umisc.o:		umisc.dir
 umisc.dir:
 	makesubdir $@
 
+ucx.o:			ucx.dir
+ucx.dir:
+	makesubdir $@
+
 snx.o:			snx.dir
 snx.dir:
 	makesubdir $@
 
+ucttyname.o:		ucttyname.cc	ucttyname.h
 sncpyx.o:		sncpyx.cc	sncpyx.h
 
 
