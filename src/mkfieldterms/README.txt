@@ -1,7 +1,7 @@
 MKFIELDTERMS
 
-This program is used to make a terminating character array for inclusion (as
-source) into C-language code.
+This program is used to make a terminating character array for
+inclusion (as source) into C-language code.
 
 Synopsis:
 $ mkfieldterms <character(s)> [-lc] [-uc] [-V]
