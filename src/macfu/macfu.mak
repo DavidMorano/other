@@ -37,16 +37,21 @@ INCS +=
 
 MODS +=
 
-LIBS += -lf -luo -lu
+LIBS += -lf -lu
 
 
 DEPS_MAIN= fonce.o
 
-OBJ_MACFU= fu_main.o
+OBJ0= fu_main.o
+OBJ1=
+OBJ2=
+OBJ3=
+
+OBJ_MACFU= obj0.o
 
 
-INCDIRS= -I$(INCDIR)
-LIBDIRS= -L$(LIBDIR)
+INCDIRS=
+LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -89,7 +94,7 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	makemodule $(*)
+	gxx -c -x c++ -o $@ -O $<
 
 
 $(T).x:			$(OBJ_MACFU) Makefile
@@ -111,11 +116,47 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
+obj0.o:			$(OBJ0)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj1.o:			$(OBJ1)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj2.o:			$(OBJ2)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj3.o:			$(OBJ3)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj4.o:			$(OBJ4)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj5.o:			$(OBJ5)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj6.o:			$(OBJ6)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj7.o:			$(OBJ7)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+obja.o:			$(OBJA)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objb.o:			$(OBJB)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+obj.o:			$(OBJ)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
 fu_main.o:		fu_main.cc $(DEPS_MAIN) 		$(INCS)
 
 # FONCE		(libu)
 fonce.o:		fonce.dir
 fonce.dir:
-	makesubdir $@
+	gxx -c -x c++ -o $@ -O $<
 
 
