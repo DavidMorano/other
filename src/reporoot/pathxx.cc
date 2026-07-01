@@ -60,7 +60,7 @@
 	The |pathaddw| subroutine is almost equivalent to:
 	    int pathaddw(char *rbuf,int rl,cc *sp,int sl) noex {
 	        int	rs ;
-	        if ((rs = getbufsize(bufsize_mp)) >= 0) {
+	        if ((rs = bufsizeget(bufsize_mp)) >= 0) {
 		    cint	rlen = rs ;
 	            rs = storebuf_strw(rbuf,rlen,rl,sp,sl) ;
 		    rl += rs ;
@@ -71,16 +71,16 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<cstdarg>
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<usyscalls.h>
-#include	<storebuf.h>
-#include	<localmisc.h>
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstdarg>		/* CSTD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU */
+#include	<storebuf.h>		/* LIBUC */
+#include	<localmisc.h>		/* LIBU */
 
-#include	"pathadd.h"
+#include	"pathxx.hh"
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/ulibvals.ccm"
@@ -108,12 +108,12 @@ import ulibvals ;			/* |ulibval(3u)| */
 
 /* forward references */
 
-local int		local_pathadd(char *,int,int,cchar *,int) noex ;
+local int	local_pathadd(char *,int,int,cchar *,int) noex ;
 
 
 /* local variables */
 
-cint			maxpathlen = ulibval.maxpathlen ;
+cint		maxpathlen = ulibval.maxpathlen ;
 
 
 /* exported variables */
@@ -121,7 +121,8 @@ cint			maxpathlen = ulibval.maxpathlen ;
 
 /* exported subroutines */
 
-int pathnaddw(char *pbuf,int plen,int pl,cchar *sp,int sl) noex {
+namespace pathxx {
+    int pathnaddw(char *pbuf,int plen,int pl,cchar *sp,int sl) noex {
     	int		rs = SR_FAULT ;
 	if (pbuf && sp) {
 	    rs = SR_INVALID ;
@@ -131,10 +132,8 @@ int pathnaddw(char *pbuf,int plen,int pl,cchar *sp,int sl) noex {
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? pl : rs ;
-}
-/* end subroutine (pathnaddw) */
-
-int pathnaddx(char *pbuf,int plen,int pl,int n,...) noex {
+    } /* end subroutine (pathnaddw) */
+    int pathnaddx(char *pbuf,int plen,int pl,int n,...) noex {
 	va_list		ap ;
 	int		rs = SR_FAULT ;
 	if (pbuf) {
@@ -150,10 +149,11 @@ int pathnaddx(char *pbuf,int plen,int pl,int n,...) noex {
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? pl : rs ;
-}
-/* end subroutine (pathnaddx) */
+    } /* end subroutine (pathnaddx) */
+} /* end namespace (pathxx) */
 
-int pathaddw(char *pbuf,int pl,cchar *sp,int sl) noex {
+namespace pathxx {
+    int pathaddw(char *pbuf,int pl,cchar *sp,int sl) noex {
 	int		rs = SR_FAULT ;
 	if (pbuf && sp) {
 	    rs = SR_INVALID ;
@@ -166,10 +166,8 @@ int pathaddw(char *pbuf,int pl,cchar *sp,int sl) noex {
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? pl : rs ;
-}
-/* end subroutine (pathaddw) */
-
-int pathaddx(char *pbuf,int pl,int n,...) noex {
+    } /* end subroutine (pathaddw) */
+    int pathaddx(char *pbuf,int pl,int n,...) noex {
 	va_list		ap ;
 	int		rs = SR_FAULT ;
 	if (pbuf) {
@@ -188,8 +186,8 @@ int pathaddx(char *pbuf,int pl,int n,...) noex {
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? pl : rs ;
-}
-/* end subroutine (pathaddx) */
+    } /* end subroutine (pathaddx) */
+} /* end namespace (pathxx) */
 
 
 /* local subroutines */
@@ -205,7 +203,6 @@ local int local_pathadd(char *pbuf,int plen,int pl,cchar *sp,int sl) noex {
 	    pl += rs ;
 	}
 	return (rs >= 0) ? pl : rs ;
-}
-/* end subroutine (local_pathadd) */
+} /* end subroutine (local_pathadd) */
 
 
