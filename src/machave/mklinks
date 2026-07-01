@@ -4,10 +4,11 @@
 CMDS+=" pathenum "
 CMDS+=" pathto fpathto "
 CMDS+=" haveprogram havefunction  "
+CMDS+=" haveprog havefunc "
 CMDS+=" pe pt ft "
 LOCPROG=machave.x
 
-TARDIRS=" /usr/extra /usr/local /opt/local "
+TARDIRS=" /usr/extra /usr/local "
 
 function linkdir {
   typeset TDIR=${1}
