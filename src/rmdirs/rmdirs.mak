@@ -44,14 +44,13 @@ DEPS_MAIN +=
 
 OBJ0= rmdirs_main.o
 OBJ1= prognamevar.o shellunder.o
-OBJ2= mapex.o strabbrerr.o
+OBJ2= strabbrerr.o
 OBJ3= deb.o
 
 OBJ= obj0.o obj1.o obj2.o obj3.o
 
 
 INCDIRS=
-
 LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
@@ -92,7 +91,7 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	makemodule $(*)
+	gxx -c -x c++ -o $@ -O $<
 
 
 $(T).x:			obj.o
@@ -161,7 +160,6 @@ deb.dir:
 
 prognamevar.o:		prognamevar.cc		prognamevar.hh
 shellunder.o:		shellunder.cc		shellunder.h
-mapex.o:		mapex.cc		mapex.h
 strabbrerr.o:		strabbrerr.cc		strabbrerr.h
 
 
