@@ -37,15 +37,19 @@ INCS +=
 
 MODS += umisc.ccm usysconf.ccm ulibvals.ccm
 
-LIBS += -luo -lu
+LIBS += -lf -lu
 
 
-OBJ= tmpusers_main.o
+OBJ0= tmpusers_main.o
+OBJ1=
+OBJ2=
+OBJ3=
+
+OBJ= obj0.o
 
 
 INCDIRS +=
-
-LIBDIRS += -L$(LIBDIR)
+LIBDIRS += -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -88,7 +92,7 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	makemodule $(*)
+	gxx -c -x c++ -o $@ -O $<
 
 
 $(T).x:			$(OBJ)
@@ -155,5 +159,9 @@ usysconf.dir:
 
 ulibvals.o:		ulibvals.dir
 ulibvals.dir:
+
+deb.o:			deb.dir
+deb.dir:
+	makesubdir $@
 
 
