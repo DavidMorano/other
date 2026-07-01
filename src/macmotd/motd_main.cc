@@ -49,9 +49,8 @@
 #include	<sfx.h>
 #include	<rmx.h>			/* |rmchr(3uc)| */
 #include	<matstr.h>
-#include	<mapex.h>
-#include	<exitcodes.h>
-#include	<localmisc.h>		/* system constants */
+#include	<mapex.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
 
 
 /* local defines */
