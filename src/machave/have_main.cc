@@ -63,34 +63,29 @@
 #include	<string_view>
 #include	<vector>
 #include	<iostream>
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<usyscalls.h>
-#include	<getourenv.h>
-#include        <getfdfile.h>           /* |FD_STDERR| */
-#include	<strn.h>
-#include	<sfx.h>
-#include	<rmx.h>
-#include	<strwcpy.h>
-#include	<strnul.hh>
-#include	<matstr.h>
-#include	<ascii.h>
-#include	<isnot.h>
-#include	<mapex.h>
-#include	<exitcodes.h>
-#include	<localmisc.h>
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU */
+#include	<usupport.h>		/* LIBU */
+#include	<strnul.hh>		/* LIBU */
+#include	<ascii.h>		/* LIBU */
+#include	<mapex.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
+#include	<deb.hh>		/* LIBU debugging */
 
 #pragma		GCC dependency		"mod/uconstants.ccm"
 #pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/umisc.ccm"
+#pragma		GCC dependency		"mod/ureserve.ccm"
 #pragma		GCC dependency		"mod/ulibvals.ccm"
 #pragma		GCC dependency		"mod/deb.ccm"
 
 import uconstants ;			/* |varname(3u)| */
 import libutil ;			/* |lenstr(3u)| */
 import umisc ;				/* |mknpath(3u)| */
+import ureserve ;			/* |sfbasename(3u)| */
 import ulibvals ;
-import deb ;
+import deb ;				/* debugging */
 
 /* local defines */
 
@@ -104,9 +99,11 @@ import deb ;
 using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::vector ;			/* type */
+using libu::rmchr ;			/* subroutine */
+using libu::rmtrailchr ;		/* subroutine */
+using libu::matstr;			/* subroutine */
+using libu::strnchr ;			/* subroutine */
 using std::cout ;			/* variable */
-using std::cerr ;			/* variable */
-using std::nothrow ;			/* constant */
 
 
 /* local typedefs */
@@ -224,6 +221,8 @@ namespace {
 enum progmodes {
 	progmode_haveprogram,
 	progmode_havefunction,
+	progmode_haveprog,
+	progmode_havefunc,
 	progmode_pathenum,
 	progmode_pathto,
 	progmode_fpathto,
@@ -236,22 +235,24 @@ enum progmodes {
 	progmode_overlast
 } ; /* end enum (progmodes) */
 
-static constexpr cpcchar	prognames[] = {
-	[progmode_haveprogram]	= "haveprogram",
-	[progmode_havefunction]	= "havefunction",
-	[progmode_pathenum]	= "pathenum",
-	[progmode_pathto]	= "pathto",
-	[progmode_fpathto]	= "fpathto",
-	[progmode_manto]	= "manto",
-	[progmode_pe]		= "pe",
-	[progmode_pt]		= "pt",
-	[progmode_ft]		= "ft",
-	[progmode_mt]		= "mt",
-	[progmode_hpdebug]	= "hpdebug",
-	[progmode_overlast]	= nullptr
+constexpr cpcchar	prognames[] = {
+	"haveprogram",
+	"havefunction",
+	"haveprog",
+	"havefunc",
+	"pathenum",
+	"pathto",
+	"fpathto",
+	"manto",
+	"pe",
+	"pt",
+	"ft",
+	"mt",
+	"hpdebug",
+	nullptr
 } ; /* end array (prognames) */
 
-static constexpr MAPEX	mapexs[] = {
+constexpr MAPEX		mapexs[] = {
 	{ SR_NOENT,	EX_NOUSER },
 	{ SR_AGAIN,	EX_TEMPFAIL },
 	{ SR_DEADLK,	EX_TEMPFAIL },
@@ -284,9 +285,17 @@ int main(int argc,con mainv argv,con mainv envv) {
 	int		rs ;
 	int		rs1 ;
 	debfd(dfd) ;
-        debprintf(__func__,"ent\n") ;
-	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
+        DEBPRINTF("ent\n") ;
+	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) ylikely {
+	    int npm = -1 ;
             switch (pi.pm) {
+            case progmode_haveprog:
+		if (npm < 0) npm = progmode_haveprogram ;
+		falldown ;
+            case progmode_havefunc:
+		if (npm < 0) npm = progmode_havefunction ;
+		pi.pm = npm ;
+		falldown ;
             case progmode_hpdebug:
             case progmode_haveprogram:
             case progmode_havefunction:
@@ -325,6 +334,7 @@ int main(int argc,con mainv argv,con mainv envv) {
 	if ((ex == EX_OK) && (rs < 0)) {
 	    ex = mapex(mapexs,rs) ;
 	}
+        DEBPRINTF("ret ex=%d rs=%d\n",ex,rs) ;
 	return ex ;
 }
 /* end subroutine (main) */
@@ -334,9 +344,9 @@ int main(int argc,con mainv argv,con mainv envv) {
 
 int proginfo::istart() noexcept {
 	int		rs = SR_FAULT ;
-	if (argv) {
+	if (argv) ylikely {
 	    rs = getpn(prognames) ;
-	    debprintf(__func__,"rs=%d pn=%s\n",rs,pn) ;
+	    DEBPRINTF("rs=%d pn=%s\n",rs,pn) ;
 	} /* end if (non-null) */
 	return rs ;
 } /* end method (proginfo::istart) */
@@ -347,11 +357,11 @@ int proginfo::ifinish() noex {
 
 int proginfo::getpn(mainv names) noex {
 	int		rs = SR_FAULT ;
-	if (argv) {
+	if (argv) ylikely {
 	    rs = SR_NOMSG ;
-	    if ((argc > 0) && argv[0]) {
+	    if ((argc > 0) && argv[0]) ylikely {
 	        cchar	*bp ;
-	        if (int bl ; (bl = sfbasename(argv[0],-1,&bp)) > 0) {
+	        if (int bl ; (bl = sfbasename(argv[0],-1,&bp)) > 0) ylikely {
 		    if (cint rl = rmchr(bp,bl,'.') ; rl > 0) {
 	                if ((pm = matstr(names,bp,rl)) >= 0) {
 			    pn = names[pm] ;
@@ -367,11 +377,11 @@ int proginfo::getpn(mainv names) noex {
 int proginfo::ipathbegin(cchar *vn) noex {
     	cnullptr	np{} ;
 	int		rs = SR_FAULT ;
-	if (vn) {
+	if (vn) ylikely {
 	    rs = SR_INVALID ;
-	    if (vn[0]) {
+	    if (vn[0]) ylikely {
 		rs = SR_OK ;
-	        if (cchar *valp ; (valp = getourenv(envv,vn)) != np) {
+	        if (cchar *valp = getourenv(envv,vn) ; valp) {
 	            cchar	*sp = valp ;
 	            int		sl = lenstr(sp) ;
 	            for (cc *tp ; (tp = strnchr(sp,sl,':')) != np ; ) {
@@ -398,7 +408,7 @@ int proginfo::pathcandidate(cchar *sp,int µsl) noex {
 	    sp += 1 ;
 	    sl -= 1 ;
 	}
-	if (strnul s(sp,sl) ; (s != nullptr)) {
+	if (strnul s(sp,sl) ; s.fok) ylikely {
 	    if (ustat sb ; (rs = u_stat(s,&sb)) >= 0) {
 	        if (S_ISDIR(sb.st_mode)) {
 	            const dev_t	d = sb.st_dev ;
@@ -496,20 +506,20 @@ int proginfo::pathto(cchar *vn) noex {
 	int		rs = SR_BUGCHECK ;
 	int		rs1 ;
 	int		c = 0 ;
-	debprintf(__func__,"ent\n") ;
-	if (vn) {
-	    debprintf(__func__,"vn=%s\n",vn) ;
-	    if ((rs = pathbegin(vn)) >= 0) {
-		debprintf(__func__,"pathbegin rs=%d\n",rs) ;
-	        if ((rs = maxpathlen) >= 0) {
+	DEBPRINTF("ent\n") ;
+	if (vn) ylikely {
+	    DEBPRINTF("vn=%s\n",vn) ;
+	    if ((rs = pathbegin(vn)) >= 0) ylikely {
+		DEBPRINTF("pathbegin rs=%d\n",rs) ;
+	        if ((rs = maxpathlen) >= 0) ylikely {
 	            cint	plen = rs ;
 	            rs = SR_NOMEM ;
 	            if (char *pbuf ; (pbuf = new(nt) char[plen + 1]) != np) {
-			debprintf(__func__,"new\n") ;
+			DEBPRINTF("new\n") ;
 		        rs = SR_OK ;
 	                for (int ai = 1 ; (ai < argc) && argv[ai] ; ai += 1) {
 	                    if (cchar *ap = argv[ai] ; ap[0]) {
-			        debprintf(__func__,"ap=%s\n",ap) ;
+			        DEBPRINTF("ap=%s\n",ap) ;
 			        if (strchr(ap,CH_SLASH) != np) {
 				    rs = present(ap) ;
 				    c += rs ;
@@ -527,7 +537,7 @@ int proginfo::pathto(cchar *vn) noex {
 	        if (rs >= 0) rs = rs1 ;
 	    } /* end if (proginfo::path) */
 	} /* end if (non-null) */
-	debprintf(__func__,"ret rs=%d c=%d\n",rs,c) ;
+	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end subroutine (proginfo::pathto) */
 
@@ -622,7 +632,7 @@ int proginfo::getvn(cchar **rpp) noex {
 		rs = SR_BUGCHECK ;
 		break ;
 	    } /* end switch */
-	    debprintf(__func__,"rs=%d vn=%s\n",rs,vn) ;
+	    DEBPRINTF("rs=%d vn=%s\n",rs,vn) ;
 	    *rpp = (rs >= 0) ? vn : nullptr ;
 	} /* end if (non-null) */
 	return rs ;
@@ -630,7 +640,7 @@ int proginfo::getvn(cchar **rpp) noex {
 
 int proginfo_co::operator () (int) noex {
 	int	rs = SR_BUGCHECK ;
-	if (op) {
+	if (op) ylikely {
 	    switch (w) {
 	    case proginfomem_start:
 	        rs = op->istart() ;
@@ -648,7 +658,7 @@ int proginfo_co::operator () (int) noex {
 
 int proginfo_pabeg::operator () (cchar *vn) noex {
 	int	rs = SR_BUGCHECK ;
-	if (op) {
+	if (op) ylikely {
 	    if (vn == nullptr) vn = varname.path ;
 	    rs = op->ipathbegin(vn) ;
 	}
