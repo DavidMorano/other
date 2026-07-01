@@ -5,6 +5,7 @@
 /* find and print the repository (repo) root */
 /* version %I% last-modified %G% */
 
+#define	CF_DEBUG	0		/* debugging */
 
 /* revision history:
 
@@ -44,22 +45,22 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<sys/param.h>		/* |MAXPATHLEN| */
-#include	<unistd.h>
-#include	<fcntl.h>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<new>			/* |nothrow(3c++)| */
-#include	<string_view>
-#include	<vector>
-#include	<iostream>
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<usyscalls.h>
-#include	<strnul.hh>
-#include	<mapex.h>
-#include	<exitcodes.h>
-#include	<localmisc.h>
+#include	<sys/param.h>		/* POSIX |MAXPATHLEN| */
+#include	<unistd.h>		/* POSIX */
+#include	<fcntl.h>		/* POSIX */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<new>			/* C++ |nothrow(3c++)| */
+#include	<string_view>		/* C++ */
+#include	<vector>		/* C++ */
+#include	<iostream>		/* C++ */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU */
+#include	<strnul.hh>		/* LIBU */
+#include	<mapex.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
+#include	<dprint.hh>		/* LIBU |DPRINTF(3u)| */
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/umisc.ccm"
@@ -74,6 +75,10 @@ import fonce ;
 /* local defines */
 
 #define	NENTS		1000
+
+#ifndef	CF_DEBUG
+#define	CF_DEBUG	0		/* debugging */
+#endif
 
 
 /* imported namespaces */
@@ -146,7 +151,7 @@ namespace {
 	    argc = c ;
 	    argv = a ;
 	    envv = e ;
-	} ;
+	} ; /* end method */
 	int process() noex ;
 	int process_loop(char *,int,int) noex ;
 	int process_check(char *,int,int) noex ;
@@ -187,7 +192,7 @@ constexpr cpcchar	repomarks[] = {
 } ; /* end array */
 
 constexpr MAPEX		mapexs[] = {
-	{ SR_NOENT,	EX_NOUSER },
+	{ SR_NOENT,	EX_NOTFOUND},
 	{ SR_AGAIN,	EX_TEMPFAIL },
 	{ SR_DEADLK,	EX_TEMPFAIL },
 	{ SR_NOLCK,	EX_TEMPFAIL },
@@ -207,6 +212,8 @@ static cint	maxlinelen = ulibval.maxline ;
 
 constexpr int	nents = NENTS ;
 
+cbool		f_debug = CF_DEBUG ;
+
 
 /* exported variables */
 
@@ -217,12 +224,15 @@ int main(int argc,con mainv argv,con mainv envv) {
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;
+	DPRINTF("ent\n") ;
 	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
 	    if ((rs = pi.flistbegin) >= 0) {
                 switch (pi.pm) {
                 case progmode_reporoot:
                 case progmode_reponame:
-                    rs = pi.process() ;
+                    if ((rs = pi.process()) == 0) {
+			ex = EX_NOTFOUND ;
+		    }
                     break ;
 		default:
 		    rs = SR_BUGCHECK ;
@@ -237,6 +247,7 @@ int main(int argc,con mainv argv,con mainv envv) {
 	if ((ex == EX_OK) && (rs < 0)) {
 	    ex = mapex(mapexs,rs) ;
 	}
+	DPRINTF("ret ex=%d rs=%d\n",ex,rs) ;
 	return ex ;
 }
 /* end subroutine (main) */
@@ -258,6 +269,7 @@ int proginfo::ifinish() noex {
 
 int proginfo::getpn(mainv names) noex {
 	int		rs = SR_FAULT ;
+	DPRINTF("ent\n") ;
 	if (argv) {
 	    rs = SR_NOMSG ;
 	    if ((argc > 0) && argv[0]) {
@@ -273,6 +285,7 @@ int proginfo::getpn(mainv names) noex {
 		} /* end if (have base-name) */
 	    } /* end if (have first argument) */
 	} /* end if (non-null) */
+	DPRINTF("ret rs=%d\n",rs) ;
 	return rs ;
 } /* end method (proginfo::getpn) */
 
@@ -289,14 +302,20 @@ int proginfo::process() noex {
     	cnullptr	np{} ;
 	int		rs ;
 	int		rs1 ;
-	int		c = 0 ;
+	int		c = 0 ; /* return-value */
+	DPRINTF("ent\n") ;
 	if ((rs = process_pmbegin()) >= 0) {
+	    DPRINTF("-> maxpathlen\n") ;
 	    if ((rs = maxpathlen) >= 0) {
 	        cint plen = rs ;
+		DPRINTF("maxpathlen() rs=%d\n",rs) ;
 	        if (char *pbuf ; (pbuf = new(nt) char[plen + 1]) != np) {
+		    DPRINTF("new() rs=%d\n",rs) ;
 	            if ((rs = u_getcwd(pbuf,plen)) >= 0) {
+			DPRINTF("-> loop()\n") ;
 			rs = process_loop(pbuf,plen,rs) ;
 			c = rs ;
+			DPRINTF("loop() rs=%d\n",rs) ;
 		    } /* end if (u_getcwd) */
 		    delete [] pbuf ;
 	        } /* end if (m-a-f) */
@@ -304,12 +323,14 @@ int proginfo::process() noex {
 	    rs1 = process_pmend() ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (process_pm) */
+	DPRINTF("ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end subroutine (proginfo::process) */
 
 int proginfo::process_loop(char *pbuf,int plen,int pl) noex {
     	int		rs = SR_OK ;
 	int		f = false ;
+	DPRINTF("ent\n") ;
 	while ((rs >= 0) && (! f) && (pl > 1)) {
 	    if ((rs = process_check(pbuf,plen,pl)) > 0) {
 		f = true ;
@@ -322,34 +343,42 @@ int proginfo::process_loop(char *pbuf,int plen,int pl) noex {
 		}
 	    } /* end if */
 	} /* end while */
+	DPRINTF("ret rs=%d f=%d\n",rs,f) ;
 	return (rs >= 0) ? f : rs ;
 } /* end subroutine (proginfo::process_loop) */
 
 int proginfo::process_check(char *pbuf,int plen,int pl) noex {
     	int		rs = SR_OK ;
 	int		f = false ;
+	DPRINTF("ent\n") ;
 	for (cauto &n : repomarks) {
+	    DPRINTF("mark=%s\n",n) ;
 	    if ((rs = pathnadd(pbuf,plen,pl,n)) >= 0) {
 	        if (ustat sb ; (rs = u_stat(pbuf,&sb)) >= 0) {
+	    	    DPRINTF("exists rs=%d\n",rs) ;
 		    f = S_ISDIR(sb.st_mode) || S_ISREG(sb.st_mode) ;
 	        } else if (isNotAccess(rs)) {
+	    	    DPRINTF("no-exists rs=%d\n",rs) ;
 		    rs = SR_OK ;
 	        }
-	    } /* end if (pathadd) */
+	    } /* end if (pathnadd) */
+	    DPRINTF("for-bot rs=%d f=%d\n",rs,f) ;
 	    if ((rs < 0) || f) break ;
 	} /* end for */
 	pbuf[pl] = '\0' ; /* restore original */
+	DPRINTF("ret rs=%d f=%d\n",rs,f) ;
 	return (rs >= 0) ? f : rs ;
 } /* end subroutine (proginfo::process_check) */
 
 int proginfo::process_print(cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
+	DPRINTF("ent pm=%d\n",pm) ;
 	switch (pm) {
 	case progmode_reporoot:
 	    {
 		strview n(sp,sl) ;
 		cout << n << eol ;
-	    }
+	    } /* end block */
 	    break ;
 	case progmode_reponame:
 	    {
@@ -358,18 +387,20 @@ int proginfo::process_print(cchar *sp,int sl) noex {
 		    strview n(cp,cl) ;
 		    cout << n << eol ;
 		}
-	    }
+	    } /* end block */
 	    break ;
 	} /* end switch */
+	DPRINTF("ret rs=%d\n",rs) ;
 	return rs ;
 } /* end subroutine (proginfo::process_print) */
 
 int proginfo::process_pmbegin() noex {
 	int		rs = SR_OK ;
+	DPRINTF("ent\n") ;
 	switch (pm) {
         case progmode_reporoot:
         case progmode_reponame:
-	    if ((rs = maxlinelen) >= 0) {
+	    if ((rs = maxlinelen) >= 0) ylikely {
 	        llen = rs ;
 		rs = SR_NOMEM ;
 	        if ((lbuf = new(nothrow) char[llen + 1]) != nullptr) {
@@ -377,9 +408,10 @@ int proginfo::process_pmbegin() noex {
 	        } else {
 		    llen = 0 ;
 		}
-	    } /* end block */
+	    } /* end if (maxlinelen) */
 	    break ;
 	} /* end switch */
+	DPRINTF("ret rs=%d\n",rs) ;
 	return rs ;
 } /* end subroutine (proginfo::process_pmbegin) */
 
@@ -400,7 +432,7 @@ int proginfo::process_pmend() noex {
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
-	if (op) {
+	if (op) ylikely {
 	    switch (w) {
 	    case proginfomem_start:
 	        rs = op->istart() ;
