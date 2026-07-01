@@ -55,9 +55,8 @@
 #include	<usyscalls.h>
 #include	<usupport.h>
 #include	<strnul.hh>
-#include	<mapex.h>
-#include	<exitcodes.h>
-#include	<localmisc.h>		/* |DIGBUFLEN| + |REALNAMELEN| */
+#include	<mapex.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU |DIGBUFLEN| + |REALNAMELEN| */
 
 #pragma		GCC dependency		"mod/ulibvals.ccm"
 #pragma		GCC dependency		"mod/usysconf.ccm"
@@ -148,16 +147,16 @@ namespace {
 	    argv = a ;
 	    envv = e ;
 	} ; /* end method */
-	int uname() noex ;
-	int sysoutstr() noex ;
-	int sysoutnum(cchar *) noex ;
-	int lax() noex ;
-	int navail() noex ;
+	int uname	() noex ;
+	int sysoutstr	() noex ;
+	int sysoutnum	(cchar *) noex ;
+	int lax		() noex ;
+	int navail	() noex ;
     private:
-	int istart() noex ;
-	int ifinish() noex ;
-	int inproc() noex ;
-	int getpn(mainv) noex ;
+	int istart	() noex ;
+	int ifinish	() noex ;
+	int inproc	() noex ;
+	int getpn	(mainv) noex ;
     } ; /* end struct (proginfo) */
 } /* end namespace */
 
@@ -167,75 +166,58 @@ namespace {
 
 /* local variables */
 
+#define	PROGMODES	\
+	X(sysname,	"sysname"	)	\
+	X(systype,	"systype"	)	\
+	X(sysrelease,	"sysrelease"	)	\
+	X(sysversion,	"sysversion"	)	\
+	X(sysversionx,	"sysversionx"	)	\
+	X(systime,	"systime"	)	\
+	X(sysuuid,	"sysuuid"	)	\
+	X(sysid,	"sysid"		)	\
+	X(release,	"release"	)	\
+	X(nodename,	"nodename"	)	\
+	X(version,	"version"	)	\
+	X(architecture,	"architecture"	)	\
+	X(machine,	"machine"	)	\
+	X(platform,	"platform"	)	\
+	X(provider,	"provider"	)	\
+	X(cpuvendor,	"cpuvendor"	)	\
+	X(nisdomain,	"nisdomain"	)	\
+	X(symfile,	"symfile"	)	\
+	X(hostid,	"hostid"	)	\
+	X(lax,		"lax"		)	\
+	X(unixtime,	"unixtime"	)	\
+	X(nproc,	"nproc"		)	\
+	X(navail,	"navail"	)	\
+	X(ncpu,		"ncpu"		)	\
+	X(overlast,	nullptr		)
+
 enum progmodes {
-	progmode_sysname,
-	progmode_systype,
-	progmode_sysrelease,
-	progmode_sysversion,
-	progmode_sysversionx,
-	progmode_systime,
-	progmode_sysuuid,
-	progmode_sysid,
-	progmode_release,
-	progmode_nodename,
-	progmode_version,
-	progmode_architecture,
-	progmode_machine,
-	progmode_platform,
-	progmode_provider,
-	progmode_cpuvendor,
-	progmode_nisdomain,
-	progmode_symfile,
-	progmode_hostid,
-	progmode_lax,
-	progmode_unixtime,
-	progmode_nproc,
-	progmode_navail,
-	progmode_ncpu,
-	progmode_overlast
+#define	X(e,n)	progmode_##e,
+	PROGMODES
+#undef	X
 } ; /* end enum (progmodes) */
 
 constexpr cpcchar	prognames[] = {
-	"sysname",
-	"systype",
-	"sysrelease",
-	"sysversion",
-	"sysversionx",
-	"systime",
-	"sysuuid",
-	"sysid",
-	"release",
-	"nodename",
-	"version",
-	"architecture",
-	"machine",
-	"platform",
-	"provider",
-	"cpuvendor",
-	"nisdomain",
-	"symfile",
-	"hostid",
-	"lax",
-	"unixtime",
-	"nproc",
-	"navail",
-	"ncpu",
-	nullptr
+#define	X(e,n)	n,
+	PROGMODES
+#undef	X
 } ; /* end array (prognames) */
 
 constexpr MAPEX		mapexs[] = {
-	{ SR_NOENT,	EX_NOUSER },
-	{ SR_AGAIN,	EX_TEMPFAIL },
-	{ SR_DEADLK,	EX_TEMPFAIL },
-	{ SR_NOLCK,	EX_TEMPFAIL },
-	{ SR_TXTBSY,	EX_TEMPFAIL },
-	{ SR_ACCESS,	EX_NOPERM },
-	{ SR_REMOTE,	EX_PROTOCOL },
-	{ SR_NOSPC,	EX_TEMPFAIL },
-	{ SR_INTR,	EX_INTR },
-	{ SR_EXIT,	EX_TERM },
-	{ SR_NOMSG,	EX_OSERR },
-	{ SR_NOSYS,	EX_OSFILE },
+	{ SR_NOENT,	EX_NOUSER	},
+	{ SR_AGAIN,	EX_TEMPFAIL	},
+	{ SR_DEADLK,	EX_TEMPFAIL	},
+	{ SR_NOLCK,	EX_TEMPFAIL	},
+	{ SR_TXTBSY,	EX_TEMPFAIL	},
+	{ SR_ACCESS,	EX_NOPERM	},
+	{ SR_REMOTE,	EX_PROTOCOL	},
+	{ SR_NOSPC,	EX_TEMPFAIL	},
+	{ SR_INTR,	EX_INTR		},
+	{ SR_EXIT,	EX_TERM		},
+	{ SR_NOMSG,	EX_OSERR	},
+	{ SR_NOSYS,	EX_OSFILE	},
 	{ 0, 0 }
 } ; /* end array (mapexs) */
 
