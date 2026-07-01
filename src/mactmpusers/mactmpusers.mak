@@ -37,20 +37,19 @@ INCS +=
 
 MODS += umisc.ccm usysconf.ccm ulibvals.ccm
 
-LIBS += -lu
+LIBS += -lf -lu
 
 
 OBJ0= tmpusers_main.o
-OBJ1= deb.o
-OBJ2= mapex.o
+OBJ1=
+OBJ2=
 OBJ3=
 
-OBJ= obj0.o obj1.o obj2.o
+OBJ= obj0.o
 
 
 INCDIRS +=
-
-LIBDIRS += -L$(LIBDIR)
+LIBDIRS += -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -93,7 +92,7 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	makemodule $(*)
+	gxx -c -x c++ -o $@ -O $<
 
 
 $(T).x:			$(OBJ)
@@ -164,7 +163,5 @@ ulibvals.dir:
 deb.o:			deb.dir
 deb.dir:
 	makesubdir $@
-
-mapex.o:		mapex.cc	mapex.h
 
 
