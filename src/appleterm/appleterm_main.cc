@@ -13,6 +13,9 @@
 
 */
 
+/* Copyright © 2023 David A­D­ Morano.  All rights reserved. */
+/* Use is subject to license terms. */
+
 /*******************************************************************************
 
   	Description:
@@ -22,56 +25,57 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* must be ordered first to configure */
-#include	<sys/types.h>
-#include	<cstddef>
-#include	<cstdlib>		/* |EXIT_SUCCESS| */
-#include	<cstring>		/* |strchr(3c)|  + |strlen(3c)| */
-#include	<string>
-#include	<cctype>		/* |isprint(3c)| */
-#include	<algorithm>
-#include	<iostream>
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD |EXIT_SUCCESS| */
+#include	<cstring>		/* CSTD |strchr(3c)|  + |lenstr(3c)| */
+#include	<string>		/* C++STD */
+#include	<cctype>		/* CSTD |isprint(3c)| */
+#include	<algorithm>		/* C++STD */
+#include	<iostream>		/* C++STD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU |eol| */
 
+#pragma		GCC dependency		"mod/libutil.ccm"
+
+import libutil ;			/* |lenstr(3u)| */
 
 /* local defines */
 
 #ifndef	FD_STDIN
 #define	FD_STDIN	0
 #endif
-
 #ifndef	FD_STDOUT
 #define	FD_STDOUT	1
 #endif
 
 #define	ENCBUFLEN	10
 
-#ifndef	eol
-#define	eol		'\n'
-#endif
-
-#define	noex		noexcept
-
 
 /* local namespaces */
 
 using std::string ;			/* type */
 using std::cout ;			/* variable */
-using std::cerr ;			/* variable */
 
 
 /* local typedefs */
 
-typedef const int		cint ;
-typedef const char		cchar ;
-typedef const char *const	cpcchar ;
-typedef const char *const *	mainv ;
+
+/* external subrutines */
+
+
+/* external variables */
+
+
+/* local structures */
 
 
 /* forward references */
 
-static int	form(int,cchar *) noex ;
-static int	perenc(char *,int,int) noex ;
-static char	hexchar(int) noex ;
-static bool	isnotbadchar(int) noex ;
+local int	form(int,cchar *) noex ;
+local int	perenc(char *,int,int) noex ;
+local char	hexchar(int) noex ;
+local bool	isnotbadchar(int) noex ;
 
 
 /* local variables */
@@ -87,21 +91,31 @@ enum types {
 	type_overlast
 } ; /* end enum (types) */
 
-constexpr cpcchar	typenames[] = {
-    	[type_pwd] = "pwd",
-    	[type_doc] = "doc",
-    	[type_tab] = "tab",
-    	[type_win] = "win",
-    	[type_overlast] = nullptr
-} ; /* end array (types) */
+namespace {
+    struct termnames {
+	cchar		*n[type_overlast + 1] ;
+	consteval termnames() noex {
+    	    n[type_pwd] = "pwd" ;
+    	    n[type_doc] = "doc" ;
+    	    n[type_tab] = "tab" ;
+    	    n[type_win] = "win" ;
+    	    n[type_overlast] = nullptr ;
+	} ; /* end ctor */
+    } ; /* end struct (termnames) */
+    struct termcodes {
+	cchar		*n[type_overlast + 1] ;
+	consteval termcodes() noex {
+    	    n[type_pwd] = "6" ;
+    	    n[type_doc] = "7" ;
+    	    n[type_tab] = "1" ;
+    	    n[type_win] = "2" ;
+    	    n[type_overlast] = nullptr ;
+	} ; /* end ctor */
+    } ; /* end struct (termcodes) */
+} /* end namespace */
 
-constexpr cpcchar	typecodes[] = {
-    	[type_pwd] = "6",
-    	[type_doc] = "7",
-    	[type_tab] = "1",
-    	[type_win] = "2",
-    	[type_overlast] = nullptr
-} ; /* end array (typecodes) */
+constexpr termcodes	termcode ;
+constexpr termnames	termname ;
 
 
 /* exported variables */
@@ -110,7 +124,6 @@ constexpr cpcchar	typecodes[] = {
 /* exported subroutines */
 
 int main(int argc,mainv argv,mainv) {
-	cint		fd = FD_STDIN ;
 	int		rs = 0 ;
 	int		ex = EXIT_SUCCESS ;
 	if (argc >= 3) {
@@ -118,45 +131,50 @@ int main(int argc,mainv argv,mainv) {
 	    bool f = false ;
 	    int	 type ; /* used-afterwards */
 	    rs = -1 ;
-	    for (type = 0 ; typenames[type] ; type += 1) {
-		f = (strcmp(typenames[type],tn) == 0) ;
+	    for (type = 0 ; termname.n[type] ; type += 1) {
+		f = (strcmp(termname.n[type],tn) == 0) ;
 		if (f) break ;
 	    } /* end for */
 	    if (f) {
 		cchar	*text = argv[2] ;
 	        rs = form(type,text) ;
-	    }
+	    } /* end if */
 	} else {
 	    rs = -1 ;
 	} /* end if (had arguments) */
-	if ((rs == EXIT_SUCCESS) && (rs < 0)) ex = EXIT_FAILURE ;
+	if ((rs == EXIT_SUCCESS) && (rs < 0)) {
+	    ex = EXIT_FAILURE ;
+	}
 	return ex ;
 }
 /* end subroutine (main) */
 
-static string mkprefix(int type) noex {
-    	string ps ;
-    	cchar	*tc = typecodes[type] ;
+
+/* local subroutines */
+
+local string mkprefix(int type) noex {
+    	string	ps ;
+    	cchar	*tc = termcode.n[type] ;
 	ps += "\033]" ;
 	ps += tc ;
 	ps += ";" ;
 	return ps ;
 } /* end subroutine (mkprefix) */
 
-static int form(int type,cchar *text) noex {
-    	const decltype(nullptr)	np{} ;
+local int form(int type,cchar *text) noex {
+	cnullptr	np{} ;
     	int		rs = -1 ;
 	if (text[0]) {
 	    string	s ;
 	    cint	elen = ENCBUFLEN ;
 	    char	ebuf[ENCBUFLEN+1] = {} ;
 	    cchar	*fn = text ;
-	    int		fl = strlen(text) ;
+	    int		fl = lenstr(text) ;
 	    if ((type == type_pwd) || (type == type_doc)) {
 		s += docprefix ;
 		while ((fl > 1) && (fn[fl-1] == '/')) {
 		    fl -= 1 ;
-		}
+		} /* end while */
 		for (int i = 0 ; (i < fl) && fn[i] ; i += 1) {
 		    perenc(ebuf,elen,fn[i]) ;
 		    s += ebuf ;
@@ -176,40 +194,34 @@ static int form(int type,cchar *text) noex {
 	    }
 	} /* end if (valid) */
 	return rs ;
-}
-/* end subroutine (form) */
+} /* end subroutine (form) */
 
-
-/* local subroutines */
-
-static int perenc(char *ebuf,int,int ch) noex {
+local int perenc(char *ebuf,int,int ch) noex {
 	char		*ep = ebuf ;
 	if (isprint(ch) && isnotbadchar(ch)) {
-	    *ep++ = ch ;
+	    *ep++ = char(ch) ;
 	    *ep = '\0' ;
 	} else {
 	    *ep++ = '%' ;
 	    *ep++ = hexchar((ch >> 4) & 0x0F) ;
 	    *ep++ = hexchar((ch >> 0) & 0x0F) ;
 	    *ep = '\0' ;
-	}
+	} /* end if */
 	return int(ep - ebuf) ;
-}
-/* end subroutine (perenc) */
+} /* end subroutine (perenc) */
 
-static char hexchar(int ch) noex {
+local char hexchar(int ch) noex {
 	int	xch = 0 ;
 	if ((ch >= 0) && (ch <= 9)) {
 	    xch = ('0' + ch) ;
 	} else {
 	    xch = ('A' + (ch - 10)) ;
 	}
-	return xch ;
-}
-/* end subroutine (hexchar) */
+	return charconv(xch) ;
+} /* end subroutine (hexchar) */
 
-static bool isnotbadchar(int ch) noex {
+local bool isnotbadchar(int ch) noex {
 	return (strchr(badchars,ch) == nullptr) ;
-}
+} /* end subroutine (isnotbadchar) */
 
 
