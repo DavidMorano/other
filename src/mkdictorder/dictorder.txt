@@ -1,4 +1,8 @@
-# dictionary-collating-ordinal
+# dictionary-collating-ordinal (database)
+#
+# This is the database for creting the 'dictorder" table.
+#
+#
 
 0
 1
