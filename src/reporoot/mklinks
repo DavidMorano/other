@@ -5,7 +5,7 @@ CMDS=
 CMDS+=" reporoot reponame "
 
 LOCPROG=reporoot.x
-TDIRS=" /usr/extra /usr/local /opt/local "
+TDIRS=" /usr/extra /usr/local "
 
 function linkdir {
   typeset TDIR=${1}
