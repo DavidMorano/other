@@ -70,14 +70,10 @@
 #include	<string_view>
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<usysbase.h>
 #include	<usyscalls.h>
+#include	<usupport.h>
 #include	<ucx.h>			/* |uc_ttyname(3uc)| + |uc_tc(3uc)| */
-#include	<getfdfile.h>		/* |FD_STDIN| */
-#include	<strwcpy.h>
 #include	<localmisc.h>		/* |TIMEBUFLEN| */
 
 #pragma		GCC dependency	"mod/libutil.ccm"
@@ -134,10 +130,10 @@ import ureserve ;			/* |isNot{xx}(3u)| */
 
 /* imported namespaces */
 
-using std::nullptr_t ;			/* type */
 using std::string_view ;		/* type */
 using std::min ;			/* subroutine-template */
 using std::max ;			/* subroutine-template */
+using libu::strwcpy ;			/* subroutine (LIBU) */
 using libu::sncpy ;			/* subroutine (LIBU) */
 using libu::snprintf ;			/* subroutine (LIBU) */
 using std::cout ;			/* variable */
