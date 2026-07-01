@@ -35,10 +35,7 @@
 #include	<cstdlib>		/* <- for |EXIT_SUCCESS| */
 #include	<cstdio>		/* <- for |printf(3c)| */
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<usysbase.h>
 #include	<localmisc.h>		/* |TIMEBUFLEN| */
 
 #pragma		GCC dependency		"mod/umisc.ccm"
