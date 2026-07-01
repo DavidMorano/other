@@ -17,18 +17,16 @@
 
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>		/* |getenv(3c)| */
+#include	<cstdlib>
 #include	<cstdio>
-#include	<iostream>		
-#include	<iomanip>		
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<usyscalls.h>		/* |u_rmdirs(3u)| */
-#include	<prognamevar.hh>
-#include	<strabbrerr.h>
-#include	<mapex.h>
-#include	<exitcodes.h>
-#include	<localmisc.h>		/* |eol| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU |u_rmdirs(3u)| */
+#include	<prognamevar.hh>	/* locally supplied */
+#include	<strabbrerr.h>		/* locally supplied */
+#include	<mapex.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU |eol| */
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 
@@ -45,12 +43,12 @@ int main(int argc,con mainv argv,con mainv envv) {
 		}
 		if (rs < 0) break ;
 	    } /* end for */
-	} /* end block */
+	} /* end arguments */
 	if ((ex == EXIT_SUCCESS) && (rs < 0)) {
 	    cchar *fmt = "%s: error ex=%d %s (%d)\n" ;
 	    ex = EXIT_FAILURE ;
 	    fprintf(stdout,fmt,ccp(pn),ex,strabbrerr(rs),rs) ;
-	} /* end if (erro) */
+	} /* end if (error) */
 	return ex ;
 }
 /* end subroutine (main) */
