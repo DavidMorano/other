@@ -41,15 +41,14 @@ LIBS= -lf -lu
 
 
 OBJ0= sysdata_main.o
-OBJ1= mapex.o
+OBJ1=
 OBJ2=
 ONK3=
 
-OBJ_MACFU= obj0.o obj1.o
+OBJ_MACFU= obj0.o
 
 
-INCDIRS= -I$(INCDIR)
-
+INCDIRS=
 LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
@@ -90,7 +89,7 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	makemodule $(*)
+	gxx -c -x c++ -o $@ -O $<
 
 
 $(T).x:			$(OBJ_MACFU)
@@ -148,7 +147,5 @@ objb.o:			$(OBJB)
 
 
 sysdata_main.o:		sysdata_main.cc $(INCS)
-
-mapex.o:		mapex.cc	mapex.h
 
 
