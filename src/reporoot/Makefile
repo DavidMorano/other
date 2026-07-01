@@ -40,21 +40,20 @@ MODS +=
 LIBS += -lf -lu
 
 
-DEPS_MAIN += ulibvals.o umisc.o
+DEPS_MAIN += 
 
 OBJ0= reporoot_main.o
-OBJ1= pathxx.o storebufxx.o
-OBJ2= mapex.o
+OBJ1=
+OBJ2=
 OBJ3=
 
-OBJA= obj0.o obj1.o obj2.o
+OBJA= obj0.o
 
 OBJ_MAIN= obja.o
 
 
-INCDIRS= -I$(INCDIR)
-
-LIBDIRS= -L$(LIBDIR)
+INCDIRS=
+LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -97,7 +96,7 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	makemodule $(*)
+	gxx -c -x c++ -o $@ -O $<
 
 
 $(T).x:			$(OBJ_MAIN)
@@ -153,20 +152,7 @@ objb.o:			$(OBJB)
 
 reporoot_main.o:	reporoot_main.cc $(DEPS_MAIN) 		$(INCS)
 
-storebufxx.o:		storebufxx.cc	storebuf.h
-mapex.o:		mapex.cc	mapex.h
-
-ulibvals.o:		ulibvals.dir
-ulibvals.dir:
-	makesubdir $@
-
-umisc.o:		umisc.dir
-umisc.dir:
-	makesubdir $@
-
-# PATH
-path.o:			path.dir
-path.dir:
-	makesubdir $@
+pathxx.o:		pathxx.cc	pathxx.hh
+storebufxx.o:		storebufxx.cc	storebufxx.h
 
 
