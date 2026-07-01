@@ -2,7 +2,7 @@
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
-/* calculate the number of lines in a file */
+/* show lines that are longer (in columns) than some given value */
 /* get the size of an open file */
 
 
@@ -21,10 +21,8 @@
 	files_show
 
 	Description:
-	This is the (now) famous 'filelines' subroutine.  It is the
-	fastest version of this kind of funtion (counting lines in
-	a text file).  Note that unlike the |fileliner(3dam)|
-	subroutine, no comment character can be specified.
+	This subroutine shows (prints out) any lines that are longer
+	than the given value.
 
 	Synopsis:
 	int files_show(cchar *fn,int mlen) noex
@@ -40,20 +38,20 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<sys/stat.h>
-#include	<sys/mman.h>
-#include	<unistd.h>
-#include	<fcntl.h>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<cstring>		/* |memchr(3c)| */
-#include	<algorithm>		/* |min(3c++)| + |max(3c++)| */
-#include	<string_view>
-#include	<iostream>
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<usyscalls.h>
-#include	<localmisc.h>		/* |eol| */
+#include	<sys/stat.h>		/* POSIX */
+#include	<sys/mman.h>		/* POSIX */
+#include	<unistd.h>		/* POSIX */
+#include	<fcntl.h>		/* POSIX */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstring>		/* CSTD |memchr(3c)| */
+#include	<algorithm>		/* C++STD |min(3c++)| + |max(3c++)| */
+#include	<string_view>		/* C++STD */
+#include	<iostream>		/* C++STD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU |eol| */
 
 #include	"files_show.h"
 
@@ -168,7 +166,7 @@ local int liner(cchar *fn,int fd,csize ms,int mlen) noex {
 
 local int check(cchar *fn,size_t mll,cchar *lp,size_t ll,int lno,int c) noex {
 	if (ll > mll) {
-	    strview sv(lp,min((ll-1),msize)) ;
+	    strview sv(lp,min((ll - 1),msize)) ;
 	    c += 1 ;
 	    cout << fn << " " << lno << eol ;
 	    cout << "»" << sv << "«" << eol ;
