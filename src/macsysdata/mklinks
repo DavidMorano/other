@@ -11,7 +11,7 @@ CMDS+=" cpuvendor "
 CMDS+=" nisdomain symfile hostid lax "
 CMDS+=" unixtime navail "
 
-TDIRS=" /usr/extra /usr/local /opt/local "
+TDIRS=" /usr/extra /usr/local "
 
 function linkdir {
   typeset TDIR=${1}
