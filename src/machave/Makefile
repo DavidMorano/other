@@ -37,21 +37,21 @@ INCS += usyscalls.h localmisc.h
 
 MODS += libutil.ccm umisc.ccm ulibvals.ccm
 
-LIBS += -lf -luo -lu
+LIBS += -lf -lu
 
 
 DEPS_MAIN += libutil.o umisc.o
 
 OBJ0= have_main.o
-OBJ1= strnul.o deb.o
+OBJ1=
 OBJ2=
 OBJ3=
 
-OBJ= obj0.o obj1.o
+OBJ= obj0.o
 
 
 INCDIRS=
-LIBDIRS= -L$(LIBDIR)
+LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -94,7 +94,7 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	makemodule $(*)
+	gxx -c -x c++ -o $@ -O $<
 
 
 obj0.o:			$(OBJ0)
@@ -169,7 +169,5 @@ ulibvals.dir:
 deb.o:			deb.dir
 deb.dir:
 	makesubdir $@
-
-strnul.o:		strnul.cc	strnul.hh
 
 
