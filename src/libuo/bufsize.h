@@ -35,6 +35,8 @@
 #include	<usysbase.h>
 
 #include	<bufsizes.h>
+#include	<bufsizedata.h>
+#include	<bufsizeget.h>
 #include	<bufsizevar.hh>
 
 
