@@ -53,20 +53,20 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<string>
-#include	<string_view>
-#include	<fstream>
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<usyscalls.h>		/* |ulogerror(3u)| */
-#include	<strnul.hh>
-#include	<stdfnames.h>
-#include	<readln.hh>
-#include	<mkchar.h>
-#include	<localmisc.h>
-#include	<dprint.hh>		/* debugging */
+#include	<cstddef>		/* CSTD |nullptr_t| */
+#include	<cstdlib>		/* CSTD */
+#include	<string>		/* C++STD */
+#include	<string_view>		/* C++STD */
+#include	<fstream>		/* C++STD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU |ulogerror(3u)| */
+#include	<strnul.hh>		/* LIBU */
+#include	<stdfnames.h>		/* LIBU */
+#include	<readln.hh>		/* LIBU */
+#include	<mkchar.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
+#include	<dprint.hh>		/* LIBU debugging */
 
 #include	"ccfile.hh"
 
@@ -74,8 +74,12 @@
 /* local defines */
 
 #ifndef	MAXLINE
+#ifdef	MAXLINELEN
+#define	MAXLINE		MAXLINELEN
+#else
 #define	MAXLINE		(4*1024)
 #endif
+#endif /* MAXLINE */
 
 
 /* imported namespaces */
@@ -396,8 +400,7 @@ int ccfile::iclose() noex {
 	    fl.fopened = false ;
 	} /* end if (not-fnulling) */
 	return rs ;
-}
-/* end method (ccfile::iclose) */
+} /* end method (ccfile::iclose) */
 
 int ccfile::irewind() noex {
 	int		rs = SR_OK ;
@@ -405,15 +408,13 @@ int ccfile::irewind() noex {
 	    rs = seek(0z) ;
 	}
 	return rs ;
-}
-/* end method (ccfile::irewind) */
+} /* end method (ccfile::irewind) */
 
 void ccfile::dtor() noex {
 	if (int rs ; (rs = iclose()) < 0) {
 	    ulogerror("ccfile",rs,"dtor-close") ;
 	}
-}
-/* end method (ccfile::dtor) */
+} /* end method (ccfile::dtor) */
 
 int ccfile_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
@@ -428,8 +429,7 @@ int ccfile_co::operator () (int) noex {
 	    } /* end switch */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (ccfile_co::operator) */
+} /* end method (ccfile_co::operator) */
 
 local omode mkmode(cchar *sp) noex {
 	omode		om{} ;
@@ -448,8 +448,7 @@ local omode mkmode(cchar *sp) noex {
 	   }
 	} /* end for */
 	return om ;
-}
-/* end subroutine (mkmode) */
+} /* end subroutine (mkmode) */
 
 local bool isnomode(omode of) noex {
 	return ((! (of & ios::in)) && (! (of & ios::out))) ;
