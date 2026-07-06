@@ -26,6 +26,7 @@
 #include	<strxxxxcmp.h>
 #include	<strleadcmp.h>
 #include	<strpcmp.h>
+#include	<dictdiff.h>
 
 
 EXTERNC_begin
