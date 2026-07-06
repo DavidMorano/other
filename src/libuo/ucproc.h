@@ -21,26 +21,13 @@
 /*******************************************************************************
 
   	Names:
-	uc_writedesc
-	uc_write
-	uc_writefile
-	uc_filecopy
 
   	Description:
 	Additional (or supplemental) support for UNIX® limits.
 
 	Synopsis:
-	extern int	uc_writedesc(int,int,int) noex
-	extern int	uc_write(int,cvoid *,int) noex
-	extern int	uc_writefile(int,cchar *) noex
-	extern int	uc_filecopy(cchar *,cchar *) noex
 
 	Arguments:
-	sfd		srouce file-descriptor
-	dfd		destination file-descriptor
-	sfname		source file-name
-	dfname		destination file-name
-	len		number of bytes to copy
 
 *******************************************************************************/
 
@@ -54,14 +41,15 @@
 #include	<clanguage.h>
 #include	<usysbase.h>
 
-#include	<ucprocpid.h>
-#include	<ucprochave.h>
-#include	<ucfork.h>
-#include	<ucforkdet.h>
-#include	<ucexit.h>
-#include	<ucsafesleep.h>
 #include	<ucatexit.h>
 #include	<ucatfork.h>
+#include	<ucexec.h>
+#include	<ucexit.h>
+#include	<ucfork.h>
+#include	<ucforkdet.h>
+#include	<ucprocpid.h>
+#include	<ucprochave.h>
+#include	<ucsafesleep.h>
 
 
 #endif /* UCPROC_INCLUDE */
