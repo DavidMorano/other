@@ -20,15 +20,15 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<dstr.h>
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<dstr.h>		/* LIBUC */
 
 
-#define	REALNAME_MAGIC		0x06253425
 #define	REALNAME		struct realname_head
 #define	REALNAME_LEN		struct realname_len
 #define	REALNAME_ABV		struct realname_abv
+#define	REALNAME_MAGIC		0x06253425
 #define	REALNAME_NNAMES		5
 #define	REALNAME_NPARTS		REALNAME_NNAMES
 
