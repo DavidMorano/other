@@ -20,8 +20,8 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<clanguage.h>
-#include	<usysbase.h>
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
 
 
 #define	UCMEM_CUR	struct ucmem_cursor
@@ -98,7 +98,37 @@ namespace libuc {
 	int vall	(int,void *) noex ;
 	int call	(int,int,void *) noex ;
 	int rall	(void *,int,void *) noex ;
-	int free	(void *vp) noex ;
+	int free	(void *) noex ;
+	int sysbuf	(int,void *) noex ;
+	int ps		(void *) noex ;
+	int ma		(void *) noex ;
+	int ml		(char **) noex ;
+	int mn		(char **) noex ;
+	int mp		(char **) noex ;
+	int nn		(char **) noex ;	/* name system node */
+	int un		(char **) noex ;	/* name system user */
+	int gn		(char **) noex ;	/* name system group */
+	int pn		(char **) noex ;	/* name system project */
+	int protname	(char **) noex ;	/* name network prot */
+	int netwname	(char **) noex ;	/* name network netw */
+	int hostname	(char **) noex ;	/* name network host */
+	int servname	(char **) noex ;	/* name network serv */
+	int ut		(void *) noex ;		/* entry */
+	int pw		(void *) noex ;		/* entry */
+	int sp		(void *) noex ;		/* entry */
+	int ua		(void *) noex ;		/* entry */
+	int gr		(void *) noex ;		/* entry */
+	int pj		(void *) noex ;		/* entry */
+	int pr		(void *) noex ;		/* entry */
+	int nw		(void *) noex ;		/* entry */
+	int ho		(void *) noex ;		/* entry */
+	int sv		(void *) noex ;		/* entry */
+	int fs		(char **) noex ;	/* name system file-system */
+	int sn		(char **) noex ;	/* name system symbol */
+	int zn		(char **) noex ;	/* name zone (abbreviation) */
+	int zi		(char **) noex ;	/* name zone-info */
+	int ad		(char **) noex ;	/* buffer (mail-address) */
+	int mailaddr	(char **) noex ;	/* buffer (mail-address) */
 	int mallset	(int) noex ;
 	int mallcount	(ulong *) noex ;
 	int mallout	(ulong *) noex ;
