@@ -34,7 +34,6 @@
 #include	<getrealname.h>
 #include	<getsysname.h>
 #include	<getusername.h>
-#include	<getpwx.h>
 
 
 #endif /* GETXNAME_INCLUDE */
