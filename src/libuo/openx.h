@@ -1,4 +1,4 @@
-/* optx HEADER */
+/* openx HEADER */
 /* charset=ISO8859-1 */
 /* lang=C20 */
 
