@@ -20,25 +20,27 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
+#include	<clanguage.h>		/* LIBU */
+#include	<utypedefs.h>		/* LIBU */
+#include	<utypealiases.h>	/* LIBU */
+#include	<usysdefs.h>		/* LIBU */
+
+#include	<isaccmode.h>		/* LIBUC */
 
 
 EXTERNC_begin
 
-extern bool	isprime(uint) noex ;
-extern bool	isleapyear(int) noex ;
-extern bool	isdotdir(cchar *) noex ;
-extern bool	isobjspecial(void *) noex ;
-extern bool	issamehostname(cchar *,cchar *,cchar *) noex ;
-extern bool	isfnamespecial(cchar *,int) noex ;
+extern bool	isprime		(uint) noex ;
+extern bool	isleapyear	(int) noex ;
+extern bool	isdotdir	(cchar *) noex ;
+extern bool	isobjspecial	(void *) noex ;
+extern bool	issamehostname	(cchar *,cchar *,cchar *) noex ;
+extern bool	isfnamespecial	(cchar *,int) noex ;
 
-static inline bool isDotDir(cchar *dp) noex {
+local inline bool isDotDir(cchar *dp) noex {
 	return isdotdir(dp) ;
 }
-static inline bool isSpecialObject(void *op) noex {
+local inline bool isSpecialObject(void *op) noex {
 	return isobjspecial(op) ;
 }
 
