@@ -20,19 +20,17 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<stdarg.h>		/* |va_list(3c)| */
-#include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<stdarg.h>		/* CSTD |va_list(3c)| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
 
-#include	<fmtopts.h>
+#include	<fmtopts.h>		/* LIBUC */
 
 
 #ifndef	FMTSTR_NULLSTR
 #define	FMTSTR_NULLSTR		"(null)"
 #endif
+
 
 EXTERNC_begin
 
