@@ -20,14 +20,11 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<stdint.h>		/* |uint64_t| */
-#include	<stdarg.h>		/* |va_list(3c)| */
-#include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
-#include	<stdintx.h>
+#include	<stdint.h>		/* CSTD |uint64_t| */
+#include	<stdarg.h>		/* CSTD |va_list(3c)| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<stdintx.h>		/* LIBU */
 
 
 #define	SBUF		struct sbuf_head
@@ -93,9 +90,9 @@ struct sbuf_co {
 	} ;
 } ; /* end struct (sbuf_co) */
 extern "C" {
-   extern int sbuf_strw(sbuf *,cchar *,int) noex ;
-   extern int sbuf_addquoted(sbuf *,cchar *,int) noex ;
-   extern int sbuf_getlen(sbuf *) noex ;
+   extern int sbuf_strw		(sbuf *,cchar *,int) noex ;
+   extern int sbuf_addquoted	(sbuf *,cchar *,int) noex ;
+   extern int sbuf_getlen	(sbuf *) noex ;
 }
 struct sbuf : sbuf_head {
 	sbuf_co		deci ;
@@ -137,14 +134,14 @@ struct sbuf : sbuf_head {
 	} ;
 	int vprintf	(cchar *,va_list) noex ;
 	int printf	(cchar *,...) noex ;
-	int hexp	(uint64_t,int) noex ;
+	int hexp	(uint128_t,int) noex ;
 	int buf		(cchar *,int) noex ;
 	int getpoint	(cchar **) noex ;
 	int decl	(long) noex ;
-	template<typename Binary>	int bin(Binary) noex ;
-	template<typename Octal>	int oct(Octal) noex ;
-	template<typename Decimal>	int dec(Decimal) noex ;
-	template<typename Hexadecimal>	int hex(Hexadecimal) noex ;
+	template<typename Binary>	int bin(Binary)		noex ;
+	template<typename Octal>	int oct(Octal)		noex ;
+	template<typename Decimal>	int dec(Decimal)	noex ;
+	template<typename Hexadecimal>	int hex(Hexadecimal)	noex ;
 	sbuf &operator << (cchar *cp) noex {
 	    strw(cp) ;
 	    return *this ;
@@ -220,7 +217,7 @@ extern int	sbuf_printf	(sbuf *,cchar *,...) noex ;
 extern int	sbuf_vprintf	(sbuf *,cchar *,va_list) noex ;
 extern int	sbuf_termconseq	(sbuf *,int,cchar *,int,...) noex ;
 extern int	sbuf_addquoted	(sbuf *,cchar *,int) noex ;
-extern int	sbuf_hexp	(sbuf *,uint64_t,int) noex ;
+extern int	sbuf_hexp	(sbuf *,uint128_t,int) noex ;
 
 static inline int sbuf_str(sbuf *op,cchar *sp) noex {
 	return sbuf_strw(op,sp,-1) ;
