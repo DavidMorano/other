@@ -1,3 +1,0 @@
-.ccm.o:
-	makemodule $(*)
-
