@@ -2,7 +2,7 @@
 
 T= libuo
 
-ALL= $(T).o ${T}.so $(T).a
+ALL= $(T).o ${T}.so
 EXTRA ?= /usr/extra
 
 
@@ -39,13 +39,13 @@ INCS= libuc.h
 MODS += libutil.ccm argmgr.ccm strfilter.ccm sif.ccm 
 MODS += tardir.ccm
 
-LIBS= -lu -lsecdb -lnss
+LIBS= -lut -lu -lsecdb -lnss
 
 
 OBJUC00= ucsys.o ucent.o ucget.o ucenum.o
 OBJUC01= ucsig.o ucsysconf.o ucx.o 
-OBJUC02= ucstrto.o uclibmem.o
-OBJUC03= ucsupport.o ucstream.o
+OBJUC02= ucstrto.o uclibmem.o ucpwcache.o
+OBJUC03= ucsupport.o ucstream.o ucpts.o
 
 OBJUC04= ucdescbase.o ucdescmisc.o
 OBJUC05= ucdescread.o ucdescwrite.o
@@ -54,18 +54,18 @@ OBJUC07= ucgetx.o ucsysmisc.o
 
 OBJUC08= ucproc.o ucdata.o ucsysauxinfo.o
 OBJUC09= ucfileop.o
-OBJUC10= ucrand.o
-OBJUC11=
+OBJUC10= ucrand.o ucmem.o
+OBJUC11= ucopen.o
 
 OBJUC_A= objuc00.o objuc01.o objuc02.o objuc03.o
 OBJUC_B= objuc04.o objuc05.o objuc06.o objuc07.o
-OBJUC_C= objuc08.o objuc09.o objuc10.o
+OBJUC_C= objuc08.o objuc09.o objuc10.o objuc11.o
 
 OBJUC= objuc_a.o objuc_b.o objuc_c.o
 
-OBJ00_LUO= deb.o
+OBJ00_LUO= snwcpy.o
 OBJ01_LUO= strn.o six.o mkx.o mnw.o
-OBJ02_LUO= sfx.o rmx.o snx.o snwcpy.o
+OBJ02_LUO= sfx.o rmx.o snx.o mkui.o
 OBJ03_LUO= isx.o ismisc.o isfiledesc.o hasx.o 
 
 OBJ04_LUO= sif.o ctx.o cfx.o
@@ -73,20 +73,20 @@ OBJ05_LUO= strcpyx.o strdcpy.o strx.o
 OBJ06_LUO= strxcmp.o
 OBJ07_LUO= strw.o strwcpy.o
 
-OBJ08_LUO= filer.o filemap.o hdb.o
-OBJ09_LUO= strfilter.o 
+OBJ08_LUO= filer.o hdb.o hdbstr.o mklogid.o
+OBJ09_LUO= strfilter.o paramfile.o
 OBJ10_LUO= fsdirtree.o fsdir.o
-OBJ11_LUO= queue.o field.o
+OBJ11_LUO= queue.o field.o bits.o
 
 OBJ12_LUO= tardir.o langx.o
 OBJ13_LUO= nleadx.o matxstr.o 
 OBJ14_LUO= char.o toxc.o
-OBJ15_LUO= dictdiff.o strnxcmp.o
+OBJ15_LUO= strnxcmp.o
 
 OBJ16_LUO= checkbase.o matparam.o
 OBJ17_LUO= bitrotate.o stdorder.o
-OBJ18_LUO= mapex.o ncolx.o hash.o permx.o
-OBJ19_LUO= inetconv.o inetaddrx.o 
+OBJ18_LUO= ncolx.o hash.o permx.o
+OBJ19_LUO= inetaddrx.o 
 
 OBJ20_LUO= addrset.o ids.o gecos.o
 OBJ21_LUO= sigobj.o pwentry.o serialbuf.o
@@ -98,30 +98,35 @@ OBJ25_LUO= wsnx.o
 OBJ26_LUO= wsix.o
 OBJ27_LUO= wswcpyx.o
 
-OBJ28_LUO= bufsize.o openx.o
+OBJ28_LUO= bufsize.o openx.o open.o
 OBJ29_LUO= sysval.o path.o termx.o
 OBJ30_LUO= vstr.o xfile.o absfn.o
 OBJ31_LUO= randlc.o pow.o calstrs.o digval.o
 
-OBJ32_LUO= realname.o nodedb.o
-OBJ33_LUO= ema.o tmpx.o getxname.o
+OBJ32_LUO= realname.o
+OBJ33_LUO= ema.o tmpx.o getxname.o getutmp.o
 OBJ34_LUO= sbuf.o buffer.o
 OBJ35_LUO= storebuf.o storeitem.o
 
 OBJ36_LUO= fmtflag.o fmtstr.o sysdbfiles.o
-OBJ37_LUO= getx.o gethe.o sysdbfn.o strlibval.o
-OBJ38_LUO= utmpxx.o uinfo.o caches.o optval.o
-OBJ39_LUO= filex.o getxx.o bufos.o bufslide.o 
+OBJ37_LUO= getx.o host.o gethe.o sysdbfn.o strlibval.o
+OBJ38_LUO= utmpxx.o ucinfo.o caches.o optval.o
+OBJ39_LUO= filex.o fileobj.o getxx.o bufos.o bufslide.o 
 
 OBJ40_LUO= dirs.o dirseen.o sockaddress.o 
-OBJ41_LUO= envx.o strpack.o strobj.o
+OBJ41_LUO= envx.o envs.o strpack.o strobj.o
 OBJ42_LUO= chrono.o timestr.o lockfile.o
-OBJ43_LUO= hostinfo.o hostent.o clusterdb.o
+OBJ43_LUO= nodedb.o clusterdb.o varsub.o
 
 OBJ44_LUO= kvsfile.o memtrack.o randomvar.o
-OBJ45_LUO= varray.o nonpath.o
-OBJ46_LUO=
-OBJ47_LUO=
+OBJ45_LUO= nonpath.o msghdr.o conmsghdr.o
+OBJ46_LUO= userattrdb.o userinfo.o expcook.o
+OBJ47_LUO= spawner.o spawnproc.o
+
+OBJ48_LUO= findxfile.o sigx.o dial.o conallof.o
+OBJ49_LUO= argutils.o cmdutils.o logfile.o linex.o
+OBJ50_LUO= ndig.o ndigit.o bufprintf.o
+OBJ51_LUO=
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
@@ -134,13 +139,14 @@ OBJH_LUO= obj28_luo.o obj29_luo.o obj30_luo.o obj31_luo.o
 OBJI_LUO= obj32_luo.o obj33_luo.o obj34_luo.o obj35_luo.o
 OBJJ_LUO= obj36_luo.o obj37_luo.o obj38_luo.o obj39_luo.o
 OBJK_LUO= obj40_luo.o obj41_luo.o obj42_luo.o obj43_luo.o
-#OBJL_LUO= obj44_luo.o obj45_luo.o obj46_luo.o obj47_luo.o
-OBJL_LUO= obj44_luo.o obj45_luo.o
-OBJM_MUO=
+OBJL_LUO= obj44_luo.o obj45_luo.o obj46_luo.o obj47_luo.o
+#OBJM_LUO= obj48_luo.o obj49_luo.o obj50_luo.o obj51_luo.o
+OBJM_LUO= obj48_luo.o obj49_luo.o obj50_luo.o
 
 OBJ_LUO += obja_luo.o objb_luo.o objc_luo.o objd_luo.o
 OBJ_LUO += obje_luo.o objf_luo.o objg_luo.o objh_luo.o
 OBJ_LUO += obji_luo.o objj_luo.o objk_luo.o objl_luo.o
+OBJ_LUO += objm_luo.o
 
 OBJ += objuc.o
 OBJ += obj_luo.o
@@ -148,7 +154,7 @@ OBJ += obj_luo.o
 
 INCDIRS=
 
-LIBDIRS= -L$(LIBDIR)
+LIBDIRS= -L /usr/local/lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -195,7 +201,7 @@ a:			$(T).a
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	makemodule $(*)
+	gxx -c -x c++ -o $@ -O $<
 
 
 $(T).so:		obj.o
@@ -429,6 +435,19 @@ obj47_luo.o:		$(OBJ47_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
+obj48_luo.o:		$(OBJ48_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj49_luo.o:		$(OBJ49_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj50_luo.o:		$(OBJ50_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj51_luo.o:		$(OBJ51_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
 obja_luo.o:		$(OBJA_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
@@ -553,10 +572,6 @@ inetaddrx.o:		inetaddrx.dir
 inetaddrx.dir:
 	makesubdir $@
 
-bufsizevar.o:		bufsizevar.dir
-bufsizevar.dir:
-	makesubdir $@
-
 # Hierarchical Objects
 
 # SBUF
@@ -572,6 +587,11 @@ buffer.dir:
 # HDB
 hdb.o:			hdb.dir
 hdb.dir:
+	makesubdir $@
+
+# HDBSTR
+hdbstr.o:		hdbstr.dir
+hdbstr.dir:
 	makesubdir $@
 
 # EMA
@@ -666,7 +686,15 @@ ucfileop.o:		ucfileop.dir
 ucfileop.dir:
 	makesubdir $@
 
+# UCOPEN
+ucopen.o:		ucopen.dir
+ucopen.dir:
+	makesubdir $@
+
+ucpts.o:		ucpts.cc	ucpts.h			$(INCS)
+ucpwcache.o:		ucpwcache.cc	ucpwcache.h		$(INCS)
 ucdescbase.o:		ucdescbase.cc	ucdescbase.hh		$(INCS)
+ucinfo.o:		ucinfo.cc	ucinfo.h		$(INCS)
 
 # UCDESCREAD
 ucdescread.o:		ucdescread.dir
@@ -683,14 +711,14 @@ ucdescsock.o:		ucdescsock.dir
 ucdescsock.dir:
 	makesubdir $@
 
-# UCESCMISC
-ucdescmisc.o:		ucdescmisc.dir
-ucdescmisc.dir:
-	makesubdir $@
-
 # UCESCLOCK
 ucdesclock.o:		ucdesclock.dir
 ucdesclock.dir:
+	makesubdir $@
+
+# UCESCMISC
+ucdescmisc.o:		ucdescmisc.dir
+ucdescmisc.dir:
 	makesubdir $@
 
 # UCX		(libuc)
@@ -711,11 +739,6 @@ strnxcmp.dir:
 # STRKEYX
 strxcmp.o:		strxcmp.dir
 strxcmp.dir:
-	makesubdir $@
-
-# DEBUG		(libu)
-deb.o:			deb.dir
-deb.dir:
 	makesubdir $@
 
 # ADDRSET	(libuc)
@@ -873,19 +896,24 @@ fmtstr.o:		fmtstr.dir
 fmtstr.dir:
 	makesubdir $@
 
-# GETXX
-getxx.o:		getxx.dir
-getxx.dir:
-	makesubdir $@
-
 # GETX
 getx.o:			getx.dir
 getx.dir:
 	makesubdir $@
 
+# GETXX
+getxx.o:		getxx.dir
+getxx.dir:
+	makesubdir $@
+
 # GETXNAME
 getxname.o:		getxname.dir
 getxname.dir:
+	makesubdir $@
+
+# GETUTMP
+getutmp.o:		getutmp.dir
+getutmp.dir:
 	makesubdir $@
 
 # TMPX
@@ -903,9 +931,14 @@ caches.o:		caches.dir
 caches.dir:
 	makesubdir $@
 
-# FILEREAD
+# FILEX
 filex.o:		filex.dir
 filex.dir:
+	makesubdir $@
+
+# FILEOBJ
+fileobj.o:		fileobj.dir
+fileobj.dir:
 	makesubdir $@
 
 # BUFOS
@@ -932,6 +965,11 @@ mktmp.o:		mktmp.dir
 mktmp.dir:
 	makesubdir $@
 
+# MKLOGID
+mklogid.o:		mklogid.dir
+mklogid.dir:
+	makesubdir $@
+
 # DIRS
 dirs.o:			dirs.dir
 dirs.dir:
@@ -952,6 +990,11 @@ timestr.o:		timestr.dir
 timestr.dir:
 	makesubdir $@
 
+# HOST
+host.o:			host.dir
+host.dir:
+	makesubdir $@
+
 # GETHE
 gethe.o:		gethe.dir
 gethe.dir:
@@ -962,9 +1005,49 @@ envx.o:			envx.dir
 envx.dir:
 	makesubdir $@
 
+# ENVS
+envs.o:			envs.dir
+envs.dir:
+	makesubdir $@
+
+# SIGX
+sigx.o:			sigx.dir
+sigx.dir:
+	makesubdir $@
+
 # DIAL
 dial.o:			dial.dir
 dial.dir:
+	makesubdir $@
+
+# ARGUTILS
+argutils.o:		argutils.dir
+argutils.dir:
+	makesubdir $@
+
+# CMDUTILS
+cmdutils.o:		cmdutils.dir
+cmdutils.dir:
+	makesubdir $@
+
+# LOGFILE
+logfile.o:		logfile.dir
+logfile.dir:
+	makesubdir $@
+
+# LINEX
+linex.o:		linex.dir
+linex.dir:
+	makesubdir $@
+
+# MKUI
+mkui.o:			mkui.dir
+mkui.dir:
+	makesubdir $@
+
+# VARSUB
+varsub.o:		varsub.dir
+varsub.dir:
 	makesubdir $@
 
 # Objects
@@ -975,37 +1058,32 @@ lookaside.o:		lookaside.cc	lookaside.h		$(INCS)
 termstr.o:		termstr.cc	termstr.h		$(INCS)
 td.o:			td.cc		td.h			$(INCS)
 fsdirtree.o:		fsdirtree.cc	fsdirtree.h		$(INCS)
-filemap.o:		filemap.cc	filemap.h		$(INCS)
 nodedb.o:		nodedb.cc	nodedb.h		$(INCS)
+clusterdb.o:		clusterdb.cc	clusterdb.h		$(INCS)
 gecos.o:		gecos.cc	gecos.h			$(INCS)
 pwentry.o:		pwentry.cc	pwentry.h		$(INCS)
 serialbuf.o:		serialbuf.cc	serialbuf.h		$(INCS)
 dupstr.o:		dupstr.cc	dupstr.h		$(INCS)
 comparse.o:		comparse.cc	comparse.h		$(INCS)
 posname.o:		posname.cc	posname.h		$(INCS)
-hostinfo.o:		hostinfo.cc	hostinfo.h		$(INCS)
-hostent.o:		hostent.cc	hostent.h		$(INCS)
-clusterdb.o:		clusterdb.cc	clusterdb.h		$(INCS)
 absfn.o:		absfn.cc	absfn.h			$(INCS)
 kvsfile.o:		kvsfile.cc	kvsfile.h		$(INCS)
-varray.o:		varray.cc	varray.h		$(INCS)
+userattrdb.o:		userattrdb.cc	userattrdb.h		$(INCS)
+spawner.o:		spawner.cc	spawner.h		$(INCS)
+userinfo.o:		userinfo.cc	userinfo.h		$(INCS)
+expcook.o:		expcook.cc	expcook.h		$(INCS)
+bits.o:			bits.cc		bits.h			$(INCS)
+paramfile.o:		paramfile.cc	paramfile.h		$(INCS)
 
 # GROUPS
-uinfo.o:		uinfo.cc	uinfo.h			$(INCS)
 calstrs.o:		calstrs.cc	calstrs.h		$(INCS)
 char.o:			char.cc		char.h			$(INCS)
 toxc.o:			toxc.cc		toxc.h			$(INCS)
-inetconv.o:		inetconv.cc	inetconv.h		$(INCS)
 bitrotate.o:		bitrotate.cc	bitrotate.h		$(INCS)
 stdorder.o:		stdorder.cc	stdorder.h		$(ICNS)
 
 # SINGLES
-mapex.o:		mapex.cc	mapex.h			$(INCS)
-dictdiff.o:		dictdiff.cc	dictdiff.h		$(INCS)
-inet4int.o:		inet4int.cc	inet4int.h		$(INCS)
-getourenv.o:		getourenv.cc	getourenv.h		$(INCS)
 optval.o:		optval.cc	optval.h		$(INCS)
-getbufsize.o:		getbufsize.cc	getbufsize.h		$(INCS)
 sysval.o:		sysval.cc	sysval.hh		$(INCS)
 randlc.o:		randlc.cc	randlc.h		$(INCS)
 calstrs.o:		calstrs.cc	calstrs.h		$(INCS)
@@ -1020,5 +1098,13 @@ sockaddress.o:		sockaddress.cc	sockaddress.h		$(INCS)
 lockfile.o:		lockfile.cc	lockfile.h		$(INCS)
 digval.o:		digval.cc	digval.h		$(INCS)
 nonpath.o:		nonpath.cc	nonpath.h		$(INCS)
+msghdr.o:		msghdr.cc	msghdr.h		$(INCS)
+conmsghdr.o:		conmsghdr.cc	conmsghdr.h		$(INCS)
+spawnproc.o:		spawnproc.cc	spawnproc.h		$(INCS)
+findxfile.o:		findxfile.cc	findxfile.h		$(INCS)
+conallof.o:		conallof.cc	conallof.h		$(INCS)
+ndig.o:			ndig.cc		ndig.h			$(INCS)
+ndigit.o:		ndigit.cc	ndigit.h		$(INCS)
+bufprintf.o:		bufprintf.cc	bufprintf.h		$(INCS)
 
 
