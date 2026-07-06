@@ -84,10 +84,10 @@ struct strmgr : strmgr_head {
 	} ; /* end ctor */
 	strmgr(const strmgr &) = delete ;
 	strmgr &operator = (const strmgr &) = delete ;
-	int start(char *,int = -1) noex ;
-	int str(cchar *,int = -1) noex ;
-	int chr(int) noex ;
-	int get(ccharpp) noex ;
+	int start	(char *,int = -1) noex ;
+	int str		(cchar *,int = -1) noex ;
+	int chr		(int) noex ;
+	int get		(ccharpp) noex ;
 	void dtor() noex ;
 	operator int () noex ;
 	destruct strmgr() {
@@ -100,16 +100,16 @@ typedef STRMGR		strmgr ;
 
 EXTERNC_begin
 
-extern int strmgr_start(strmgr *,char *,int) noex ;
-extern int strmgr_avail(strmgr *) noex ;
-extern int strmgr_rem(strmgr *) noex ;
-extern int strmgr_lenrem(strmgr *) noex ;
-extern int strmgr_str(strmgr *,cchar *,int) noex ;
-extern int strmgr_chr(strmgr *,int) noex ;
-extern int strmgr_get(strmgr *,ccharpp) noex ;
-extern int strmgr_len(strmgr *) noex ;
-extern int strmgr_reset(strmgr *) noex ;
-extern int strmgr_finish(strmgr *) noex ;
+extern int strmgr_start		(strmgr *,char *,int) noex ;
+extern int strmgr_avail		(strmgr *) noex ;
+extern int strmgr_rem		(strmgr *) noex ;
+extern int strmgr_lenrem	(strmgr *) noex ;
+extern int strmgr_str		(strmgr *,cchar *,int) noex ;
+extern int strmgr_chr		(strmgr *,int) noex ;
+extern int strmgr_get		(strmgr *,ccharpp) noex ;
+extern int strmgr_len		(strmgr *) noex ;
+extern int strmgr_reset		(strmgr *) noex ;
+extern int strmgr_finish	(strmgr *) noex ;
 
 EXTERNC_end
 
