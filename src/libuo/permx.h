@@ -31,20 +31,20 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<sys/types.h>		/* UNIX® system types */
-#include	<sys/stat.h>
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<ids.h>
-#include	<vecstr.h>
+#include	<sys/types.h>		/* POSIX UNIX® system types */
+#include	<sys/stat.h>		/* POSIX */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<ids.h>			/* LIBUC */
+#include	<vecstr.h>		/* LIBUC */
 
-#include	<permsched.h>
+#include	<permsched.h>		/* LIBUC */
 
 EXTERNC_begin
 
-extern int permid(ids *,ustat *,int) noex ;
-extern int perm(cchar *,uid_t,gid_t,const gid_t *,int) noex ;
-extern int permf(int,uid_t,gid_t,const gid_t *,int) noex ;
+extern int permid	(ids *,ustat *,int)			noex ;
+extern int perm		(cchar *,uid_t,gid_t,const gid_t *,int)	noex ;
+extern int permf	(int,uid_t,gid_t,const gid_t *,int)	noex ;
 
 EXTERNC_end
 
