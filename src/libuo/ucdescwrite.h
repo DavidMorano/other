@@ -49,10 +49,10 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<clanguage.h>
-#include	<usysbase.h>
+#include	<cstddef>		/* CSTD |nullptr_t| */
+#include	<cstdlib>		/* CSTD */
+#include	<clanguage.h>		/* LINU */
+#include	<usysbase.h>		/* LINU */
 
 #include	<ucwritedesc.h>
 #include	<ucwritefile.h>
