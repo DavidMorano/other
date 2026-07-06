@@ -27,8 +27,8 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<clanguage.h>
-#include	<usysbase.h>
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
 
 #include	<mkaddr.h>
 #include	<mkbasename.h>
@@ -39,11 +39,12 @@
 #include	<mkgecosname.h>
 #include	<mklineclean.h>
 #include	<mkmagic.h>
+#include	<mkmid.h>
+#include	<mkmisc.h>
 #include	<mknpath.h>
-#include	<mkprogenv.h>
 #include	<mkpath.h>
 #include	<mkpathxx.h>
-#include	<mkpathmulti.h>
+#include	<mknpathxx.h>
 #include	<mkpr.h>
 #include	<mkquoted.h>
 #include	<mksofname.h>
@@ -53,34 +54,6 @@
 #include	<mkutmpid.h>
 #include	<mkuuid.h>
 #include	<mkxdisp.h>
-
-
-EXTERNC_begin
-
-extern int	mkrealname(char *,int,cchar *,int) noex ;
-extern int	mknoise(uint *a,int n) noex ;
-extern int	mkintfname(char *,cchar *,cchar *,cchar *) noex ;
-extern int	mktagfname(char *,cchar *,cchar *,int) noex ;
-extern int	mkmid(char *,int,cchar *,cchar *,pid_t,int) noex ;
-extern int	mkonefrom(char *,int,cchar *,int) noex ;
-extern int	mkmailname(char *,int,cchar *,int) noex ;
-extern int	mkshlibname(char *,cchar *,int) noex ;
-extern int	mkshmname(char *,cchar *,int,cchar *,int) noex ;
-extern int	mksofname(char *,cchar *,cchar *,cchar *) noex ;
-extern int	mkaltext(char *,cchar *,cchar *) noex ;
-extern int	mkmaildirtest(char *,cchar *,int) noex ;
-extern int	mkfmtphone(char *,int,cchar *,int) noex ;
-extern int	mkfingerquery(char *,int,int,cchar *,mainv) noex ;
-
-EXTERNC_end
-
-#ifdef	__cplusplus
-
-inline int mkshmname(char *rbuf,cchar *ip,int il,cchar *sp) noex {
-	return mkshmname(rbuf,ip,il,sp,-1) ;
-}
-
-#endif /* __cplusplus */
 
 
 #endif /* MKX_INCLUDE */
