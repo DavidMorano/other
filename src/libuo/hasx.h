@@ -40,7 +40,6 @@
 #include	<hasprint.h>
 #include	<hasmisc.h>
 #include	<hasuniq.h>
-#include	<hasvarprefix.h>
 
 #include	<hasallof.h>		/* special (different return) */
 
