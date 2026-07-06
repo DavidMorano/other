@@ -32,11 +32,11 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<sys/types.h>		/* system types */
-#include	<unistd.h>		/* system types */
-#include	<stdarg.h>		/* |va_list(3c)| */
-#include	<clanguage.h>
-#include	<usysbase.h>
+#include	<sys/types.h>		/* POSIX system types */
+#include	<unistd.h>		/* POSIX system types */
+#include	<stdarg.h>		/* CSTD |va_list(3c)| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
 
 
 #define	FILER		struct filer_head
@@ -76,6 +76,7 @@ enum filermems {
 	filermem_writeblanks,
 	filermem_writealign,
 	filermem_writezero,
+	filermem_rewind,
 	filermem_overlast
 } ; /* end enum (filermems) */
 struct filer ;
@@ -85,8 +86,8 @@ struct filer_co {
 	void operator () (filer *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
-	int operator () (int) noex ;
+	} ; /* end method */
+	int operator () (int = 0) noex ;
 	operator int () noex {
 	    return operator () (0) ;
 	} ;
@@ -102,6 +103,7 @@ struct filer : filer_head {
 	filer_co	writeblanks ;
 	filer_co	writealign ;
 	filer_co	writezero ;
+	filer_co	rewind ;
 	filer() noex {
 	    reserve	(this,filermem_reserve) ;
 	    invalidate	(this,filermem_invalidate) ;
@@ -113,6 +115,7 @@ struct filer : filer_head {
 	    writeblanks	(this,filermem_writeblanks) ;
 	    writealign	(this,filermem_writealign) ;
 	    writezero	(this,filermem_writezero) ;
+	    rewind	(this,filermem_rewind) ;
 	    magval = 0 ;
 	} ; /* end ctor */
 	filer(const filer &) = delete ;
@@ -136,7 +139,7 @@ struct filer : filer_head {
 	void dtor() noex ;
 	destruct filer() {
 	    if (magval) dtor() ;
-	} ;
+	} ; /* end destruct */
 } ; /* end struct (filer) */
 #else	/* __cplusplus */
 typedef FILER		filer ;
@@ -146,34 +149,35 @@ typedef FILER_FL	filer_fl ;
 
 EXTERNC_begin
 
-extern int	filer_start(filer *,int,off_t,int,int) noex ;
-extern int	filer_read(filer *,void *,int,int) noex ;
-extern int	filer_readp(filer *,void *,int,off_t,int) noex ;
-extern int	filer_readln(filer *,char *,int,int) noex ;
-extern int	filer_readlns(filer *,char *,int,int,int *) noex ;
-extern int	filer_write(filer *,cvoid *,int) noex ;
-extern int	filer_writeto(filer *,cvoid *,int,int) noex ;
-extern int	filer_println(filer *,cchar *,int) noex ;
-extern int	filer_printf(filer *,cchar *,...) noex ;
-extern int	filer_vprintf(filer *,cchar *,va_list) noex ;
-extern int	filer_reserve(filer *,int) noex ;
-extern int	filer_update(filer *,off_t,cchar *,int) noex ;
-extern int	filer_invalidate(filer *) noex ;
-extern int	filer_flush(filer *) noex ;
-extern int	filer_adv(filer *,int) noex ;
-extern int	filer_seek(filer *,off_t,int) noex ;
-extern int	filer_tell(filer *,off_t *) noex ;
-extern int	filer_poll(filer *,int) noex ;
-extern int	filer_stat(filer *,ustat *) noex ;
-extern int	filer_lockbegin(filer *,int,off_t,int) noex ;
-extern int	filer_lockend(filer *) noex ;
-extern int	filer_finish(filer *) noex ;
+extern int	filer_start		(filer *,int,off_t,int,int) noex ;
+extern int	filer_read		(filer *,void *,int,int) noex ;
+extern int	filer_readp		(filer *,void *,int,off_t,int) noex ;
+extern int	filer_readln		(filer *,char *,int,int) noex ;
+extern int	filer_readlns		(filer *,char *,int,int,int *) noex ;
+extern int	filer_write		(filer *,cvoid *,int) noex ;
+extern int	filer_writeto		(filer *,cvoid *,int,int) noex ;
+extern int	filer_println		(filer *,cchar *,int) noex ;
+extern int	filer_printf		(filer *,cchar *,...) noex ;
+extern int	filer_vprintf		(filer *,cchar *,va_list) noex ;
+extern int	filer_reserve		(filer *,int) noex ;
+extern int	filer_update		(filer *,off_t,cchar *,int) noex ;
+extern int	filer_invalidate	(filer *) noex ;
+extern int	filer_flush		(filer *) noex ;
+extern int	filer_adv		(filer *,int) noex ;
+extern int	filer_seek		(filer *,off_t,int) noex ;
+extern int	filer_tell		(filer *,off_t *) noex ;
+extern int	filer_poll		(filer *,int) noex ;
+extern int	filer_stat		(filer *,ustat *) noex ;
+extern int	filer_lockbegin		(filer *,int,off_t,int) noex ;
+extern int	filer_lockend		(filer *) noex ;
+extern int	filer_rewind		(filer *) noex ;
+extern int	filer_finish		(filer *) noex ;
 
-extern int	filer_writeblanks(filer *,int) noex ;
-extern int	filer_writefill(filer *,cchar *,int) noex ;
-extern int	filer_writealign(filer *,int) noex ;
-extern int	filer_writezero(filer *,int) noex ;
-extern int	filer_writefd(filer *,char *,int,int,int) noex ;
+extern int	filer_writeblanks	(filer *,int) noex ;
+extern int	filer_writealign	(filer *,int) noex ;
+extern int	filer_writezero		(filer *,int) noex ;
+extern int	filer_writefill		(filer *,cchar *,int) noex ;
+extern int	filer_writefd		(filer *,char *,int,int,int) noex ;
 
 EXTERNC_end
 
