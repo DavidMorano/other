@@ -22,17 +22,14 @@
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<clanguage.h>
 #include	<usysbase.h>
-
 #include	<getaddr.h>
 #include	<getaf.h>
 #include	<getarch.h>
-#include	<getbufsize.h>
 #include	<getchostname.h>
 #include	<getdefzdata.h>
 #include	<geteaddrinfo.h>
-#include	<getev.h>
-#include	<getfdfile.h>
 #include	<gethz.h>
+#include	<getlogx.h>
 #include	<getmailgid.h>
 #include	<getmjd.h>
 #include	<getnfile.h>
@@ -42,29 +39,30 @@
 #include	<getnodeinfo.h>
 #include	<getnprocessors.h>
 #include	<getoflags.h>
-#include	<getourenv.h>
+#include	<getopendial.h>
 #include	<getpassword.h>
 #include	<getportnum.h>
+#include	<getprogexec.h>
 #include	<getprogpath.h>
 #include	<getproto.h>
 #include	<getpf.h>
 #include	<getpwd.h>
 #include	<getpwentry.h>
+#include	<getpwlogname.h>
+#include	<getpwx.h>
 #include	<getrand.h>
+#include	<getseed.h>
 #include	<getserial.h>
 #include	<getserv.h>
 #include	<getsocktype.h>
 #include	<getsyslogx.h>
 #include	<getsystypenum.h>
+#include	<gettmpdir.h>
 #include	<getuserhome.h>
 #include	<getuserorg.h>
+#include	<getuserterm.h>
 #include	<getuserterms.h>
 #include	<getxid.h>
-#include	<getopendial.h>
-#include	<getseed.h>
-
-#include	<getenver.h>
-#include	<gettmpdir.h>
 
 
 #endif /* GETX_INCLUDE */
