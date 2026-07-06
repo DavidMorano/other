@@ -20,13 +20,13 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<sys/types.h>		/* |pid_t| */
-#include	<utmpx.h>
-#include	<time.h>		/* |time_t| */
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<vecstr.h>
-#include	<vecint.h>
+#include	<sys/types.h>		/* POSIX |pid_t| */
+#include	<time.h>		/* CSTD |time_t| */
+#include	<clanguage.h>		/* LINU */
+#include	<usysbase.h>		/* LINU */
+#include	<vecstr.h>		/* LIBUC */
+#include	<vecint.h>		/* LIBUC */
+#include	<utmpxx.h>		/* LIBUC */
 
 
 /* UTMPX file */
@@ -93,11 +93,11 @@
 
 struct tmpx_cursor {
 	int		i ;
-} ;
+} ; /* end struct */
 
 struct tmpx_flags {
 	uint		writable:1 ;
-} ;
+} ; /* end struct */
 
 struct tmpx_head {
 	cchar		*fname ;	/* stored file name */
@@ -117,7 +117,7 @@ struct tmpx_head {
 	int		ncursors ;
 	int		mapei ;		/* index of top mapped entry */
 	int		mapen ;		/* number of mapped entries */
-} ;
+} ; /* end struct */
 
 typedef TMPX_FL		tmpx_fl ;
 typedef TMPX_CUR	tmpx_cur ;
@@ -130,7 +130,7 @@ enum tmpxmems {
 	tmpxmem_nusers,
 	tmpxmem_close,
 	tmpxmem_overlast
-} ;
+} ; /* end enum */
 struct tmpx ;
 struct tmpx_op {
 	tmpx		*op = nullptr ;
@@ -220,8 +220,7 @@ local inline int tmpx_magic(tmpx *op,Args ... args) noex {
 	    rs = (op->magval == TMPX_MAGIC) ? SR_OK : SR_NOTOPEN ;
 	}
 	return rs ;
-}
-/* end subroutine (tmpx_magic) */
+} /* end subroutine (tmpx_magic) */
 #endif /* __cplusplus */
 
 
