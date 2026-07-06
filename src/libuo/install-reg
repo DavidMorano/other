@@ -1,0 +1,12 @@
+#!/usr/local/bin/ksh
+# INSTALL-REG
+TDIRS=" lib /usr/local/lib /usr/extra/lib "
+for F in "${@}" ; do
+  if [[ -r "${F}" ]] ; then
+    for TD in ${TDIRS} ; do
+      install -C -p ${F} ${TD}
+    done
+  fi
+done
+
+
