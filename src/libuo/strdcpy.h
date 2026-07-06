@@ -20,10 +20,10 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
+#include	<clanguage.h>		/* LIBU */
+#include	<utypedefs.h>		/* LIBU */
+#include	<utypealiases.h>	/* LIBU */
+#include	<usysdefs.h>		/* LIBU */
 
 #include	<strdcpyx.h>
 #include	<strdcpyxw.h>
@@ -39,24 +39,24 @@ EXTERNC_end
 
 #ifdef	__cplusplus
 
-static inline char *strdcpy(char *dp,int dl,cc *s1,int sl) noex {
+local inline char *strdcpy(char *dp,int dl,cc *s1,int sl) noex {
 	return strdcpyxw(dp,dl,1,s1,sl) ;
 }
-static inline char *strdcpy(char *dp,int dl,cc *s1,cc *s2,int sl) noex {
+local inline char *strdcpy(char *dp,int dl,cc *s1,cc *s2,int sl) noex {
 	return strdcpyxw(dp,dl,2,s1,s2,sl) ;
 }
-static inline char *strdcpy(char *dp,int dl,cc *s1,cc *s2,cc *s3,int sl) noex {
+local inline char *strdcpy(char *dp,int dl,cc *s1,cc *s2,cc *s3,int sl) noex {
 	return strdcpyxw(dp,dl,3,s1,s2,s3,sl) ;
 }
-static inline char *strdcpy(char *dp,int dl,cc *s1,cc *s2,cc *s3,
+local inline char *strdcpy(char *dp,int dl,cc *s1,cc *s2,cc *s3,
 		cc *s4,int sl) noex {
 	return strdcpyxw(dp,dl,4,s1,s2,s3,s4,sl) ;
 }
-static inline char *strdcpy(char *dp,int dl,cc *s1,cc *s2,cc *s3,cc *s4,
+local inline char *strdcpy(char *dp,int dl,cc *s1,cc *s2,cc *s3,cc *s4,
 		cc *s5,int sl) noex {
 	return strdcpyxw(dp,dl,5,s1,s2,s3,s4,s5,sl) ;
 }
-static inline char *strdcpy(char *dp,int dl,cc *s1,cc *s2,cc *s3,cc *s4,
+local inline char *strdcpy(char *dp,int dl,cc *s1,cc *s2,cc *s3,cc *s4,
 		cc *s5,cc *s6,int sl) noex {
 	return strdcpyxw(dp,dl,6,s1,s2,s3,s4,s5,s6,sl) ;
 }
