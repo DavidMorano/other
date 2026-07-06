@@ -26,6 +26,7 @@
 #include	<envhelp.h>
 #include	<envlist.h>
 #include	<envmgr.h>
+#include	<envmk.h>
 
 
 #endif /* RNVX_INCLUDE */
