@@ -21,12 +21,9 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
-#include	<vecobj.h>
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<vecobj.h>		/* LIBUC */
 
 
 #define	DIRSEEN		struct dirseen_head
@@ -37,13 +34,15 @@
 
 struct dirseen_cursor {
 	int		i ;
-} ; /* end struct */
+} ; /* end struct (dirseen_cursor) */
 
 struct dirseen_head {
 	vecobj		*dlistp ;
 	uint		magval ;
 	int		strsz ;
-} ; /* end struct */
+} ; /* end struct (dirseen_head) */
+
+typedef DIRSEEN_CUR	dirseen_cur ;
 
 #ifdef	__cplusplus
 enum dirseenmems {
@@ -106,27 +105,28 @@ struct dirseen : dirseen_head {
 	dirseen_co	count ;
 	dirseen_co	finish ;
 	dirseen() noex {
-	    start(this,dirseenmem_start) ;
-	    count(this,dirseenmem_count) ;
-	    finish(this,dirseenmem_finish) ;
+	    start	(this,dirseenmem_start) ;
+	    count	(this,dirseenmem_count) ;
+	    finish	(this,dirseenmem_finish) ;
 	    magval = 0 ;
 	} ; /* end ctor */
 	dirseen(const dirseen &) = delete ;
 	dirseen &operator = (const dirseen &) = delete ;
-	int add(cchar *,int,ustat *) noex ;
-	int havename(cchar *,int) noex ;
-	int havedevino(ustat *) noex ;
-	int notseen(ustat *,cchar *,int) noex ;
-	int notadd(ustat *,cchar *,int) noex ;
+	int add		(cchar *,int,ustat *) noex ;
+	int havename	(cchar *,int) noex ;
+	int havedevino	(ustat *) noex ;
+	int notseen	(ustat *,cchar *,int) noex ;
+	int notadd	(ustat *,cchar *,int) noex ;
+	int curbegin	(dirseen_cur *) noex ;
+	int curend	(dirseen_cur *) noex ;
+	int curenum	(dirseen_cur *,char *,int) noex ;
 	void dtor() noex ;
 	destruct dirseen() {
 	    if (magval) dtor() ;
 	} ;
 } ; /* end struct (dirseen) */
-typedef DIRSEEN_CUR	dirseen_cur ;
 #else	/* __cplusplus */
 typedef DIRSEEN		dirseen ;
-typedef DIRSEEN_CUR	dirseen_cur ;
 #endif /* __cplusplus */
 
 #ifdef	__cplusplus
@@ -144,17 +144,17 @@ inline int dirseen_magic(dirseen *op,Args ... args) noex {
 
 EXTERNC_begin
 
-extern int dirseen_start(dirseen *) noex ;
-extern int dirseen_add(dirseen *,cchar *,int,ustat *) noex ;
-extern int dirseen_havename(dirseen *,cchar *,int) noex ;
-extern int dirseen_havedevino(dirseen *,ustat *) noex ;
-extern int dirseen_count(dirseen *) noex ;
-extern int dirseen_curbegin(dirseen *,dirseen_cur *) noex ;
-extern int dirseen_curend(dirseen *,dirseen_cur *) noex ;
-extern int dirseen_curenum(dirseen *,dirseen_cur *,char *,int) noex ;
-extern int dirseen_notseen(dirseen *,ustat *,cchar *,int) noex ;
-extern int dirseen_notadd(dirseen *,ustat *,cchar *,int) noex ;
-extern int dirseen_finish(dirseen *) noex ;
+extern int dirseen_start	(dirseen *) noex ;
+extern int dirseen_add		(dirseen *,cchar *,int,ustat *) noex ;
+extern int dirseen_havename	(dirseen *,cchar *,int) noex ;
+extern int dirseen_havedevino	(dirseen *,ustat *) noex ;
+extern int dirseen_count	(dirseen *) noex ;
+extern int dirseen_curbegin	(dirseen *,dirseen_cur *) noex ;
+extern int dirseen_curend	(dirseen *,dirseen_cur *) noex ;
+extern int dirseen_curenum	(dirseen *,dirseen_cur *,char *,int) noex ;
+extern int dirseen_notseen	(dirseen *,ustat *,cchar *,int) noex ;
+extern int dirseen_notadd	(dirseen *,ustat *,cchar *,int) noex ;
+extern int dirseen_finish	(dirseen *) noex ;
 
 EXTERNC_end
 
