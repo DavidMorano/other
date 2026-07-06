@@ -57,18 +57,13 @@
 #include	<ctx.h>
 #include	<dater.h>
 #include	<defproc.h>
-#include	<dictdiff.h>
 #include	<digval.h>
 #include	<dirempty.h>
 #include	<dirent.h>
 #include	<dstr.h>
 #include	<dupstr.h>
-#include	<envhelp.h>
-#include	<envlist.h>
-#include	<envmgr.h>
 #include	<envs.h>
-#include	<envstandards.h>	/* MUST be first to configure */
-#include	<envstandards.h>	/* ordered first to configure */
+#include	<envx.h>
 #include	<epsem.h>
 #include	<errno.h>
 #include	<estrings.h>
@@ -79,17 +74,14 @@
 #include	<filegrp.h>
 #include	<filemap.h>
 #include	<filer.h>
-#include	<findbit.h>
 #include	<findfilepath.h>
-#include	<findinline.h>
 #include	<findxfile.h>
 #include	<format.h>
 #include	<fsdir.h>
 #include	<fsdirtree.h>
 #include	<gecos.h>
-#include	<getbufsize.h>
 #include	<getexecname.h>
-#include	<getmjd.h>
+#include	<gethe.h>
 #include	<getngroups.h>
 #include	<getutmp.h>
 #include	<getx.h>
@@ -106,10 +98,7 @@
 #include	<hostent.h>
 #include	<hostinfo.h>
 #include	<ids.h>
-#include	<inet4int.h>
-#include	<inetaddr.h>
-#include	<inetaddrparse.h>
-#include	<inetconv.h>
+#include	<inetaddrx.h>
 #include	<initnow.h>
 #include	<inttypesx.h>
 #include	<ischarx.h>
@@ -137,12 +126,10 @@
 #include	<mkdirs.h>
 #include	<mkfile.h>
 #include	<mklogid.h>
-#include	<mkprogenv.h>
 #include	<mkdirs.h>
 #include	<mkfile.h>
 #include	<mklogid.h>
 #include	<mkpathxx.h>
-#include	<mkprogenv.h>
 #include	<mktmp.h>
 #include	<mkx.h>
 #include	<modload.h>
@@ -266,7 +253,6 @@
 #include	<ucgetpid.h>
 #include	<ucgetrandom.h>
 #include	<ucgetx.h>
-#include	<ucids.h>
 #include	<ucinetconv.h>
 #include	<uckvamatch.h>
 #include	<uclibmem.h>
@@ -299,8 +285,8 @@
 #include	<uctimer.h>
 #include	<ucuserattr.h>
 #include	<ucutility.h>
+#include	<ucinfo.h>
 #include	<udomain.h>
-#include	<uinfo.h>
 #include	<umask.h>
 #include	<unameo.h>
 #include	<upt.h>
@@ -313,7 +299,6 @@
 #include	<utypealiases.h>
 #include	<utypedefs.h>
 #include	<varray.h>
-#include	<vars.h>
 #include	<vec.h>
 #include	<vstrcmp.h>
 #include	<vstrkeycmp.h>
@@ -331,8 +316,6 @@ extern int	uc_nprocs(int) noex ;
 /* process group */
 extern int	uc_atfork(void_f,void_f,void_f) noex ;
 
-extern int	uc_execve(cchar *,mainv,mainv) noex ;
-extern int	uc_isaexecve(cchar *,mainv,mainv) noex ;
 extern int	uc_initgroups(cchar *,gid_t) noex ;
 extern int	uc_exit(int) noex ;
 extern int	uc_atexit(void_f) noex ;
@@ -344,9 +327,6 @@ extern int	uc_setpriority(int,id_t,int) noex ;
 extern int	uc_procpid(cchar *,uid_t) noex ;
 
 /* double-special open group */
-extern int	uc_pipe(int *) noex ;
-extern int	uc_pipes(int *,int) noex ;
-extern int	uc_piper(int *,int,int) noex ;
 extern int	uc_sockpair(int,int,int,int *) noex ;
 
 /* operate group */
@@ -385,13 +365,7 @@ extern int	uc_tell(int,off_t *) noex ;
 
 extern int	uc_copy(int,int,int) noex ;
 extern int	uc_peek(int,void *,int) noex ;
-extern int	uc_keepalive(int,int) noex ;
-extern int	uc_moveup(int,int) noex ;
-extern int	uc_ndelay(int,int) noex ;
-extern int	uc_nonblock(int,int) noex ;
 extern int	uc_msgdiscard(int) noex ;
-extern int	uc_setappend(int,int) noex ;
-extern int	uc_closeonexec(int,int) noex ;
 
 extern int	uc_remove(cchar *) noex ;
 extern int	uc_link(cchar *,cchar *) noex ;
