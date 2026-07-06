@@ -27,9 +27,12 @@
 
 EXTERNC_begin
 
-extern int uc_sockjoin(int,SOCKADDR *,int,int,mode_t) noex ;
-extern int uc_sockreuse(int) noex ;
-local inline int uc_reuseaddr(int fd) noex {
+extern int uc_connecte		(int,cvoid *,int,int) noex ;
+extern int uc_connect		(int,cvoid *,int) noex ;
+extern int uc_sockjoin		(int,SOCKADDR *,int,int,mode_t) noex ;
+extern int uc_sockreuse		(int) noex ;
+extern int uc_keepalive		(int fd,int f) noex ;
+local inline int uc_reuseaddr	(int fd) noex {
     	return uc_sockreuse(fd) ;
 }
 
