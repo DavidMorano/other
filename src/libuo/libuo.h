@@ -9,7 +9,7 @@
 
 */
 
-/* Copyright © 2017 David A­D­ Morano.  All rights reserved. */
+/* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
 /* Use is subject to license terms. */
 
 #ifndef	LIBUO_INCLUDE
@@ -60,6 +60,7 @@
 #include	<uctimeconv.h>
 #include	<uctimer.h>
 #include	<ucutility.h>
+#include	<ucinfo.h>
 
 #include	<absfn.h>
 #include	<acceptpass.h>
@@ -70,7 +71,7 @@
 #include	<bits.h>
 #include	<buffer.h>
 #include	<bufprintf.h>
-#include	<bufsizenames.h>
+#include	<bufsize.h>
 #include	<bufstr.h>
 #include	<bwops.h>
 #include	<cachetime.h>
@@ -97,10 +98,8 @@
 #include	<dstr.h>
 #include	<dupstr.h>
 #include	<ebuf.h>
-#include	<envhelp.h>
-#include	<envlist.h>
-#include	<envmgr.h>
 #include	<envs.h>
+#include	<envx.h>
 #include	<epsem.h>
 #include	<estrings.h>
 #include	<exitcodes.h>
@@ -112,14 +111,11 @@
 #include	<filer.h>
 #include	<findbit.h>
 #include	<findfilepath.h>
-#include	<findinline.h>
 #include	<findxfile.h>
 #include	<format.h>
 #include	<fsdir.h>
 #include	<fsdirtree.h>
 #include	<gecos.h>
-#include	<getbufsize.h>
-#include	<getmjd.h>
 #include	<getutmp.h>
 #include	<getx.h>
 #include	<getxname.h>
@@ -128,7 +124,6 @@
 #include	<grcache.h>
 #include	<grmems.h>
 #include	<hash.h>
-#include	<hasnonpath.h>
 #include	<hasx.h>
 #include	<hdb.h>
 #include	<hdbstr.h>
@@ -166,9 +161,8 @@
 #include	<mkdirs.h>
 #include	<mkfile.h>
 #include	<mklogid.h>
-#include	<mkprogenv.h>
 #include	<mktmp.h>
-#include	<mkuix.h>
+#include	<mkui.h>
 #include	<mkx.h>
 #include	<modload.h>
 #include	<namecache.h>
@@ -276,7 +270,6 @@
 #include	<toxc.h>
 #include	<typenonpath.h>
 #include	<udomain.h>
-#include	<uinfo.h>
 #include	<umask.h>
 #include	<unameo.h>
 #include	<upt.h>
