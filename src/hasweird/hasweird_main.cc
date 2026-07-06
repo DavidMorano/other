@@ -65,9 +65,10 @@
 #include	<rmx.h>
 #include	<hasx.h>
 #include	<isnot.h>
-#include	<mapex.h>
-#include	<exitcodes.h>
-#include	<localmisc.h>
+#include	<mapex.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
+
+#pragma		GCC dependency		"mod/fonce.ccm"
 
 import fonce ;
 
