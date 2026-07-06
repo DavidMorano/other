@@ -31,7 +31,6 @@
 #include	<openshm.h>
 #include	<opensockaddr.h>
 #include	<opensys.h>
-#include	<opentmp.h>
 #include	<splitfname.h>
 
 
