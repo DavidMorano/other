@@ -20,12 +20,9 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<termios.h>		/* |TERMIOS| */
-#include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>	/* |TERMIOS| */
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<termios.h>		/* POSIX |TERMIOS| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
 
 
 EXTERNC_begin
