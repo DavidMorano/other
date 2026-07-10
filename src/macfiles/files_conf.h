@@ -15,8 +15,8 @@
 
 /* Copyright © 2023 David A­D­ Morano.  All rights reserved. */
 
-#ifndef	FILESCONF__INCLUDE
-#define	FILESCONF__INCLUDE
+#ifndef	FILESCONF_INCLUDE
+#define	FILESCONF_INCLUDE
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
@@ -24,6 +24,6 @@
 #include	<usysbase.h>
 
 
-#endif /* FILESCONF__INCLUDE */
+#endif /* FILESCONF_INCLUDE */
 
 
