@@ -39,26 +39,26 @@
 #include	<sys/param.h>		/* |MAXPATHLEN| */
 #include	<unistd.h>
 #include	<fcntl.h>
-#include	<climits>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<cstdio>
-#include	<string>
-#include	<new>			/* plaement-new */
-#include	<string>
-#include	<string_view>
-#include	<unordered_set>
-#include	<iostream>
-#include	<iomanip>		/* |hex(3c++)| */
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<usyscalls.h>
-#include	<ccfile.hh>
-#include	<readln.hh>
-#include	<sfx.h>
-#include	<rmx.h>
-#include	<matstr.h>
-#include	<strnul.hh>
+#include	<climits>		/* CSTD */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstdio>		/* CSTD */
+#include	<string>		/* CSTD */
+#include	<new>			/* C++STD plaement-new */
+#include	<string>		/* C++SYD */
+#include	<string_view>		/* C++SYD */
+#include	<unordered_set>		/* C++SYD */
+#include	<iostream>		/* C++SYD */
+#include	<iomanip>		/* C++STD |hex(3c++)| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU */
+#include	<ccfile.hh>		/* LIBU */
+#include	<readln.hh>		/* LIBU */
+#include	<strnul.hh>		/* LIBU */
+#include	<sfx.h>			/* LIBUC */
+#include	<rmx.h>			/* LIBUC */
+#include	<matstr.h>		/* LIBUC */
 #include	<isnot.h>		/* |isNotPresent(3uc)| */
 #include	<mapex.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU */
@@ -105,7 +105,7 @@ namespace {
 	proginfomem_flistbegin,
 	proginfomem_flistend,
 	proginfomem_overlast
-    } ;
+    } ; /* end enum */
     struct proginfo ;
     struct proginfo_co {
 	proginfo	*op = nullptr ;
@@ -234,8 +234,7 @@ int main(int argc,mainv argv,mainv envv) {
 	    ex = mapex(mapexs,rs) ;
 	}
 	return ex ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
@@ -246,13 +245,11 @@ int proginfo::istart() noex {
 	    rs = 0 ;
 	} /* end if (proginfo::getpn) */
 	return rs ;
-}
-/* end method (proginfo::istart) */
+} /* end method (proginfo::istart) */
 
 int proginfo::ifinish() noex {
 	return SR_OK ;
-}
-/* end method (proginfo::ifinish) */
+} /* end method (proginfo::ifinish) */
 
 int proginfo::getpn(mainv names) noex {
 	int		rs = SR_FAULT ;
@@ -274,18 +271,15 @@ int proginfo::getpn(mainv names) noex {
 	    } /* end if (have first argument) */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo::getpn) */
+} /* end method (proginfo::getpn) */
 
 int proginfo::iflistbegin() noex {
 	return SR_OK ;
-}
-/* end method (proginfo::iflistbegin) */
+} /* end method (proginfo::iflistbegin) */
 
 int proginfo::iflistend() noex {
 	return SR_OK ;
-}
-/* end method (proginfo::iflistend) */
+} /* end method (proginfo::iflistend) */
 
 int proginfo::process() noex {
 	int		rs ;
@@ -314,8 +308,7 @@ int proginfo::process() noex {
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (process_pm) */
 	return (rs >= 0) ? c : rs ;
-}
-/* end subroutine (proginfo::process) */
+} /* end subroutine (proginfo::process) */
 
 int proginfo::process_stdin() noex {
 	int		rs = SR_OK ;
@@ -329,8 +322,7 @@ int proginfo::process_stdin() noex {
 	    break ;
 	} /* end switch */
 	return (rs >= 0) ? c : rs ;
-}
-/* end subroutine (proginfo::process_stdin) */
+} /* end subroutine (proginfo::process_stdin) */
 
 int proginfo::process_pmbegin() noex {
 	int		rs = SR_OK ;
@@ -349,8 +341,7 @@ int proginfo::process_pmbegin() noex {
 	    break ;
 	} /* end switch */
 	return rs ;
-}
-/* end subroutine (proginfo::process_pmbegin) */
+} /* end subroutine (proginfo::process_pmbegin) */
 
 int proginfo::process_pmend() noex {
 	int		rs = SR_OK ;
@@ -364,8 +355,7 @@ int proginfo::process_pmend() noex {
 	    break ;
 	} /* end switch */
 	return rs ;
-}
-/* end subroutine (proginfo::process_pmend) */
+} /* end subroutine (proginfo::process_pmend) */
 
 int proginfo::readin() noex {
 	istream		*isp = &cin ;
@@ -388,8 +378,7 @@ int proginfo::readin() noex {
 	    } /* end if (m-a-f) */
 	} /* end if (maxpathlen) */
 	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::readin) */
+} /* end method (proginfo::readin) */
 
 int proginfo::fileproc(cchar *sp,int sl) noex {
 	strnul		s(sp,sl) ;
@@ -404,8 +393,7 @@ int proginfo::fileproc(cchar *sp,int sl) noex {
 	    rs = SR_OK ;
 	}
 	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::fileproc) */
+} /* end method (proginfo::fileproc) */
 
 int proginfo::fileproc_magicx(custat *sbp,cchar *sp,int sl) noex {
 	int		rs = SR_OK ;
@@ -431,8 +419,7 @@ int proginfo::fileproc_magicx(custat *sbp,cchar *sp,int sl) noex {
 	    } /* end if (is-reg) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::fileproc_magicx) */
+} /* end method (proginfo::fileproc_magicx) */
 
 int proginfo::fileproc_lines() noex {
 	istream		*isp = &cin ;
@@ -447,13 +434,11 @@ int proginfo::fileproc_lines() noex {
 	} /* end if (reading lines) */
 	lines += nl ;
 	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::fileproc_lines) */
+} /* end method (proginfo::fileproc_lines) */
 
 int proginfo::filecheck(custat *)  noex {
 	return 1 ;
-}
-/* end method (proginfo::filecheck) */
+} /* end method (proginfo::filecheck) */
 
 local int printmagic(cchar *lbuf,int llen) noex {
     	cint		sz = szof(uint) ;
@@ -464,8 +449,7 @@ local int printmagic(cchar *lbuf,int llen) noex {
 	} /* end for */
 	cout << eol ;
 	return rs ;
-}
-/* end method (printmagic) */
+} /* end method (printmagic) */
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
@@ -486,7 +470,6 @@ int proginfo_co::operator () (int) noex {
 	    } /* end switch */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo_co::operator) */
+} /* end method (proginfo_co::operator) */
 
 
