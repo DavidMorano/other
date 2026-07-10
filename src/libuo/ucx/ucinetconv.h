@@ -8,15 +8,12 @@
 
 /* revision history:
 
-	= 1998-03-21, David A­D­ Morano
+	= 1998-04-13, David A­D­ Morano
 	This module was originally written.
-
-	= 2017-08-01, David A­D­ Morano
-	Updated for lack of interfaces in Apple-Darwin
 
 */
 
-/* Copyright © 1998,2017 David A­D­ Morano.  All rights reserved. */
+/* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
 
 /*******************************************************************************
 
@@ -34,15 +31,15 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<clanguage.h>
-#include	<usysbase.h>
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
 
 
 EXTERNC_begin
 
-extern int uc_inetnetpton(void *,int,int,cchar *) noex ;
-extern int uc_inetpton(void *,int,cchar *) noex ;
-extern int uc_inetntop(char *,int,int,cvoid *) noex ;
+extern int uc_inetnetpton	(void *,int,int,cchar *) noex ;
+extern int uc_inetpton		(void *,int,cchar *) noex ;
+extern int uc_inetntop		(char *,int,int,cvoid *) noex ;
 
 EXTERNC_end
 
