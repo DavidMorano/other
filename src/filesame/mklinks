@@ -4,7 +4,7 @@
 CMDS=" filesame filenewer "
 
 LOCPROG=filesame.x
-TDIRS=" /usr/local /opt/local "
+TDIRS=" /usr/local /usr/extra "
 
 function linkdir {
   typeset TDIR=${1}
