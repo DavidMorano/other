@@ -243,6 +243,7 @@
 #include	<ucent.h>
 #include	<ucenum.h>
 #include	<ucfdmanip.h>
+#include	<ucontext.h>
 #include	<ucdesc.h>
 #include	<ucfileop.h>
 #include	<ucfork.h>
@@ -258,7 +259,7 @@
 #include	<uclibmem.h>
 #include	<ucmem.h>
 #include	<ucmemla.h>
-#include	<ucontext.h>
+#include	<ucnprocs.h>
 #include	<ucopen.h>
 #include	<ucopeninfo.h>
 #include	<ucpeek.h>
@@ -309,9 +310,6 @@
 #ifdef	COMMENT
 
 EXTERNC_begin
-
-/* system group */
-extern int	uc_nprocs(int) noex ;
 
 /* process group */
 extern int	uc_atfork(void_f,void_f,void_f) noex ;
