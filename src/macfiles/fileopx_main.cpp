@@ -47,7 +47,6 @@
 #include	<usysbase.h>
 #include	<usyscalls.h>
 #include	<uclibmem.h>
-#include	<getourenv.h>
 #include	<estrings.h>
 #include	<sighand.h>
 #include	<sigblocker.h>
