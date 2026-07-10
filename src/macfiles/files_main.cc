@@ -515,7 +515,7 @@ int main(int argc,con mainv argv,con mainv envv) {
             fprintf(stderr,fmt,ccp(spn),strabbrerr(rs),rs) ;
 	    ex = mapex(mapexs,rs) ;
 	} /* end if */
-	DEBPRINTF("ret ex=%d\n",ex) ;
+	DEBPRINTF("ret ex=%d rs=%d\n",ex,rs) ;
 	return ex ;
 } /* end subroutine (main) */
 
@@ -731,7 +731,6 @@ int proginfo::args(argmgr *amp) noex {
 int proginfo::argoptstr(argmgr *amp,int wi) noex {
     	int		rs = SR_OK ;
 	DEBPRINTF("ent\n") ;
-	(void) amp ;
 	switch (wi) {
 	case argopt_version:
 	    fl.version = true ;
