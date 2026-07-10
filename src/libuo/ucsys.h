@@ -40,9 +40,9 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<ucsys_sup.hh>
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<ucsys_sup.hh>		/* LIBU */
 
 #include	<spwd.h>		/* <- special */
 #include	<userattr.h>		/* <- special */
