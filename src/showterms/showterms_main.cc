@@ -14,7 +14,7 @@
 
 */
 
-/* Copyright © 2017 David A­D­ Morano.  All rights reserved. */
+/* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
 /* Use is subject to license terms. */
 
 /*******************************************************************************
@@ -35,31 +35,31 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<climits>		/* |UCHAR_MAX| + |CHAR_BIT| */
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>		/* |atoi(3c)| + |strtol(3c)| */
-#include	<cstdio>
-#include	<cstring>
-#include	<new>
-#include	<exception>
-#include	<iostream>
-#include	<iomanip>
-#include	<usysrets.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<clanguage.h>
-#include	<baops.h>
-#include	<strn.h>
-#include	<sfx.h>
-#include	<field.h>
-#include	<fieldterms.h>
-#include	<fieldterminit.hh>
-#include	<ccfile.hh>
-#include	<strnul.hh>
-#include	<char.h>
-#include	<mkchar.h>
-#include	<hasx.h>
-#include	<localmisc.h>		/* |MAXLINELEN| */
+#include	<climits>		/* CSTD |UCHAR_MAX| + |CHAR_BIT| */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstdio>		/* CSTD */
+#include	<cstring>		/* CSTD */
+#include	<new>			/* C++STD */
+#include	<exception>		/* C++STD */
+#include	<iostream>		/* C++STD */
+#include	<iomanip>		/* C++STD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<baops.h>		/* LIBU */
+#include	<ucmem.h>		/* LIBUC */
+#include	<strn.h>		/* LIBUC */
+#include	<sfx.h>			/* LIBUC */
+#include	<field.h>		/* LIBUC */
+#include	<fieldterms.h>		/* LIBUC */
+#include	<fieldterminit.hh>	/* LIBUC */
+#include	<ccfile.hh>		/* LIBUC */
+#include	<char.h>		/* LIBUC */
+#include	<hasx.h>		/* LIBUC */
+#include	<strnul.hh>		/* LIBU */
+#include	<charnames.h>		/* LIBU */
+#include	<mkchar.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU |MAXLINELEN| */
 
 import sif ;
 
@@ -70,7 +70,6 @@ import sif ;
 
 /* imported namespaces */
 
-using std::nullptr_t ;			/* type */
 using std::cout ;			/* (global) variable */
 using std::nothrow ;			/* constant */
 
@@ -87,7 +86,6 @@ using std::nothrow ;			/* constant */
 /* local structures */
 
 constexpr int		tablen = (UCHAR_MAX+1) ;
-
 constexpr int		termsize = ((UCHAR_MAX+1)/CHAR_BIT) ;
 
 namespace {
@@ -97,8 +95,8 @@ namespace {
 	int accum(cchar *sp,int sl) noex {
 	    strnul	s(sp,sl) ;
 	    int		rs = SR_OK ;
-	    long	v ; 
-	    if ((v = strtol(s,nullptr,0)) == 0) {
+	    int		v ; 
+	    if ((v = strtoi(s,nullptr,0)) == 0) {
 		rs = (- errno) ;
 	    }
 	    if (rs >= 0) {
@@ -112,17 +110,16 @@ namespace {
 
 /* forward references */
 
-static int	procfile(cchar *) noex ;
-static int	procline(termer *,cchar *,int) noex ;
-static int	readterms(termer *,cchar *) noex ;
+local int	procfile(cchar *) noex ;
+local int	procline(termer *,cchar *,int) noex ;
+local int	readterms(termer *,cchar *) noex ;
 
-static void	showterms(cchar *) noex ;
+local void	showterms(cchar *) noex ;
 
 
 /* local variables */
 
 static fieldterminit	fterms(",") ;
-
 cbool			f_field = CF_FIELD ;
 
 
@@ -131,7 +128,7 @@ cbool			f_field = CF_FIELD ;
 
 /* exported subroutines */
 
-int main(int argc,mainv argv,mainv) {
+int main(int argc,con mainv argv,con mainv) {
 	int		ex = EXIT_SUCCESS ;
 	int		rs = SR_OK ;
 	if (argc > 1) {
@@ -142,42 +139,29 @@ int main(int argc,mainv argv,mainv) {
 	    ex = EXIT_FAILURE ;
 	}
 	return ex ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
 
-static void showterms(cchar *terms) noexcept {
+local void showterms(cchar *terms) noexcept {
 	for (int ch = 0 ; ch < tablen ; ch += 1) {
 	    if (BATSTB(terms,ch)) {
-		if (strchr("\n\r\f\v\b",ch)) {
-		    printf("¯\\x%02X¯",ch) ;
-		} else {
-		    if (ch < 0x20) {
-		       printf("¯»%02X«",ch) ;
-		    } else if (ch == 0xA0) {
-		       printf("¯NBSP") ;
-		    } else {
-		       printf("¯%c¯",ch) ;
-		    }
-		} /* end if (special) */
+		cchar *name = charname[ch] ;
+		printf("0x%02X %s\n",ch,name) ;
 	    } /* end if (hit) */
 	} /* end for */
-	printf("\n") ;
-}
-/* end subroutine (showterms) */
+} /* end subroutine (showterms) */
 
-static int procfile(cchar *fn) noex {
+local int procfile(cchar *fn) noex {
 	int		rs ;
 	if (termer to ; (rs = readterms(&to,fn)) >= 0) {
 	    showterms(to.terms) ;
 	}
 	return rs ;
-}
-/* end subroutine (procfile) */
+} /* end subroutine (procfile) */
 
-static int procline(termer *top,cchar *lp,int ll) noex {
+local int procline(termer *top,cchar *lp,int ll) noex {
 	int		rs = SR_OK ;
 	int		rs1 ;
 	int		c = 0 ;
@@ -204,10 +188,9 @@ static int procline(termer *top,cchar *lp,int ll) noex {
 	    } /* end for */
 	} /* end if_constexpr (f_field) */
 	return (rs >= 0) ? c : rs ;
-}
-/* end subroutine (procline) */
+} /* end subroutine (procline) */
 
-static int readterms(termer *top,cchar *fn) noex {
+local int readterms(termer *top,cchar *fn) noex {
 	cnullptr	np{} ;
         cint            llen = MAXLINE ;
         int             rs = SR_NOMEM ;
@@ -236,7 +219,6 @@ static int readterms(termer *top,cchar *fn) noex {
             delete [] lbuf ;            
         } /* end if (m-a-f) */          
         return (rs >= 0) ? c : rs ;
-}
-/* end subroutine (readterms) */
+} /* end subroutine (readterms) */
 
 
