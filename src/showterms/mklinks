@@ -1,10 +1,15 @@
-#!/usr/extra/bin/ksh
+#!/usr/local/bin/ksh
 # MKLINKS
 
-LOCPROG=showterms.x
 CMDS=" showterms "
+LOCPROG=showterms.x
 
-TDIRS=" /usr/local /opt/local "
+: ${HOME:=$( userhome )}
+: ${EXTRA:=/usr/extra}
+: ${USRLOCAL:=/usr/local}
+: ${LOCAL:=/opt/local}
+
+TDIRS=" ${EXTRA} ${USRLOCAL} "
 
 function linkdir {
   typeset TDIR=${1}
@@ -25,5 +30,4 @@ if [[ -x "${LOCPROG}" ]] ; then
 else
   print -u 2 -- "program not made"
 fi
-
 
