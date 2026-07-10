@@ -37,17 +37,18 @@
 #include	<libgen.h>
 #include	<iostream>
 #include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
-#include	<matstr.h>
+#include	<usysbase.h>
+#include	<usupport.h>
 #include	<localmisc.h>
+
+
+/* local defines */
 
 
 /* namespaces */
 
 using std::cerr ;			/* variable */
+using libu::matstr ;
 
 
 /* typedefs */
@@ -64,12 +65,12 @@ using std::cerr ;			/* variable */
 
 /* forward references */
 
-static bool newer(ustat *sb1p,ustat *sb2p) noex {
+local bool newer(ustat *sb1p,ustat *sb2p) noex {
     	bool f = false ;
 	f = f || (sb1p->st_mtimespec.tv_sec > sb2p->st_mtimespec.tv_sec) ;
 	f = f || (sb1p->st_mtimespec.tv_nsec > sb2p->st_mtimespec.tv_nsec) ;
 	return f ;
-}
+} /* end subroutine (newer) */
 
 
 /* local variables */
@@ -78,13 +79,13 @@ enum progmodes {
     	progmode_filesame,
     	progmode_filenewer,
 	progmode_overlast
-} ;
+} ; /* end enum */
 
-static constexpr cpcchar	prognames[] = {
+constexpr cpcchar	prognames[] = {
     	[progmode_filesame]	= "filesame",
 	[progmode_filenewer]	= "filenewer",
 	[progmode_overlast]	= nullptr
-} ;
+} ; /* end array (prognames) */
 
 
 /* exported variables */
