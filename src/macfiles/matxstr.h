@@ -1,0 +1,38 @@
+/* matxstr HEADER */
+/* charset=ISO8859-1 */
+/* lang=C20 */
+
+/* Match a String */
+/* version %I% last-modified %G% */
+
+
+/* revision history:
+
+	= 1998-11-01, David A­D­ Morano
+	This subroutine was written for Rightcore Network Services.
+
+*/
+
+/* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
+
+#ifndef	MATXSTR_INCLUDE
+#define	MATXSTR_INCLUDE
+
+
+#include	<envstandards.h>	/* MUST be first to configure */
+#include	<clanguage.h>		/* LIBU */
+#include	<utypedefs.h>		/* LIBU */
+#include	<utypealiases.h>	/* LIBU */
+#include	<usysdefs.h>		/* LIBU */
+
+#include	<matnstr.h>
+#include	<matostr.h>
+#include	<matpstr.h>
+#include	<matkeystr.h>
+#include	<matsubstr.h>
+#include	<matlocalfs.h>
+
+
+#endif /* MATXSTR_INCLUDE */
+
+
