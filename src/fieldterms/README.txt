@@ -11,8 +11,8 @@ blocks are used in subroutines like:
 	field_wordphrase(3dam)
 
 Synopsis:
-$ fieldterms < <termfile>
+$ fieldterms <termfile(s)>
 
 Arguments:
-<termfile>	file containing the ASCII representation of field terminators
+<termfile(s)>	file(s) containing ASCII representation of field terminators
 
