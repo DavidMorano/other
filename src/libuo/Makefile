@@ -126,7 +126,7 @@ OBJ47_LUO= spawner.o spawnproc.o
 OBJ48_LUO= findxfile.o sigx.o dial.o conallof.o
 OBJ49_LUO= argutils.o cmdutils.o logfile.o linex.o
 OBJ50_LUO= ndig.o ndigit.o bufprintf.o
-OBJ51_LUO=
+OBJ51_LUO= termdisp.o
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
@@ -1056,7 +1056,7 @@ storeitem.o:		storeitem.cc	storeitem.h		$(INCS)
 ids.o:			ids.cc		ids.h			$(INCS)
 lookaside.o:		lookaside.cc	lookaside.h		$(INCS)
 termstr.o:		termstr.cc	termstr.h		$(INCS)
-td.o:			td.cc		td.h			$(INCS)
+termdisp.o:		termdisp.cc	termdisp.h		$(INCS)
 fsdirtree.o:		fsdirtree.cc	fsdirtree.h		$(INCS)
 nodedb.o:		nodedb.cc	nodedb.h		$(INCS)
 clusterdb.o:		clusterdb.cc	clusterdb.h		$(INCS)
