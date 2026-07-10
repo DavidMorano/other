@@ -35,10 +35,10 @@ DEFS +=
 
 INCS +=
 
-MODS += argmgr.ccm filerec.ccm
-MODS += cmdutils.ccm
-MODS += modproc.ccm 
-MODS += strfilter.ccm 
+MODS += argmgr.o filerec.o
+MODS += cmdutils.o
+MODS += modproc.o 
+MODS += strfilter.o 
 
 LIBS += -lf -lu -lsecdb -lnss
 
