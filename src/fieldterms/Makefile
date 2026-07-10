@@ -44,9 +44,7 @@ OBJ_FIELDTERMS= fieldterms_main.o
 
 
 INCDIRS=
-
-LIBDIRS= -L$(LIBDIR)
-
+LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -89,11 +87,11 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	makemodule $(*)
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
 $(T).x:			$(OBJ_FIELDTERMS)
-	$(CXX) $(LDFLAGS) -o $@ $(RUNINFO) $(OBJ_FIELDTERMS) $(LIBINFO)
+	$(CXX) $(LDFLAGS) -o $@ $(RUNINFO) $^ $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).x > $(T).nm
@@ -108,7 +106,7 @@ control:
 	(uname -n ; date) > Control
 
 install:		$(T).x
-	makeinstall $(T).x
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
 fieldterms_main.o:	fieldterms_main.cc $(INCS)
