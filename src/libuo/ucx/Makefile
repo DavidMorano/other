@@ -40,7 +40,7 @@ MODS +=
 LIBS +=
 
 
-OBJ0= uctc.o ucttyname.o 
+OBJ0= uctc.o
 OBJ1= ucstrftime.o
 OBJ2= uckvamatch.o
 OBJ3= uctimeconv.o ucinetconv.o
@@ -56,8 +56,7 @@ OBJ= obja.o objb.o
 
 
 INCDIRS +=
-
-LIBDIRS += -L$(LIBDIR)
+LIBDIRS += -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -161,7 +160,6 @@ ucaddrinfo.o:		ucaddrinfo.cc	ucaddrinfo.h	$(INCS)
 ucinetconv.o:		ucinetconv.cc	ucinetconv.h	$(INCS)
 uctimeconv.o:		uctimeconv.cc	uctimeconv.h	$(INCS)
 ucstrftime.o:		ucstrftime.cc	ucstrftime.h	$(INCS)
-ucttyname.o:		ucttyname.cc	ucttyname.h	$(INCS)
 uckvamatch.o:		uckvamatch.cc	uckvamatch.h	$(INCS)
 uaddrinfo.o:		uaddrinfo.cc	uaddrifo.h	$(INCS)
 
