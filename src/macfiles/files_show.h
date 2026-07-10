@@ -15,8 +15,8 @@
 
 /* Copyright © 2023 David A­D­ Morano.  All rights reserved. */
 
-#ifndef	FILESSHOW__INCLUDE
-#define	FILESSHOW__INCLUDE
+#ifndef	FILESSHOW_INCLUDE
+#define	FILESSHOW_INCLUDE
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
@@ -31,6 +31,6 @@ extern int	files_show(cchar *,int) noex ;
 EXTERNC_end
 
 
-#endif /* FILESSHOW__INCLUDE */
+#endif /* FILESSHOW_INCLUDE */
 
 
