@@ -134,7 +134,6 @@ struct sbuf : sbuf_head {
 	} ;
 	int vprintf	(cchar *,va_list) noex ;
 	int printf	(cchar *,...) noex ;
-	int hexp	(uint128_t,int) noex ;
 	int buf		(cchar *,int) noex ;
 	int getpoint	(cchar **) noex ;
 	int decl	(long) noex ;
@@ -142,6 +141,7 @@ struct sbuf : sbuf_head {
 	template<typename Octal>	int oct(Octal)		noex ;
 	template<typename Decimal>	int dec(Decimal)	noex ;
 	template<typename Hexadecimal>	int hex(Hexadecimal)	noex ;
+	template<typename HexPrec>	int hexp(int,HexPrec)	noex ;
 	sbuf &operator << (cchar *cp) noex {
 	    strw(cp) ;
 	    return *this ;
@@ -201,6 +201,7 @@ extern int	sbuf_hexi	(sbuf *,int) noex ;
 extern int	sbuf_hexl	(sbuf *,long) noex ;
 extern int	sbuf_hexll	(sbuf *,longlong) noex ;
 extern int	sbuf_hexuc	(sbuf *,uchar) noex ;
+extern int	sbuf_hexus	(sbuf *,ushort) noex ;
 extern int	sbuf_hexui	(sbuf *,uint) noex ;
 extern int	sbuf_hexul	(sbuf *,ulong) noex ;
 extern int	sbuf_hexull	(sbuf *,ulonglong) noex ;
@@ -217,12 +218,17 @@ extern int	sbuf_printf	(sbuf *,cchar *,...) noex ;
 extern int	sbuf_vprintf	(sbuf *,cchar *,va_list) noex ;
 extern int	sbuf_termconseq	(sbuf *,int,cchar *,int,...) noex ;
 extern int	sbuf_addquoted	(sbuf *,cchar *,int) noex ;
-extern int	sbuf_hexp	(sbuf *,uint128_t,int) noex ;
 
-static inline int sbuf_str(sbuf *op,cchar *sp) noex {
+extern int sbuf_hexpuc	(sbuf *,int,uchar)	noex ;
+extern int sbuf_hexpus	(sbuf *,int,ushort)	noex ;
+extern int sbuf_hexpui	(sbuf *,int,uint)	noex ;
+extern int sbuf_hexpul	(sbuf *,int,ulong)	noex ;
+extern int sbuf_hexpull	(sbuf *,int,ulonglong)	noex ;
+
+local inline int sbuf_str(sbuf *op,cchar *sp) noex {
 	return sbuf_strw(op,sp,-1) ;
 }
-static inline int sbuf_char(sbuf *op,int ch) noex {
+local inline int sbuf_char(sbuf *op,int ch) noex {
 	return sbuf_chr(op,ch) ;
 }
 
@@ -324,6 +330,26 @@ inline int sbuf_hex(sbuf *op,ulonglong v) noex {
 
 template<typename Hexadecimal> inline int sbuf::hex(Hexadecimal v) noex {
 	return sbuf_hex(this,v) ;
+}
+
+inline int sbuf_hexp(sbuf *op,int n,uchar v)		noex {
+	return sbuf_hexpuc	(op,n,v) ;
+}
+inline int sbuf_hexp(sbuf *op,int n,ushort v)		noex {
+	return sbuf_hexpus	(op,n,v) ;
+}
+inline int sbuf_hexp(sbuf *op,int n,uint v)		noex {
+	return sbuf_hexpui	(op,n,v) ;
+}
+inline int sbuf_hexp(sbuf *op,int n,ulong v)		noex {
+	return sbuf_hexpul	(op,n,v) ;
+}
+inline int sbuf_hexp(sbuf *op,int n,ulonglong v)	noex {
+	return sbuf_hexpull	(op,n,v) ;
+}
+
+template<typename HexPrec> inline int sbuf::hexp(int n,HexPrec v) noex {
+	return sbuf_hexp(this,n,v) ;
 }
 
 #endif /* __cplusplus */
