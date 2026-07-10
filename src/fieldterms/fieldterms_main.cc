@@ -1,4 +1,4 @@
-/* main SUPPORT (fieldterms) */
+/* fieldterms_main SUPPORT (fieldterms) */
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
@@ -15,37 +15,37 @@
 
 */
 
-/* Copyright © 2017 David A­D­ Morano.  All rights reserved. */
+/* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
 /* Use is subject to license terms. */
 
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<climits>		/* |UCHAR_MAX| */
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>		/* |atoi(3c)| + |strtol(3c)| */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
 #include	<cstdio>		/* |fprintf(3c)| */
 #include	<cstring>		/* |lenstr(3c)| */
-#include	<new>
-#include	<exception>
-#include	<stdexcept>
-#include	<iostream>
-#include	<sstream>
-#include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysrets.h>
-#include	<baops.h>
-#include	<strn.h>
-#include	<sfx.h>
-#include	<ccfile.hh>
-#include	<strnul.hh>
-#include	<cfdec.h>
-#include	<char.h>
-#include	<hasx.h>
-#include	<localmisc.h>		/* |MAXLINELEN| */
+#include	<new>			/* C++STD */
+#include	<exception>		/* C++STD */
+#include	<stdexcept>		/* C++STD */
+#include	<iostream>		/* C++STD */
+#include	<sstream>		/* C++STD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<baops.h>		/* LIBUC */
+#include	<strn.h>		/* LIBUC */
+#include	<sfx.h>			/* LIBUC */
+#include	<cfdec.h>		/* LIBUC */
+#include	<char.h>		/* LIBUC */
+#include	<hasx.h>		/* LIBUC */
+#include	<ascii.h>		/* LIBU */
+#include	<ccfile.hh>		/* LIBU */
+#include	<strnul.hh>		/* LIBU */
+#include	<charnames.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU |MAXLINELEN| */
 
-#pragma		GCC dependency	"mod/libutil.ccm"
-#pragma		GCC dependency	"mod/sif.ccm"
-#pragma		GCC dependency	"mod/digtab.ccm"
+#pragma		GCC dependency		"mod/libutil.ccm"
+#pragma		GCC dependency		"mod/sif.ccm"
+#pragma		GCC dependency		"mod/digtab.ccm"
 
 import libutil ;			/* |lenstr(3u)| */
 import sif ;
@@ -58,7 +58,6 @@ import digtab ;
 
 /* imported namespaces */
 
-using std::nullptr_t ;			/* type */
 using std::string ;			/* type */
 using std::cerr ;			/* variable */
 using std::cout ;			/* variable */
@@ -85,23 +84,23 @@ namespace {
 	int accum(cchar *,int) noex ;
 	operator int () noex { return 0 ; } ;
     } ; /* end struct (termer) */
-}
+} /* end namespace */
+
 
 /* forward references */
 
-static void	showterms(cchar *) noexcept ;
-static int	chartest() noex ;
+local void	showterms(cchar *) noexcept ;
+local int	chartest() noex ;
 
-static int	procfile(cchar *) noex ;
-static int	procfiler(termer *,cchar *) noex ;
-static int	procline(termer *,cchar *,int) noex ;
-static int	cfnum(cchar *,int,int *) noex ;
+local int	procfile(cchar *) noex ;
+local int	procfiler(termer *,cchar *) noex ;
+local int	procline(termer *,cchar *,int) noex ;
+local int	cfnum(cchar *,int,int *) noex ;
 
 
 /* local variables */
 
 constexpr int		tablen = (UCHAR_MAX+1) ;
-
 constexpr bool		f_chartest = CF_CHARTEST ;
 constexpr bool		f_sif = CF_SIF ;
 
@@ -123,44 +122,44 @@ int main(int argc,mainv argv,mainv) {
 		if (fn[0] != '\0') {
 	            rs = procfile(fn) ;
 		}
-	    }
+	    } /* end for */
 	} /* end if (argument) */
-	if ((ex == EXIT_SUCCESS) && (rs < 0)) ex = EXIT_FAILURE ;
+	if ((ex == EXIT_SUCCESS) && (rs < 0)) {
+	    ex = EXIT_FAILURE ;
+	}
 	return ex ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
 
-static int chartest() noex {
+local int chartest() noex {
 	constexpr cchar		tstr[] = "ab \r\n" ;
 	int		rs = SR_OK ;
 	for (int i = 0 ; tstr[i] ; i += 1) {
 	    bool	f = CHAR_ISWHITE(tstr[i]) ;
 	    cerr << "chartest ch=>" << tstr[i] << "<" << " f=" << f << eol ;
-	}
+	} /* end for */
 	return rs ;
-}
+} /* end subroutine */
 
 int termer::accum(cchar *sp,int sl) noex {
 	int		rs ;
 	if (int v ; (rs = cfnum(sp,sl,&v)) >= 0) {
 	    terms[idx++] = uchar(v) ;
-	}
+	} /* end if */
 	return rs ;
 } /* end method (termer::accum) */
 
-static int procfile(cchar *fn) noex {
+local int procfile(cchar *fn) noex {
 	int		rs ;
 	if (termer to ; (rs = procfiler(&to,fn)) >= 0) {
 	    showterms(to.terms) ;
 	} /* end if (procfiler) */
 	return rs ;
-}
-/* end subroutine (procfile) */
+} /* end subroutine (procfile) */
 
-static int procfiler(termer *top,cchar *fn) noex {
+local int procfiler(termer *top,cchar *fn) noex {
 	cnullptr	np{} ;
         cint            llen = MAXLINE ;
         int             rs = SR_NOMEM ;
@@ -186,10 +185,9 @@ static int procfiler(termer *top,cchar *fn) noex {
             delete [] lbuf ;            
         } /* end if (m-a-f) */          
         return rs ;
-}
-/* end subroutine (procfiler) */
+} /* end subroutine (procfiler) */
 
-static int procline(termer *top,cchar *lp,int ll) noex {
+local int procline(termer *top,cchar *lp,int ll) noex {
 	int		rs ;
 	cchar		*cp{} ;
 	if_constexpr (f_sif) {
@@ -201,23 +199,22 @@ static int procline(termer *top,cchar *lp,int ll) noex {
 	    rs = SR_OK ;
 	    (void) top ;
 	    for (int cl ; (cl = sfnextchr(lp,ll,',',&cp)) > 0 ; ) {
-		ll -= ((cp + cl + 1) - lp) ;
+		ll -= intconv((cp + cl + 1) - lp) ;
 		lp = (cp + cl + 1) ;
 	    } /* end for */
 	} /* end if_constexpr (f_sif) */
 	return rs ;
-}
-/* end subroutine (procline) */
+} /* end subroutine (procline) */
 
-static int cfnum(cchar *sp,int sl,int *rp) noex {
+local int cfnum(cchar *sp,int sl,int *rp) noex {
 	int		rs = SR_FAULT ;
 	if (sp && rp) {
 	    rs = SR_OK ;
 	    if (sl < 0) sl = lenstr(sp) ;
 	    try {
-	        string	sbuf(sp,sl) ;
+	        string	ss(sp,sl) ;
 		{
-		    cchar	*raw = sbuf.c_str() ;
+		    cchar	*raw = ss.c_str() ;
 		    errno = 0 ;
 		    {
 			long	val = strtol(raw,nullptr,0) ;
@@ -233,61 +230,15 @@ static int cfnum(cchar *sp,int sl,int *rp) noex {
 	    } /* end block */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end subroutine (cfnum) */
+} /* end subroutine (cfnum) */
 
 void showterms(cchar *terms) noexcept {
-	cint		cols = 8 ;
-	int		cnt = 0 ;
 	for (int ch = 0 ; ch < tablen ; ch += 1) {
 	    if (BATSTB(terms,ch)) {
-		if (cnt >= cols) {
-		    printf("\n") ;
-		    cnt = 0 ;
-		}
-		if (ch == 0) {
-		    printf(" NUL") ;
-		} else if (strchr("\t\n\r\f\v\b",ch)) {
-		    cchar	*ostr = nullptr ;
-		    switch (ch) {
-		    case '\t':
-			ostr = "HT" ;
-			break ;
-		    case '\n':
-			ostr = "NL" ;
-			break ;
-		    case '\r':
-			ostr = "CR" ;
-			break ;
-		    case '\f':
-			ostr = "FF" ;
-			break ;
-		    case '\v':
-			ostr = "VT" ;
-			break ;
-		    case '\b':
-			ostr = "BS" ;
-			break ;
-		    } /* end switch */
-		    if (ostr) {
-		        printf(" %s",ostr) ;
-		    }
-		} else {
-		    if (ch < 0x20) {
-		       printf(" \\x%02X",ch) ;
-		    } else if (ch == 0x20) {
-		       printf(" SP") ;
-		    } else if (ch == 0xA0) {
-		       printf(" NBSP") ;
-		    } else {
-		       printf(" %c",ch) ;
-		    }
-		} /* end if (special) */
-		cnt += 1 ;
+		cchar *name = charname[ch] ;
+		printf("0x%02X %s\n",ch,name) ;
 	    } /* end if (hit) */
 	} /* end for */
-	if (cnt > 0) printf("\n") ;
-}
-/* end subroutine (showterms) */
+} /* end subroutine (showterms) */
 
 
