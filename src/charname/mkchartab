@@ -1,0 +1,8 @@
+#!/usr/bin/ksh
+# MKCHARTAB
+
+while read A B C D ; do
+  S=$( print -- ${B} | cut -d _ -f 2 )
+  print -- "\t{ ${B},\t\"${S}\",\t},"
+done 
+
