@@ -8,6 +8,5 @@ static int mkterms() noex {
 	    rs = fieldterms(kterms,0,'\b','\t','\v','\f',' ','#','=') ;
 	}
 	return rs ;
-}
-/* end subroutine (mkterms) */
+} /* end subroutine (mkterms) */
 
