@@ -33,10 +33,10 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<unistd.h>		/* |_CS_{xx}| */
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<sysconfcmds.h>
+#include	<unistd.h>		/* POSIX |_CS_{xx}| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<sysconfcmds.h>		/* LIBU */
 
 
 enum sysconfstrss {
@@ -80,11 +80,11 @@ extern int	uc_sysconfstr(int,char *,int) noex ;
 
 static inline int uc_sysconf(int req,long *rp) noex {
 	return uc_sysconfval(req,rp) ;
-}
+} /* end subroutine */
 static inline int uc_sysconfmaxline() noex {
 	cint		req = _SC_LINE_MAX ;
 	return uc_sysconfval(req,nullptr) ;
-}
+} /* end subroutine */
 
 EXTERNC_end
 
