@@ -20,7 +20,6 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<stdint.h>		/* CSTD |uint64_t| */
 #include	<stdarg.h>		/* CSTD |va_list(3c)| */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
