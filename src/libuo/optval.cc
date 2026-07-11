@@ -42,10 +42,10 @@
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
 #include	<usupport.h>		/* LIBU */
-#include	<matostr.h>
-#include	<cfnum.h>
-#include	<mkchar.h>
-#include	<ischarx.h>		/* |isnumlatin(3uc) */
+#include	<matostr.h>		/* LIBUC */
+#include	<cfnum.h>		/* LIBUC */
+#include	<mkchar.h>		/* LIBUC */
+#include	<ischarx.h>		/* LIBUC |isnumlatin(3uc) */
 #include	<localmisc.h>		/* LIBU */
 
 #include	"optval.h"
