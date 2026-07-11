@@ -37,16 +37,16 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<unistd.h>
-#include	<fcntl.h>
-#include	<climits>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<cstdio>
-#include	<string>
-#include	<string_view>
-#include	<vector>
-#include	<iostream>
+#include	<unistd.h>		/* POSIX */
+#include	<fcntl.h>		/* POSIX */
+#include	<climits>		/* CSTD */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstdio>		/* CSYD */
+#include	<string>		/* C++STD */
+#include	<string_view>		/* C++STD */
+#include	<vector>		/* C++STD */
+#include	<iostream>		/* C++STD */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
 #include	<usyscalls.h>		/* LIBU */
@@ -149,22 +149,22 @@ namespace {
 	    argv = a ;
 	    envv = e ;
 	} ; /* end method */
-	int filecheck(custat *) noex ;
-	int process() noex ;
-	int process_pmbegin() noex ;
-	int process_pmend() noex ;
-	int process_stdin() noex ;
-	int readin() noex ;
-	int fileproc(cchar *,int = -1) noex ;
-	int fileproc_fu(custat *,cchar *,int = -1) noex ;
-	int fileproc_lc(custat *,cchar *,int = -1) noex ;
-	int fileproc_lines() noex ;
+	int filecheck		(custat *) noex ;
+	int process		() noex ;
+	int process_pmbegin	() noex ;
+	int process_pmend	() noex ;
+	int process_stdin	() noex ;
+	int readin		() noex ;
+	int fileproc		(cchar *,int = -1) noex ;
+	int fileproc_fu		(custat *,cchar *,int = -1) noex ;
+	int fileproc_lc		(custat *,cchar *,int = -1) noex ;
+	int fileproc_lines	() noex ;
     private:
-	int istart() noex ;
-	int ifinish() noex ;
-	int getpn(mainv) noex ;
-	int iflistbegin() noex ;
-	int iflistend() noex ;
+	int istart		() noex ;
+	int ifinish		() noex ;
+	int getpn		(con mainv) noex ;
+	int iflistbegin		() noex ;
+	int iflistend		() noex ;
     } ; /* end struct (proginfo) */
 } /* end namespace */
 
@@ -243,8 +243,7 @@ int main(int argc,con mainv argv,con mainv envv) {
 	    ex = mapex(mapexs,rs) ;
 	}
 	return ex ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
@@ -261,7 +260,7 @@ int proginfo::ifinish() noex {
 	return SR_OK ;
 } /* end method (proginfo::ifinish) */
 
-int proginfo::getpn(mainv names) noex {
+int proginfo::getpn(con mainv names) noex {
 	int		rs = SR_FAULT ;
 	if (argv) {
 	    rs = SR_NOMSG ;
@@ -423,7 +422,7 @@ int proginfo::fileproc_fu(custat *,cchar *sp,int sl) noex {
 	    strview	fn(sp,sl) ;
 	    cout << fn << eol ;
 	    c += 1 ;
-	}
+	} /* end if (non-null) */
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::fileproc_fu) */
 
