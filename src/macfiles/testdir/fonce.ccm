@@ -2,7 +2,7 @@
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
-/* (File-Once) implement a map container to track file device-inode values */
+/* (File-Once) map container to track file device-inode values */
 /* version %I% last-modified %G% */
 
 
