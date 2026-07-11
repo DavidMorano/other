@@ -152,6 +152,7 @@ namespace {
 	int sysoutnum	(cchar *) noex ;
 	int lax		() noex ;
 	int navail	() noex ;
+	int nprocs	() noex ;
     private:
 	int istart	() noex ;
 	int ifinish	() noex ;
@@ -191,6 +192,7 @@ namespace {
 	X(nproc,	"nproc"		)	\
 	X(navail,	"navail"	)	\
 	X(ncpu,		"ncpu"		)	\
+	X(nprocs,	"nprocs"	)	\
 	X(overlast,	nullptr		)
 
 enum progmodes {
@@ -290,6 +292,9 @@ int main(int argc,con mainv argv,con mainv envv) {
 	    case progmode_ncpu:
 		rs = pi.navail() ;
 		break ;
+	    case progmode_nprocs:
+		rs = pi.nprocs() ;
+		break ;
 	    default:
 		rs = SR_BUGCHECK ;
 		break ;
@@ -344,7 +349,7 @@ int proginfo::getpn(mainv names) noex {
 	                if ((pm = matstr(names,bp,pl)) >= 0) {
 			    pn = names[pm] ;
 		            rs = pm ;
-	                }
+	                } /* end if (matstr) */
 		    } /* end if (non-zero positive progname) */
 		} /* end if (have base-name) */
 	    } /* end if (have first argument) */
@@ -487,6 +492,15 @@ int proginfo::navail() noex {
 	}
 	return rs ;
 } /* end method (proginfo::avail) */
+
+int proginfo::nprocs() noex {
+    	cint		cmd = 0 ;
+    	int		rs ;
+	if ((rs = usys::usys_nprocs(cmd)) >= 0) {
+	    printf("%d\n",rs) ;
+	}
+	return rs ;
+} /* end method (proginfo::nprocs) */
 
 int proginfo_co::operator () (int) noex {
 	int	rs = SR_BUGCHECK ;
