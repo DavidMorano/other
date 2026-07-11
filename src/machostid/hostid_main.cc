@@ -28,14 +28,15 @@
 ***************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<unistd.h>		/* |gethostid(3c)| */
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<cstdio>		/* |printf(3c++)| */
-#include	<iostream>		/* |cout(3c++)| */
-#include	<iomanip>		/* |hex(3c++)| + |setw(3c++)| */
-#include	<usystem.h>
-#include	<localmisc.h>		/* |eol(3local)| */
+#include	<unistd.h>		/* POSIX |gethostid(3c)| */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstdio>		/* CSTD |printf(3c++)| */
+#include	<iostream>		/* C++STD |cout(3c++)| */
+#include	<iomanip>		/* C++STD |hex(3c++)| + |setw(3c++)| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU |eol(3u)| */
 
 
 /* local defines */
