@@ -37,7 +37,7 @@ INCS +=
 
 MODS +=
 
-LIBS += -luo -lu
+LIBS += -lf -lu
 
 
 OBJ_CONTERM= fexts_main.o
@@ -45,7 +45,7 @@ OBJ_CONTERM= fexts_main.o
 
 INCDIRS +=
 
-LIBDIRS += -L$(LIBDIR)
+LIBDIRS += -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -58,7 +58,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-.SUFFIXES:		.hh .ii .ccm
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).x
@@ -71,6 +71,9 @@ all:			$(ALL)
 
 .cc.ii:
 	$(CPP) $(CPPFLAGS) $< > $(*).ii
+
+.ccm.iim:
+	$(CPP) $(CPPFLAGS) $< > $(*).iim
 
 .c.s:
 	$(CC) -S $(CPPFLAGS) $(CFLAGS) $<
@@ -92,7 +95,7 @@ $(T).x:			$(OBJ_CONTERM)
 	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_CONTERM) $(LIBINFO)
 
 $(T).o:			$(OBJ_CONTERM)
-	$(LD) $(LDFLAGS) -r -o $@ $(OBJ_CONTERM)
+	$(LD) -r $(LDFLAGS) -o $@ $(OBJ_CONTERM)
 
 $(T).nm:		$(T).o
 	$(NM) $(NMFLAGS) $(T).o > $(T).nm
