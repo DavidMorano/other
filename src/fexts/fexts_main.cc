@@ -38,16 +38,17 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be ordered first to configure */
-#include	<cstdlib>		/* |EXIT_FAILURE| */
-#include	<exception>
-#include	<new>
-#include	<algorithm>		/* |ranges(3c++)| + |strrchr(3c)| */
-#include	<iostream>
-#include	<vector>
-#include	<filesystem>
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<localmisc.h>
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD |EXIT_FAILURE| */
+#include	<exception>		/* C++STD */
+#include	<new>			/* C++STD */
+#include	<algorithm>		/* C++STD |ranges(3c++)| */
+#include	<iostream>		/* C++STD */
+#include	<vector>		/* C++STD */
+#include	<filesystem>		/* C++STD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
 
 
 /* local defines */
@@ -75,6 +76,9 @@ typedef	vector<cchar *>		veccp ;
 
 
 /* external variables */
+
+
+/* local structures */
 
 
 /* forward references */
