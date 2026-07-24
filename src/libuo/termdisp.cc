@@ -37,27 +37,27 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<unistd.h>		/* |isatty(3c)| */
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>		/* |abs(3c)| */
-#include	<cstdarg>
-#include	<algorithm>		/* |min(3c++)| * |max(3c++)| */
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<usyscalls.h>
-#include	<uclibmem.h>
-#include	<uctc.h>		/* Terminal-Control */
-#include	<vecitem.h>
-#include	<buffer.h>
-#include	<ascii.h>
-#include	<ansigr.h>
-#include	<snwcpy.h>
-#include	<strwcpy.h>
-#include	<termstr.h>
-#include	<termconseq.h>
-#include	<tabcols.h>
-#include	<bufprintf.h>
-#include	<localmisc.h>		/* |HEXBUFLEN| + |NTABCOLS| */
+#include	<unistd.h>		/* POSIX® |isatty(3c)| */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstdarg>		/* CSTD */
+#include	<algorithm>		/* C++STD |min(3c++)| * |max(3c++)| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU */
+#include	<ascii.h>		/* LIBU */
+#include	<uclibmem.h>		/* LIBUC */
+#include	<uctc.h>		/* LIBUC Terminal-Control */
+#include	<vecitem.h>		/* LIBUC */
+#include	<buffer.h>		/* LIBUC */
+#include	<ansigr.h>		/* LIBUC */
+#include	<snwcpy.h>		/* LIBUC */
+#include	<strwcpy.h>		/* LIBUC */
+#include	<termstr.h>		/* LIBUC */
+#include	<termconseq.h>		/* LIBUC */
+#include	<tabcols.h>		/* LIBUC */
+#include	<bufprintf.h>		/* LIBUC */
+#include	<localmisc.h>		/* LIBU |HEXBUFLEN| + |NTABCOLS| */
 
 #include	"termdisp.h"
 
@@ -156,7 +156,7 @@ local int termdisp_ctor(TD *op,Args ... args) noex {
 		if (rs < 0) {
 		    delete op->tsp ;
 		    op->tsp = nullptr ;
-		}
+		} /* end if (error) */
 	    } /* end if (new-termstr) */
 	} /* end if (non-null) */
 	return rs ;
