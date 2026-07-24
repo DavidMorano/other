@@ -53,9 +53,9 @@ OBJUC06= ucdescsock.o ucdesclock.o
 OBJUC07= ucgetx.o ucsysmisc.o
 
 OBJUC08= ucproc.o ucdata.o ucsysauxinfo.o
-OBJUC09= ucfileop.o
+OBJUC09= uctime.o ucinet.o
 OBJUC10= ucrand.o ucmem.o
-OBJUC11= ucopen.o
+OBJUC11= ucopen.o ucfileop.o
 
 OBJUC_A= objuc00.o objuc01.o objuc02.o objuc03.o
 OBJUC_B= objuc04.o objuc05.o objuc06.o objuc07.o
@@ -103,7 +103,7 @@ OBJ29_LUO= sysval.o path.o termx.o
 OBJ30_LUO= vstr.o xfile.o absfn.o
 OBJ31_LUO= randlc.o pow.o calstrs.o digval.o
 
-OBJ32_LUO= realname.o
+OBJ32_LUO= realname.o initnow.o
 OBJ33_LUO= ema.o tmpx.o getxname.o getutmp.o
 OBJ34_LUO= sbuf.o buffer.o
 OBJ35_LUO= storebuf.o storeitem.o
@@ -572,6 +572,12 @@ inetaddrx.o:		inetaddrx.dir
 inetaddrx.dir:
 	makesubdir $@
 
+ucsysmisc.o:		ucsysmisc.cc	ucsysmisc.h		$(INCS)
+ucdescbase.o:		ucdescbase.cc	ucdescbase.hh		$(INCS)
+ucpts.o:		ucpts.cc	ucpts.h			$(INCS)
+ucpwcache.o:		ucpwcache.cc	ucpwcache.h		$(INCS)
+ucinfo.o:		ucinfo.cc	ucinfo.h		$(INCS)
+
 # Hierarchical Objects
 
 # SBUF
@@ -613,8 +619,6 @@ matxstr.dir:
 nleadx.o:		nleadx.dir
 nleadx.dir:
 	makesubdir $@
-
-ucsysmisc.o:		ucsysmisc.cc	ucsysmisc.h		$(INCS)
 
 # UCSUPPORT	(libuc)
 ucsupport.o:		ucsupport.dir
@@ -681,20 +685,10 @@ ucdata.o:		ucdata.dir
 ucdata.dir:
 	makesubdir $@
 
-# UCFILEOP
-ucfileop.o:		ucfileop.dir
-ucfileop.dir:
-	makesubdir $@
-
 # UCOPEN
 ucopen.o:		ucopen.dir
 ucopen.dir:
 	makesubdir $@
-
-ucpts.o:		ucpts.cc	ucpts.h			$(INCS)
-ucpwcache.o:		ucpwcache.cc	ucpwcache.h		$(INCS)
-ucdescbase.o:		ucdescbase.cc	ucdescbase.hh		$(INCS)
-ucinfo.o:		ucinfo.cc	ucinfo.h		$(INCS)
 
 # UCDESCREAD
 ucdescread.o:		ucdescread.dir
@@ -719,6 +713,21 @@ ucdesclock.dir:
 # UCESCMISC
 ucdescmisc.o:		ucdescmisc.dir
 ucdescmisc.dir:
+	makesubdir $@
+
+# UCFILEOP
+ucfileop.o:		ucfileop.dir
+ucfileop.dir:
+	makesubdir $@
+
+# UCTIME
+uctime.o:		uctime.dir
+uctime.dir:
+	makesubdir $@
+
+# UCINET
+ucinet.o:		ucinet.dir
+ucinet.dir:
 	makesubdir $@
 
 # UCX		(libuc)
@@ -1106,5 +1115,6 @@ conallof.o:		conallof.cc	conallof.h		$(INCS)
 ndig.o:			ndig.cc		ndig.h			$(INCS)
 ndigit.o:		ndigit.cc	ndigit.h		$(INCS)
 bufprintf.o:		bufprintf.cc	bufprintf.h		$(INCS)
+initnow.o:		initnow.cc	initnow.h		$(INCS)
 
 
