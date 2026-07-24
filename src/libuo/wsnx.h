@@ -20,16 +20,16 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<stddef.h>		/* |wchar_t| */
-#include	<clanguage.h>
-#include	<usysbase.h>
+#include	<stddef.h>		/* CSTD |wchar_t| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
 
 
 EXTERNC_begin
 
-extern int wsnlen(const wchar_t *,int) noex ;
-extern int wsncolstr(int,int,const wchar_t *,int) noex ;
-extern int wsnwcpynarrow(wchar_t *,int,cchar *,int) noex ;
+extern int wsnlen		(const wchar_t *,int) noex ;
+extern int wsncolstr		(int,int,const wchar_t *,int) noex ;
+extern int wsnwcpynarrow	(wchar_t *,int,cchar *,int) noex ;
 
 EXTERNC_end
 
