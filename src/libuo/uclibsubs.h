@@ -245,8 +245,11 @@
 #include	<ucfdmanip.h>
 #include	<ucontext.h>
 #include	<ucdesc.h>
+#include	<userattrdb.h>
+#include	<userports.h>
 #include	<ucfileop.h>
 #include	<ucfork.h>
+#include	<ucinet.h>
 #include	<funcodes.h>
 #include	<ucget.h>
 #include	<ucgethost.h>
@@ -254,7 +257,6 @@
 #include	<ucgetpid.h>
 #include	<ucgetrandom.h>
 #include	<ucgetx.h>
-#include	<ucinetconv.h>
 #include	<uckvamatch.h>
 #include	<uclibmem.h>
 #include	<ucmem.h>
@@ -263,6 +265,7 @@
 #include	<ucopen.h>
 #include	<ucopeninfo.h>
 #include	<ucpeek.h>
+#include	<ucproc.h>
 #include	<ucprochave.h>
 #include	<ucproctypes.h>
 #include	<ucprogdata.h>
@@ -291,8 +294,6 @@
 #include	<umask.h>
 #include	<unameo.h>
 #include	<upt.h>
-#include	<userattrdb.h>
-#include	<userports.h>
 #include	<usyscalls.h>
 #include	<usysdefs.h>
 #include	<usysrets.h>
@@ -305,87 +306,6 @@
 #include	<vstrkeycmp.h>
 #include	<willaddover.h>
 #include	<xfile.h>
-
-
-#ifdef	COMMENT
-
-EXTERNC_begin
-
-/* process group */
-extern int	uc_atfork(void_f,void_f,void_f) noex ;
-
-extern int	uc_initgroups(cchar *,gid_t) noex ;
-extern int	uc_exit(int) noex ;
-extern int	uc_atexit(void_f) noex ;
-
-extern int	uc_swapcontext(ucontext_t *,const ucontext_t *) noex ;
-extern int	uc_msync(caddr_t,size_t,int) noex ;
-
-extern int	uc_setpriority(int,id_t,int) noex ;
-extern int	uc_procpid(cchar *,uid_t) noex ;
-
-/* double-special open group */
-extern int	uc_sockpair(int,int,int,int *) noex ;
-
-/* operate group */
-extern int	uc_mknod(cchar *,mode_t,dev_t) noex ;
-extern int	uc_statvfs(cchar *,USTATVFS *) noex ;
-extern int	uc_stat(cchar *,ustat *) noex ;
-extern int	uc_lstat(cchar *,ustat *) noex ;
-extern int	uc_readlink(cchar *,char *,int) noex ;
-extern int	uc_chmod(cchar *,mode_t) noex ;
-extern int	uc_chown(cchar *,uid_t,gid_t) noex ;
-extern int	uc_rename(cchar *,cchar *) noex ;
-extern int	uc_realpath(cchar *,char *) noex ;
-extern int	uc_resolvepath(cchar *,char *,int) noex ;
-extern int	uc_truncate(cchar *,off_t) noex ;
-
-/* use group */
-extern int	uc_fcntl(int,int,...) noex ;
-extern int	uc_ioctl(int,int,...) noex ;
-extern int	uc_fpassfd(int,int) noex ;
-extern int	uc_ftruncate(int,off_t) noex ;
-extern int	uc_fstat(int,ustat *) noex ;
-extern int	uc_fchown(int,uid_t,gid_t) noex ;
-extern int	uc_isatty(int) noex ;
-extern int	uc_fsync(int) noex ;
-extern int	uc_fsyncdata(int) noex ;
-extern int	uc_fattach(int,cchar *) noex ;
-extern int	uc_fdetach(cchar *) noex ;
-extern int	uc_minmod(cchar *,mode_t) noex ;
-extern int	uc_fminmod(int,mode_t) noex ;
-extern int	uc_fsize(int) noex ;
-extern int	uc_fuid(int) noex ;
-extern int	uc_fgid(int) noex ;
-extern int	uc_seeko(int,off_t,int,off_t *) noex ;
-extern int	uc_seek(int,off_t,int) noex ;
-extern int	uc_tell(int,off_t *) noex ;
-
-extern int	uc_copy(int,int,int) noex ;
-extern int	uc_peek(int,void *,int) noex ;
-extern int	uc_msgdiscard(int) noex ;
-
-extern int	uc_remove(cchar *) noex ;
-extern int	uc_link(cchar *,cchar *) noex ;
-extern int	uc_symlink(cchar *,cchar *) noex ;
-extern int	uc_unlink(cchar *) noex ;
-extern int	uc_mkdir(cchar *,mode_t) noex ;
-extern int	uc_rmdir(cchar *) noex ;
-extern int	uc_access(cchar *,int) noex ;
-extern int	uc_pathconf(cchar *,int,long *) noex ;
-
-/* special */
-extern int	uc_ttyname(int,char *,int) noex ;
-
-/* POSIX® shared memory operations */
-extern int	uc_unlinkshm(cchar *) noex ;
-
-/* POSIX® semaphore */
-extern int	uc_unlinksem(cchar *) noex ;
-
-EXTERNC_end
-
-#endif /* COMMENT */
 
 
 #endif /* UCLIBSUBS_INCLUDE */
