@@ -20,11 +20,11 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<stdarg.h>		/* |va_list(3c)| */
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<ascii.h>
-#include	<stdintx.h>
+#include	<stdarg.h>		/* CSTD |va_list(3c)| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<ascii.h>		/* LIBU */
+#include	<stdintx.h>		/* LIBU */
 
 
 #define	BUFFER		struct buffer_head
