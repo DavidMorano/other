@@ -1,6 +1,6 @@
 /* umisc HEADER */
 /* charset=ISO8859-1 */
-/* lang=C20 */
+/* lang=C++20 */
 
 /* LIBU miscellaneous interfaces */
 /* version %I% last-modified %G% */
@@ -17,6 +17,7 @@
 
 #ifndef	UMISC_INCLUDE
 #define	UMISC_INCLUDE
+#ifdef	__cplusplus
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
@@ -24,6 +25,7 @@
 #include	<usysbase.h>
 
 
+#endif /* __cplusplus */
 #endif /* UMISC_INCLUDE */
 
 
