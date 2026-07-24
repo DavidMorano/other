@@ -35,7 +35,7 @@ DEFS +=
 
 INCS +=
 
-MODS +=
+MODS += fonce.o
 
 LIBS += -lf -lu
 
@@ -94,11 +94,11 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	gxx -c -x c++ -o $@ -O $<
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
-$(T).x:			$(OBJ_MACFU) Makefile
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACFU) $(LIBINFO)
+$(T).x:			$(OBJ_MACFU)
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $^ $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).x > $(T).nm
@@ -157,6 +157,6 @@ fu_main.o:		fu_main.cc $(DEPS_MAIN) 		$(INCS)
 # FONCE		(libu)
 fonce.o:		fonce.dir
 fonce.dir:
-	gxx -c -x c++ -o $@ -O $<
+	makesubdir $@
 
 
