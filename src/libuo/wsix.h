@@ -20,20 +20,20 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<stddef.h>		/* |wchar_t| */
-#include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
+#include	<stddef.h>		/* CSTD |wchar_t| */
+#include	<clanguage.h>		/* LIBU */
+#include	<utypedefs.h>		/* LIBU */
+#include	<utypealiases.h>	/* LIBU */
+#include	<usysdefs.h>		/* LIBU */
 
 
 EXTERNC_begin
 
-extern int wsiochr(const wchar_t *,int,int) noex ;
-extern int wsirchr(const wchar_t *,int,int) noex ;
-extern int wsinul(const wchar_t *) noex ;
+extern int wsiochr	(const wchar_t *,int,int) noex ;
+extern int wsirchr	(const wchar_t *,int,int) noex ;
+extern int wsinul	(const wchar_t *) noex ;
 
-static inline int wsichr(const wchar_t *wsp,int wsl,int sch) noex {
+local inline int wsichr(const wchar_t *wsp,int wsl,int sch) noex {
 	return wsiochr(wsp,wsl,sch) ;
 }
 
