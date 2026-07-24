@@ -20,7 +20,6 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<termios.h>		/* POSIX |TERMIOS| */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
 
