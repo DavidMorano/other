@@ -20,17 +20,17 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<stddef.h>		/* |wchar_t| */
-#include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
+#include	<stddef.h>		/* CSTD |wchar_t| */
+#include	<clanguage.h>		/* LIBU */
+#include	<utypedefs.h>		/* LIBU */
+#include	<utypealiases.h>	/* LIBU */
+#include	<usysdefs.h>		/* LIBU */
 
 
 EXTERNC_begin
 
-extern int wsfnext(const wchar_t *,int,const wchar_t **) noex ;
-extern int wswcpynarrow(wchar_t *,cchar *,int) noex ;
+extern int wsfnext	(const wchar_t *,int,const wchar_t **) noex ;
+extern int wswcpynarrow	(wchar_t *,cchar *,int) noex ;
 
 EXTERNC_end
 
