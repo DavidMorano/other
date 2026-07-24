@@ -39,23 +39,22 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<sys/stat.h>
-#include	<sys/xattr.h>
-#include	<unistd.h>
-#include	<fcntl.h>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<cstdarg>
-#include	<cstring>		/* |strlen(3c)| yes-we-want-it */
-#include	<iostream>
+#include	<sys/stat.h>		/* POSIX */
+#include	<sys/xattr.h>		/* POSIX */
+#include	<unistd.h>		/* POSIX */
+#include	<fcntl.h>		/* POSIX */
+#include	<cstddef>		/* CSTD |nullptr_t| */
+#include	<cstdlib>		/* CSTD */
+#include	<cstdarg>		/* CSTD */
+#include	<cstring>		/* CSTD |strlen(3c)| yes-we-want-it */
+#include	<iostream>		/* C++STD */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
 #include	<usyscalls.h>		/* LIBU */
 #include	<usysutility.hh>	/* LIBU |snvprintf(3u)| */
 #include	<readln.hh>		/* LIBU */
 #include	<strnul.hh>		/* LIBU */
-#include	<mapex.h>		/* locally supplied */
-#include	<exitcodes.h>		/* LIBU */
+#include	<mapex.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU */
 #include	<deb.hh>		/* |DEBPRINT(3uc)| */
 
@@ -150,18 +149,20 @@ namespace {
 	    argv = a ;
 	    envv = e ;
 	} ; /* end method */
-	int charset() noex ;
-	int charprocess(char *,int) noex ;
-	int readin(char *,int) noex ;
-	int fileproc(char *,int,cchar *,int = -1) noex ;
-	int filecheck(char *,int,cchar *,int = -1) noex ;
-	int printf(cchar *,...) noex ;
+	int charset	() noex ;
+	int charprocess	(char *,int) noex ;
+	int readin	(char *,int) noex ;
+	int fileproc	(char *,int,cchar *,int = -1) noex ;
+	int fileproc_cs	(char *,int,cchar *,int = -1) noex ;
+	int fileproc_cm	(char *,int,cchar *,int = -1) noex ;
+	int filecheck	(char *,int,cchar *,int = -1) noex ;
+	int printf	(cchar *,...) noex ;
     private:
-	int getpn(mainv) noex ;
-	int istart() noex ;
-	int ifinish() noex ;
-	int iflistbegin(int) noex ;
-	int iflistend() noex ;
+	int getpn	(mainv) noex ;
+	int istart	() noex ;
+	int ifinish	() noex ;
+	int iflistbegin	(int) noex ;
+	int iflistend	() noex ;
     } ; /* end struct (proginfo) */
 } /* end namespace */
 
@@ -171,30 +172,37 @@ namespace {
 
 /* local variables */
 
+#define	PROGMODES \
+    	X(charset,	"charset"	)	\
+    	X(chstaff,	"chstaff"	)	\
+	X(overlast,	nullptr		)
+
 enum progmodes {
-	progmode_charset,
-	progmode_overlast
+#define	X(e,n)	progmode_##e,
+    	PROGMODES
+#undef	X
 } ; /* end enum (progmodes) */
 
 constexpr cpcchar	prognames[] = {
-	"charset",
-	nullptr
+#define	X(e,n)	n,
+    	PROGMODES
+#undef	X
 } ; /* end array (prognames) */
 
 constexpr MAPEX		mapexs[] = {
-	{ SR_NOENT,	EX_NOUSER },
-	{ SR_AGAIN,	EX_TEMPFAIL },
-	{ SR_DEADLK,	EX_TEMPFAIL },
-	{ SR_NOLCK,	EX_TEMPFAIL },
-	{ SR_TXTBSY,	EX_TEMPFAIL },
-	{ SR_NOSPC,	EX_TEMPFAIL },
-	{ SR_ACCESS,	EX_NOPERM },
-	{ SR_REMOTE,	EX_PROTOCOL },
-	{ SR_INTR,	EX_INTR },
-	{ SR_EXIT,	EX_TERM },
-	{ SR_NOMSG,	EX_OSERR },
-	{ SR_NOSYS,	EX_OSFILE },
-	{ SR_INVALID,	EX_USAGE },
+	{ SR_NOENT,	EX_NOUSER	},
+	{ SR_AGAIN,	EX_TEMPFAIL	},
+	{ SR_DEADLK,	EX_TEMPFAIL	},
+	{ SR_NOLCK,	EX_TEMPFAIL	},
+	{ SR_TXTBSY,	EX_TEMPFAIL	},
+	{ SR_NOSPC,	EX_TEMPFAIL	},
+	{ SR_ACCESS,	EX_NOPERM	},
+	{ SR_REMOTE,	EX_PROTOCOL	},
+	{ SR_INTR,	EX_INTR		},
+	{ SR_EXIT,	EX_TERM		},
+	{ SR_NOMSG,	EX_OSERR	},
+	{ SR_NOSYS,	EX_OSFILE	},
+	{ SR_INVALID,	EX_USAGE	},
 	{ 0, 0 }
 } ; /* end array (mapexs) */
 
@@ -202,7 +210,7 @@ constexpr cchar		xaname[]	= "charset" ;
 
 static cint		maxpathlen	= ulibval.maxpathlen ;
 static cint		maxlinelen	= ulibval.maxline ;
-static cint		pagesz	= ulibval.pagesz ;
+static cint		pagesz		= ulibval.pagesz ;
 
 cint			nents		= NENTS ;
 
@@ -223,6 +231,7 @@ int main(int argc,con mainv argv,con mainv envv) {
 	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
             switch (pi.pm) {
             case progmode_charset:
+            case progmode_chstaff:
                 rs = pi.charset() ;
                 break ;
 	    default:
@@ -253,7 +262,7 @@ int proginfo::charset() noex {
 	    if ((rs = flistbegin(nents)) >= 0) {
 		if ((rs = pagesz) >= 0) {
 		    cint	vlen = rs ;
-		    if (char *vbuf ; (vbuf = new(nt) char[vlen+1]) != np) {
+		    if (char *vbuf = new(nt) char[vlen+1] ; vbuf) {
 		        {
 	                    rs = charprocess(vbuf,vlen) ;
 		            c = rs ;
@@ -272,8 +281,7 @@ int proginfo::charprocess(char *vbuf,int vlen) noex {
 	int		rs = SR_OK ;
 	int		c = 0 ;
 	for (int ai = 2 ; (rs >= SR_OK) && (ai < argc) && argv[ai] ; ai += 1) {
-            cchar   *fn = argv[ai] ;
-            if (fn[0]) {
+            if (cchar *fn = argv[ai] ; fn[0]) {
                 if ((fn[0] == '-') && (fn[1] == '\0')) {
                     rs = readin(vbuf,vlen) ;
                     c += rs ;
@@ -281,14 +289,13 @@ int proginfo::charprocess(char *vbuf,int vlen) noex {
                     rs = filecheck(vbuf,vlen,fn) ;
                     c += rs ;
                 }
-            }
+            } /* end if (non-empty) */
             if (rs < 0) break ;
 	} /* end for */
 	return (rs >= 0) ? c : rs ;
 } /* end subroutine (proginfo::charprocess) */
 
 int proginfo::readin(char *vbuf,int vlen) noex {
-	cnullptr	np{} ;
 	cnothrow	nt{} ;
 	istream		*isp = &cin ;
 	int		rs ;
@@ -296,7 +303,7 @@ int proginfo::readin(char *vbuf,int vlen) noex {
 	if ((rs = maxpathlen) >= 0) {
 	    cint	llen = rs ;
 	    rs = SR_NOMEM ;
-	    if (char *lbuf ; (lbuf = new(nt) char[llen+1]) != np) {
+	    if (char *lbuf = new(nt) char[llen+1] ; lbuf) {
 	        while ((rs = readln(isp,lbuf,llen)) > 0) {
 		    int		ll = rs ;
 		    if ((ll > 0) && (lbuf[ll - 1] == eol)) ll -= 1 ;
@@ -343,6 +350,25 @@ int proginfo::filecheck(char *vbuf,int vlen,cc *fp,int µfl) noex {
 } /* end subroutine (proginfo::filecheck) */
 
 int proginfo::fileproc(char *vbuf,int vlen,cc *sp,int sl) noex {
+    	int		rs = SR_OK ;
+	int		c = 0 ;
+        switch (pm) {
+        case progmode_charset:
+            rs = fileproc_cs(vbuf,vlen,sp,sl) ;
+	    c = rs ;
+            break ;
+        case progmode_chstaff:
+            rs = fileproc_cm(vbuf,vlen,sp,sl) ;
+	    c = rs ;
+            break ;
+	default:
+	    rs = SR_NOSYS ;
+	    break ;
+	} /* end switch */
+	return (rs >= 0) ? c : rs ;
+} /* end subroutine (proginfo::fileproc) */
+
+int proginfo::fileproc_cs(char *vbuf,int vlen,cc *sp,int sl) noex {
 	static csize	xasize = strlen(charsetval) ;
 	strnul		fn(sp,sl) ;
 	cint		rse = SR_EXISTS ;
@@ -358,7 +384,24 @@ int proginfo::fileproc(char *vbuf,int vlen,cc *sp,int sl) noex {
 	}
 	DEBPRINTF("ret fn=>%s< c=%d\n",ccp(fn),c) ;
 	return (rs >= 0) ? c : rs ;
-} /* end subroutine (proginfo::fileproc) */
+} /* end method (proginfo::fileproc_cs) */
+
+int proginfo::fileproc_cm(char *vbuf,int vlen,cc *sp,int sl) noex {
+	strnul		fn(sp,sl) ;
+    	int		rs ;
+	(void) vbuf ;
+	(void) vlen ;
+	if (ustat sb ; (rs = u_stat(fn,&sb)) >= 0) {
+	    bool f = false ;
+	    f = f || ((sb.st_mode & 0200) == 0) ;
+	    f = f || ((sb.st_mode & 0020) == 0) ;
+	    if (f) {
+		cmode nm = sb.st_mode | 0200 | 0020 ;
+		rs = u_chmod(fn,nm) ;
+	    }
+	} /* end if (u_stat) */
+    	return rs ;
+} /* end method (proginfo::fileproc_cm) */
 
 int proginfo::istart() noex {
 	int		rs ;
@@ -401,7 +444,6 @@ int proginfo::iflistend() noex {
 } /* end method (proginfo::iflistend) */
 
 int proginfo::printf(cchar *fmt,...) noex {
-    	cnullptr	np{} ;
 	cnothrow	nt{} ;
     	va_list		ap ;
     	int		rs = SR_FAULT ;
@@ -412,7 +454,7 @@ int proginfo::printf(cchar *fmt,...) noex {
 	        if ((rs = maxlinelen) >= 0) {
 		    cint	llen = rs ;
 		    rs = SR_NOMEM ;
-		    if (char *lbuf ; (lbuf = new(nt) char[llen + 1]) != np) {
+		    if (char *lbuf = new(nt) char[llen + 1] ; lbuf) {
 	    	        if ((rs = snvprintf(lbuf,llen,fmt,ap)) >= 0) {
 			    if (pn == nullptr) pn = "charset" ;
 			    cerr << pn << ": " << lbuf ;
