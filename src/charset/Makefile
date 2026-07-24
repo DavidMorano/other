@@ -43,11 +43,11 @@ LIBS += -lf -lu
 DEPS_MAIN +=
 
 OBJ0= charset_main.o
-OBJ1= mapex.o deb.o
+OBJ1=
 OBJ2=
 OBJ3=
 
-OBJ= obj0.o obj1.o
+OBJ= obj0.o
 
 
 INCDIRS=
@@ -92,7 +92,7 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	makemodule $(*)
+	gxx -c -x c++ -o $@ -O $<
 
 
 $(T).x:			obj.o
@@ -158,7 +158,5 @@ fonce.dir:
 deb.o:			deb.dir
 deb.dir:
 	makesubdir $@
-
-mapex.o:		mapex.cc		mapex.h
 
 
