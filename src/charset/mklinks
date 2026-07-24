@@ -3,7 +3,7 @@
 
 LOCPROG=charset.x
 CMDS=
-CMDS+=" charset "
+CMDS+=" charset chstaff "
 
 TDIRS=" /usr/extra /usr/local "
 
