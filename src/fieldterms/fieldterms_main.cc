@@ -19,11 +19,11 @@
 /* Use is subject to license terms. */
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<climits>		/* |UCHAR_MAX| */
+#include	<climits>		/* CSTD |UCHAR_MAX| */
 #include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD */
-#include	<cstdio>		/* |fprintf(3c)| */
-#include	<cstring>		/* |lenstr(3c)| */
+#include	<cstdio>		/* CSTD |fprintf(3c)| */
+#include	<cstring>		/* CSTD */
 #include	<new>			/* C++STD */
 #include	<exception>		/* C++STD */
 #include	<stdexcept>		/* C++STD */
