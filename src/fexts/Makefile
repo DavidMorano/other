@@ -44,7 +44,6 @@ OBJ_CONTERM= fexts_main.o
 
 
 INCDIRS +=
-
 LIBDIRS += -L lib
 
 RUNINFO= -rpath $(RUNDIR)
@@ -88,14 +87,14 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	makemodule $(*)
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
 $(T).x:			$(OBJ_CONTERM)
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_CONTERM) $(LIBINFO)
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $^ $(LIBINFO)
 
 $(T).o:			$(OBJ_CONTERM)
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ_CONTERM)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 $(T).nm:		$(T).o
 	$(NM) $(NMFLAGS) $(T).o > $(T).nm
