@@ -87,11 +87,11 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	makemodule $(*)
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
 $(T).x:			$(OBJ_SAMEFILE)
-	$(CXX) $(LDFLAGS) -o $@ $(RUNINFO) $(OBJ_SAMEFILE) $(LIBINFO)
+	$(CXX) $(LDFLAGS) -o $@ $(RUNINFO) $^ $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).x > $(T).nm
