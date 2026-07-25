@@ -104,7 +104,7 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	gxx -c -x c++ -o $@ -O $<
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
 $(T).x:			obj.o
@@ -271,7 +271,7 @@ testint.o:		testint.ccm	intext.o varithmetic.o loadvals.o
 
 # INTX
 intext.o:		intext.ccm	loadvals.o
-	gxx -c -x c++ -o $@ -O $<
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 arithsteps.o:		arithsteps.ccm
 
