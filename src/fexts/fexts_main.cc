@@ -60,8 +60,6 @@ using namespace	std::filesystem ;	/* namespace */
 namespace	rg = std::ranges ;	/* namespace */
 
 using std::vector ;			/* type */
-using std::min ;			/* subroutine-template */
-using std::max ;			/* subroutine-template */
 using std::cerr ;			/* variable */
 using std::cout ;			/* variable */
 
@@ -114,8 +112,7 @@ int main(int argc,con mainv argv,con mainv) {
 	    } /* end if */
 	} /* end if (arguments) */
 	return ex ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
