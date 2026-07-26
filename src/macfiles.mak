@@ -52,13 +52,13 @@ OBJ0= files_main.o files_show.o
 OBJ1= argmgr.o filerec.o tardir.o
 OBJ2= modproc.o matxstr.o nleadx.o
 OBJ3= sif.o cmdutils.o strcpyx.o
-OBJ4= filelinker.o ucx.o inetaddrx.o
+OBJ4= filelinker.o ucx.o ucinet.o
 OBJ5= strfilter.o strx.o strn.o
 OBJ6= char.o isx.o rmx.o six.o sfx.o
 OBJ7= deb.o strnxcmp.o strxcmp.o
 
 OBJ8= strw.o strwcpy.o
-OBJ9=
+OBJ9= inetaddrx.o
 OBJ10=
 OBJ11=
 OBJ12=
@@ -68,7 +68,7 @@ OBJ15=
 
 OBJA= obj0.o obj1.o obj2.o obj3.o
 OBJB= obj4.o obj5.o obj6.o obj7.o
-OBJC= obj8.o 
+OBJC= obj8.o obj9.o
 
 OBJ= obja.o objb.o objc.o
 
@@ -117,7 +117,7 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	gxx -c -x c++ -o $@ -O $<
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
 $(T).x:			obj.o
@@ -232,6 +232,11 @@ deb.dir:
 # UCX		(libuc)
 ucx.o:			ucx.dir
 ucx.dir:
+	makesubdir $@
+
+# UCINET	(libuc)
+ucinet.o:		ucinet.dir
+ucinet.dir:
 	makesubdir $@
 
 # STRFILER	(libuc)
