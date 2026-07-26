@@ -31,7 +31,7 @@ EXTERNC_begin
 
 extern int	optval(cchar *,int) noex ;
 
-static inline int optbool(cchar *sp,int sl) noex {
+local inline int optbool(cchar *sp,int sl) noex {
 	return optval(sp,sl) ;
 }
 
