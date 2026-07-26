@@ -20,9 +20,9 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<vechand.h>
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<vechand.h>		/* LIBUC */
 
 
 #define	EMA		struct ema_head
@@ -118,13 +118,13 @@ struct ema : ema_head {
 	} ; /* end ctor */
 	ema(const ema &) = delete ;
 	ema &operator = (const ema &) = delete ;
-	int parse(cchar *,int = -1) noex ;
-	int addent(ema_ent *) noex ;
-	int addents(ema *) noex ;
-	int get(int,ema_ent **) noex ;
-	int getbestaddr(int,cchar **) noex ;
-	int haveaddr(cchar *,int = -1) noex ;
-	int first(cchar **) noex ;
+	int parse	(cchar *,int = -1) noex ;
+	int addent	(ema_ent *) noex ;
+	int addents	(ema *) noex ;
+	int get		(int,ema_ent **) noex ;
+	int getbestaddr	(int,cchar **) noex ;
+	int haveaddr	(cchar *,int = -1) noex ;
+	int first	(cchar **) noex ;
 	void dtor() noex ;
 	destruct ema() {
 	    if (magval) dtor() ;
@@ -136,16 +136,16 @@ typedef EMA		ema ;
 
 EXTERNC_begin
 
-extern int ema_start(ema *) noex ;
-extern int ema_parse(ema *,cchar *,int) noex ;
-extern int ema_addent(ema *,ema_ent *) noex ;
-extern int ema_addents(ema *,ema *) noex ;
-extern int ema_get(ema *,int,ema_ent **) noex ;
-extern int ema_getbestaddr(ema *,int,cchar **) noex ;
-extern int ema_count(ema *) noex ;
-extern int ema_haveaddr(ema *,cchar *,int) noex ;
-extern int ema_first(ema *,cchar **) noex ;
-extern int ema_finish(ema *) noex ;
+extern int ema_start		(ema *) noex ;
+extern int ema_parse		(ema *,cchar *,int) noex ;
+extern int ema_addent		(ema *,ema_ent *) noex ;
+extern int ema_addents		(ema *,ema *) noex ;
+extern int ema_get		(ema *,int,ema_ent **) noex ;
+extern int ema_getbestaddr	(ema *,int,cchar **) noex ;
+extern int ema_count		(ema *) noex ;
+extern int ema_haveaddr		(ema *,cchar *,int) noex ;
+extern int ema_first		(ema *,cchar **) noex ;
+extern int ema_finish		(ema *) noex ;
 
 EXTERNC_end
 
