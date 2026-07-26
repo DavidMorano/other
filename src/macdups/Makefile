@@ -41,12 +41,9 @@ LIBS= -lmacuser -lu
 
 
 INCDIRS= -I$(INCDIR)
-
 LIBDIRS= -L$(LIBDIR)
 
-
 RUNINFO= -rpath $(RUNDIR)
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -60,7 +57,7 @@ LDFLAGS		?= $(MAKELDFLAGS)
 OBJ_MACDUPS= main.o
 
 
-.SUFFIXES:		.hh .ii .ccm
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).x
@@ -87,11 +84,11 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	makemodule $(*)
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
 $(T).x:			$(OBJ_MACDUPS)
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACDUPS) $(LIBINFO)
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $^ $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm
@@ -110,6 +107,6 @@ install:		$(T).x
 
 
 main.o:			main.cc 	$(INCS)
-mapblock.o:		mapblock.cc mapblock.hh
+mapblock.o:		mapblock.cc	mapblock.hh
 
 
