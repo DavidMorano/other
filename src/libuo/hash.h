@@ -31,10 +31,10 @@
 
 EXTERNC_begin
 
-extern uint	hash_elf(cvoid *,int) noex ;
-extern uint	hash_djb(cvoid *,int) noex ;
-extern uint	hash_hsieh(cchar *,int) noex ;
-extern uint	hash_again(uint,int,int) noex ;
+extern uint	hash_elf	(cvoid *,int) noex ;
+extern uint	hash_djb	(cvoid *,int) noex ;
+extern uint	hash_hsieh	(cchar *,int) noex ;
+extern uint	hash_again	(uint,int,int) noex ;
 
 EXTERNC_end
 
