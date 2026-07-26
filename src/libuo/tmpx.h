@@ -22,8 +22,8 @@
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<sys/types.h>		/* POSIX |pid_t| */
 #include	<time.h>		/* CSTD |time_t| */
-#include	<clanguage.h>		/* LINU */
-#include	<usysbase.h>		/* LINU */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
 #include	<vecstr.h>		/* LIBUC */
 #include	<vecint.h>		/* LIBUC */
 #include	<utmpxx.h>		/* LIBUC */
