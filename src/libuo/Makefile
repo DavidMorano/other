@@ -201,14 +201,14 @@ a:			$(T).a
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	gxx -c -x c++ -o $@ -O $<
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
 $(T).so:		obj.o
-	$(CXX) -shared -o $@ $(LDFLAGS) obj.o $(RUNINFO) $(LIBINFO)
+	$(CXX) -shared -o $@ $(LDFLAGS) $^$(RUNINFO) $(LIBINFO)
 
 $(T).o:			obj.o
-	$(LD) -r -o $@ $(LDFLAGS) obj.o
+	$(LD) -r -o $@ $(LDFLAGS) $^
 
 $(T).a:			$(OBJ)
 	$(AR) -rc $@ $?
