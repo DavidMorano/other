@@ -43,13 +43,13 @@ LIBS +=
 OBJ0= uctc.o
 OBJ1= ucstrftime.o
 OBJ2= uckvamatch.o
-OBJ3=
+OBJ3= ucttyname.o
 OBJ4=
 OBJ5= 
 OBJ6= 
 OBJ7= 
 
-OBJA= obj0.o obj1.o obj2.o
+OBJA= obj0.o obj1.o obj2.o obj3.o
 OBJB= obj4.o
 
 OBJ= obja.o
@@ -154,11 +154,11 @@ obj.o:			$(OBJ)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
-uclibmem.o:		uclibmem.cc	uclibmem.h	$(INCS)
-uctc.o:			uctc.cc		uctc.h		$(INCS)
-ucstrftime.o:		ucstrftime.cc	ucstrftime.h	$(INCS)
 uckvamatch.o:		uckvamatch.cc	uckvamatch.h	$(INCS)
-uaddrinfo.o:		uaddrinfo.cc	uaddrifo.h	$(INCS)
+uclibmem.o:		uclibmem.cc	uclibmem.h	$(INCS)
+ucstrftime.o:		ucstrftime.cc	ucstrftime.h	$(INCS)
+uctc.o:			uctc.cc		uctc.h		$(INCS)
+ucttyname.o:		ucttyname.cc	ucttyname.h	$(INCS)
 
 # obsoleted
 ucmemalloc.o:		ucmemalloc.cc	ucmemalloc.h	$(INCS)
