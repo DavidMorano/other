@@ -74,8 +74,7 @@ int strmgr_start(strmgr *op,char *dbuf,int dlen) noex {
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end subroutine (strmgr_start) */
+} /* end subroutine (strmgr_start) */
 
 int strmgr_finish(strmgr *op) noex {
 	int		rs = SR_FAULT ;
@@ -87,8 +86,7 @@ int strmgr_finish(strmgr *op) noex {
 	    op->dl = 0 ;
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end subroutine (strmgr_finish) */
+} /* end subroutine (strmgr_finish) */
 
 int strmgr_avail(strmgr *op) noex {
 	int		rs = SR_FAULT ;
@@ -96,18 +94,15 @@ int strmgr_avail(strmgr *op) noex {
 	    rs = (op->dlen - op->dl) ;
 	}
 	return rs ;
-}
-/* end subroutine (strmgr_avail) */
+} /* end subroutine (strmgr_avail) */
 
 int strmgr_rem(strmgr *op) noex {
 	return strmgr_avail(op) ;
-}
-/* end subroutine (strmgr_rem) */
+} /* end subroutine (strmgr_rem) */
 
 int strmgr_lenrem(strmgr *op) noex {
 	return strmgr_avail(op) ;
-}
-/* end subroutine (strmgr_lenrem) */
+} /* end subroutine (strmgr_lenrem) */
 
 int strmgr_str(strmgr *op,cchar *sp,int sl) noex {
 	int		rs = SR_FAULT ;
@@ -127,8 +122,7 @@ int strmgr_str(strmgr *op,cchar *sp,int sl) noex {
 	    }
 	} /* end if (non-null) */
 	return (rs >= 0) ? tl : rs ;
-}
-/* end subroutine (strmgr_str) */
+} /* end subroutine (strmgr_str) */
 
 int strmgr_chr(strmgr *op,int ch) noex {
 	int		rs = SR_FAULT ;
@@ -141,8 +135,7 @@ int strmgr_chr(strmgr *op,int ch) noex {
 	    }
 	} /* end if (non-null) */
 	return (rs >= 0) ? 1 : rs ;
-}
-/* end subroutine (strmgr_chr) */
+} /* end subroutine (strmgr_chr) */
 
 int strmgr_get(strmgr *op,ccharpp rpp) noex {
 	int		rs = SR_FAULT ;
@@ -151,8 +144,7 @@ int strmgr_get(strmgr *op,ccharpp rpp) noex {
 	    if (rpp) *rpp = op->dbuf ;
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end subroutine (strmgr_len) */
+} /* end subroutine (strmgr_len) */
 
 int strmgr_len(strmgr *op) noex {
 	int		rs = SR_FAULT ;
@@ -160,8 +152,7 @@ int strmgr_len(strmgr *op) noex {
 	    rs = op->dl ;
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end subroutine (strmgr_len) */
+} /* end subroutine (strmgr_len) */
 
 int strmgr_reset(strmgr *op) noex {
 	int		rs = SR_FAULT ;
@@ -170,8 +161,7 @@ int strmgr_reset(strmgr *op) noex {
 	    op->dl = 0 ;
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end subroutine (strmgr_reset) */
+} /* end subroutine (strmgr_reset) */
 
 
 /* local subroutines */
