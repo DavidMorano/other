@@ -126,8 +126,7 @@ int files_show(cchar *fn,int mlen) noex {
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? lines : rs ;
-}
-/* end subroutine (filelines) */
+} /* end subroutine (filelines) */
 
 
 /* local subroutines */
