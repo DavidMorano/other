@@ -20,15 +20,13 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
 
-#include	<uclibmem.h>
+#include	<uckvamatch.h>
 #include	<ucstrftime.h>
 #include	<uctc.h>
+#include	<ucttyname.h>
 
 
 #endif /* UCX_INCLUDE */
