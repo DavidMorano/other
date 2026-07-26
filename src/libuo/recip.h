@@ -21,18 +21,15 @@
 
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<sys/types.h>		/* system types */
-#include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
-#include	<vecitem.h>
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<vecitem.h>		/* LIBUC */
 
 
-#define	RECIP_MAGIC	0x73169284
 #define	RECIP		struct recip_head
 #define	RECIP_FL	struct recip_flags
 #define	RECIP_ENT	struct recip_entry
+#define	RECIP_MAGIC	0x73169284
 
 
 struct recip_entry {
