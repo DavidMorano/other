@@ -39,12 +39,9 @@ LIBS=
 
 
 INCDIRS=
-
-LIBDIRS= -L$(LIBDIR)
-
+LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -58,7 +55,7 @@ LDFLAGS		?= $(MAKELDFLAGS)
 OBJ_CONTERM= main.o
 
 
-.SUFFIXES:		.hh .ii
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).x
@@ -84,12 +81,15 @@ all:			$(ALL)
 .cc.o:
 	$(COMPILE.cc) $<
 
+.ccm.o:
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
+
 
 $(T).x:			$(OBJ_CONTERM)
-	$(LD) $(LDFLAGS) -o $@ $(OBJ_CONTERM)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 $(T).o:			$(OBJ_CONTERM)
-	$(LD) $(LDFLAGS) -r -o $@ $(OBJ_CONTERM)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 $(T).a:			$(OBJ_CONTERM)
 	$(AR) $(ARFLAGS) -rc $@ $?
