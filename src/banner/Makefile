@@ -30,6 +30,7 @@ RM		?= rm -f
 TOUCH		?= touch
 LINT		?= lint
 
+
 DEFS +=
 
 INCS += 
@@ -38,12 +39,9 @@ LIBS += -lmacuser
 
 
 INCDIRS +=
-
-LIBDIRS += -L$(LIBDIR)
-
+LIBDIRS += -L lib
 
 LDRPATH= $(USRLOCAL)/lib
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -70,11 +68,17 @@ all:			$(ALL)
 .c.i:
 	$(CPP) $(CPPFLAGS) $< > $(*).i
 
+.ccm.iim:
+	$(CPP) $(CPPFLAGS) $< > $(*).iim
+
 .c.o:
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $<
 
 .cc.o:
 	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $<
+
+.ccm.o:
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
 $(T).x:			$(OBJ_BANNER) $(LIB)
