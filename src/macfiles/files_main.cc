@@ -374,7 +374,7 @@ enum argopts {
 	argopt_overlast
 } ; /* end enum (argopts) */
 
-constexpr cpcchar	argopts[] = {
+constexpr cpcchar	aonames[] = {
     	"DEBUG",
     	"HELP",
     	"VERSION",
@@ -386,17 +386,17 @@ constexpr cpcchar	argopts[] = {
     	"ud",
     	"ot",
 	nullptr
-} ; /* end array (argopts) */
+} ; /* end array (aonames) */
 
 enum argoptlongs {
     	argoptlong_version,
 	argoptlong_overlast
 } ; /* end enum (argoptlongs) */
 
-constexpr cpcchar	argoptlongs[] = {
+constexpr cpcchar	aolnames[] = {
     	"version",
 	nullptr
-} ; /* end array (argoptlongs) */
+} ; /* end array (aolnames) */
 
 constexpr MAPEX		mapexs[] = {
     	{ SR_INVALID,	EX_USAGE },
@@ -713,7 +713,7 @@ int proginfo::args(argmgr *amp) noex {
     	int		rs ;
 	while ((rs = amp->arg) > 0) {
 	    if (cc *sp ; (rs = amp->argopt(&sp)) > 1) {
-		if (int wi ; (wi = matostr(argopts,2,sp,rs)) >= 0) {
+		if (int wi ; (wi = matostr(aonames,2,sp,rs)) >= 0) {
 		    rs = argoptstr(amp,wi) ;
 		} else {
 		    rs = argoptchr(amp,sp,rs) ;
@@ -769,7 +769,7 @@ int proginfo::argoptstr(argmgr *amp,int wi) noex {
 int proginfo::argoptlong(argmgr *amp,cchar *sp,int sl) noex {
 	int		rs = SR_OK ;
 	(void) amp ;
-	if (int wi ; (wi = matostr(argoptlongs,2,sp,sl)) >= 0) {
+	if (int wi ; (wi = matostr(aolnames,2,sp,sl)) >= 0) {
 	    switch (wi) {
 	    case argoptlong_version:
 		fl.version = true ;
