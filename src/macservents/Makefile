@@ -39,12 +39,9 @@ LIBS=
 
 
 INCDIRS=
-
 LIBDIRS= -L$(LIBDIR)
 
-
 RUNINFO= -rpath $(RUNDIR)
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -58,7 +55,7 @@ LDFLAGS		?= $(MAKELDFLAGS)
 OBJ_USERHOME= main.o
 
 
-.SUFFIXES:		.hh .ii
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).x
@@ -70,7 +67,7 @@ all:			$(ALL)
 
 
 $(T).x:			$(OBJ_USERHOME)
-	$(LD) $(LDFLAGS) -o $@ $(OBJ_USERHOME) $(LIBDIRS) $(LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBDIRS) $(LIBS)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).so > $(T).nm
