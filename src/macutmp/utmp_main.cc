@@ -166,35 +166,35 @@ struct utmpx32 {
 
 /* forward references */
 
-static int getpm(int,mainv,mainv) noex ;
-static int prutmp(bool) noex ;
-static int boottime() noex ;
-static int consoleid() noex ;
-static int findsid(int) noex ;
-static int findstdin(int) noex ;
-static int findenv(int) noex ;
-static int findstat(int) noex ;
-static int printutxval(int,UTMPX *) noex ;
-static int sirchr(cchar *,int,int) noex ;
-static int utmpwrite(UTMPX *) noex ;
+local int getpm(int,mainv,mainv) noex ;
+local int prutmp(bool) noex ;
+local int boottime() noex ;
+local int consoleid() noex ;
+local int findsid(int) noex ;
+local int findstdin(int) noex ;
+local int findenv(int) noex ;
+local int findstat(int) noex ;
+local int printutxval(int,UTMPX *) noex ;
+local int sirchr(cchar *,int,int) noex ;
+local int utmpwrite(UTMPX *) noex ;
 
-static bool isourtype(UTMPX *up) noex {
+local bool isourtype(UTMPX *up) noex {
 	bool	f = false ;
 	f = f || (up->ut_type == INIT_PROCESS) ;
 	f = f || (up->ut_type == LOGIN_PROCESS) ;
 	f = f || (up->ut_type == USER_PROCESS) ;
 	return f ;
-}
+} /* end subroutine */
 
-static bool isourtype32(utmpx32 *up) noex {
+local bool isourtype32(utmpx32 *up) noex {
 	bool	f = false ;
 	f = f || (up->ut_type == INIT_PROCESS) ;
 	f = f || (up->ut_type == LOGIN_PROCESS) ;
 	f = f || (up->ut_type == USER_PROCESS) ;
 	return f ;
-}
+} /* end subroutine */
 
-static UTMPX	*getutxliner(UTMPX *) noex ;
+local UTMPX	*getutxliner(UTMPX *) noex ;
 
 
 /* local variables */
@@ -240,7 +240,7 @@ constexpr cpcchar	prognames[] = {
 constexpr cpcchar	utmpvars[] = {
 	VARUTMPLINE,
 	VARLOGLINE
-} ;
+} ; /* end array */
 
 constexpr int		utl_id		= UT_IDSIZE ;
 constexpr int		utl_user	= UT_USERSIZE ;
@@ -310,13 +310,12 @@ int main(int argc,con mainv argv,con mainv) {
 	    ex = EXIT_FAILURE ;
 	}
 	return ex ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
 
-static int getpm(int argc,mainv argv,mainv names) noex {
+local int getpm(int argc,mainv argv,mainv names) noex {
 	int		rs = SR_NOMSG ;
 	if (argc > 0) {
 	    cchar	*argz = argv[0] ;
@@ -346,10 +345,9 @@ static int getpm(int argc,mainv argv,mainv names) noex {
 	    } /* end if (non-empty argz) */
 	} /* end if */
 	return rs ;
-}
-/* end subroutine (getpm) */
+} /* end subroutine (getpm) */
 
-static int prutmp(bool fprint) noex {
+local int prutmp(bool fprint) noex {
 	TM		ts ;
 	int		rs = SR_OK ;
 	int		c = 0 ;
@@ -380,10 +378,9 @@ static int prutmp(bool fprint) noex {
 	   } /* end if (type match) */
 	} /* end for */
 	return (rs >= 0) ? c : rs ;
-}
-/* end subroutine (prutmp) */
+} /* end subroutine (prutmp) */
 
-static int boottime() noex {
+local int boottime() noex {
 	TM		ts ;
 	int		rs = SR_OK ;
 	cchar		*tmt = "%Y%m%d-%H%M%S" ;
@@ -398,10 +395,9 @@ static int boottime() noex {
 	   } /* end if (type match) */
 	} /* end for */
 	return rs ;
-}
-/* end subroutine (boottime) */
+} /* end subroutine (boottime) */
 
-static bool conidok(UTMPX* up) noex {
+local bool conidok(UTMPX* up) noex {
     	bool		f = false ;
 	cchar		*idp = up->ut_id ;
 	if (strncmp(idp,"co",2) == 0) {
@@ -409,10 +405,9 @@ static bool conidok(UTMPX* up) noex {
 	    f = f || (isdigitlatin(idp[2]) && isdigitlatin(idp[3])) ;
 	}
 	return f ;
-}
-/* end subroutine (conidok) */
+} /* end subroutine (conidok) */
 
-static int consoleid_wrid(UTMPX *up,vecstr *cosp,int c) noex {
+local int consoleid_wrid(UTMPX *up,vecstr *cosp,int c) noex {
     	cint	lid = szof(up->ut_id) ;
     	cint	idlen = 10 ;
 	int	rs = SR_OK ;
@@ -434,10 +429,10 @@ static int consoleid_wrid(UTMPX *up,vecstr *cosp,int c) noex {
 	return rs ;
 } /* end subroutine (consoleid_wrid) */
 
-static int consoleid_utx(vecstr *) noex ;
-static int consoleid_load(vecstr *) noex ;
+local int consoleid_utx(vecstr *) noex ;
+local int consoleid_load(vecstr *) noex ;
 
-static int consoleid() noex {
+local int consoleid() noex {
 	int		rs ;
 	int		rs1 ;
 	int		f = false ; /* return-value */
@@ -452,7 +447,7 @@ static int consoleid() noex {
 	return (rs >= 0) ? f : rs ;
 } /* end subroutine (consoleid) */
 
-static int consoleid_load(vecstr *cosp) noex {
+local int consoleid_load(vecstr *cosp) noex {
     	int		rs = SR_OK ;
 	int		c = 0 ; /* return-value */
 	setutxent() ;
@@ -473,7 +468,7 @@ static int consoleid_load(vecstr *cosp) noex {
 	return (rs >= 0) ? c : rs ;
 } /* end subroutine (consoleid_load) */
 
-static int consoleid_utx(vecstr *cosp) noex {
+local int consoleid_utx(vecstr *cosp) noex {
     	const uid_t	uid = getuid() ;
 	cnullptr	np{} ;
 	int		rs = SR_OK ;
@@ -510,10 +505,9 @@ static int consoleid_utx(vecstr *cosp) noex {
 	} /* end for */
 	endutxent() ;
 	return (rs >= 0) ? f : rs ;
-}
-/* end subroutine (consoleid_utx) */
+} /* end subroutine (consoleid_utx) */
 
-static int findsid(int pm) noex {
+local int findsid(int pm) noex {
 	cint		sid = getsid(0) ;	/* get our SID */
 	int		rs = SR_NOTFOUND ;
 	setutxent() ;
@@ -524,10 +518,9 @@ static int findsid(int pm) noex {
 	   }
 	} /* end for */
 	return rs ;
-}
-/* end subroutine (findsid) */
+} /* end subroutine (findsid) */
 
-static int findstdin(int pm) noex {
+local int findstdin(int pm) noex {
 	cint		fd = FD_STDIN ;
 	int		rs ;
 	bool		f = false ;
@@ -553,10 +546,9 @@ static int findstdin(int pm) noex {
 	} /* end if (stat) */
 	if ((rs >= 0) && (!f)) rs = SR_NOTFOUND ;
 	return rs ;
-}
-/* end subroutine (findstdin) */
+} /* end subroutine (findstdin) */
 
-static int findenv(int pm) noex {
+local int findenv(int pm) noex {
 	int		rs = SR_OK ;
 	bool		f = false ;
 	for (auto const &vn : utmpvars) {
@@ -574,10 +566,9 @@ static int findenv(int pm) noex {
 	} /* end for (utmpvars) */
 	if ((rs >= 0) && (!f)) rs = SR_NOTFOUND ;
 	return rs ;
-}
-/* end subroutine (findenv) */
+} /* end subroutine (findenv) */
 
-static int findstat(int pm) noex {
+local int findstat(int pm) noex {
 	static cint	sid = getsid(0) ;
 	int		rs ;
 	int		rs1 ;
@@ -616,10 +607,9 @@ static int findstat(int pm) noex {
 	} /* end if (sncpy) */
 	if ((rs >= 0) && (!f)) rs = SR_NOTFOUND ;
 	return rs ;
-}
-/* end subroutine (findstat) */
+} /* end subroutine (findstat) */
 
-static int printutxval(int pm,UTMPX *up) noex {
+local int printutxval(int pm,UTMPX *up) noex {
 	cint		olen = HOSTLEN ;
 	int		rs = SR_OK ;
 	int		fl = 0 ;
@@ -660,10 +650,9 @@ static int printutxval(int pm,UTMPX *up) noex {
 	    cout << obuf << eol ;
 	}
 	return rs ;
-}
-/* end subroutine (printutxval) */
+} /* end subroutine (printutxval) */
 
-static int sirchr(cchar *sp,int 탎l,int sch) noex {
+local int sirchr(cchar *sp,int 탎l,int sch) noex {
 	int		i = -1 ; /* used-afterwards */
 	if (int sl ; (sl = getlenstr(sp,탎l)) >= 0) {
 	    for (i = (sl-1) ; i >= 0 ; i -= 1) {
@@ -671,10 +660,9 @@ static int sirchr(cchar *sp,int 탎l,int sch) noex {
 	    } /* end for */
 	} /* end if (getlenstr) */
 	return i ;
-}
-/* end subroutine (sirchr) */
+} /* end subroutine (sirchr) */
 
-static UTMPX *getutxliner(UTMPX *sup) noex {
+local UTMPX *getutxliner(UTMPX *sup) noex {
 	static const uid_t	uid = getuid() ;
 	UTMPX		*up ; /* return-value */
 	PASSWD		*pwp ;
@@ -695,10 +683,9 @@ static UTMPX *getutxliner(UTMPX *sup) noex {
 	   } /* end if (our type) */
 	} /* end while */
 	return up ;
-}
-/* end subroutine (getutxliner) */
+} /* end subroutine (getutxliner) */
 
-static int utmpwrite(UTMPX *up) noex {
+local int utmpwrite(UTMPX *up) noex {
     	cnullptr	np{} ;
     	int		rs ;
 	int		rs1 ;
