@@ -76,6 +76,9 @@ all:			$(ALL)
 .cc.ii:
 	$(CPP) $(CPPFLAGS) $< > $(*).ii
 
+.ccm.iim:
+	$(CPP) $(CPPFLAGS) $< > $(*).iim
+
 .c.s:
 	$(CC) -S $(CPPFLAGS) $(CFLAGS) $<
 
@@ -89,11 +92,11 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	gxx -c -x c++ -o $@ -O $<
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
 $(T).x:			$(OBJ_MACFU)
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_MACFU) $(LIBINFO)
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $^ $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).x > $(T).nm
