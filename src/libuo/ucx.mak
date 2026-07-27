@@ -43,13 +43,13 @@ LIBS +=
 OBJ0= uctc.o
 OBJ1= ucstrftime.o
 OBJ2= uckvamatch.o
-OBJ3= ucttyname.o
+OBJ3=
 OBJ4=
 OBJ5= 
 OBJ6= 
 OBJ7= 
 
-OBJA= obj0.o obj1.o obj2.o obj3.o
+OBJA= obj0.o obj1.o obj2.o
 OBJB= obj4.o
 
 OBJ= obja.o
