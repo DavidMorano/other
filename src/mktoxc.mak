@@ -44,9 +44,7 @@ OBJ_MKTOFC= mktoxc_main.o
 
 
 INCDIRS=
-
-LIBDIRS= -L$(LIBDIR)
-
+LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -89,11 +87,11 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	makemodule $(*)
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
 $(T).x:			$(OBJ_MKTOFC)
-	$(CXX) -o $@ $(LDFLAGS) $(OBJ_MKTOFC) $(LIBINFO)
+	$(CXX) -o $@ $(LDFLAGS) $^ $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).x > $(T).nm
