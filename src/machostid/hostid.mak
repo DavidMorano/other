@@ -84,11 +84,11 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	makemodule $(*)
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
 $(T).x:			$(OBJ_HOSTID)
-	$(LD) $(LDFLAGS) -o $@ $(OBJ_HOSTID) $(LIBDIRS) $(LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBDIRS) $(LIBS)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).x > $(T).nm
