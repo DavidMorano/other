@@ -20,10 +20,10 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<sys/types.h>		/* system types (see below) */
-#include        <pthread.h>		/* |pthread_t| */
-#include	<clanguage.h>
-#include	<usysbase.h>
+#include	<sys/types.h>		/* POSIX system types (see below) */
+#include        <pthread.h>		/* POSIX |pthread_t| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
 
 #include	<snabbr.h>
 #include	<snadd.h>
@@ -43,14 +43,14 @@
 
 EXTERNC_begin
 
-extern int snxtilook(char *,int,int) noex ;
-extern int sninetaddr(char *,int,int,cchar *) noex ;
-extern int snshellunder(char *,int,pid_t,cchar *) noex ;
-extern int snfilemode(char *,int,mode_t) noex ;
-extern int sntid(char *,int,pthread_t) noex ;
-extern int snrealname(char *,int,mainv,int) noex ;
-extern int snloadavg(char *,int,uint,int,int,int) noex ;
-extern int snkeyval(char *,int,cchar *,int,cchar *,int) noex ;
+extern int snxtilook	(char *,int,int) noex ;
+extern int sninetaddr	(char *,int,int,cchar *) noex ;
+extern int snshellunder	(char *,int,pid_t,cchar *) noex ;
+extern int snfilemode	(char *,int,mode_t) noex ;
+extern int sntid	(char *,int,pthread_t) noex ;
+extern int snrealname	(char *,int,mainv,int) noex ;
+extern int snloadavg	(char *,int,uint,int,int,int) noex ;
+extern int snkeyval	(char *,int,cchar *,int,cchar *,int) noex ;
 
 EXTERNC_end
 
