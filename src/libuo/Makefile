@@ -103,7 +103,7 @@ OBJ29_LUO= sysval.o path.o termx.o
 OBJ30_LUO= vstr.o xfile.o absfn.o
 OBJ31_LUO= randlc.o pow.o calstrs.o digval.o
 
-OBJ32_LUO= realname.o initnow.o
+OBJ32_LUO= realname.o
 OBJ33_LUO= ema.o tmpx.o getxname.o getutmp.o
 OBJ34_LUO= sbuf.o buffer.o
 OBJ35_LUO= storebuf.o storeitem.o
@@ -126,7 +126,7 @@ OBJ47_LUO= spawner.o spawnproc.o
 OBJ48_LUO= findxfile.o sigx.o dial.o conallof.o
 OBJ49_LUO= argutils.o cmdutils.o logfile.o linex.o
 OBJ50_LUO= ndig.o ndigit.o bufprintf.o
-OBJ51_LUO= termdisp.o
+OBJ51_LUO= termdisp.o calendar.o
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
@@ -994,6 +994,11 @@ chrono.o:		chrono.dir
 chrono.dir:
 	makesubdir $@
 
+# CALENDAR
+calendar.o:		calendar.dir
+calendar.dir:
+	makesubdir $@
+
 # TIMESTR
 timestr.o:		timestr.dir
 timestr.dir:
@@ -1115,6 +1120,5 @@ conallof.o:		conallof.cc	conallof.h		$(INCS)
 ndig.o:			ndig.cc		ndig.h			$(INCS)
 ndigit.o:		ndigit.cc	ndigit.h		$(INCS)
 bufprintf.o:		bufprintf.cc	bufprintf.h		$(INCS)
-initnow.o:		initnow.cc	initnow.h		$(INCS)
 
 
