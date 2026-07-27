@@ -48,7 +48,7 @@ DEPMODS +=
 DEPMODS += 
 
 OBJ00= utmp_main.o utmp_support.o
-OBJ01= ucx.o
+OBJ01= ucx.o ucttyname.o
 OBJ02= 
 OBJ03=
 
@@ -100,17 +100,17 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	makemodule $(*)
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
-consoleid.x:		$(OBJ_UTMP) Makefile
-	$(LD) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_UTMP) $(ELIBINFO)
+consoleid.x:		$(OBJ_UTMP)
+	$(LD) -o $@ $(LDFLAGS) $(RUNINFO) $^ $(ELIBINFO)
 
-$(T).x:			$(OBJ_UTMP) Makefile
-	$(LD) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_UTMP) $(LIBINFO)
+$(T).x:			$(OBJ_UTMP)
+	$(LD) -o $@ $(LDFLAGS) $(RUNINFO) $^ $(LIBINFO)
 
-$(T).o:			$(OBJ_UTMP) Makefile
-	$(LD) -r $(LDFLAGS) -o $@ $(OBJ_UTMP)
+$(T).o:			$(OBJ_UTMP)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 $(T).nm:		$(T).o
 	$(NM) $(NMFLAGS) $(T).o > $(T).nm
@@ -169,8 +169,16 @@ ureserve.o:		ureserve.dir
 ureserve.dir:
 	makesubdir $@
 
+# UCDESCMISC
+ucdescmisc.o:		ucdescmisc.dir
+ucdescmisc.dir:
+	makesubdir $@
+
 ucx.o:			ucx.dir
 ucx.dir:
 	makesubdir $@
+
+uclibmem.o:		uclibmem.cc	uclibmem.h
+ucttyname.o:		ucttyname.cc	ucttyname.h
 
 
