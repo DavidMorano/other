@@ -45,13 +45,13 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* must be ordered first to configure */
-#include	<cerrno>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<cstdio>
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<localmisc.h>
+#include	<cerrno>		/* STD-C */
+#include	<cstddef>		/* STD-C |nullptr_t| */
+#include	<cstdlib>		/* STD-C */
+#include	<cstdio>		/* STD-C */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
 
 #include	"freadln.h"
 
