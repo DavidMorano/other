@@ -90,8 +90,8 @@ all:			$(ALL)
 	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
-$(T).x:			$(OBJ_SHOWTERMS) $(LIB)
-	$(CXX) $(LDFLAGS) -o $@ $(OBJ_SHOWTERMS) $(LIBINFO)
+$(T).x:			$(OBJ_SHOWTERMS)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).x > $(T).nm
