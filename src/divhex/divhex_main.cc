@@ -28,16 +28,16 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<cerrno>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>		/* |getenv(3c)| */
-#include	<cstdio>
-#include	<bit>			/* |popcount(3c++)| */
-#include	<iostream>
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<localmisc.h>
-#include	<dprint.hh>		/* debugging */
+#include	<cerrno>		/* CSTD */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstdio>		/* CSTD */
+#include	<bit>			/* C++STD |popcount(3c++)| */
+#include	<iostream>		/* C++STD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
+#include	<dprint.hh>		/* LIBU debugging */
 
 
 /* local defines */
