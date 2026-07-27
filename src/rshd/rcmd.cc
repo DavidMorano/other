@@ -1,5 +1,9 @@
-/* rcmd */
+/* rcmd SUPPORT */
+/* charset=ISO8859-1 */
+/* lang=C++20 (conformance reviewed) */
 
+/* remove-command */
+/* version %I% last-modified %G% */
 
 #define	DAM		1
 #define	CF_TESTREJECT	0		/* only for testing */
@@ -41,30 +45,32 @@
  *
  */
 
-#include <climits>
-#include <cstdio>
-#include <ctype.h>
-#include <pwd.h>
+#include	<envstandards.h>	/* ordered first to configure */
 #include <sys/types.h>
 #include <sys/param.h>
 #include <sys/file.h>
-#include <csignal>
-#include <libintl.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
-
+#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <inet/common.h>
-
-#include <netdb.h>
-#include <cerrno>
-#include <fcntl.h>
 #include <unistd.h>
-#include <cstring>
-#include <cstdlib>
+#include <fcntl.h>
+#include <netdb.h>
+#include <libintl.h>
+#include <ctype.h>
+#include <pwd.h>
 #include <grp.h>
-#include <arpa/inet.h>
+#include <cerrno>
+#include <csignal>
+#include <climits>
+#include	<cstddef>
+#include	<cstdlib>
+#include <cstdio>
+#include <cstring>
+#include	<clanguage.h>
+#include	<usysbase.h>
 
 #ifdef SYSV
 #define	bcopy(s1, s2, len)	(void) memcpy(s2, s1, len)
@@ -132,7 +138,7 @@ int rcmd_af(char **ahost, unsigned short rport, const char *locuser,
 	hp = getipnodebyname(*ahost, af, AI_ALL | AI_DEFAULT,
 	    &error_num);
 	if (hp == NULL) {
-		if (error_num == TRY_AGAIN) {
+		if (error_num == netdberr.tryagain) {
 			(void) fprintf(stderr,
 				"%s: unknown host (try again later)\n",
 			    *ahost);
