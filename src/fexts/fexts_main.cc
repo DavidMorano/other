@@ -135,11 +135,11 @@ local int iterate(dirit &dir,veccp &exts) {
                         cauto fif = rg::find_if ;
                         cauto strmat = [ep] (cc *s) noex -> bool {
                             return (strcmp(s,ep) == 0) ;
-                        } ;
+                        } ; /* end lambda */
                         if (cauto &it = fif(exts,strmat) ; it != ite) {
 			    c += 1 ;
                             cout << bns << '\n' ;
-                        }
+                        } /* end if */
                     } /* end if (non-empty) */
                 } /* end if (had-extension) */
             } /* end if (regular-file) */
