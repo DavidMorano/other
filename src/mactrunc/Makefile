@@ -57,7 +57,6 @@ LD= ld
 
 LDFLAGS= -m -R$(LIBDIR)
 
-
 LIBDIRS= -L$(LIBDIR)
 
 LIB0=
