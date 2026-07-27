@@ -87,11 +87,11 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	gxx -c -x c++ -o $@ -O $<
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
 $(T).x:			$(OBJ_CONTERM)
-	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $(OBJ_CONTERM) $(LIBINFO)
+	$(CXX) -o $@ $(LDFLAGS) $(RUNINFO) $^ $(LIBINFO)
 
 $(T).o:			$(OBJ_CONTERM)
 	$(LD) -r $(LDFLAGS) -o $@ $(OBJ_CONTERM)
