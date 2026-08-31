@@ -1,1 +1,0 @@
-../../../system/src/libuc/spawner.h
