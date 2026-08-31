@@ -1,0 +1,33 @@
+/* find HEADER */
+/* charset=ISO8859-1 */
+/* lang=C20 */
+
+/* find various items */
+/* version %I% last-modified %G% */
+
+
+/* revision history:
+
+	= 1998-11-01, David A­D­ Morano
+	This subroutine was written for Rightcore Network Services.
+
+*/
+
+/* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
+
+#ifndef	FIND_INCLUDE
+#define	FIND_INCLUDE
+
+
+#include	<envstandards.h>	/* ordered first to configure */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+
+#include	<findfilepath.h>
+#include	<findfile.h>
+#include	<findfilex.h>
+
+
+#endif /* FIND_INCLUDE */
+
+
