@@ -46,9 +46,9 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<secdb.h>		/* <- the money shot |kva_t| */
-#include	<clanguage.h>
-#include	<usysbase.h>
+#include	<secdb.h>		/* POSIX® <- the money shot |kva_t| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
 
 
 EXTERNC_begin
