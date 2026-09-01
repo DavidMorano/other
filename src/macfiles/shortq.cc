@@ -41,7 +41,7 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<cstddef>		/* CSTD |nullptr_t| */
+#include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD */
 #include	<new>			/* C++ |nothrow(3c++)| */
 #include	<algorithm>		/* C++ |min(3c++)| + |max(3c++)| */
@@ -409,31 +409,31 @@ int shortq_load(shortq *op,short *sp,int µsl) noex {
 
 int shortq::ins(short v) noex {
     return shortq_ins(this,v) ;
-}
+} /* end method */
 
 int shortq::rem(short *rp) noex {
     return shortq_rem(this,rp) ;
-}
+} /* end method */
 
 int shortq::get(int ei) noex {
     return shortq_get(this,ei) ;
-}
+} /* end method */
 
 int shortq::readat(int ei,short *rbuf,int rlen) noex {
 	return shortq_readat(this,ei,rbuf,rlen) ;
-}
+} /* end method */
 
 int shortq::read(short *rbuf,int rlen) noex {
 	return shortq_readat(this,0,rbuf,rlen) ;
-}
+} /* end method */
 
 int shortq::remread(short *rbuf,int rlen) noex {
     return shortq_remread(this,rbuf,rlen) ;
-}
+} /* end method */
 
 int shortq::adv(int n) noex {
     return shortq_adv(this,n) ;
-}
+} /* end method */
 
 void shortq::dtor() noex {
 	if (cint rs = finish ; rs < 0) {
