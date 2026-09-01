@@ -38,8 +38,11 @@ INCS=
 LIBS=
 
 
+OBJ_USERHOME= servents_main.o
+
+
 INCDIRS=
-LIBDIRS= -L$(LIBDIR)
+LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -52,18 +55,12 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_USERHOME= main.o
-
-
 .SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).x
 
 all:			$(ALL)
-
-
-.SUFFIXES:		.hh .ii
 
 
 $(T).x:			$(OBJ_USERHOME)
@@ -82,6 +79,6 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc
+servents_main.o:	servents_main.cc
 
 
