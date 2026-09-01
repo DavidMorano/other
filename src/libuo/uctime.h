@@ -15,8 +15,8 @@
 
 /* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
 
-#ifndef	UCMEM_INCLUDE
-#define	UCMEM_INCLUDE
+#ifndef	UCTIME_INCLUDE
+#define	UCTIME_INCLUDE
 
 
 #include	<envstandards.h>	/* ordered first to configure */
@@ -27,8 +27,9 @@
 #include	<uctimeconv.h>
 #include	<uctimeout.h>
 #include	<uctimer.h>
+#include	<ucstrftime.h>
 
 
-#endif /* UCMEM_INCLUDE */
+#endif /* UCTIME_INCLUDE */
 
 
