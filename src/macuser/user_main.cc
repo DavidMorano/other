@@ -339,8 +339,7 @@ int main(int argc,con mainv argv,con mainv) {
 	}
 	DPRINTF("ret rs=%d ex=%d\n",rs,ex) ;
 	return ex ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
