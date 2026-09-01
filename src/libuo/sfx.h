@@ -26,6 +26,7 @@
 #include	<usysdefs.h>		/* LIBU */
 
 #include	<sfcasesub.h>
+#include	<sfcontent.h>
 #include	<sfext.h>
 #include	<sfkey.h>
 #include	<sfkeyval.h>
