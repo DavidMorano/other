@@ -1,4 +1,4 @@
-#!/usr/extra/bin/ksh
+#!/usr/local/bin/ksh
 # MKLINKS
 
 LOCPROG=macsysdata.x
@@ -10,6 +10,7 @@ CMDS+=" architecture machine platform provider "
 CMDS+=" cpuvendor "
 CMDS+=" nisdomain symfile hostid lax "
 CMDS+=" unixtime navail nprocs "
+CMDS+=" zoneinfo "
 
 TDIRS=" /usr/extra /usr/local "
 
