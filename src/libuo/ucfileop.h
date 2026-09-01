@@ -91,10 +91,11 @@
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
 
-#include	<uctruncate.h>
 #include	<prefixfn.h>
+#include	<ucdetach.h>
 #include	<ucfiletimes.h>
 #include	<ucmkfifo.h>
+#include	<uctruncate.h>
 
 
 EXTERNC_begin
