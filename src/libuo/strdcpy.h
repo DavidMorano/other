@@ -31,9 +31,9 @@
 
 EXTERNC_begin
 
-extern char	*strdcpycompact(char *,int,cc *,int) noex ;
-extern char	*strdcpyopaque(char *,int,cc *,int) noex ;
-extern char	*strdcpyclean(char *,int,int,cchar *,int) noex ;
+extern char	*strdcpycompact	(char *,int,cc *,int) noex ;
+extern char	*strdcpyopaque	(char *,int,cc *,int) noex ;
+extern char	*strdcpyclean	(char *,int,int,cchar *,int) noex ;
 
 EXTERNC_end
 
