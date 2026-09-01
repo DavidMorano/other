@@ -168,19 +168,19 @@ int strmgr_reset(strmgr *op) noex {
 
 int strmgr::start(char *sp,int sl) noex {
     	return strmgr_start(this,sp,sl) ;
-}
+} /* end method */
 
 int strmgr::str(cchar *sp,int sl) noex {
     	return strmgr_str(this,sp,sl) ;
-}
+} /* end method */
 
 int strmgr::chr(int ch) noex {
     	return strmgr_chr(this,ch) ;
-}
+} /* end method */
 
 int strmgr::get(ccharpp rpp) noex {
     	return strmgr_get(this,rpp) ;
-}
+} /* end method */
 
 void strmgr::dtor() noex {
     	if (cint rs = finish ; rs < 0) {
