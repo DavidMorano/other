@@ -1,4 +1,4 @@
-#!/usr/extra/bin/ksh
+#!/usr/local/bin/ksh
 # TERMDEV
 
 integer ex=1
