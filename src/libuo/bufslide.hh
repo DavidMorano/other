@@ -32,11 +32,11 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<string>		/* |string(3c++)| */
-#include	<clanguage.h>
-#include	<usysbase.h>
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<string>		/* CSTD |string(3c++)| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
 
 
 enum bufslidemems {
@@ -73,11 +73,11 @@ class bufslide {
 	void		*chunkp ;	/* chunk-object pointer */
 	int		oi ;		/* output index */
 	int push(int) noex ;
-	int istart() noex ;
-	int ifinish() noex ;
-	int iadv(int) noex ;
-	int ilen() const noex ;
-	int iextent() const noex ;
+	int istart	() noex ;
+	int ifinish	() noex ;
+	int iadv	(int) noex ;
+	int ilen	() const noex ;
+	int iextent	() const noex ;
 public:
 	bufslide_co	start ;
 	bufslide_co	finish ;
