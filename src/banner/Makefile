@@ -52,7 +52,7 @@ ARFLAGS= $(MAKEARFLAGS)
 LDFLAGS= $(MAKELDFLAGS) -rpath $(LDRPATH)
 
 
-OBJ_BANNER= main.o
+OBJ_BANNER= banner_main.o
 
 
 default:		$(T).x
@@ -97,6 +97,6 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc		$(INCS)
+banner_main.o:		banner_main.cc		$(INCS)
 
 
