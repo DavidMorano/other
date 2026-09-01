@@ -20,13 +20,13 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<stddef.h>
-#include	<stdlib.h>
-#include	<string.h>		/* |strchr(3c)| + |strpbrk(3c)| */
-#include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<string.h>		/* CSTD |strchr(3c)| + |strpbrk(3c)| */
+#include	<clanguage.h>		/* LIBU */
+#include	<utypedefs.h>		/* LIBU */
+#include	<utypealiases.h>	/* LIBU */
+#include	<usysdefs.h>		/* LIBU */
 
 #include	<strsub.h>
 #include	<strwildsub.h>
