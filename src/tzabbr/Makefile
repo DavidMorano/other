@@ -36,11 +36,13 @@ DEFS=
 
 INCS=
 
+MODS=
+
 LIBS=
 
 
 INCDIRS=
-LIBDIRS= -L$(LIBDIR)
+LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -53,7 +55,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_CONTERM= main.o
+OBJ_CONTERM= tzabbr_main.o
 
 
 .SUFFIXES:		.hh .ii .iim .ccm
@@ -115,6 +117,6 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc
+tzabbr_main.o:		tzabbr_main.cc
 
 
