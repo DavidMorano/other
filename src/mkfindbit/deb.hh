@@ -2,8 +2,8 @@
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
+/* debugging support */
 /* version %I% last-modified %G% */
-/* C-language defines */
 
 
 /* revision history:
@@ -37,10 +37,10 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<clanguage.h>
-#include	<usysbase.h>
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
 
 
 #define DEBPRINTF(FMT, ...) \
