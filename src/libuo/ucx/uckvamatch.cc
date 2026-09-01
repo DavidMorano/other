@@ -42,13 +42,13 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<new>			/* |nothrow(3c++)| */
-#include	<secdb.h>		/* <- the money shot */
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<localmisc.h>
+#include	<secdb.h>		/* Solaris® <- the money shot */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<new>			/* C++STD |nothrow(3c++)| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
 
 #include	"uckvamatch.h"		/* |kva_t| */
 
@@ -108,7 +108,6 @@ int uc_kvamatch(kva_t *kva,cchar *keyname,cchar **rpp) noex {
 	    *rpp = (rs >= 0) ? rp : nullptr ;
 	}
 	return rs ;
-}
-/* end subroutine (uc_kvamatch) */
+} /* end subroutine (uc_kvamatch) */
 
 
