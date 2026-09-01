@@ -58,13 +58,13 @@
 #include	<six.h>
 #include	<matstr.h>
 #include	<strwcpy.h>
-#include	<strnul.hh>
 #include	<sncpyx.h>
 #include	<readln.hh>
 #include	<ccfile.hh>
 #include	<rmx.h>
 #include	<hasx.h>
 #include	<isnot.h>
+#include	<strnul.hh>		/* LIBU */
 #include	<mapex.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU */
 
