@@ -108,9 +108,9 @@ using std::nothrow ;			/* constant */
 /* external subroutines */
 
 extern "C" {
-    extern int	buffer_blanks(buffer *,int) noex ;
-    extern int	buffer_backs(buffer *,int) noex ;
-}
+    extern int	buffer_blanks	(buffer *,int) noex ;
+    extern int	buffer_backs	(buffer *,int) noex ;
+} /* end extern (C) */
 
 
 /* external variables */
