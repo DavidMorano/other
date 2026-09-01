@@ -61,6 +61,7 @@
 #include	<uctimer.h>
 #include	<ucutility.h>
 #include	<ucinfo.h>
+#include	<ucnameo.h>
 
 #include	<absfn.h>
 #include	<acceptpass.h>
@@ -270,8 +271,6 @@
 #include	<toxc.h>
 #include	<typenonpath.h>
 #include	<udomain.h>
-#include	<umask.h>
-#include	<unameo.h>
 #include	<upt.h>
 #include	<urotate.h>
 #include	<userattrdb.h>
