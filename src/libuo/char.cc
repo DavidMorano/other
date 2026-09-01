@@ -355,31 +355,31 @@ const short	chardata_dictorder[] = {
 
 bool char_isalpha(int ch) noex attrpure {
 	return char_data.isalpha[ch & UCHAR_MAX] ;
-}
+} /* end */
 
 bool char_isalnum(int ch) noex attrpure {
 	return char_data.isalnum[ch & UCHAR_MAX] ;
-}
+} /* end */
 
 bool char_iswhite(int ch) noex attrpure {
 	return char_data.iswhite[ch & UCHAR_MAX] ;
-}
+} /* end */
 
 bool char_islc(int ch) noex attrpure {
 	return char_data.islc[ch & UCHAR_MAX] ;
-}
+} /* end */
 
 bool char_isuc(int ch) noex attrpure {
 	return char_data.isuc[ch & UCHAR_MAX] ;
-}
+} /* end */
 
 bool char_isfc(int ch) noex attrpure {
 	return char_data.isfc[ch & UCHAR_MAX] ;
-}
+} /* end */
 
 int char_toval(int ch) noex attrpure {
 	return char_data.toval[ch & UCHAR_MAX] ;
-}
+} /* end */
 
 
 /* local subroutines */
