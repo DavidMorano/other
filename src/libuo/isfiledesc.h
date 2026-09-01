@@ -29,9 +29,9 @@
 
 EXTERNC_begin
 
-extern int	isterminal(int) noex ;
-extern int	isasocket(int) noex ;
-extern int	isfsremote(int) noex ;
+extern int	isterminal	(int) noex ;
+extern int	isasocket	(int) noex ;
+extern int	isfsremote	(int) noex ;
 
 EXTERNC_end
 
