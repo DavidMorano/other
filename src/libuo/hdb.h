@@ -20,18 +20,18 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<lookaside.h>
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<lookaside.h>		/* LIBUC */
 
 
-#define HDB_MAGIC	314159261
-#define	HDB_DEFNUM	10
 #define	HDB		struct hdb_head
 #define HDB_DATUM	struct hdb_datum
 #define HDB_DAT		struct hdb_datum
 #define	HDB_CUR		struct hdb_cursor
 #define HDB_ENT		struct hdb_entry
+#define HDB_MAGIC	314159261
+#define	HDB_DEFNUM	10
 
 
 EXTERNC_begin
