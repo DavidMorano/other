@@ -22,15 +22,15 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<clanguage.h>
-#include	<usysbase.h>
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
 
 
 #define	STOREITEM	struct storeitem_head
 
 
 struct storeitem_head {
-	char		*dbuf ;
+	charp		dbuf ;
 	int		dlen ;
 	int		index ;
 	int		f_overflow ;
@@ -49,36 +49,37 @@ struct storeitem_co {
 	void operator () (storeitem *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
+	} ; /* end */
 	operator int () noex ;
 	int operator () () noex { 
 	    return operator int () ;
-	} ;
+	} ; /* end */
 } ; /* end struct (storeitem_co) */
 struct storeitem : storeitem_head {
 	storeitem_co	getlen ;
 	storeitem_co	finish ;
 	storeitem() noex {
-	    getlen(this,storeitemmem_getlen) ;
-	    finish(this,storeitemmem_finish) ;
-	} ;
+	    getlen	(this,storeitemmem_getlen) ;
+	    finish	(this,storeitemmem_finish) ;
+	    dbuf	= nullptr ;
+	} ; /* end ctor */
 	storeitem(const storeitem &) = delete ;
 	storeitem &operator = (const storeitem &) = delete ;
-	int start(char *,int) noex ;
-	int strw(cchar *,int,cchar **) noex ;
-	int buf(cvoid *,int,cchar **) noex ;
-	int dec(int,cchar **) noex ;
-	int chr(int,cchar **) noex ;
-	int nul(cchar **) noex ;
-	int ptab(int,void ***) noex ;
-	int block(int,int,void **) noex ;
-	void dtor() noex ;
-	~storeitem() {
-	    dtor() ;
-	} ;
-	int str(cchar *sp,cchar **rpp) noex {
+	int start	(char *,int) noex ;
+	int strw	(cchar *,int,cchar **) noex ;
+	int buf		(cvoid *,int,cchar **) noex ;
+	int dec		(int,cchar **) noex ;
+	int chr		(int,cchar **) noex ;
+	int nul		(cchar **) noex ;
+	int ptab	(int,void ***) noex ;
+	int block	(int,int,void **) noex ;
+	int str		(cchar *sp,cchar **rpp) noex {
 	    return strw(sp,-1,rpp) ;
-	} ;
+	} ; /* end */
+	void dtor() noex ;
+	destruct storeitem() {
+	    if (dbuf) dtor() ;
+	} ; /* end destruct */
 } ; /* end struct (storeitem) */
 #else	/* __cplusplus */
 typedef STOREITEM	storeitem ;
@@ -86,16 +87,16 @@ typedef STOREITEM	storeitem ;
 
 EXTERNC_begin
 
-extern int storeitem_start(storeitem *,char *,int) noex ;
-extern int storeitem_strw(storeitem *,cchar *,int,cchar **) noex ;
-extern int storeitem_buf(storeitem *,cvoid *,int,cchar **) noex ;
-extern int storeitem_dec(storeitem *,int,cchar **) noex ;
-extern int storeitem_chr(storeitem *,int,cchar **) noex ;
-extern int storeitem_nul(storeitem *,cchar **) noex ;
-extern int storeitem_ptab(storeitem *,int,void ***) noex ;
-extern int storeitem_block(storeitem *,int,int,void **) noex ;
-extern int storeitem_getlen(storeitem *) noex ;
-extern int storeitem_finish(storeitem *) noex ;
+extern int storeitem_start	(storeitem *,char *,int) noex ;
+extern int storeitem_strw	(storeitem *,cchar *,int,cchar **) noex ;
+extern int storeitem_buf	(storeitem *,cvoid *,int,cchar **) noex ;
+extern int storeitem_dec	(storeitem *,int,cchar **) noex ;
+extern int storeitem_chr	(storeitem *,int,cchar **) noex ;
+extern int storeitem_nul	(storeitem *,cchar **) noex ;
+extern int storeitem_ptab	(storeitem *,int,void ***) noex ;
+extern int storeitem_block	(storeitem *,int,int,void **) noex ;
+extern int storeitem_getlen	(storeitem *) noex ;
+extern int storeitem_finish	(storeitem *) noex ;
 
 EXTERNC_end
 
