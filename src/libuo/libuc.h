@@ -23,12 +23,10 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-
-#include	<usysnative.h>		/* native system headers */
-
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<usyscalls.h>
+#include	<usysnative.h>		/* LIBU native system headers */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU */
 
 #include	<absfn.h>
 #include	<acceptpass.h>
@@ -71,11 +69,9 @@
 #include	<expcook.h>
 #include	<fibonacci.h>
 #include	<field.h>
-#include	<filegrp.h>
-#include	<filemap.h>
+#include	<filex.h>
 #include	<filer.h>
-#include	<findfilepath.h>
-#include	<findxfile.h>
+#include	<find.h>
 #include	<format.h>
 #include	<fsdir.h>
 #include	<fsdirtree.h>
@@ -290,10 +286,9 @@
 #include	<ucuserattr.h>
 #include	<ucutility.h>
 #include	<ucinfo.h>
+#include	<ucnameo.h>
+
 #include	<udomain.h>
-#include	<umask.h>
-#include	<unameo.h>
-#include	<upt.h>
 #include	<usyscalls.h>
 #include	<usysdefs.h>
 #include	<usysrets.h>
