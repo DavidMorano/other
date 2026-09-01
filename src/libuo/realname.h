@@ -59,8 +59,8 @@ struct realname_head {
 	cchar		*last ;
 	REALNAME_LEN	len ;
 	REALNAME_ABV	abv ;
+	uint		magval ;
 	int		stlen ;
-	uint		magic ;
 } ; /* end struct (realname_head) */
 
 #ifdef	__cplusplus
@@ -103,22 +103,22 @@ struct realname : realname_head {
 	    start.init	(this,0) ;
 	    finish	(this,realnamemem_finish) ;
 	    stbuf = nullptr ;
-	} ;
+	} ; /* end ctor */
 	realname(const realname &) = delete ;
 	realname &operator = (const realname &) = delete ;
-	int loadparts(dstr *) noex ;
-	int loadpieces(char **,int) noex ;
-	int getlast(cchar **) noex ;
-	int getfirst(cchar **) noex ;
-	int getm1(cchar **) noex ;
-	int getm2(cchar **) noex ;
-	int getm3(cchar **) noex ;
-	int getpieces(cchar **) noex ;
-	int name(char *,int) noex ;
-	int fullname(char *,int) noex ;
-	int mailname(char *,int) noex ;
-	int mat(realname *) noex ;
-	void dtor() noex ;
+	int loadparts	(dstr *) noex ;
+	int loadpieces	(char **,int) noex ;
+	int getlast	(cchar **) noex ;
+	int getfirst	(cchar **) noex ;
+	int getm1	(cchar **) noex ;
+	int getm2	(cchar **) noex ;
+	int getm3	(cchar **) noex ;
+	int getpieces	(cchar **) noex ;
+	int name	(char *,int) noex ;
+	int fullname	(char *,int) noex ;
+	int mailname	(char *,int) noex ;
+	int mat		(realname *) noex ;
+	void dtor	() noex ;
 	destruct realname() {
 	    if (stbuf) dtor() ;
 	} ;
