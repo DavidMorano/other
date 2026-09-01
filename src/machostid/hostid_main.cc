@@ -76,7 +76,6 @@ using std::cout ;			/* variable */
 int main(int,mainv,mainv) {
 	ulong	id = gethostid() ;
 	printf("%08lX\n",id) ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
