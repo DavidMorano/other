@@ -47,11 +47,11 @@ struct logfile_head {
 	time_t		ti_open ;
 	time_t		ti_data ;
 	time_t		ti_write ;
-	uint		magic ;
+	uint		magval ;
 	int		oflags ;
 	int		lfd ;
 	int		logidlen ;
-	int		bufsize ;
+	int		bufsz ;
 	int		len ;		/* length of buffer filled so far */
 	int		percent ;
 	mode_t		operm ;
@@ -78,19 +78,6 @@ extern int logfile_userinfo	(logfile *,userinfo *,time_t,cc *,cc *) noex ;
 extern int logfile_close	(logfile *) noex ;
 
 EXTERNC_end
-
-#ifdef	__cplusplus
-
-template<typename ... Args>
-inline int logfile_magic(logfile *op,Args ... args) noex {
-	int		rs = SR_FAULT ;
-	if (op && (args && ...)) {
-	    rs = (op->magic == LOGFILE_MAGIC) ? SR_OK : SR_NOTOPEN ;
-	}
-	return rs ;
-} /* end subroutine (logfile_magic) */
-
-#endif /* __cplusplus */
 
 
 #endif /* LOGFILE_INCLUDE */
