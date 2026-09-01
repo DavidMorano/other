@@ -28,7 +28,7 @@
 #include	<nistinfo.h>		/* LIBUC */
 
 
-enum timestrstypes {
+enum timestrtypes {
 	timestrtype_std,	/* standard (and MSG envelope) */
 	timestrtype_gmstd,	/* standard for GMT */
 	timestrtype_msg,	/* RFC-822 message */
@@ -37,7 +37,7 @@ enum timestrstypes {
 	timestrtype_logz,	/* "logz" format */
 	timestrtype_gmlogz,	/* "logz" format for GMT */
 	timestrtype_overlast
-} ; /* end enum (timestrstypes) */
+} ; /* end enum (timestrtypes) */
 
 
 EXTERNC_begin
@@ -51,7 +51,7 @@ extern char *timestr_gmlog	(time_t,char *) noex ;
 extern char *timestr_hdate	(time_t,char *) noex ;
 extern char *timestr_gmlogz	(time_t,char *) noex ;
 extern char *timestr_gmtstd	(time_t,char *) noex ;
-extern char *timestr_date	(time_t,char *,int) noex ;
+extern char *timestr_date	(time_t,char *,timestrtypes) noex ;
 extern char *timestr_scandate	(time_t,char *) noex ;
 extern char *timestr_elapsed	(time_t,char *) noex ;
 extern char *timestr_nist	(time_t,char *,nistinfo *) noex ;
