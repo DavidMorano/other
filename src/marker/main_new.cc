@@ -57,8 +57,8 @@
 #include	<strnul.hh>
 #include	<sncpyx.h>
 #include	<rmx.h>
-#include	<strnul.hh>
 #include	<isnot.h>
+#include	<strnul.hh>		/* LIBU */
 #include	<mapex.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>		/* |DIGBUFLEN| + |REALNAMELEN| */
