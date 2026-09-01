@@ -1,4 +1,4 @@
-/* sha1 HEADER */
+/* sha1 HEADER (Secure-Hash-Algorithm) */
 /* charset=ISO8859-1 */
 /* lang=C20 */
 
@@ -18,11 +18,11 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<clanguage.h>		/* LIBU */
+#include	<utypedefs.h>		/* LIBU */
+#include	<utypealiases.h>	/* LIBU */
+#include	<usysdefs.h>		/* LIBU */
+#include	<usysrets.h>		/* LIBU */
 
 
 #ifndef ENDIAN_H
@@ -32,7 +32,7 @@
 
 #define SHA1_BYTE_ORDER 4321
 
-#define SHA1_VERSION 1
+#define SHA1_VERSION	1
 
 #endif /* ENDIAN_H */
 
