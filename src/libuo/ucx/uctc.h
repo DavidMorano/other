@@ -51,21 +51,21 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<termios.h>		/* |TERMIOS| */
-#include	<clanguage.h>
-#include	<usysbase.h>
+#include	<termios.h>		/* POSIX® |TERMIOS| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
 
 
 EXTERNC_begin
 
-extern int uc_tcdrain(int) noex ;
-extern int uc_tcflow(int,int) noex ;
-extern int uc_tcflush(int,int) noex ;
-extern int uc_tcattrget(int,TERMIOS *) noex ;
-extern int uc_tcattrset(int,int,const TERMIOS *) noex ;
-extern int uc_tcgetpgrp(int) noex ;
-extern int uc_tcgetsid(int) noex ;
-extern int uc_tcsetpgrp(int,pid_t) noex ;
+extern int uc_tcdrain	(int) noex ;
+extern int uc_tcflow	(int,int) noex ;
+extern int uc_tcflush	(int,int) noex ;
+extern int uc_tcattrget	(int,TERMIOS *) noex ;
+extern int uc_tcattrset	(int,int,const TERMIOS *) noex ;
+extern int uc_tcgetpgrp	(int) noex ;
+extern int uc_tcgetsid	(int) noex ;
+extern int uc_tcsetpgrp	(int,pid_t) noex ;
 
 EXTERNC_end
 
