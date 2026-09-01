@@ -56,11 +56,11 @@
 #include	<sfx.h>
 #include	<matstr.h>
 #include	<strwcpy.h>
-#include	<strnul.hh>
 #include	<sncpyx.h>
 #include	<readln.hh>
 #include	<rmx.h>
 #include	<isnot.h>
+#include	<strnul.hh>		/* LIBU */
 #include	<mapex.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>
