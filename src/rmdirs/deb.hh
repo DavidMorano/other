@@ -2,8 +2,8 @@
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
+/* debugging support */
 /* version %I% last-modified %G% */
-/* C-language defines */
 
 
 /* revision history:
