@@ -90,7 +90,7 @@ CPP= cpp
 INCS= config.h defs.h
 
 
-OBJ0= main.o whatinfo.o
+OBJ0= maxtrunc_main.o whatinfo.o
 OBJ1= process.o
 OBJ2= 
 OBJ3= uc_ftruncate64.o
@@ -155,7 +155,7 @@ control:
 	date >> Control
 
 
-main.o:			main.c config.h defs.h
+mactrunc_main.o:	mactrunc_main.c config.h defs.h
 
 whatinfo.o:		whatinfo.c config.h
 
