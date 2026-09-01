@@ -27,12 +27,9 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<sys/types.h>		/* system types |dev_t| + |ino_t| */
-#include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
+#include	<sys/types.h>		/* POSIX® system types */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
 
 
 #define	FSDIR		struct fsdir_head
@@ -46,18 +43,18 @@ struct fsdir_entry {
 	ino_t		ino ;		/* UNIX® "inode number" of entry */
 	ushort		nlen ;		/* length of this record */
 	ushort		type ;		/* some systems support this */
-} ;
+} ; /* end struct */
 
 struct fsdir_flags {
 	uint		descname:1 ;	/* name was really a descriptor */
-} ;
+} ; /* end struct */
 
 struct fsdir_head {
 	void		*posixp ;	/* pointer to POSIX® adapater */
 	dev_t		dev ;
 	FSDIR_FL	fl ;
-	uint		magic ;
-} ;
+	uint		magval ;
+} ; /* end struct */
 
 typedef	FSDIR_FL	fsdir_fl ;
 typedef	FSDIR_ENT	fsdir_ent ;
@@ -69,7 +66,7 @@ enum fsdirmems {
 	fsdirmem_audit,
 	fsdirmem_close,
 	fsdirmem_overlast
-} ;
+} ; /* end enum (fsdirmems) */
 struct fsdir ;
 struct fsdir_opener {
 	fsdir		*op = nullptr ;
@@ -118,15 +115,15 @@ struct fsdir : fsdir_head {
 	    rewind	(this,fsdirmem_rewind) ;
 	    audit	(this,fsdirmem_audit) ;
 	    close	(this,fsdirmem_close) ;
-	    magic = 0 ;
+	    magval = 0 ;
 	} ; /* end ctor */
 	fsdir(const fsdir &) = delete ;
 	fsdir &operator = (const fsdir &) = delete ;
-	int read(fsdir_ent *,char *,int) noex ;
-	int seek(off_t = 0z) noex ;
+	int read	(fsdir_ent *,char *,int) noex ;
+	int seek	(off_t = 0z) noex ;
 	void dtor() noex ;
 	destruct fsdir() {
-	    if (posixp || magic) dtor() ;
+	    if (posixp || magval) dtor() ;
 	} ;
 	int isdir(cchar *) noex ;
 } ; /* end struct (fsdir) */
@@ -136,13 +133,13 @@ typedef FSDIR		fsdir ;
 
 EXTERNC_begin
 
-extern int	fsdir_open(fsdir *,cchar *) noex ;
-extern int	fsdir_read(fsdir *,fsdir_ent *,char *,int) noex ;
-extern int	fsdir_tell(fsdir *,off_t *) noex ;
-extern int	fsdir_seek(fsdir *,off_t) noex ;
-extern int	fsdir_rewind(fsdir *) noex ;
-extern int	fsdir_audit(fsdir *) noex ;
-extern int	fsdir_close(fsdir *) noex ;
+extern int	fsdir_open	(fsdir *,cchar *) noex ;
+extern int	fsdir_read	(fsdir *,fsdir_ent *,char *,int) noex ;
+extern int	fsdir_tell	(fsdir *,off_t *) noex ;
+extern int	fsdir_seek	(fsdir *,off_t) noex ;
+extern int	fsdir_rewind	(fsdir *) noex ;
+extern int	fsdir_audit	(fsdir *) noex ;
+extern int	fsdir_close	(fsdir *) noex ;
 
 EXTERNC_end
 
