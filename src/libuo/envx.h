@@ -20,8 +20,9 @@
 
 
 #include	<envstandards.h>	/* MUST be ordered first to configure */
-#include	<clanguage.h>
-#include	<usyscalls.h>		/* |ulogerror(3u)| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU |ulogerror(3u)| */
 
 #include	<envhelp.h>
 #include	<envlist.h>
