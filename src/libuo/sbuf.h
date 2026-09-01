@@ -30,7 +30,7 @@
 
 
 struct sbuf_head {
-	char		*rbuf ;		/* result buffer base (constant) */
+	charp		rbuf ;		/* result buffer base (constant) */
 	int		rlen ;		/* result buffer length (constant) */
 	int		index ;		/* current buffer index (changes) */
 } ; /* end struct (sbuf_head) */
@@ -150,11 +150,11 @@ struct sbuf : sbuf_head {
 	    return *this ;
 	} ;
 	sbuf_iter begin() noex {
-	    sbuf_iter		it(rbuf) ;
+	    sbuf_iter	it(rbuf) ;
 	    return it ;
 	} ;
 	sbuf_iter end() noex {
-	    sbuf_iter		it(rbuf+index) ;
+	    sbuf_iter	it(rbuf + index) ;
 	    return it ;
 	} ;
 	void dtor() noex ;
