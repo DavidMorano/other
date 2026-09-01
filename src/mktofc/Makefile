@@ -37,10 +37,10 @@ INCS +=
 
 MODS +=
 
-LIBS += -luo -lu
+LIBS += -luo -lu -lf
 
 
-OBJ_MKTOFC= mktofc_main.o freadln.o
+OBJ_MKTOFC= mktofc_main.o
 
 
 INCDIRS=
@@ -107,7 +107,5 @@ control:
 
 
 mktofc_main.o:		mktofc_main.cc				$(INCS)
-
-freadln.o:		freadln.cc
 
 
