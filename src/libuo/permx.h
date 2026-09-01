@@ -42,7 +42,8 @@
 
 EXTERNC_begin
 
-extern int permid	(ids *,ustat *,int)			noex ;
+extern int permids	(ids *,custat *,int)			noex ;
+extern int permidf	(ids *,cchar *,int)			noex ;
 extern int perm		(cchar *,uid_t,gid_t,const gid_t *,int)	noex ;
 extern int permf	(int,uid_t,gid_t,const gid_t *,int)	noex ;
 
