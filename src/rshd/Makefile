@@ -122,7 +122,7 @@ RM= rm -f
 INCS= config.h defs.h
 
 
-OBJ00= main.o whatinfo.o proginfo.o proginfo_setpiv.o
+OBJ00= rshd_main.o whatinfo.o proginfo.o proginfo_setpiv.o
 OBJ01= 
 OBJ02=
 OBJ03=
@@ -237,7 +237,7 @@ control:
 	date >> Control
 
 
-main.o:			main.c $(INCS)
+rshd_main.o:		rshd_main.c $(INCS)
 
 whatinfo.o:		whatinfo.c config.h
 
