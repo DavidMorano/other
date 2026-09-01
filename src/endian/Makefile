@@ -39,12 +39,9 @@ LIBS=
 
 
 INCDIRS=
-
-LIBDIRS= -L$(LIBDIR)
-
+LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
-
 LIBINFO= $(LIBDIRS) $(LIBS)
 
 # flag setting
@@ -55,7 +52,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-.SUFFIXES:		.hh .ii
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 OBJ_ENDIAN= main.o
@@ -84,12 +81,15 @@ all:			$(ALL)
 .cc.o:
 	$(COMPILE.cc) $<
 
+.ccm.o:
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
+
 
 $(T).x:			$(OBJ_ENDIAN)
-	$(LD) $(LDFLAGS) -o $@ $(LIBDIRS) $(LIBS) $(OBJ_ENDIAN)
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBDIRS) $(LIBS)
 
 $(T).o:			$(OBJ_ENDIAN)
-	$(LD) $(LDFLAGS) -r -o $@ $(OBJ_ENDIAN)
+	$(LD) -r $(LDFLAGS) -o $@ $^
 
 $(T).a:			$(OBJ_ENDIAN)
 	$(AR) $(ARFLAGS) -rc $@ $?
