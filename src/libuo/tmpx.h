@@ -170,15 +170,15 @@ struct tmpx : tmpx_head {
 	} ; /* end ctor */
 	tmpx(const tmpx &) = delete ;
 	tmpx &operator = (const tmpx &) = delete ;
-	int read(int,tmpx_ent *) noex ;
-	int write(int,tmpx_ent *) noex ;
-	int check(time_t) noex ;
-	int curbegin(tmpx_cur *) noex ;
-	int curend(tmpx_cur *) noex ;
-	int curenum(tmpx_cur *,tmpx_ent *) noex ;
-	int fetchuser(tmpx_cur *,tmpx_ent *,cchar *) noex ;
-	int fetchpid(tmpx_ent *,pid_t) noex ;
-	int getboottim(time_t *) noex ;
+	int read	(int,tmpx_ent *) noex ;
+	int write	(int,tmpx_ent *) noex ;
+	int check	(time_t) noex ;
+	int curbegin	(tmpx_cur *) noex ;
+	int curend	(tmpx_cur *) noex ;
+	int curenum	(tmpx_cur *,tmpx_ent *) noex ;
+	int fetchuser	(tmpx_cur *,tmpx_ent *,cchar *) noex ;
+	int fetchpid	(tmpx_ent *,pid_t) noex ;
+	int getboottim	(time_t *) noex ;
 	int getuserlines(vecstr *,cchar *) noex ;
 	int getuserterms(vecstr *,cchar *) noex ;
 	void dtor() noex ;
