@@ -1357,8 +1357,7 @@ int proginfo::procfile_list(custat *,cchar *sp,int sl) noex {
 	    c += 1 ;
 	} /* end if (non-null) */
 	return (rs >= 0) ? c : rs ;
-}
-/* end method (proginfo::procfile_list) */
+} /* end method (proginfo::procfile_list) */
 
 local int findlines(char *lbuf,int llen,cchar *fn) noex {
     	int		rs ;
@@ -1822,8 +1821,7 @@ int proginfo_co::operator () (int) noex {
 	    } /* end switch */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo_co::operator) */
+} /* end method (proginfo_co::operator) */
 
 /* make *parent* directories as needed */
 [[maybe_unused]]
@@ -1855,7 +1853,6 @@ local int mkpdirs(cchar *tarfname,mode_t dm) noex {
 	    rs = SR_NOENT ;
 	}
 	return (rs >= 0) ? rv : rs ;
-}
-/* end subroutine (mkpdirs) */
+} /* end subroutine (mkpdirs) */
 
 
