@@ -31,21 +31,21 @@ TOUCH		?= touch
 LINT		?= lint
 
 
-DEFS=
+DEFS +=
 
-INCS=
+INCS +=
 
 MODS += 
 
-LIBS= -lf -lu
+LIBS += -lf -lu
 
 
 OBJ0= sysdata_main.o
-OBJ1=
+OBJ1= zoffparts.o
 OBJ2=
 ONK3=
 
-OBJ_MACFU= obj0.o
+OBJ_MACFU= obj0.o obj1.o
 
 
 INCDIRS=
@@ -149,6 +149,7 @@ objb.o:			$(OBJB)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
-sysdata_main.o:		sysdata_main.cc $(INCS)
+sysdata_main.o:		sysdata_main.cc				$(INCS)
+zoffparts.o:		zoffparts.cc	zoffparts.h
 
 
