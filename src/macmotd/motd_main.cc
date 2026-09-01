@@ -36,19 +36,21 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<sys/param.h>		/* |MAXPATHLEN| */
-#include	<unistd.h>
-#include	<fcntl.h>
-#include	<ctime>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<new>			/* |nothrow(3c++)| */
-#include	<utility>		/* |unreachable(3c++)| */
-#include	<fstream>
-#include	<usystem.h>
-#include	<sfx.h>
-#include	<rmx.h>			/* |rmchr(3uc)| */
-#include	<matstr.h>
+#include	<sys/param.h>		/* POSIX® |MAXPATHLEN| */
+#include	<unistd.h>		/* POSIX® */
+#include	<fcntl.h>		/* POSIX® */
+#include	<ctime>			/* CSTD */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<new>			/* C++STD |nothrow(3c++)| */
+#include	<utility>		/* C++STD |unreachable(3c++)| */
+#include	<fstream>		/* C++SYD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU */
+#include	<sfx.h>			/* LIBUC */
+#include	<rmx.h>			/* LIBUC |rmchr(3uc)| */
+#include	<matstr.h>		/* LIBUC */
 #include	<mapex.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU */
 
@@ -158,14 +160,14 @@ namespace {
 enum progmodes {
 	progmode_macmotd,
 	progmode_overlast
-} ;
+} ; /* end enum */
 
-static constexpr cpcchar	prognames[] = {
+constexpr cpcchar	prognames[] = {
 	[progmode_macmotd]	= "macmotd",
 	[progmode_overlast]	= nullptr
-} ;
+} ; /* end struct */
 
-static constexpr MAPEX	mapexs[] = {
+constexpr MAPEX		mapexs[] = {
 	{ SR_NOENT,	EX_NOUSER },
 	{ SR_AGAIN,	EX_TEMPFAIL },
 	{ SR_DEADLK,	EX_TEMPFAIL },
@@ -215,8 +217,7 @@ int main(int argc,mainv argv,mainv envv) {
 	    ex = mapex(mapexs,rs) ;
 	}
 	return ex ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
@@ -227,13 +228,11 @@ int proginfo::istart() noex {
 	    rs = 0 ;
 	} /* end if (proginfo::getpn) */
 	return rs ;
-}
-/* end method (proginfo::istart) */
+} /* end method (proginfo::istart) */
 
 int proginfo::ifinish() noex {
 	return SR_OK ;
-}
-/* end method (proginfo::ifinish) */
+} /* end method (proginfo::ifinish) */
 
 int proginfo::getpn(mainv names) noex {
 	int		rs = SR_FAULT ;
@@ -253,8 +252,7 @@ int proginfo::getpn(mainv names) noex {
 	    } /* end if (have first argument) */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo::getpn) */
+} /* end method (proginfo::getpn) */
 
 int proginfo::iservbegin() noex {
 	int		rs ;
@@ -267,8 +265,7 @@ int proginfo::iservbegin() noex {
 	    }
 	} /* end if (maxlinelen) */
 	return rs ;
-}
-/* end method (proginfo::iservbegin) */
+} /* end method (proginfo::iservbegin) */
 
 int proginfo::iservend() noex {
 	int		rs = SR_OK ;
@@ -278,8 +275,7 @@ int proginfo::iservend() noex {
 	    llen = 0 ;
 	}
 	return rs ;
-}
-/* end method (proginfo::iservend) */
+} /* end method (proginfo::iservend) */
 
 int proginfo::process() noex {
 	custime		tistart = getustime ;
@@ -303,8 +299,7 @@ int proginfo::process() noex {
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (process_pm) */
 	return (rs >= 0) ? c : rs ;
-}
-/* end subroutine (proginfo::process) */
+} /* end subroutine (proginfo::process) */
 
 int proginfo::procfile(time_t ti) noex {
 	int		rs = SR_FAULT ;
@@ -330,8 +325,7 @@ int proginfo::procfile(time_t ti) noex {
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? wlen : rs ;
-}
-/* end subroutine (proginfo::procfile) */
+} /* end subroutine (proginfo::procfile) */
 
 int proginfo::procline(time_t ti) noex {
 	constexpr cchar	sep[] = " - " ;
@@ -358,8 +352,7 @@ int proginfo::procline(time_t ti) noex {
 	    }
 	} /* end if (conversion ok) */
 	return (rs >= 0) ? wl : rs ;
-}
-/* end subroutine (proginfo::procline) */
+} /* end subroutine (proginfo::procline) */
 
 int proginfo::procline_node(int i) noex {
 	cnullptr	np{} ;
@@ -378,23 +371,20 @@ int proginfo::procline_node(int i) noex {
 	    } /* end if (m-a-f) */
 	} /* end if (nodenamelen) */
 	return rs ;
-}
-/* end subroutine (proginfo::procline_node) */
+} /* end subroutine (proginfo::procline_node) */
 
 int proginfo::procline_str(int i,cchar *s) noex {
 	cint		bl = (llen - i) ;
 	char		*bp = (lbuf + i) ;
 	return snwcpy(bp,bl,s) ;
-}
-/* end subroutine (proginfo::procline_str) */
+} /* end subroutine (proginfo::procline_str) */
 
 int proginfo::procline_date(int i,const tm *tsp) noex {
 	constexpr cchar	fmt[] = "%a %e %b %H:%M" ;
 	cint		bl = (llen - i) ;
 	char		*bp = (lbuf + i) ;
 	return ustrftime(bp,bl,fmt,tsp) ;
-}
-/* end subroutine (proginfo::procline_date) */
+} /* end subroutine (proginfo::procline_date) */
 
 int proginfo::procline_la(int i) noex {
 	cint		bl = (llen - i) ;
@@ -405,8 +395,7 @@ int proginfo::procline_la(int i) noex {
 	    rs = snloadavgd(bp,bl,prec,dla,nlas) ;
 	}
 	return rs ;
-}
-/* end subroutine (proginfo::procline_la) */
+} /* end subroutine (proginfo::procline_la) */
 
 int proginfo::procline_eol(int i) noex {
 	cint		bl = (llen - i) ;
@@ -418,8 +407,7 @@ int proginfo::procline_eol(int i) noex {
 	    rs = 1 ;
 	}
 	return rs ;
-}
-/* end subroutine (proginfo::procline_date) */
+} /* end subroutine (proginfo::procline_date) */
 
 int proginfo::process_pmbegin() noex {
 	int		rs = SR_OK ;
@@ -427,17 +415,15 @@ int proginfo::process_pmbegin() noex {
 	    fn = argv[1] ;
 	}
 	return rs ;
-}
-/* end subroutine (proginfo::process_pmbegin) */
+} /* end subroutine (proginfo::process_pmbegin) */
 
 int proginfo::process_pmend() noex {
 	return SR_OK ;
-}
-/* end subroutine (proginfo::process_pmend) */
+} /* end subroutine (proginfo::process_pmend) */
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
-	if (op) {
+	if (op) ylikely {
 	    switch (w) {
 	    case proginfomem_start:
 	        rs = op->istart() ;
@@ -454,7 +440,6 @@ int proginfo_co::operator () (int) noex {
 	    } /* end switch */
 	} /* end if (non-null) */
 	return rs ;
-}
-/* end method (proginfo_co::operator) */
+} /* end method (proginfo_co::operator) */
 
 
