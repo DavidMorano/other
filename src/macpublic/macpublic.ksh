@@ -22,7 +22,9 @@ USERS=/Users
 export SYSNAME
 
 
+: ${USELOCAL:=/usr/local}
 : ${EXTRA:=/usr/extra}
+: ${LOCAL:=/opt/local}
 
 if [[ ! -d "${EXTRA}" ]] ; then
   exit 1
