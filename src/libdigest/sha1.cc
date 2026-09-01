@@ -1,4 +1,4 @@
-/* sha1 SUPPORT */
+/* sha1 SUPPORT (Secure-Hash-Algorithm) */
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
@@ -15,16 +15,16 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<sys/types.h>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<cstring>
-#include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
-#include	<localmisc.h>
+#include	<sys/types.h>		/* POSIX® */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstring>		/* CSTD */
+#include	<clanguage.h>		/* LIBU */
+#include	<utypedefs.h>		/* LIBU */
+#include	<utypealiases.h>	/* LIBU */
+#include	<usysdefs.h>		/* LIBU */
+#include	<usysrets.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
 
 #include	"sha1.h"
 
@@ -100,7 +100,7 @@ static void sha_transform(SHA1_INFO *sha_info) noex ;
 
 /* initialize the SHA1 digest */
 int sha1_start(SHA1_INFO *sha_info) noex {
-	if (sha_info == NULL) return -1 ;
+	if (sha_info == nullptr) return -1 ;
 
     sha_info->digest[0] = 0x67452301UL ;
     sha_info->digest[1] = 0xefcdab89UL ;
@@ -112,8 +112,7 @@ int sha1_start(SHA1_INFO *sha_info) noex {
     sha_info->locdata = 0;
 
 	return 0 ;
-}
-/* end subroutine (sha1_start) */
+} /* end subroutine (sha1_start) */
 
 /* update the SHA digest */
 int sha1_update(SHA1_INFO *sha_info,const char *ubuf, int count) noex {
@@ -121,7 +120,7 @@ int sha1_update(SHA1_INFO *sha_info,const char *ubuf, int count) noex {
 	SHA1_BYTE	*buffer = (SHA1_BYTE *) ubuf ;
     	int 		i;
 
-	if (sha_info == NULL)
+	if (sha_info == nullptr)
 		return -1 ;
 
     clo = T32(sha_info->count_lo + ((SHA1_LONG) count << 3));
@@ -144,40 +143,37 @@ int sha1_update(SHA1_INFO *sha_info,const char *ubuf, int count) noex {
 	} else {
 	    return 0 ;
 	}
-    }
+    } /* end if */
     while (count >= SHA1_BLOCKSIZE) {
 	memcpy(sha_info->data, buffer, SHA1_BLOCKSIZE);
 	buffer += SHA1_BLOCKSIZE;
 	count -= SHA1_BLOCKSIZE;
 	sha_transform(sha_info);
-    }
+    } /* end while */
     memcpy(sha_info->data, buffer, count);
     sha_info->locdata = count;
 
 	return 0 ;
-}
-/* end subroutine (sha1_update) */
+} /* end subroutine (sha1_update) */
 
 /* get the final digest */
 int sha1_digest(SHA1_INFO *sha_info,unsigned char *digest) noex {
-	if (sha_info == NULL)
+	if (sha_info == nullptr)
 		return -1 ;
 
 	sha_final(digest,sha_info) ;
 
 	return 0 ;
-}
-/* end subroutine (sha1_digest) */
+} /* end subroutine (sha1_digest) */
 
 int sha1_finish(SHA1 *sha_info) noex {
-	if (sha_info == NULL)
+	if (sha_info == nullptr)
 		return -1 ;
 
 	memset(sha_info,0,sizeof(SHA1_INFO)) ;
 
 	return 0 ;
-}
-/* end subroutine (sha1_finish) */
+} /* end subroutine (sha1_finish) */
 
 
 /* deprecated API */
@@ -230,8 +226,7 @@ void sha_final(unsigned char digest[20], SHA1_INFO *sha_info) noex {
     digest[17] = (unsigned char) ((sha_info->digest[4] >> 16) & 0xff);
     digest[18] = (unsigned char) ((sha_info->digest[4] >>  8) & 0xff);
     digest[19] = (unsigned char) ((sha_info->digest[4]      ) & 0xff);
-}
-/* end subroutine (sha_final) */
+} /* end subroutine (sha_final) */
 
 
 /* private subroutines */
@@ -260,7 +255,7 @@ nether regions of the anatomy ...
 	dp += 4;
 	W[i] =  ((T << 24) & 0xff000000) | ((T <<  8) & 0x00ff0000) |
 		((T >>  8) & 0x0000ff00) | ((T >> 24) & 0x000000ff);
-    }
+    } /* end for */
 #endif /* SHA1_BYTE_ORDER == 1234 */
 
 #if (SHA1_BYTE_ORDER == 4321)
@@ -269,7 +264,7 @@ nether regions of the anatomy ...
 	T = *((SHA1_LONG *) dp);
 	dp += 4;
 	W[i] = T32(T);
-    }
+    } /* end for */
 #endif /* SHA1_BYTE_ORDER == 4321 */
 
 #if (SHA1_BYTE_ORDER == 12345678)
@@ -282,7 +277,7 @@ nether regions of the anatomy ...
 	T >>= 32;
 	W[i+1] = ((T << 24) & 0xff000000) | ((T <<  8) & 0x00ff0000) |
 		 ((T >>  8) & 0x0000ff00) | ((T >> 24) & 0x000000ff);
-    }
+    } /* end for */
 #endif /* SHA1_BYTE_ORDER == 12345678 */
 
 #if (SHA1_BYTE_ORDER == 87654321)
@@ -292,7 +287,7 @@ nether regions of the anatomy ...
 	dp += 8;
 	W[i] = T32(T >> 32);
 	W[i+1] = T32(T);
-    }
+    } /* end for */
 #endif /* SHA1_BYTE_ORDER == 87654321 */
 
 #ifndef SWAP_DONE
@@ -304,7 +299,7 @@ nether regions of the anatomy ...
 #if (SHA_VERSION == 1)
 	W[i] = R32(W[i], 1);
 #endif /* SHA_VERSION */
-    }
+    } /* end for */
 
     A = sha_info->digest[0];
     B = sha_info->digest[1];
@@ -348,8 +343,7 @@ nether regions of the anatomy ...
     sha_info->digest[3] = T32(sha_info->digest[3] + D);
     sha_info->digest[4] = T32(sha_info->digest[4] + E);
 #endif /* !UNRAVEL */
-}
-/* end subroutine (transformation) */
+} /* end subroutine (transformation) */
 
 
 /* TEST STUFF */
@@ -368,13 +362,12 @@ void sha1_stream(unsigned char digest[20],SHA1_INFO *sha_info, FILE *fin) noex {
 
     while ((i = fread(data, 1, BLOCK_SIZE, fin)) > 0) {
 	sha1_update(sha_info, data, i);
-    }
+    } /* end while */
 
     sha_final(digest, sha_info);
-}
+} /* end subroutine */
 
 /* print a SHA digest */
-
 void sha_print(unsigned char digest[20]) noex {
     int i, j;
 
@@ -383,8 +376,8 @@ void sha_print(unsigned char digest[20]) noex {
 	    printf("%02x", *digest++);
 	}
 	printf("%c", (j < 4) ? ' ' : '\n');
-    }
-}
+    } /* end for */
+} /* end subroutine */
 
 char *sha_version(void) noex {
 #if (SHA_VERSION == 1)
@@ -393,7 +386,8 @@ char *sha_version(void) noex {
     static char *version = "SHA";
 #endif
     return(version);
-}
+} /* end subroutine */
+
 
 #endif /* SHA_FOR_C */
 
