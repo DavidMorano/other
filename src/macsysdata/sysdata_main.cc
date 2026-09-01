@@ -37,26 +37,30 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<sys/types.h>
-#include	<sys/sysctl.h>		/* "macOS" specific */
-#include	<unistd.h>
-#include	<fcntl.h>
-#include	<climits>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<cstdio>		/* |printf(3c++)| */
-#include	<cstring>		/* |strchr(3c)| */
-#include	<string>
-#include	<string_view>
-#include	<iostream>
-#include	<iomanip>		/* |hex(3c++)| + |setw(3c++)| */
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<usyscalls.h>
-#include	<usupport.h>
-#include	<strnul.hh>
+#include	<sys/types.h>		/* POSIX® */
+#include	<sys/sysctl.h>		/* MAXOS "macOS" specific */
+#include	<unistd.h>		/* POSIX® */
+#include	<fcntl.h>		/* POSIX® */
+#include	<climits>		/* POSIX® */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstdio>		/* CSTD |printf(3c++)| */
+#include	<cstring>		/* CSTD |strchr(3c)| */
+#include	<string>		/* C++STD */
+#include	<string_view>		/* C++STD */
+#include	<chrono>		/* C++STD */
+#include	<iostream>		/* C++STD */
+#include	<iomanip>		/* C++STD |hex(3c++)| + |setw(3c++)| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU */
+#include	<usupport.h>		/* LIBU */
+#include	<umem.hh>		/* LIBU */
+#include	<strnul.hh>		/* LIBU */
 #include	<mapex.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU |DIGBUFLEN| + |REALNAMELEN| */
+
+#include	"zoffparts.h"		/* *local* */
 
 #pragma		GCC dependency		"mod/ulibvals.ccm"
 #pragma		GCC dependency		"mod/usysconf.ccm"
@@ -89,6 +93,8 @@ using libu::rmchr ;			/* subroutine */
 using libu::rmtrailchr ;		/* subroutine */
 using libu::strwcpy ;			/* subroutine */
 using libu::hasnotempty ;		/* subroutine */
+using std::cout ;			/* variable */
+using libu::umem ;			/* variable */
 using std::nothrow ;			/* constant */
 
 
@@ -119,11 +125,11 @@ namespace {
 	void operator () (proginfo *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
+	} ; /* end */
 	int operator () (int = 0) noex ;
 	operator int () noex {
 	    return operator () (0) ;
-	} ;
+	} ; /* end */
     } ; /* end struct (proginfo_co) */
     struct proginfo {
 	friend		proginfo_co ;
@@ -153,6 +159,7 @@ namespace {
 	int lax		() noex ;
 	int navail	() noex ;
 	int nprocs	() noex ;
+	int zoneinfo	() noex ;
     private:
 	int istart	() noex ;
 	int ifinish	() noex ;
@@ -193,6 +200,7 @@ namespace {
 	X(navail,	"navail"	)	\
 	X(ncpu,		"ncpu"		)	\
 	X(nprocs,	"nprocs"	)	\
+	X(zoneinfo,	"zoneinfo"	)	\
 	X(overlast,	nullptr		)
 
 enum progmodes {
@@ -295,6 +303,9 @@ int main(int argc,con mainv argv,con mainv envv) {
 	    case progmode_nprocs:
 		rs = pi.nprocs() ;
 		break ;
+	    case progmode_zoneinfo:
+		rs = pi.zoneinfo() ;
+		break ;
 	    default:
 		rs = SR_BUGCHECK ;
 		break ;
@@ -306,8 +317,7 @@ int main(int argc,con mainv argv,con mainv envv) {
 	    ex = mapex(mapexs,rs) ;
 	}
 	return ex ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
@@ -332,7 +342,7 @@ int proginfo::inproc() noex {
 	if (int32_t v{} ; (rs = sysctlbyname(name,&v,&vsz,np,0uz)) >= 0) {
 	    rs = intconv(v) ;
 	} else {
-	    rs = (- errno) ;
+	    rs = (neg errno) ;
 	}
 	return rs ;
 } /* end method (proginfo::inproc) */
@@ -357,7 +367,7 @@ int proginfo::getpn(mainv names) noex {
 	return rs ;
 } /* end method (proginfo::getpn) */
 
-static int printnodename(cchar *valp) noex {
+local int printnodename(cchar *valp) noex {
 	int		rs = SR_OK ;
 	if (cchar *tp ; (tp = strchr(valp,'.')) != nullptr) {
 	    strnul	s(valp,intconv(tp - valp)) ;
@@ -395,6 +405,7 @@ int proginfo::uname() noex {
 
 int proginfo::sysoutstr() noex {
 	cnullptr	np{} ;
+	cnothrow	nt{} ;
 	int		rs = SR_OK ;
 	cchar		*name = nullptr ;
 	switch (pm) {
@@ -435,17 +446,17 @@ int proginfo::sysoutstr() noex {
 	    rs = SR_BUGCHECK ;
 	    break ;
 	} /* end switch */
-	if ((rs >= 0) && name) {
+	if ((rs >= 0) && name) ylikely {
 	    cint	olen = maxpathlen ;
 	    rs = SR_NOMEM ;
-	    if (char *obuf ; (obuf = new(nothrow) char[olen+1]) != np) {
+	    if (char *obuf = new(nt) char[olen+1] ; obuf) ylikely {
 		size_t	rsz = size_t(olen) ; /* <- return value also */
-		if ((rs = sysctlbyname(name,obuf,&rsz,np,0uz)) >= 0) {
+		if ((rs = sysctlbyname(name,obuf,&rsz,np,0uz)) >= 0) ylikely {
 		    cint	ol = int(rsz) ;
 		    obuf[ol] = '\0' ;
 		    printf("%s\n",obuf) ;
 		} else {
-		    rs = (- errno) ;
+		    rs = (neg errno) ;
 		}
 		delete [] obuf ;
 	    } /* end if (new-char) */
@@ -456,15 +467,15 @@ int proginfo::sysoutstr() noex {
 int proginfo::sysoutnum(cchar *name) noex {
 	cnullptr	np{} ;
 	int		rs = SR_FAULT ;
-	if (name) {
+	if (name) ylikely {
 	    rs = SR_INVALID ;
-	    if (name[0]) {
+	    if (name[0]) ylikely {
 		size_t		vsz = sizeof(uint32_t) ;
 		uint32_t	val{} ;
 		if ((rs = sysctlbyname(name,&val,&vsz,np,0uz)) >= 0) {
 		    printf("%d\n",val) ;
 		} else {
-		    rs = (- errno) ;
+		    rs = (neg errno) ;
 		}
 	    } /* end if (valid) */
 	} /* end if (non-null) */
@@ -473,11 +484,11 @@ int proginfo::sysoutnum(cchar *name) noex {
 
 int proginfo::lax() noex {
 	int		rs ;
-	if (double dla[nlas] ; (rs = uloadavgd(dla,nlas)) >= 0) {
+	if (double dla[nlas] ; (rs = uloadavgd(dla,nlas)) >= 0) ylikely {
 	    cint	prec = 1 ;
 	    cint	dlen = DIGBUFLEN ;
 	    char	dbuf[DIGBUFLEN + 1] ;
-	    if ((rs = snloadavgd(dbuf,dlen,prec,dla,nlas)) >= 0) {
+	    if ((rs = snloadavgd(dbuf,dlen,prec,dla,nlas)) >= 0) ylikely {
 		printf("%s\n",dbuf) ;
 	    }
 	} /* end if (uloadavgd) */
@@ -487,7 +498,7 @@ int proginfo::lax() noex {
 int proginfo::navail() noex {
 	cint		cmd = _SC_NPROCESSORS_ONLN ;
     	int		rs ;
-	if ((rs = usysconfval(cmd)) >= 0) {
+	if ((rs = usysconfval(cmd)) >= 0) ylikely {
 	    printf("%d\n",rs) ;
 	}
 	return rs ;
@@ -496,15 +507,61 @@ int proginfo::navail() noex {
 int proginfo::nprocs() noex {
     	cint		cmd = 0 ;
     	int		rs ;
-	if ((rs = usys::usys_nprocs(cmd)) >= 0) {
+	if ((rs = usys::usys_nprocs(cmd)) >= 0) ylikely {
 	    printf("%d\n",rs) ;
 	}
 	return rs ;
 } /* end method (proginfo::nprocs) */
 
+local int zoneinfos(con std::chrono::sys_info &) noex ;
+
+int proginfo::zoneinfo() noex {
+    	int		rs = SR_OK ;
+        try {
+            cauto tzp = std::chrono::current_zone() ; // may throw
+            cauto now = std::chrono::system_clock::now() ;
+            cout << tzp->name() ;
+            {
+                cauto info = tzp->get_info(now) ;
+		rs = zoneinfos(info) ;
+	    } /* end block */
+	} catch (const std::runtime_error& ex) {
+            rs = SR_IO ;
+            std::cerr << ex.what() << '\n';
+	} catch (...) {
+	    rs = SR_BADFMT ;
+	} /* end if */
+	return rs ;
+} /* end method (proginfo::zoneinfo) */
+
+local int zoneinfos(con std::chrono::sys_info &info) noex {
+    	using namespace	std::chrono ;
+    	int		rs ;
+	int		rs1 ;
+	seconds		s_off = seconds(info.offset) ;
+	if (char *obuf ; (rs = umem.zn(&obuf)) >= 0) ylikely {
+	    cauto roff = s_off.count() ;
+	    cint olen = rs ;
+	    {
+		using zpa = zoffparts ;
+		cint ro = conv<int>(neg roff) ;
+	        if (zpa zo ; (rs = zo.set(ro)) >= 0) ylikely {
+	            if ((rs = zo.mkstr(obuf,olen)) >= 0) ylikely {
+		        cout << " " << info.abbrev ;
+                        cout << " " << obuf ;
+		        cout << eol ;
+		    } /* end if (zoffparts_mkstr) */
+		} /* end if (zoffparts_set) */
+	    } /* end block */
+	    rs1 = umem.free(obuf) ;
+	    if (rs >= 0) rs = rs1 ;
+	} /* end if (m-a-f) */
+	return rs ;
+} /* end subroutine (zoneinfos) */
+
 int proginfo_co::operator () (int) noex {
 	int	rs = SR_BUGCHECK ;
-	if (op) {
+	if (op) ylikely {
 	    switch (w) {
 	    case proginfomem_start:
 	        rs = op->istart() ;
