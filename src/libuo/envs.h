@@ -34,7 +34,7 @@ struct envs_cursor {
 
 struct envs_head {
 	hdb		*varp ;
-	uint		magic ;
+	uint		magval ;
 } ; /* end struct */
 
 typedef ENVS		envs ;
