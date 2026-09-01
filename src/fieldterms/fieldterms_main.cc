@@ -31,13 +31,13 @@
 #include	<sstream>		/* C++STD */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
-#include	<baops.h>		/* LIBUC */
+#include	<baops.h>		/* LIBU */
+#include	<ascii.h>		/* LIBU */
 #include	<strn.h>		/* LIBUC */
 #include	<sfx.h>			/* LIBUC */
 #include	<cfdec.h>		/* LIBUC */
 #include	<char.h>		/* LIBUC */
 #include	<hasx.h>		/* LIBUC */
-#include	<ascii.h>		/* LIBU */
 #include	<ccfile.hh>		/* LIBU */
 #include	<strnul.hh>		/* LIBU */
 #include	<charnames.h>		/* LIBU */
