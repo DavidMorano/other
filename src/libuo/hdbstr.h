@@ -20,12 +20,9 @@
 
 
 #include	<envstandards.h>	/* MUST be first to configure */
-#include	<clanguage.h>
-#include	<utypedefs.h>
-#include	<utypealiases.h>
-#include	<usysdefs.h>
-#include	<usysrets.h>
-#include	<hdb.h>
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<hdb.h>			/* LIBUC */
 
 
 #define	HDBSTR		hdb
@@ -43,7 +40,7 @@ enum hdbstrmems {
 	hdbstrmem_count,
 	hdbstrmem_finish,
 	hdbstrmem_overlast
-} ;
+} ; /* end enum (hdbstrmems) */
 struct hdbstr ;
 struct hdbstr_iter {
     	hdbstr		*op = nullptr ;
@@ -84,25 +81,25 @@ struct hdbstr : hdb {
 	hdbstr_co	finish ;
 	bool		fopen{} ;
 	hdbstr() noex {
-	    start(this,hdbstrmem_start) ;
-	    delall(this,hdbstrmem_delall) ;
-	    count(this,hdbstrmem_count) ;
-	    finish(this,hdbstrmem_finish) ;
+	    start	(this,hdbstrmem_start) ;
+	    delall	(this,hdbstrmem_delall) ;
+	    count	(this,hdbstrmem_count) ;
+	    finish	(this,hdbstrmem_finish) ;
 	} ;
 	hdbstr(const hdbstr &) = delete ;
 	hdbstr &operator = (const hdbstr &) = delete ;
-	int add(cchar *,int,cchar *,int) noex ;
-	int curbegin(hdbstr_cur *) noex ;
-	int curend(hdbstr_cur *) noex ;
-	int curget(hdbstr_cur *,cc **,cc **,int *) noex ;
-	int curenum(hdbstr_cur *,cc **,cc **,int *) noex ;
-	int curnext(hdbstr_cur *) noex ;
-	int curdel(hdbstr_cur *,int) noex ;
-	int curdone(hdbstr_cur *) noex ;
-	int fetch(cchar *,int,hdbstr_cur *,cchar **) noex ;
-	int delkey(cchar *,int) noex ;
-	int loadkeys(cchar *) noex ;
-	int loadpairs(cchar *) noex ;
+	int add		(cchar *,int,cchar *,int) noex ;
+	int curbegin	(hdbstr_cur *) noex ;
+	int curend	(hdbstr_cur *) noex ;
+	int curget	(hdbstr_cur *,cc **,cc **,int *) noex ;
+	int curenum	(hdbstr_cur *,cc **,cc **,int *) noex ;
+	int curnext	(hdbstr_cur *) noex ;
+	int curdel	(hdbstr_cur *,int) noex ;
+	int curdone	(hdbstr_cur *) noex ;
+	int fetch	(cchar *,int,hdbstr_cur *,cchar **) noex ;
+	int delkey	(cchar *,int) noex ;
+	int loadkeys	(cchar *) noex ;
+	int loadpairs	(cchar *) noex ;
 	hdbstr_iter begin() noex ;
 	hdbstr_iter end() noex ;
 	void dtor() noex ;
