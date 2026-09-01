@@ -37,7 +37,7 @@ INCS +=
 
 MODS += fonce.o
 
-LIBS += -lf -lu
+LIBS += -lu
 
 
 DEPS_MAIN= fonce.o
