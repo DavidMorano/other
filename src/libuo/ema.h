@@ -111,9 +111,9 @@ struct ema : ema_head {
 	ema_co		count ;
 	ema_co		finish ;
 	ema() noex {
-	    start(this,emamem_start) ;
-	    count(this,emamem_count) ;
-	    finish(this,emamem_finish) ;
+	    start	(this,emamem_start) ;
+	    count	(this,emamem_count) ;
+	    finish	(this,emamem_finish) ;
 	    magval = 0 ;
 	} ; /* end ctor */
 	ema(const ema &) = delete ;
