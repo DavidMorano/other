@@ -55,11 +55,17 @@ OBJUC07= ucgetx.o ucsysmisc.o
 OBJUC08= ucproc.o ucdata.o ucsysauxinfo.o
 OBJUC09= uctime.o ucinet.o
 OBJUC10= ucrand.o ucmem.o
-OBJUC11= ucopen.o ucfileop.o
+OBJUC11= ucopen.o ucfileop.o ucnameo.o
+
+OBJUC12=
+OBJUC13=
+OBJUC14=
+OBJUC15= 
 
 OBJUC_A= objuc00.o objuc01.o objuc02.o objuc03.o
 OBJUC_B= objuc04.o objuc05.o objuc06.o objuc07.o
 OBJUC_C= objuc08.o objuc09.o objuc10.o objuc11.o
+OBJUC_D= objuc12.o
 
 OBJUC= objuc_a.o objuc_b.o objuc_c.o
 
@@ -103,9 +109,9 @@ OBJ29_LUO= sysval.o path.o termx.o
 OBJ30_LUO= vstr.o xfile.o absfn.o
 OBJ31_LUO= randlc.o pow.o calstrs.o digval.o
 
-OBJ32_LUO= realname.o
+OBJ32_LUO= realname.o find.o
 OBJ33_LUO= ema.o tmpx.o getxname.o getutmp.o
-OBJ34_LUO= sbuf.o buffer.o
+OBJ34_LUO= sbuf.o buffer.o bufstr.o
 OBJ35_LUO= storebuf.o storeitem.o
 
 OBJ36_LUO= fmtflag.o fmtstr.o sysdbfiles.o
@@ -120,13 +126,13 @@ OBJ43_LUO= nodedb.o clusterdb.o varsub.o
 
 OBJ44_LUO= kvsfile.o memtrack.o randomvar.o
 OBJ45_LUO= nonpath.o msghdr.o conmsghdr.o
-OBJ46_LUO= userattrdb.o userinfo.o expcook.o
-OBJ47_LUO= spawner.o spawnproc.o
+OBJ46_LUO= user.o userinfo.o
+OBJ47_LUO= spawn.o expcook.o
 
-OBJ48_LUO= findxfile.o sigx.o dial.o conallof.o
+OBJ48_LUO= sigx.o dial.o conallof.o
 OBJ49_LUO= argutils.o cmdutils.o logfile.o linex.o
 OBJ50_LUO= ndig.o ndigit.o bufprintf.o
-OBJ51_LUO= termdisp.o calendar.o
+OBJ51_LUO= term.o calendar.o
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
@@ -153,7 +159,6 @@ OBJ += obj_luo.o
 
 
 INCDIRS=
-
 LIBDIRS= -L /usr/local/lib
 
 RUNINFO= -rpath $(RUNDIR)
@@ -205,7 +210,7 @@ a:			$(T).a
 
 
 $(T).so:		obj.o
-	$(CXX) -shared -o $@ $(LDFLAGS) $^$(RUNINFO) $(LIBINFO)
+	$(CXX) -shared -o $@ $(LDFLAGS) $(RUNINFO) $^ $(LIBINFO)
 
 $(T).o:			obj.o
 	$(LD) -r -o $@ $(LDFLAGS) $^
@@ -268,6 +273,19 @@ objuc11.o:		$(OBJUC11)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
+objuc12.o:		$(OBJUC12)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objuc13.o:		$(OBJUC13)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objuc14.o:		$(OBJUC14)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objuc15.o:		$(OBJUC15)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
 objuc_a.o:		$(OBJUC_A)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
@@ -275,6 +293,9 @@ objuc_b.o:		$(OBJUC_B)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 objuc_c.o:		$(OBJUC_C)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+objuc_d.o:		$(OBJUC_D)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
@@ -499,6 +520,10 @@ obj.o:			$(OBJ)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
+user.o:			user.dir
+user.dir:
+	makesubdir $@
+
 six.o:			six.dir
 six.dir:
 	makesubdir $@
@@ -572,11 +597,11 @@ inetaddrx.o:		inetaddrx.dir
 inetaddrx.dir:
 	makesubdir $@
 
-ucsysmisc.o:		ucsysmisc.cc	ucsysmisc.h		$(INCS)
 ucdescbase.o:		ucdescbase.cc	ucdescbase.hh		$(INCS)
 ucpts.o:		ucpts.cc	ucpts.h			$(INCS)
 ucpwcache.o:		ucpwcache.cc	ucpwcache.h		$(INCS)
 ucinfo.o:		ucinfo.cc	ucinfo.h		$(INCS)
+ucnameo.o:		ucnameo.cc	ucnameo.h		$(INCS)
 
 # Hierarchical Objects
 
@@ -658,6 +683,11 @@ ucsig.dir:
 # UCSYSCONF	(libuc)
 ucsysconf.o:		ucsysconf.dir
 ucsysconf.dir:
+	makesubdir $@
+
+# UCSYSMISC	(libuc)
+ucsysmisc.o:		ucsysmisc.dir
+ucsysmisc.dir:
 	makesubdir $@
 
 # UCSTREAM	(libuc)
@@ -1064,13 +1094,27 @@ varsub.o:		varsub.dir
 varsub.dir:
 	makesubdir $@
 
+# SPAWN
+spawn.o:		spawn.dir
+spawn.dir:
+	makesubdir $@
+
+# FIND
+find.o:			find.dir
+find.dir:
+	makesubdir $@
+
+# TERM
+term.o:			term.dir
+term.dir:
+	makesubdir $@
+
 # Objects
 storebuf.o:		storebuf.cc	storebuf.h		$(INCS)
 storeitem.o:		storeitem.cc	storeitem.h		$(INCS)
 ids.o:			ids.cc		ids.h			$(INCS)
 lookaside.o:		lookaside.cc	lookaside.h		$(INCS)
 termstr.o:		termstr.cc	termstr.h		$(INCS)
-termdisp.o:		termdisp.cc	termdisp.h		$(INCS)
 fsdirtree.o:		fsdirtree.cc	fsdirtree.h		$(INCS)
 nodedb.o:		nodedb.cc	nodedb.h		$(INCS)
 clusterdb.o:		clusterdb.cc	clusterdb.h		$(INCS)
@@ -1082,12 +1126,11 @@ comparse.o:		comparse.cc	comparse.h		$(INCS)
 posname.o:		posname.cc	posname.h		$(INCS)
 absfn.o:		absfn.cc	absfn.h			$(INCS)
 kvsfile.o:		kvsfile.cc	kvsfile.h		$(INCS)
-userattrdb.o:		userattrdb.cc	userattrdb.h		$(INCS)
-spawner.o:		spawner.cc	spawner.h		$(INCS)
-userinfo.o:		userinfo.cc	userinfo.h		$(INCS)
 expcook.o:		expcook.cc	expcook.h		$(INCS)
 bits.o:			bits.cc		bits.h			$(INCS)
 paramfile.o:		paramfile.cc	paramfile.h		$(INCS)
+bufstr.o:		bufstr.cc	bufstr.h		$(INCS)
+userinfo.o:		userinfo.cc	userinfo.h		$(INCS)
 
 # GROUPS
 calstrs.o:		calstrs.cc	calstrs.h		$(INCS)
@@ -1114,8 +1157,6 @@ digval.o:		digval.cc	digval.h		$(INCS)
 nonpath.o:		nonpath.cc	nonpath.h		$(INCS)
 msghdr.o:		msghdr.cc	msghdr.h		$(INCS)
 conmsghdr.o:		conmsghdr.cc	conmsghdr.h		$(INCS)
-spawnproc.o:		spawnproc.cc	spawnproc.h		$(INCS)
-findxfile.o:		findxfile.cc	findxfile.h		$(INCS)
 conallof.o:		conallof.cc	conallof.h		$(INCS)
 ndig.o:			ndig.cc		ndig.h			$(INCS)
 ndigit.o:		ndigit.cc	ndigit.h		$(INCS)
