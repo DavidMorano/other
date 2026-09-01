@@ -35,6 +35,8 @@ DEFS=
 
 INCS=
 
+MODS=
+
 LIBS=
 
 
@@ -52,7 +54,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_CONTERM= main.o
+OBJ_CONTERM= conterm_main.o
 
 
 .SUFFIXES:		.hh .ii .iim .ccm
@@ -112,6 +114,6 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc
+conterm_main.o:		conterm_main.cc
 
 
