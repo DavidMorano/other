@@ -41,9 +41,7 @@ LIBS= -luo -lu
 
 
 INCDIRS=
-
-LIBDIRS= -L$(LIBDIR)
-
+LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -59,7 +57,7 @@ LDFLAGS		?= $(MAKELDFLAGS)
 OBJ_REPOMANIP= main.o
 
 
-.SUFFIXES:		.hh .ii .ccm
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).x
@@ -72,6 +70,9 @@ all:			$(ALL)
 
 .cc.ii:
 	$(CPP) $(CPPFLAGS) $< > $(*).ii
+
+.ccm.iim:
+	$(CPP) $(CPPFLAGS) $< > $(*).iim
 
 .c.s:
 	$(CC) -S $(CPPFLAGS) $(CFLAGS) $<
@@ -86,14 +87,14 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	makemodule $(*)
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
 $(T).x:			$(OBJ_REPOMANIP)
-	$(LD) $(LDFLAGS) -o $@ $(LIBDIRS) $(LIBS) $(OBJ_REPOMANIP)
+	$(LD) $(LDFLAGS) -o $@ $(LIBDIRS) $(LIBS) $^
 
 $(T).o:			$(OBJ_REPOMANIP)
-	$(LD) $(LDFLAGS) -r -o $@ $(OBJ_REPOMANIP)
+	$(LD) $(LDFLAGS) -r -o $@ $^
 
 $(T).nm:		$(T).o
 	$(NM) $(NMFLAGS) $(T).o > $(T).nm
