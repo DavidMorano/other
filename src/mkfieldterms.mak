@@ -87,11 +87,11 @@ all:			$(ALL)
 	$(COMPILE.cc) $<
 
 .ccm.o:
-	gxx -c -x c++ -o $@ -O $<
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
 
 
 $(T).x:			$(OBJ_MKTOFC)
-	$(CXX) -o $@ $(LDFLAGS) $(OBJ_MKTOFC) $(LIBINFO)
+	$(CXX) -o $@ $(LDFLAGS) $^ $(LIBINFO)
 
 $(T).nm:		$(T).x
 	$(NM) $(NMFLAGS) $(T).x > $(T).nm
