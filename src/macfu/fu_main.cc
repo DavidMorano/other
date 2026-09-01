@@ -42,7 +42,7 @@
 #include	<climits>		/* CSTD */
 #include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD */
-#include	<cstdio>		/* CSYD */
+#include	<cstdio>		/* CSTD */
 #include	<string>		/* C++STD */
 #include	<string_view>		/* C++STD */
 #include	<vector>		/* C++STD */
