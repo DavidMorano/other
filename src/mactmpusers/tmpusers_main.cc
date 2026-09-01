@@ -55,24 +55,24 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* must be ordered first to configure */
-#include	<sys/types.h>
-#include	<sys/param.h>
-#include	<unistd.h>		/* |getusershell(3c)| */
-#include	<pwd.h>
-#include	<grp.h>
-#include	<climits>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>		/* |getenv(3c)| */
-#include	<cstdio>
-#include	<cstring>		/* |strcmp(3c)| */
-#include	<algorithm>		/* |min(3c++)| + |max(3c++)| */
-#include	<utility>		/* |pair(3c++)| */
-#include	<string>
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<usyscalls.h>
-#include	<usupport.h>
-#include	<ucsysconf.h>
+#include	<sys/types.h>		/* POSIX® */
+#include	<sys/param.h>		/* POSIX® */
+#include	<unistd.h>		/* POSIX® |getusershell(3c)| */
+#include	<pwd.h>			/* POSIX® */
+#include	<grp.h>			/* POSIX® */
+#include	<climits>		/* CSTD */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstdio>		/* CSTD */
+#include	<cstring>		/* CSTD |strcmp(3c)| */
+#include	<algorithm>		/* C++STD |min(3c++)| + |max(3c++)| */
+#include	<utility>		/* C++STD |pair(3c++)| */
+#include	<string>		/* C++STD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU */
+#include	<usupport.h>		/* LIBU */
+#include	<ucsysconf.h>		/* LIBU */
 #include	<mapex.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU |MAXPATHLEN| + |USERNAMELEN| */
 #include	<deb.hh>		/* LIBU debugging */
@@ -336,8 +336,7 @@ int main(int argc,con mainv argv,con mainv envv) {
 	}
         DEBPRINTF("ret ex=%d rs=%d\n",ex,rs) ;
 	return ex ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
