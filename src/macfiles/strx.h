@@ -49,7 +49,7 @@ EXTERNC_begin
 EXTERNC_begin
 local inline char *strochr(cchar *sp,int sch) noex {
     	return strchr(sp,sch) ;
-}
+} /* end */
 EXTERNC_end
 #endif /* SUBROUTINE_STROCHR */
 
@@ -70,7 +70,7 @@ EXTERNC_end
 EXTERNC_begin
 local inline char *strbrk(cchar *sp,cchar *sc) noex {
     	return strpbrk(sp,sc) ;
-}
+} /* end */
 EXTERNC_end
 #endif /* SUBROUTINE_STRBRK */
 
