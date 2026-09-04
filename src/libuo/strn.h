@@ -21,7 +21,9 @@
 
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<clanguage.h>		/* LIBU */
-#include	<usysbase.h>		/* LIBU */
+#include	<utypedefs.h>		/* LIBU */
+#include	<utypealiases.h>	/* LIBU */
+#include	<usysdefs.h>		/* LIBU */
 
 #include	<strnxcmp.h>		/* compare */
 #include	<strnxchr.h>		/* find */
@@ -41,10 +43,10 @@ EXTERNC_begin
 /* copy */
 local inline char *strnwcpy(char *dp,int dl,cchar *sp,int sl) noex {
     	return strnwcpybc(dp,dl,sp,sl) ;
-}
+} /* end */
 local inline char *strnncpy(char *dp,cchar *sp,int sl,int sz) noex {
     	return strnwcpy(dp,sz,sp,sl) ;
-}
+} /* end */
 
 EXTERNC_end
 
@@ -52,7 +54,7 @@ EXTERNC_end
 
 inline char *strnwcpy(char *dp,int dl,cchar *sp) noex {
     	return strnwcpybc(dp,dl,sp,-1) ;
-}
+} /* end */
 
 #endif /* __cplusplus */
 
