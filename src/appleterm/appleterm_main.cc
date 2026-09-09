@@ -123,7 +123,7 @@ constexpr termnames	termname ;
 
 /* exported subroutines */
 
-int main(int argc,mainv argv,mainv) {
+int main(int argc,con mainv argv,con mainv) {
 	int		rs = 0 ;
 	int		ex = EXIT_SUCCESS ;
 	if (argc >= 3) {
@@ -146,8 +146,7 @@ int main(int argc,mainv argv,mainv) {
 	    ex = EXIT_FAILURE ;
 	}
 	return ex ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
