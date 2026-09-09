@@ -87,12 +87,12 @@ struct ema_st {
 	void operator () (ema *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
+	} ; /* end */
 	int operator () (cchar * = nullptr,int = -1) noex ;
 	operator int () noex {
 	    cchar	*sp = nullptr ;
 	    return operator () (sp,0) ;
-	} ;
+	} ; /* end */
 } ; /* end struct (ema_st) */
 struct ema_co {
 	ema		*op = nullptr ;
@@ -100,11 +100,11 @@ struct ema_co {
 	void operator () (ema *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
+	} ; /* end */
 	operator int () noex ;
 	int operator () () noex { 
 	    return operator int () ;
-	} ;
+	} ; /* end */
 } ; /* end struct (ema_co) */
 struct ema : ema_head {
     	ema_st		start ;
@@ -128,7 +128,7 @@ struct ema : ema_head {
 	void dtor() noex ;
 	destruct ema() {
 	    if (magval) dtor() ;
-	} ;
+	} ; /* end */
 } ; /* end struct (ema) */
 #else	/* __cplusplus */
 typedef EMA		ema ;
@@ -148,23 +148,6 @@ extern int ema_first		(ema *,cchar **) noex ;
 extern int ema_finish		(ema *) noex ;
 
 EXTERNC_end
-
-#ifdef	__cplusplus
-
-template<typename ... Args>
-local int ema_magic(ema *op,Args ... args) noex {
-	int		rs = SR_FAULT ;
-	if (op && (args && ...)) {
-	    rs = (op->magval == EMA_MAGIC) ? SR_OK : SR_NOTOPEN ;
-	}
-	return rs ;
-} /* end subroutine (ema_magic) */
-
-namespace ema_ns {
-    extern int	ema_starter(ema *,cchar *,int) noex ;
-}
-
-#endif /* __cplusplus */
 
 
 #endif /* EMA_INCLUDE */
