@@ -35,10 +35,15 @@
  * Use is subject to license terms.
  */
 
+#include	<envstandards.h>	/* ordered first to configure */
 #include	<sys/types.h>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<cstdio>
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstdio>		/* CSTD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
+
 
 #define	nchars 128	/* number of chars in char set */
 #define	nlines  7	/* number of lines in a banner character */
@@ -52,6 +57,7 @@ struct bann {
 	char alpha[nlines][pposs];
 };
 static struct bann buffer, *bp = &buffer;
+
 static char ctbl[nchars][nlines] = {
 	0, 000, 000, 000, 000, 000, 000, 	/* below 040 */
 	0, 000, 000, 000, 000, 000, 000, 	/* below 040 */
@@ -186,11 +192,11 @@ static char blank = ' ';
 static char plot = '#';
 static int  msk = 0100; /* ? */
 
-static void banner(char *s, struct bann *bufp);
-static void banfil(char *c, struct bann *p);
-static void banset(char c, struct bann *p);
-static void banprt(struct bann *ptr);
-static char convert(unsigned char c);
+local void banner(char *s, struct bann *bufp);
+local void banfil(char *c, struct bann *p);
+local void banset(char c, struct bann *p);
+local void banprt(struct bann *ptr);
+local char convert(unsigned char c);
 
 /* exported subroutines */
 
@@ -211,10 +217,9 @@ int main(int argc, char **argv) {
 		(void) printf("\n");
 	}
 	return 0 ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
-static void banner(char *s, struct bann *bufp) {
+local void banner(char *s, struct bann *bufp) {
 	char *p, *q;
 	unsigned char c;
 	struct bann *r;
@@ -229,31 +234,25 @@ static void banner(char *s, struct bann *bufp) {
 		banfil(q, r);
 		r = (struct bann *)((char *)r + pospch);
 	}
-}
+} /* end */
 
-static void
-banfil(char *c, struct bann *p)
-{
+local void banfil(char *c, struct bann *p) noex {
 	int i, j;
 	for (i = 0; i < nlines; i++) {
 		for (j = 0; j < pospch; j++) {
 			if (((c[i]<<j)&msk) != 0) p->alpha[i][j] = plot;
 		}
 	}
-}
+} /* end */
 
-static void
-banset(char c, struct bann *p)
-{
+local void banset(char c, struct bann *p) {
 	int i, j;
 	for (i = 0; i < nlines; i++)
 		for (j = 0; j < pposs-1; j++)
 			p->alpha[i][j] = c;
-}
+} /* end */
 
-static void
-banprt(struct bann *ptr)
-{
+local void banprt(struct bann *ptr) {
 	int i, j;
 	for (i = 0; i < nlines; i++) {
 		ptr->alpha[i][pposs-1] = '\0';
@@ -263,11 +262,9 @@ banprt(struct bann *ptr)
 		}
 		(void) printf("%s\n", ptr->alpha[i]);
 	}
-}
+} /* end */
 
-static char
-convert(unsigned char c)
-{
+static char convert(unsigned char c) {
 	if (c >= 0xc0 && c <= 0xc6)
 		return ('A');
 	if (c >= 0xc8 && c <= 0xcb)
@@ -317,4 +314,6 @@ convert(unsigned char c)
 	if (c == 0xff)
 		return ('y');
 	return (c & 0177);
-}
+} /* end */
+
+
