@@ -212,17 +212,6 @@ extern int tmpx_getsessions	(tmpx *,vecint *,cchar *) noex ;
 
 EXTERNC_end
 
-#ifdef	__cplusplus
-template<typename ... Args>
-local inline int tmpx_magic(tmpx *op,Args ... args) noex {
-	int		rs = SR_FAULT ;
-	if (op && (args && ...)) {
-	    rs = (op->magval == TMPX_MAGIC) ? SR_OK : SR_NOTOPEN ;
-	}
-	return rs ;
-} /* end subroutine (tmpx_magic) */
-#endif /* __cplusplus */
-
 
 #endif /* TMPX_INCLUDE */
 
