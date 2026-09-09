@@ -246,8 +246,7 @@ int main(int argc,con mainv argv,con mainv envv) {
 	    ex = mapex(mapexs,rs) ;
 	}
 	return ex ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
