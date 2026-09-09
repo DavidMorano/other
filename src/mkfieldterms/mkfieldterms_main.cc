@@ -669,8 +669,7 @@ badarg:
 	usage(pip) ;
 	goto retearly ;
 
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
@@ -686,8 +685,7 @@ static int usage(PI *pip) noex {
 	wlen += rs ;
 
 	return (rs >= 0) ? wlen : rs ;
-}
-/* end subroutine (usage) */
+} /* end subroutine (usage) */
 
 static int addstr(PI *pip,char *a,cc *sp) noex {
 	int		i, c ;
@@ -698,8 +696,7 @@ static int addstr(PI *pip,char *a,cc *sp) noex {
 	} /* end for */
 
 	return i ;
-}
-/* end subroutine (addstr) */
+} /* end subroutine (addstr) */
 
 static int addlower(PI *pip,char *a) noex {
 	int		i, c ;
@@ -718,8 +715,7 @@ static int addlower(PI *pip,char *a) noex {
 	} /* end for */
 
 	return i ;
-}
-/* end subroutine (addlower) */
+} /* end subroutine (addlower) */
 
 static int addupper(PI *pip,char *a) noex {
 	int		i, c ;
@@ -738,7 +734,6 @@ static int addupper(PI *pip,char *a) noex {
 	} /* end for */
 
 	return i ;
-}
-/* end subroutine (addupper) */
+} /* end subroutine (addupper) */
 
 
