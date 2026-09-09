@@ -54,11 +54,11 @@ struct strpack_co {
 	void operator () (strpack *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
+	} ; /* end */
 	int operator () (int = 0) noex ;
 	operator int () noex {
 	    return operator () () ;
-	} ;
+	} ; /* end */
 } ; /* end struct (strpack_co) */
 struct strpack : strpack_head {
 	strpack_co	start ;
@@ -66,15 +66,16 @@ struct strpack : strpack_head {
 	strpack_co	size ;
 	strpack_co	finish ;
 	strpack() noex {
-	    start(this,strpackmem_start) ;
-	    count(this,strpackmem_count) ;
-	    size(this,strpackmem_size) ;
-	    finish(this,strpackmem_finish) ;
+	    start	(this,strpackmem_start) ;
+	    count	(this,strpackmem_count) ;
+	    size	(this,strpackmem_size) ;
+	    finish	(this,strpackmem_finish) ;
+	    magval	= 0 ;
 	} ; /* end ctor */
 	strpack(const strpack &) = delete ;
 	strpack &operator = (const strpack &) = delete ;
 	int store	(cchar *,int = -1,cchar ** = nullptr) noex ;
-	void dtor() noex ;
+	void dtor	() noex ;
 	destruct strpack() {
 	    if (magval) dtor() ;
 	} ;
@@ -97,19 +98,6 @@ extern int strpack_envstore	(strpack *,cc *,cc *,int,cc **) noex ;
 extern int strpack_envstorer	(strpack *,cc *,int,cc *,int,cc **) noex ;
 
 EXTERNC_end
-
-#ifdef	__cplusplus
-
-template<typename ... Args>
-local inline int strpack_magic(strpack *op,Args ... args) noex {
-	int		rs = SR_FAULT ;
-	if (op && (args && ...)) {
-	    rs = (op->magval == STRPACK_MAGIC) ? SR_OK : SR_NOTOPEN ;
-	}
-	return rs ;
-} /* end subroutine (strpack_magic) */
-
-#endif /* __cplusplus */
 
 
 #endif /* STRPACK_INCLUDE */
