@@ -58,14 +58,14 @@ struct dirseen_iter {
 	dirseen_iter() = default ;
 	dirseen_iter(cchar **ov,int oi,int oii) noex : va(ov), i(oi) {
 	    ii = oii ;
-	} ;
+	} ; /* end */
 	dirseen_iter(const dirseen_iter &oit) noex {
 	    if (this != &oit) {
 		va = oit.va ;
 		i = oit.i ;
 		ii = oit.ii ;
 	    }
-	} ;
+	} ; /* end */
 	dirseen_iter &operator = (const dirseen_iter &oit) noex {
 	    if (this != &oit) {
 		va = oit.va ;
@@ -73,14 +73,14 @@ struct dirseen_iter {
 		ii = oit.ii ;
 	    }
 	    return *this ;
-	} ;
+	} ; /* end */
 	bool operator != (const dirseen_iter &) noex ;
 	bool operator == (const dirseen_iter &) noex ;
 	cchar *operator * () noex {
 	    cchar	*rp = nullptr ;
 	    if (i < ii) rp = va[i] ;
 	    return rp ;
-	} ;
+	} ; /* end */
 	dirseen_iter operator + (int) const noex ;
 	dirseen_iter operator += (int) noex ;
 	dirseen_iter operator ++ () noex ; /* pre */
@@ -94,11 +94,11 @@ struct dirseen_co {
 	void operator () (dirseen *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
+	} ; /* end */
 	int operator () () noex ;
 	operator int () noex {
 	    return operator () () ;
-	} ;
+	} ; /* end */
 } ; /* end struct (dirseen_co) */
 struct dirseen : dirseen_head {
 	dirseen_co	start ;
@@ -123,23 +123,10 @@ struct dirseen : dirseen_head {
 	void dtor() noex ;
 	destruct dirseen() {
 	    if (magval) dtor() ;
-	} ;
+	} ; /* end */
 } ; /* end struct (dirseen) */
 #else	/* __cplusplus */
 typedef DIRSEEN		dirseen ;
-#endif /* __cplusplus */
-
-#ifdef	__cplusplus
-
-template<typename ... Args>
-inline int dirseen_magic(dirseen *op,Args ... args) noex {
-	int		rs = SR_FAULT ;
-	if (op && (args && ...)) {
-	    rs = (op->magval == DIRSEEN_MAGIC) ? SR_OK : SR_NOTOPEN ;
-	}
-	return rs ;
-} /* end subroutine (dirseen_magic) */
-
 #endif /* __cplusplus */
 
 EXTERNC_begin
