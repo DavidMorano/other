@@ -73,8 +73,8 @@ using std::cout ;			/* variable */
 
 /* exported subroutines */
 
-int main(int,mainv,mainv) {
-	ulong	id = gethostid() ;
+int main(int,con mainv,con mainv) {
+	con ulong	id = gethostid() ;
 	printf("%08lX\n",id) ;
 } /* end subroutine (main) */
 
