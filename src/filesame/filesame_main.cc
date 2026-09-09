@@ -134,7 +134,6 @@ int main(int argc,mainv argv,mainv) {
 	    } /* end if (matstr) */
 	} /* end if */
 	return ex ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
