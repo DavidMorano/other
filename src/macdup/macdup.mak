@@ -41,7 +41,7 @@ LIBS= -lmacuser -lu
 
 
 INCDIRS= -I$(INCDIR)
-LIBDIRS= -L$(LIBDIR)
+LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
 LIBINFO= $(LIBDIRS) $(LIBS)
@@ -54,7 +54,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACFU= main.o
+OBJ_MACFU= macdup_main.o
 
 
 .SUFFIXES:		.hh .ii .iim .ccm
@@ -106,6 +106,6 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
-main.o:			main.cc 	$(INCS)
+maxdup_main.o:		maxdup_main.cc 	$(INCS)
 
 
