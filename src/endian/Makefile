@@ -35,6 +35,8 @@ DEFS=
 
 INCS=
 
+MODS += 
+
 LIBS=
 
 
@@ -112,6 +114,6 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc
+endian_main.o:		endian_main.cc
 
 
