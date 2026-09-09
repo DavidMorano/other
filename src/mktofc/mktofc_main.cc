@@ -67,7 +67,7 @@
 
 extern "C" {
     extern int	freadln(FILE *,char *,int) noex ;
-}
+} /* end extern (C) */
 
 
 /* local structures */
@@ -122,8 +122,7 @@ int main(int,mainv,mainv) {
 	} /* end for (readling lines) */
 
 	printout(ofp,a) ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
@@ -147,7 +146,6 @@ static int printout(FILE *ofp,const uchar *a) noex {
 	fprintf(ofp,"%c ;\n", CH_RBRACE) ;
 	fflush(ofp) ;
 	return 0 ;
-}
-/* end subroutine (printout) */
+} /* end subroutine (printout) */
 
 
