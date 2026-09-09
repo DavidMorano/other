@@ -59,13 +59,13 @@
 
 /* forward references */
 
-static int	getpm(int,mainv) noex ;
-static int	mklc() noex ;
-static int	mkuc() noex ;
-static int	printcharterms(ccharp) noex ;
-static int	mktoxc(int) noex ;
-static int	tolc(int) noex ;
-static int	touc(int) noex ;
+local int	getpm(int,mainv) noex ;
+local int	mklc() noex ;
+local int	mkuc() noex ;
+local int	printcharterms(ccharp) noex ;
+local int	mktoxc(int) noex ;
+local int	tolc(int) noex ;
+local int	touc(int) noex ;
 
 
 /* local variables */
@@ -124,7 +124,7 @@ int main(int argc,mainv argv,mainv) {
 
 /* local subroutines */
 
-static int getpm(int argc,mainv argv) noex {
+local int getpm(int argc,mainv argv) noex {
     	int		pm = -1 ; /* used afterwards */
 	if (argc > 0) {
 	    if (cc *argz = argv[0] ; argz) {
@@ -139,9 +139,9 @@ static int getpm(int argc,mainv argv) noex {
 
 extern "C" {
     typedef bool (*mkxc_f)(int) noex ;
-}
+} /* end extern (C) */
 
-static int mklc() noex {
+local int mklc() noex {
 	int		rs = SR_OK ;
 	for (int i = 0 ; i < nchars ; i += 1) {
 	    if (char_islc(i)) {
@@ -151,7 +151,7 @@ static int mklc() noex {
 	return rs ;
 } /* end subroutine (mklc) */
 
-static int mkuc() noex {
+local int mkuc() noex {
 	int		rs = SR_OK ;
 	for (int i = 0 ; i < nchars ; i += 1) {
 	    if (char_isuc(i)) {
@@ -161,7 +161,7 @@ static int mkuc() noex {
 	return rs ;
 } /* end subroutine (mklc) */
 
-static int printcharterms(ccharp terms) noex {
+local int printcharterms(ccharp terms) noex {
     	cint		n = (nchars / CHAR_BIT) ;
     	int		rs = SR_OK ;
 	for (int i = 0 ; i < n ; i += 1) {
@@ -176,7 +176,7 @@ static int printcharterms(ccharp terms) noex {
 	return rs ;
 } /* end subroutine (printcharterms) */
 
-static int mktoxc(int w) noex {
+local int mktoxc(int w) noex {
     	int		rs = SR_INVALID ;
 	if ((w >= 0) && (w < case_overlast)) {
 	cchar		*name ;
@@ -217,10 +217,9 @@ static int mktoxc(int w) noex {
 
 	} /* end if (valid) */
 	return rs ;
-}
-/* end subroutine (mktoxc) */
+} /* end subroutine (mktoxc) */
 
-static int tolc(int ch) noex {
+local int tolc(int ch) noex {
     	if ((ch >= 'A') && (ch <= 'Z')) {
 	    ch += 0x20 ;
 	} else if ((ch >= 'À') && (ch <= 'Ö')) {
@@ -231,7 +230,7 @@ static int tolc(int ch) noex {
     	return ch ;
 } /* end subroutine (mklc) */
 
-static int touc(int ch) noex {
+local int touc(int ch) noex {
     	if ((ch >= 'a') && (ch <= 'z')) {
 	    ch -= 0x20 ;
 	} else if ((ch >= 'à') && (ch <= 'ö')) {
