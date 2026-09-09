@@ -6,7 +6,7 @@ The current possible arguments are:
 	clearforward
 
 Synopsis:
-$ termopt <key>
+$ termop <key>
 
 Arguments:
 home		print sequence to put cursor to HOME position
