@@ -42,6 +42,10 @@
 
 /* local defines */
 
+#ifndef	PI
+#define	PI		proginfo
+#endif
+
 #define	MAXARGINDEX	10000
 #define	MAXARGGROUPS	(MAXARGINDEX/8 + 1)
 
@@ -55,7 +59,7 @@
 
 /* forward references */
 
-static int	usage(struct proginfo *) ;
+local int	usage(struct proginfo *) ;
 
 
 /* external variables */
@@ -510,19 +514,14 @@ badnodirs:
 
 	goto ret1 ;
 
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
 
-
-static int usage(pip)
-struct proginfo	*pip ;
-{
+local int usage(PI *pip) noex (
 	int	rs = SR_OK ;
 	int	wlen = 0 ;
-
 
 	rs = fprintf(pip->efp,
 	    "%s: USAGE> %s [<dir(s)> ...] [-s <suffix(es)>] [-Vv]\n",
@@ -535,8 +534,7 @@ struct proginfo	*pip ;
 
 	wlen += rs ;
 	return (rs >= 0) ? wlen : rs ;
-}
-/* end subroutine (usage) */
+} /* end subroutine (usage) */
 
 
 int procfile(pip,namespec,trunclen)
