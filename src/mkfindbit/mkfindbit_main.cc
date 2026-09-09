@@ -32,14 +32,14 @@
 
 #include	<envstandards.h>	/* MUST be ordered first to configure */
 #include	<climits>		/* |UCHAR_MAX| */
-#include	<cstddef>
-#include	<cstdlib>
-#include	<cstdio>
-#include	<clanguage.h>
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<ascii.h>
-#include	<localmisc.h>
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstdio>		/* CSTD */
+#include	<clanguage.h>		/* LIBU */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<ascii.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
 
 
 /* local defines */
@@ -61,11 +61,10 @@ local int	flbsb(int) noex ;
 
 /* exported subroutines */
 
-int main(int,mainv,mainv) {
+int main(int,con mainv,con mainv) {
 	mktabfbs() ;
 	mktablbs() ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
