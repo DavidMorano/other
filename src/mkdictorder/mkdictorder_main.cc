@@ -112,8 +112,7 @@ int main(int,con mainv,con mainv) {
 	printout(ofp,a) ;
 
 	return 0 ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
@@ -136,7 +135,6 @@ local int printout(FILE *ofp,cshort *a) noex {
 	} /* end for */
 	fprintf(ofp,"%c ;\n", CH_RBRACE) ;
 	return 0 ;
-}
-/* end subroutine (printout) */
+} /* end subroutine (printout) */
 
 
