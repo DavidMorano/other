@@ -54,7 +54,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_REPOMANIP= main.o
+OBJ_REPOMANIP= repomanip_main.o
 
 
 .SUFFIXES:		.hh .ii .iim .ccm
@@ -109,6 +109,6 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc
+repomanip_main.o:	repomanip_main.cc
 
 
