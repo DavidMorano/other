@@ -116,7 +116,7 @@ OBJ35_LUO= storebuf.o storeitem.o
 
 OBJ36_LUO= fmtflag.o fmtstr.o sysdbfiles.o
 OBJ37_LUO= getx.o host.o gethe.o sysdbfn.o strlibval.o
-OBJ38_LUO= utmpxx.o ucinfo.o caches.o optval.o
+OBJ38_LUO= utmpxx.o ucinfo.o caches.o
 OBJ39_LUO= filex.o fileobj.o getxx.o bufos.o bufslide.o 
 
 OBJ40_LUO= dirs.o dirseen.o sockaddress.o 
@@ -1140,7 +1140,6 @@ bitrotate.o:		bitrotate.cc	bitrotate.h		$(INCS)
 stdorder.o:		stdorder.cc	stdorder.h		$(ICNS)
 
 # SINGLES
-optval.o:		optval.cc	optval.h		$(INCS)
 sysval.o:		sysval.cc	sysval.hh		$(INCS)
 randlc.o:		randlc.cc	randlc.h		$(INCS)
 calstrs.o:		calstrs.cc	calstrs.h		$(INCS)
