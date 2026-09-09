@@ -181,19 +181,6 @@ extern int	filer_writefd		(filer *,char *,int,int,int) noex ;
 
 EXTERNC_end
 
-#if	__cplusplus
-
-template<typename ... Args>
-local inline int filer_magic(filer *op,Args ... args) noex {
-	int		rs = SR_FAULT ;
-	if (op && (args && ...)) {
-	    rs = (op->magval == FILER_MAGIC) ? SR_OK : SR_NOTOPEN ;
-	}
-	return rs ;
-} /* end subroutine (filer_magic) */
-
-#endif /* __cplusplus */
-
 
 #endif /* FILER_INCLUDE */
 
