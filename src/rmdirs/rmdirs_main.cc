@@ -50,7 +50,6 @@ int main(int argc,con mainv argv,con mainv envv) {
 	    fprintf(stdout,fmt,ccp(pn),ex,strabbrerr(rs),rs) ;
 	} /* end if (error) */
 	return ex ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
