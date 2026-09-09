@@ -54,7 +54,7 @@ ARFLAGS		?= $(MAKEARFLAGS)
 LDFLAGS		?= $(MAKELDFLAGS)
 
 
-OBJ_MACFU= main.o
+OBJ_MACFU= marker_main.o
 
 
 .SUFFIXES:		.hh .ii .iim .ccm
@@ -109,6 +109,6 @@ install:		$(T).x
 	makeinstall $(T).x
 
 
-main.o:			main.cc $(INCS)
+marker_main.o:		marker_main.cc $(INCS)
 
 
