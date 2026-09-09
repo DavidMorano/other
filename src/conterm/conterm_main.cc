@@ -74,7 +74,7 @@
 
 /* imported namespaces */
 
-typedef const int	cint ;
+typedef cint	cint ;
 
 
 /* typedefs */
@@ -84,7 +84,7 @@ typedef const char *const *mainv ;
 
 /* forward references */
 
-static int uc_tcgetsid(int) noex ;
+local int uc_tcgetsid(int) noex ;
 
 
 /* local constants */
@@ -101,20 +101,19 @@ int main(int,mainv,mainv) {
 	int	ex = EXIT_FAILURE ;
 	int	rs ;
 	if ((rs = open(termdev,O_RDONLY,0)) >= 0) {
-	    const int	fd = rs ;
+	    cint	fd = rs ;
 	    if ((rs = uc_tcgetsid(fd)) >= 0) {
 		ex = EXIT_SUCCESS ;
 	    } /* end if (uc_tcgetsid) */
 	    close(fd) ;
 	} /* end if (open) */
 	return ex ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
 /* local subroutines */
 
-static int uc_tcgetsid(int fd) noex {
+local int uc_tcgetsid(int fd) noex {
 	int		to_nomem = TO_NOMEM ;
 	int		rs ;
 	bool		f_exit = false ;
@@ -138,7 +137,6 @@ static int uc_tcgetsid(int fd) noex {
 	    } /* end if (error) */
 	} until ((rs >= 0) || f_exit) ;
 	return rs ;
-}
-/* end subroutine (uc_tcgetsid) */
+} /* end subroutine (uc_tcgetsid) */
 
 
