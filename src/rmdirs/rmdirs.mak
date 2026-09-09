@@ -45,9 +45,9 @@ DEPS_MAIN +=
 OBJ0= rmdirs_main.o
 OBJ1= prognamevar.o shellunder.o
 OBJ2= strabbrerr.o
-OBJ3= deb.o
+OBJ3=
 
-OBJ= obj0.o obj1.o obj2.o obj3.o
+OBJ= obj0.o obj1.o obj2.o
 
 
 INCDIRS=
