@@ -17,20 +17,20 @@
 /* Use is subject to license terms. */
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<iostream>
-#include	<iomanip>
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<prognamevar.hh>
-#include	<localmisc.h>
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<iostream>		/* C++STD */
+#include	<iomanip>		/* C++STD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<prognamevar.hh>	/* LIBUC */
+#include	<localmisc.h>		/* LIBU */
 
 
 using namespace std ;
 
 /* ARGSUSED */
-int main(int argc,mainv argv,mainv envv) {
+int main(int argc,con mainv argv,con mainv envv) {
     	prognamevar	name(argc,argv,envv) ;
 	cout << "Hello world!\n" ;
 	if (argc) {
@@ -40,7 +40,6 @@ int main(int argc,mainv argv,mainv envv) {
 	    }
 	}
 	return 0 ;
-}
-/* end subroutine (main) */
+} /* end subroutine (main) */
 
 
