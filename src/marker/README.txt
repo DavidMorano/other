@@ -1,9 +1,9 @@
-SYSDATA
+MARKER
 
 Print some operating system (OS) data.
 
 Synopsis:
-$ sysdata [<arg(s)>]
+$ marker [<arg(s)>]
 
 Arguments:
 <arg(s)>	optional argument(s)
