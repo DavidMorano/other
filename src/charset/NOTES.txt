@@ -1,4 +1,4 @@
 CHARSET
 
-This program could have been merge dwith MACFU.
+This program could have been merged with MACFU.
 
