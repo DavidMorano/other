@@ -117,11 +117,11 @@ namespace {
 	void operator () (proginfo *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
+	} ; /* end */
 	int operator () (int = 1) noex ;
 	operator int () noex {
 	    return operator () (1) ;
-	} ;
+	} ; /* end */
     } ; /* end struct (proginfo_co) */
     struct proginfo {
 	friend		proginfo_co ;
@@ -244,7 +244,7 @@ int main(int argc,con mainv argv,con mainv envv) {
 	if ((ex == EX_OK) && (rs < 0)) {
 	    cerr << "charset" << ": error (" << rs << ")" << eol ;
 	    ex = mapex(mapexs,rs) ;
-	}
+	} /* end */
 	return ex ;
 } /* end subroutine (main) */
 
