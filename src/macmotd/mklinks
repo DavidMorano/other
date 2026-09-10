@@ -1,5 +1,5 @@
-#!/usr/extra/bin/ksh
-# MKLINKS
+#!/usr/local/bin/ksh
+# MKLINKS (macmotd)
 
 CMDS=
 CMDS+=" macmotd "
@@ -12,7 +12,7 @@ function linkdir {
   for C in ${CMDS} ; do
     ln -f ${LOCPROG} ${TDIR}/sbin/${C}
   done
-}
+} # end function
 
 if [[ -x "${LOCPROG}" ]] ; then
   for D in ${TDIRS} ; do
