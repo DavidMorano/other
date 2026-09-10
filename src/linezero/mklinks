@@ -1,4 +1,4 @@
-#!/usr/extra/bin/ksh
+#!/usr/local/bin/ksh
 # MKLINKS (macfiles)
 
 CMDS+=" linezero "
@@ -11,7 +11,7 @@ function linkdir {
   for C in ${CMDS} ; do
     ln -f ${LOCPROG} ${TDIR}/bin/${C}
   done
-}
+} # end function
 
 if [[ -x "${LOCPROG}" ]] ; then
   for D in ${TDIRS} ; do
