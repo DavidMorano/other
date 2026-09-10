@@ -98,7 +98,7 @@ constexpr tabent	table[] = {
 int main(int argc,cchar **,cchar **) {
 	int	ex = 1 ;
 	if (argc > 0) {
-	    cchar	*fmt = "%3d %2X %03o %-3s %s\n" ;
+	    cchar	*fmt = "%3d %02X %03o %-3s %s\n" ;
 	    for (int i = 0 ; i < 0x20 ; i += 1) {
 		printf(fmt,i,i,i,table[i].cname,table[i].explain) ;
 	    } /* end for */
