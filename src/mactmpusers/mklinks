@@ -1,5 +1,5 @@
-#!/usr/extra/bin/ksh
-# MACTMPUSERS
+#!/usr/local/bin/ksh
+# MACTMPUSERS (tmpusers)
 
 CMDS=" mktmpusers tmpusers tmpmounts tmpuserdir "
 
@@ -11,7 +11,7 @@ function linkdir {
   for C in ${CMDS} ; do
     ln -f ${LOCPROG} ${TDIR}/bin/${C}
   done
-}
+} # end function
 
 if [[ -x "${LOCPROG}" ]] ; then
   for D in ${TDIRS} ; do
