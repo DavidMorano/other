@@ -51,7 +51,6 @@ OBJ= obj0.o
 
 
 INCDIRS=
-
 LIBDIRS= -L lib
 
 RUNINFO= -rpath $(RUNDIR)
