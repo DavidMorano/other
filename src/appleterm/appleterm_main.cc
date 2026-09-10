@@ -5,6 +5,7 @@
 /* print out a character sequence to send a command to Apple-Terminal */
 /* version %I% last-modified %G% */
 
+#define	CF_DEBUG	0		/* debugging */
 
 /* revision history:
 
@@ -29,33 +30,33 @@
 #include	<cstdlib>		/* CSTD |EXIT_SUCCESS| */
 #include	<cstring>		/* CSTD |strchr(3c)|  + |lenstr(3c)| */
 #include	<string>		/* C++STD */
-#include	<cctype>		/* CSTD |isprint(3c)| */
 #include	<algorithm>		/* C++STD */
 #include	<iostream>		/* C++STD */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
+#include	<getfdfile.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU |eol| */
+#include	<dprint.hh>		/* LIBU |DPRINTF(3u)| */
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 
 import libutil ;			/* |lenstr(3u)| */
+import ureserve ;			/* |isprintlatin(3u)| */
 
 /* local defines */
 
-#ifndef	FD_STDIN
-#define	FD_STDIN	0
-#endif
-#ifndef	FD_STDOUT
-#define	FD_STDOUT	1
-#endif
-
 #define	ENCBUFLEN	10
+
+#ifndef	CF_DEBUG
+#define	CF_DEBUG	1		/* debugging */
+#endif
 
 
 /* local namespaces */
 
 using std::string ;			/* type */
 using std::cout ;			/* variable */
+using std::cerr ;			/* variable */
 
 
 /* local typedefs */
@@ -72,16 +73,17 @@ using std::cout ;			/* variable */
 
 /* forward references */
 
-local int	form(int,cchar *) noex ;
-local int	perenc(char *,int,int) noex ;
-local char	hexchar(int) noex ;
-local bool	isnotbadchar(int) noex ;
+local int	getwhich	(cchar *) noex ;
+local int	form		(int,cchar *) noex ;
+local int	perenc		(char *,int,int) noex ;
+local char	hexchar		(int) noex ;
+local bool	isnotbadchar	(int) noex ;
 
 
 /* local variables */
 
-constexpr char		badchars[] = R"xx(%:\'"&)xx" ;
-constexpr char		docprefix[] = "file://" ;
+constexpr char		badchars	[] = R"xx(%:\'"&)xx" ;
+constexpr char		docprefix	[] = "file://" ;
 
 enum types {
     	type_pwd,
@@ -92,30 +94,31 @@ enum types {
 } ; /* end enum (types) */
 
 namespace {
-    struct termnames {
+    struct typenames {
 	cchar		*n[type_overlast + 1] ;
-	consteval termnames() noex {
-    	    n[type_pwd] = "pwd" ;
-    	    n[type_doc] = "doc" ;
-    	    n[type_tab] = "tab" ;
-    	    n[type_win] = "win" ;
-    	    n[type_overlast] = nullptr ;
+	consteval typenames() noex {
+    	    n[type_pwd]		= "pwd" ;
+    	    n[type_doc]		= "doc" ;
+    	    n[type_tab]		= "tab" ;
+    	    n[type_win]		= "win" ;
+    	    n[type_overlast]	= nullptr ;
 	} ; /* end ctor */
-    } ; /* end struct (termnames) */
-    struct termcodes {
+    } ; /* end struct (typenames) */
+    struct typecodes {
 	cchar		*n[type_overlast + 1] ;
-	consteval termcodes() noex {
-    	    n[type_pwd] = "6" ;
-    	    n[type_doc] = "7" ;
-    	    n[type_tab] = "1" ;
-    	    n[type_win] = "2" ;
-    	    n[type_overlast] = nullptr ;
+	consteval typecodes() noex {
+    	    n[type_pwd]		= "6" ;
+    	    n[type_doc]		= "7" ;
+    	    n[type_tab]		= "1" ;
+    	    n[type_win]		= "2" ;
+    	    n[type_overlast]	= nullptr ;
 	} ; /* end ctor */
-    } ; /* end struct (termcodes) */
+    } ; /* end struct (typecodes) */
 } /* end namespace */
 
-constexpr termcodes	termcode ;
-constexpr termnames	termname ;
+constexpr typenames	termname ;
+constexpr typecodes	termcode ;
+constexpr bool		f_debug	= CF_DEBUG ;
 
 
 /* exported variables */
@@ -124,32 +127,44 @@ constexpr termnames	termname ;
 /* exported subroutines */
 
 int main(int argc,con mainv argv,con mainv) {
-	int		rs = 0 ;
+	int		rs = SR_OK ;
 	int		ex = EXIT_SUCCESS ;
-	if (argc >= 3) {
-	    cchar *tn = argv[1] ;
-	    bool f = false ;
-	    int	 type ; /* used-afterwards */
-	    rs = -1 ;
-	    for (type = 0 ; termname.n[type] ; type += 1) {
-		f = (strcmp(termname.n[type],tn) == 0) ;
-		if (f) break ;
-	    } /* end for */
-	    if (f) {
-		cchar	*text = argv[2] ;
-	        rs = form(type,text) ;
-	    } /* end if */
+	if (argc >= 3) ylikely {
+	    rs = SR_BADRQC ;
+	    if (cchar *tn = argv[1] ; tn[0]) ylikely {
+		DPRINTF("tn=%s\n",tn) ;
+	        if (cint w = getwhich(tn) ; w >= 0) {
+		    DPRINTF("w=%d\n",w) ;
+		    cchar *text = argv[2] ;
+	            rs = form(w,text) ;
+		} else {
+		    cerr << "appleterm: " << "invalid type" << eol ;
+		    rs = SR_INVALID ;
+		} /* end if (getwhich) */
+	    } /* end if (non-empty) */
 	} else {
-	    rs = -1 ;
+	    rs = SR_NOMSG ;
 	} /* end if (had arguments) */
 	if ((rs == EXIT_SUCCESS) && (rs < 0)) {
 	    ex = EXIT_FAILURE ;
-	}
+	} /* end if (error) */
 	return ex ;
 } /* end subroutine (main) */
 
 
 /* local subroutines */
+
+local int getwhich(cchar *tn) noex {
+	int	type ; /* used-afterwards */
+	bool	f = false ;
+	DPRINTF("ent tn=%s\n",tn) ;
+	for (type = 0 ; termname.n[type] ; type += 1) {
+	    DPRINTF("test type=%d\n",type) ;
+	    if ((f = (strcmp(termname.n[type],tn) == 0))) break ;
+	} /* end for */
+	DPRINTF("ret f=%u type=%d\n",f,type) ;
+	return (f) ? type : -1 ;
+} /* end subroutine (getwhich) */
 
 local string mkprefix(int type) noex {
     	string	ps ;
@@ -162,13 +177,14 @@ local string mkprefix(int type) noex {
 
 local int form(int type,cchar *text) noex {
 	cnullptr	np{} ;
-    	int		rs = -1 ;
-	if (text[0]) {
+    	int		rs = SR_NOMSG ;
+	if (text[0]) ylikely {
 	    string	s ;
 	    cint	elen = ENCBUFLEN ;
 	    char	ebuf[ENCBUFLEN+1] = {} ;
 	    cchar	*fn = text ;
 	    int		fl = lenstr(text) ;
+	    rs = SR_OK ;
 	    if ((type == type_pwd) || (type == type_doc)) {
 		s += docprefix ;
 		while ((fl > 1) && (fn[fl-1] == '/')) {
@@ -180,24 +196,23 @@ local int form(int type,cchar *text) noex {
 	        } /* end for (encoding) */
 	    } else {
 		for (int i = 0 ; (i < fl) && fn[i] ; i += 1) {
-		    cint ch = fn[i] ;
-		    if (strchr(badchars,ch) == np) {
+		    if (cint ch = fn[i] ; strchr(badchars,ch) == np) {
 			s += char(ch) ;
 		    }
 	        } /* end for (encoding) */
 	    } /* end if (type specific) */
-	    {
+	    if (rs >= 0) ylikely {
 	        string	ws = mkprefix(type) + s + "\a" ;
 	        cout << ws ;
-		rs = 0 ;
-	    }
+		rs = SR_OK ;
+	    } /* end if (ok) */
 	} /* end if (valid) */
 	return rs ;
 } /* end subroutine (form) */
 
 local int perenc(char *ebuf,int,int ch) noex {
 	char		*ep = ebuf ;
-	if (isprint(ch) && isnotbadchar(ch)) {
+	if (isprintlatin(ch) && isnotbadchar(ch)) {
 	    *ep++ = char(ch) ;
 	    *ep = '\0' ;
 	} else {
@@ -215,7 +230,7 @@ local char hexchar(int ch) noex {
 	    xch = ('0' + ch) ;
 	} else {
 	    xch = ('A' + (ch - 10)) ;
-	}
+	} /* end */
 	return charconv(xch) ;
 } /* end subroutine (hexchar) */
 
