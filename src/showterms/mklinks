@@ -1,5 +1,5 @@
 #!/usr/local/bin/ksh
-# MKLINKS
+# MKLINKS (showterms)
 
 CMDS=" showterms "
 LOCPROG=showterms.x
@@ -16,7 +16,7 @@ function linkdir {
   for C in ${CMDS} ; do
     ln -f ${LOCPROG} ${TDIR}/bin/${C}
   done
-}
+} # end function
 
 if [[ -x "${LOCPROG}" ]] ; then
   for D in ${TDIRS} ; do
