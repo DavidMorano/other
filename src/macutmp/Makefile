@@ -178,7 +178,6 @@ ucx.o:			ucx.dir
 ucx.dir:
 	makesubdir $@
 
-uclibmem.o:		uclibmem.cc	uclibmem.h
 ucttyname.o:		ucttyname.cc	ucttyname.h
 
 
