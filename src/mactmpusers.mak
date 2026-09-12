@@ -35,7 +35,7 @@ DEFS +=
 
 INCS +=
 
-MODS += umisc.ccm usysconf.ccm ulibvals.ccm
+MODS += umisc.o usysconf.o ulibvals.o
 
 LIBS += -lf -lu
 
@@ -153,15 +153,14 @@ tmpusers_main.o:	tmpusers_main.cc $(DEPS_MAIN)		$(INCS)
 
 umisc.o:		umisc.dir
 umisc.dir:
+	makesubdir $@
 
 usysconf.o:		usysconf.dir
 usysconf.dir:
+	makesubdir $@
 
 ulibvals.o:		ulibvals.dir
 ulibvals.dir:
-
-deb.o:			deb.dir
-deb.dir:
 	makesubdir $@
 
 
