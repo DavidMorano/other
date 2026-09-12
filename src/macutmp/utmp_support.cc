@@ -28,14 +28,15 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<sys/types.h>		/* |struct passwd| */
-#include	<sys/stat.h>		/* <- for |USTAT| */
-#include	<sys/mman.h>
-#include	<unistd.h>		/* <- for |ttyname_r(3c)| */
-#include	<cstdlib>		/* <- for |EXIT_SUCCESS| */
-#include	<cstdio>		/* <- for |printf(3c)| */
-#include	<clanguage.h>
-#include	<usysbase.h>
+#include	<sys/types.h>		/* POSSIX® |passwd| */
+#include	<sys/stat.h>		/* POSIX® |USTAT| */
+#include	<sys/mman.h>		/* POSIX® */
+#include	<unistd.h>		/* POSIX® |ttyname_r(3c)| */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD |EXIT_SUCCESS| */
+#include	<cstdio>		/* CSTD |printf(3c)| */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
 #include	<localmisc.h>		/* |TIMEBUFLEN| */
 
 #pragma		GCC dependency		"mod/umisc.ccm"
