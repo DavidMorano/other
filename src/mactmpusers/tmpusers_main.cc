@@ -1,4 +1,4 @@
-/* tmpusers_main SUPPORT (macmktmpusers) */
+/* tmpusers_main SUPPORT (mktmpusers) */
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
@@ -139,11 +139,11 @@ namespace {
 	void operator () (proginfo *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
+	} ; /* end */
 	int operator () (int = 0) noex ;
 	operator int () noex {
 	    return operator () (0) ;
-	} ;
+	} ; /* end */
     } ; /* end struct (proginfo_co) */
     typedef int (proginfo::*proginfo_m)() noex ;
     struct proginfo {
@@ -203,14 +203,14 @@ namespace {
 	int tmpuserdir_already() noex ;
 	int tmpuserdir_link() noex ;
     private:
-	int istart() noex ;
-	int ifinish() noex ;
-	int ipmbegin() noex ;
-	int ipmend() noex ;
-	int getpn(mainv) noex ;
-	int revertuser() noex ;
-	int iuserbegin() noex ;
-	int iuserend() noex ;
+	int istart	() noex ;
+	int ifinish	() noex ;
+	int ipmbegin	() noex ;
+	int ipmend	() noex ;
+	int getpn	(mainv) noex ;
+	int revertuser	() noex ;
+	int iuserbegin	() noex ;
+	int iuserend	() noex ;
     } ; /* end struct (proginfo) */
     struct confstritem {
 	cchar		*dname ;
@@ -283,7 +283,6 @@ constexpr proginfo_m	tmpuserdir_mems[] = {
 
 static cint		maxpathlen	= ulibval.maxpathlen ;
 static cint		usernamelen	= ulibval.usernamelen ;
-
 static cint		varbuflen	= max(usernamelen,DIGBUFLEN) ;
 
 constexpr char		tmpdir[]	= "/tmp" ;
@@ -333,7 +332,7 @@ int main(int argc,con mainv argv,con mainv envv) {
 	} /* end if (proginfo) */
 	if ((ex == EX_OK) && (rs < 0)) {
 	    ex = mapex(mapexs,rs) ;
-	}
+	} /* end if (error) */
         DEBPRINTF("ret ex=%d rs=%d\n",ex,rs) ;
 	return ex ;
 } /* end subroutine (main) */
@@ -359,7 +358,7 @@ int proginfo::istart() noex {
 			delete pbuf ;
 			pbuf = nullptr ;
 			plen = 0 ;
-		    }
+		    } /* end if (error) */
 	        } /* end if (new-char) */
 	    } /* end if (maxpathlen) */
 	} /* end if (proginfo::getpn) */
@@ -373,13 +372,13 @@ int proginfo::ifinish() noex {
 	    dbuf = nullptr ;
 	    dlen = 0 ;
 	    dl = 0 ;
-	}
+	} /* end if (delete) */
 	if (pbuf) {
 	    delete [] pbuf ;
 	    pbuf = nullptr ;
 	    plen = 0 ;
 	    pl = 0 ;
-	}
+	} /* end if (delete) */
 	return rs ;
 } /* end method (proginfo::ifinish) */
 
@@ -400,9 +399,9 @@ int proginfo::ipmend() noex {
 } /* end method (proginfo::ipmend) */
 
 int proginfo::iuserbegin() noex {
+	const uid_t	uid = getuid() ;
     	cnothrow	nt{} ;
 	cnullptr	np{} ;
-	const uid_t	uid = getuid() ;
 	int		rs = SR_NOMEM ;
 	cint		vlen = varbuflen ;
 	char		vbuf[varbuflen + 1] ;
@@ -435,7 +434,7 @@ int proginfo::iuserend() noex {
 	    delete [] ubuf ;
 	    ubuf = nullptr ;
 	    ulen = 0 ;
-	}
+	} /* end if (delete) */
 	return rs ;
 } /* end method (proginfo::iuserend) */
 
@@ -506,7 +505,7 @@ int proginfo::tmpusers_wait() noex {
 	    } /* end while */
 	    if ((rs >= 0) && fto) {
 		rs = SR_TIMEDOUT ;
-	    }
+	    } /* end if */
 	} /* end if (snadd) */
 	return rs ;
 } /* end subroutine (proginfo::tmpusers_wait) */
@@ -526,7 +525,7 @@ int proginfo::tmpusers_make() noex {
 		} else if (rs == SR_EXISTS) {	/* race condition? */
 		    rs = SR_OK ;
 		}
-	    }
+	    } /* end if */
 	} /* end if (snadd) */
 	return (rs >= 0) ? c : rs ;
 } /* end subroutine (proginfo::tmpusers_make) */
@@ -605,11 +604,11 @@ int proginfo::tmpmounts_oners() noex {
 		    rs = tmpmounts_mklink() ;
 		    c = rs ;
 		}
-	    }
+	    } /* end if */
 	} else if (isNotPresent(rs)) {
 	    rs = tmpmounts_mklink() ;
 	    c = rs ;
-	}
+	} /* end if */
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::tmpmounts_oners) */
 
@@ -680,7 +679,7 @@ int proginfo::tmpmounts_vardir() noex {
 		} else if (isNotPresent(rs)) {
 	    	    fprintf(stderr,fmt,pn,rs) ;
 		}
-	    }
+	    } /* end if */
 	} else {
 	    fprintf(stderr,fmt,pn,rs) ;
 	}
