@@ -57,28 +57,28 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<sys/types.h>		/* |struct passwd| */
-#include	<sys/stat.h>		/* <- for |USTAT| */
-#include	<sys/mman.h>
-#include	<unistd.h>		/* <- for |ttyname_r(3c)| */
-#include	<utmpx.h>		/* <- for |getutxline(3c)| */
-#include	<pwd.h>			/* <- for |getpwnam(3c)| */
-#include	<cstdlib>		/* <- for |EXIT_SUCCESS| */
-#include	<cstdio>		/* <- for |printf(3c)| */
-#include	<cstring>		/* <- |strncmp(3c)| */
-#include	<iostream>
-#include	<string_view>
-#include	<envstandards.h>	/* ordered first to configure */
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<usyscalls.h>
-#include	<usupport.h>
+#include	<sys/types.h>		/* POSIX® |passwd| */
+#include	<sys/stat.h>		/* POSIX® |ustat| */
+#include	<sys/mman.h>		/* POSIX® */
+#include	<unistd.h>		/* POSIX® |ttyname_r(3c)| */
+#include	<utmpx.h>		/* POSIX® |getutxline(3c)| */
+#include	<pwd.h>			/* POSIX® |getpwnam(3c)| */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstdio>		/* CSTD |printf(3c)| */
+#include	<cstring>		/* CSTD |strncmp(3c)| */
+#include	<iostream>		/* C++STD */
+#include	<string_view>		/* C++STD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU */
+#include	<usupport.h>		/* LIBU */
 #include	<ucx.h>			/* |uc_ttyname(3uc)| + |uc_tc(3uc)| */
 #include	<localmisc.h>		/* |TIMEBUFLEN| */
 
-#pragma		GCC dependency	"mod/libutil.ccm"
-#pragma		GCC dependency	"mod/umisc.ccm"
-#pragma		GCC dependency	"mod/ureserve.ccm"
+#pragma		GCC dependency		"mod/libutil.ccm"
+#pragma		GCC dependency		"mod/umisc.ccm"
+#pragma		GCC dependency		"mod/ureserve.ccm"
 
 import libutil ;			/* |lenstr(3u)| */
 import umisc ;				/* |snadd(3u)| */
@@ -153,12 +153,12 @@ typedef string_view		strview ;
 /* local structures */
 
 struct utmpx32 {
-        char ut_user[_UTX_USERSIZE];    /* login name */
-        char ut_id[_UTX_IDSIZE];        /* id */
-        char ut_line[_UTX_LINESIZE];    /* tty name */
-        pid_t ut_pid;                   /* process id creating the entry */
-        short ut_type;                  /* type of this entry */
-	uint32_t		tv[2] ;
+        char	ut_user[_UTX_USERSIZE];    /* login name */
+        char	ut_id[_UTX_IDSIZE];        /* id */
+        char	ut_line[_UTX_LINESIZE];    /* tty name */
+        pid_t		ut_pid ;	/* process id creating the entry */
+        short		ut_type ;	/* type of this entry */
+	uint32_t	tv[2] ;
         char ut_host[_UTX_HOSTSIZE];    /* host name */
         __uint32_t ut_pad[16];          /* reserved for future use */
 } ; /* end struct (utmpx32) */
@@ -166,17 +166,17 @@ struct utmpx32 {
 
 /* forward references */
 
-local int getpm(int,mainv,mainv) noex ;
-local int prutmp(bool) noex ;
-local int boottime() noex ;
-local int consoleid() noex ;
-local int findsid(int) noex ;
-local int findstdin(int) noex ;
-local int findenv(int) noex ;
-local int findstat(int) noex ;
-local int printutxval(int,UTMPX *) noex ;
-local int sirchr(cchar *,int,int) noex ;
-local int utmpwrite(UTMPX *) noex ;
+local int getpm		(int,mainv,mainv) noex ;
+local int prutmp	(bool) noex ;
+local int boottime	() noex ;
+local int consoleid	() noex ;
+local int findsid	(int) noex ;
+local int findstdin	(int) noex ;
+local int findenv	(int) noex ;
+local int findstat	(int) noex ;
+local int printutxval	(int,UTMPX *) noex ;
+local int sirchr	(cchar *,int,int) noex ;
+local int utmpwrite	(UTMPX *) noex ;
 
 local bool isourtype(UTMPX *up) noex {
 	bool	f = false ;
@@ -306,9 +306,9 @@ int main(int argc,con mainv argv,con mainv) {
 		break ;
 	    } /* end switch */
 	} /* end if (getpm) */
-	if ((rs < 0) && (ex == 0)) {
+	if ((ex == EXIT_SUCCESS) && (rs < 0)) {
 	    ex = EXIT_FAILURE ;
-	}
+	} /* end if (error) */
 	return ex ;
 } /* end subroutine (main) */
 
@@ -524,7 +524,7 @@ local int findstdin(int pm) noex {
 	cint		fd = FD_STDIN ;
 	int		rs ;
 	bool		f = false ;
-	if (USTAT sb ; (rs = u_fstat(fd,&sb)) >= 0) {
+	if (ustat sb ; (rs = u_fstat(fd,&sb)) >= 0) {
 	    cchar	*devprefix = DEVPREFIX ;
 	    char	tbuf[tlen+1] ;
 	    if ((rs = uc_ttyname(fd,tbuf,tlen)) >= 0) {
@@ -648,7 +648,7 @@ local int printutxval(int pm,UTMPX *up) noex {
 	} /* end switch */
 	if ((rs >= 0) && fl && (pm != progmode_logged)) {
 	    cout << obuf << eol ;
-	}
+	} /* end */
 	return rs ;
 } /* end subroutine (printutxval) */
 
@@ -692,7 +692,7 @@ local int utmpwrite(UTMPX *up) noex {
 	int		f = false ;
 	if ((rs = u_open(utmpxfname,O_RDWR,0664)) >= 0) {
 	    cint	fd = rs ;
-	    if (USTAT sb ; (rs = u_fstat(fd,&sb)) >= 0) {
+	    if (ustat sb ; (rs = u_fstat(fd,&sb)) >= 0) {
 	        csize	ms = sb.st_size ;
 		cint	mp = (PROT_READ | PROT_WRITE) ;
 		cint	mf = MAP_SHARED ;
