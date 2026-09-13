@@ -37,7 +37,7 @@ INCS +=
 
 MODS +=
 
-LIBS= -luo -lu
+LIBS= -lu -lf
 
 
 INCDIRS=
