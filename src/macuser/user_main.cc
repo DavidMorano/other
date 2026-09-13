@@ -94,23 +94,23 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* must be ordered first to configure */
-#include	<sys/types.h>
-#include	<sys/param.h>
-#include	<unistd.h>		/* |getusershell(3c)| */
-#include	<utmpx.h>
-#include	<pwd.h>
-#include	<grp.h>
-#include	<climits>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<cstdio>
-#include	<cstring>		/* |strncmp(3c)| */
-#include	<algorithm>
-#include	<unordered_set>
-#include	<utility>
-#include	<string>
-#include	<fstream>
-#include	<iostream>
+#include	<sys/types.h>		/* POSIX® */
+#include	<sys/param.h>		/* POSIX® */
+#include	<unistd.h>		/* POSIX® |getusershell(3c)| */
+#include	<utmpx.h>		/* POSIX® */
+#include	<pwd.h>			/* POSIX® */
+#include	<grp.h>			/* POSIX® */
+#include	<climits>		/* CSTD */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstdio>		/* CSTD */
+#include	<cstring>		/* CSTD |strncmp(3c)| */
+#include	<algorithm>		/* C++STD */
+#include	<unordered_set>		/* C++STD */
+#include	<utility>		/* C++STD */
+#include	<string>		/* C++STD */
+#include	<fstream>		/* C++STD */
+#include	<iostream>		/* C++STD */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
 #include	<usyscalls.h>		/* LIBU */
@@ -186,7 +186,6 @@ using libu::strwcpy ;			/* subroutine */
 using libu::hasnotempty ;		/* subroutine */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
-using std::nothrow ;			/* constant */
 
 
 /* local typedefs */
@@ -267,14 +266,14 @@ constexpr bool		f_getusershell	= CF_GETUSERSHELL ;
 
 /* forward references */
 
-local int	getpn(int,mainv,mainv) noex ;
-local int	procgroup(int,const userinfo *) noex ;
-local int	printgroup(const userinfo *) noex ;
-local int	printshells() noex ;
-local int	printuserents() noex ;
-local int	printgroupents() noex ;
+local int	getpn		(int,mainv,mainv) noex ;
+local int	procgroup	(int,const userinfo *) noex ;
+local int	printgroup	(const userinfo *) noex ;
+local int	printshells	() noex ;
+local int	printuserents	() noex ;
+local int	printgroupents	() noex ;
 
-local UTMPX	*getutxliner(UTMPX *) noex ;
+local UTMPX	*getutxliner	(UTMPX *) noex ;
 
 
 /* local variables */
@@ -291,8 +290,8 @@ constexpr int		utl_user	= UT_NAMESIZE ;
 constexpr int		utl_line	= UT_LINESIZE ;
 constexpr int		utl_host	= UT_HOSTSIZE ;
 
-constexpr cchar		fnshells[] = FNSHELLS ;
-constexpr cchar		devprefix[] = DEVPREFIX ;
+constexpr cchar		fnshells	[] = FNSHELLS ;
+constexpr cchar		devprefix	[] = DEVPREFIX ;
 
 
 /* exported variables */
@@ -336,7 +335,7 @@ int main(int argc,con mainv argv,con mainv) {
 	} /* end if (getpn) */
 	if ((ex == EXIT_SUCCESS) && (rs < 0)) {
 	    ex = EXIT_FAILURE ;
-	}
+	} /* end if (error) */
 	DPRINTF("ret rs=%d ex=%d\n",rs,ex) ;
 	return ex ;
 } /* end subroutine (main) */
@@ -360,7 +359,7 @@ int userinfo::printdef(int pm,int argc,mainv argv,uid_t uid) noex {
 	    } /* end for */
 	} else {
 	    rs = printone(pm,uid) ;
-	}
+	} /* end if */
 	return rs ;
 } /* end method (userinfo::printdef) */
 
@@ -439,17 +438,18 @@ local int printgroup(const userinfo *uip) noex {
 } /* end subroutine (printgroup) */
 
 local int printshells() noex {
-	char		*lbuf ;
+    	cnullptr	np{} ;
+    	cnothrow	nt{} ;
 	int		rs = SR_NOMEM ;
 	int		rs1 ;
 	if_constexpr (f_getusershell) {
 	    rs = SR_OK ;
-	    while ((lbuf = getusershell()) != nullptr) {
-		cout << lbuf << eol ;
-	    } /* end while */
+	    for (cchar *cp ; (cp = getusershell()) != np ; ) {
+		cout << cp << eol ;
+	    } /* end for */
 	} else {
 	    cint	llen = MAXLINE ;
-	    if ((lbuf = new(nothrow) char[llen+1]) != nullptr) {
+	    if (char *lbuf = new(nt) char[llen+1]) ylikely {
 	        try {
 		    if (ccfile fis ; (rs = fis.open(fnshells)) >= 0) {
 		        while ((rs = fis.readln(lbuf,llen)) > 0) {
