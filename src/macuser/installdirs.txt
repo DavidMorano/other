@@ -1,2 +1,2 @@
+/usr/extra
 /usr/local
-/opt/local
