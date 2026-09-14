@@ -118,30 +118,27 @@ int main(int argc,con mainv argv,con mainv) {
 /* local subroutines */
 
 local int iterate(dirit &dir,veccp &exts) {
-	cnullptr	np{} ;
 	cauto		ite = exts.end() ;
 	int		rs = SR_OK ;
 	int		c = 0 ;
         for (cauto &e : dir) {
-            path        bn ;
-            cchar       *bns ;
-            if (e.is_regular_file()) {
+            if (path bn ; e.is_regular_file()) {
                 const path      &p = e.path() ;
                 bn = p.filename() ;
-                bns = bn.c_str() ;
-                if (cchar *tp ; (tp = strrchr(bns,'.')) != np) {
-                    cchar       *ep = (tp + 1) ;
-                    if (ep[0]) {
-                        cauto fif = rg::find_if ;
-                        cauto strmat = [ep] (cc *s) noex -> bool {
-                            return (strcmp(s,ep) == 0) ;
-                        } ; /* end lambda */
-                        if (cauto &it = fif(exts,strmat) ; it != ite) {
-			    c += 1 ;
-                            cout << bns << '\n' ;
-                        } /* end if */
-                    } /* end if (non-empty) */
-                } /* end if (had-extension) */
+                if (cchar *bns = bn.c_str() ; bns[0]) {
+                    if (cchar *tp = strrchr(bns,'.')) {
+                        if (cchar *ep = (tp + 1) ; ep[0]) {
+                            cauto fif = rg::find_if ;
+                            cauto strmat = [ep] (cc *s) noex -> bool {
+                                return (strcmp(s,ep) == 0) ;
+                            } ; /* end lambda */
+                            if (cauto &it = fif(exts,strmat) ; it != ite) {
+			        c += 1 ;
+                                cout << bns << eol ;
+                            } /* end if */
+                        } /* end if (non-empty) */
+                    } /* end if (had-extension) */
+		} /* end if (non-empty) */
             } /* end if (regular-file) */
         } /* end for */
 	return (rs >= 0) ? c : rs ;
