@@ -533,7 +533,7 @@ local int findstdin(int pm) noex {
 		    UTMPX	ut{} ;
 		    cchar	*line = (tbuf + n) ;
 		    strncpy(ut.ut_line,line,utl_line) ;
-		    if (UTMPX *up ; (up = getutxliner(&ut)) != nullptr) {
+		    if (UTMPX *up = getutxliner(&ut)) {
 			f = true ;
 			rs = printutxval(pm,up) ;
 		    }
@@ -552,11 +552,11 @@ local int findenv(int pm) noex {
 	int		rs = SR_OK ;
 	bool		f = false ;
 	for (auto const &vn : utmpvars) {
-	    if (cchar *line ; (line = getenv(vn)) != nullptr) {
+	    if (cchar *line = getenv(vn)) {
 	        if (line[0]) {
 	            UTMPX	ut{} ;
 	            strncpy(ut.ut_line,line,utl_line) ;
-	            if (UTMPX *up ; (up = getutxliner(&ut)) != nullptr) {
+	            if (UTMPX *up = getutxliner(&ut)) {
 		        f = true ;
 		        rs = printutxval(pm,up) ;
 	            }
