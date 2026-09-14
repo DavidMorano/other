@@ -26,11 +26,11 @@
 	directories that prefix-match on the given pattern.
 
 	Synopsis:
-	$ rmsubpat <pattern> <dir(s)>
+	$ rmsubpat [-d <dir(s)>] <pattern(s)> 
 
 	Arguments:
-	<pattern>	pattern to match on
 	<dir(s)>	directories to search
+	<pattern(s)>	pattern(s) to match on
 
 	Returns:
 	EXIT_SUCCESS	OK
@@ -54,6 +54,7 @@
 #pragma		GCC dependency		"mod/libutil.ccm"
 
 import libutil ;			/* |lenstr(3u)| */
+import ureserve ;			/* |vecstr(3u)| */
 
 /* local defines */
 
@@ -82,16 +83,15 @@ typedef directory_iterator	dirit ;
 
 namespace {
     struct dirmgr {
-	mainv	argv ;
-	cchar	*patp ;
-	int	argc ;
-	int	patl ;
-	dirmgr(int c,con mainv v) noex : argc(c), argv(v) { 
-	    patp = nullptr ;
-	    patl = 0 ;
-	} ;
+	mainv		argv ;
+	int		argc ;
+	dirmgr(int c,con mainv v) noex : argc(c), argv(v) { } ;
 	operator int () noex ;
-	int check(cchar *) noex ;
+	int findpats	() noex ;
+	int patsload	(vecstr *) noex ;
+	int checkargs	() noex ;
+	int checkdirs	(cpcchar *,cchar *) noex ;
+	int check	(cchar *,cchar *) noex ;
     } ; /* end struct (dirmgr) */
 } /* end namespace */
 
@@ -101,7 +101,12 @@ namespace {
 
 /* local constants */
 
-cbool		f_debug = CF_DEBUG ;
+constexpr cpcchar	dirs[] = {
+    "gcm.cache",
+    nullptr
+} ; /* end array */
+
+cbool			f_debug		= CF_DEBUG ;
 
 
 /* exported variables */
@@ -131,33 +136,80 @@ dirmgr::operator int () noex {
     	int		rs = SR_OK ;
 	int		c = 0 ;
 	DPRINTF("ent\n") ;
-	for (int i = 1 ; (i < argc) && argv[i] ; i += 1) {
-	    if (cchar *ap = argv[i] ; ap[0]) {
-		DPRINTF("ap=%s\n",ap) ;
-		if (patp) {
-		    if (ustat sb ; (rs = u_stat(ap,&sb)) >= 0) {
-			DPRINTF("u_stat() rs=%d\n",rs) ;
-			if (S_ISDIR(sb.st_mode)) {
-			    DPRINTF("-> check\n") ;
-		            rs = check(ap) ;
-			    c += 1 ;
-			} else {
-			    rs = SR_NOTDIR ;
-			}
-		    } /* end if (u_stat) */
-		} else {
-		    DPRINTF("pattern=»%s«\n",ap) ;
-		    patp = ap ;
-		    patl = lenstr(ap) ;
-		} /* end if */
-	    } /* end if (non-empty) */
-	    if (rs < 0) break ;
-	} /* end for */
+	if (argc > 1) {
+	    rs = checkargs() ;
+	    c += rs ;
+	} else {
+	    rs = checkfinds() ;
+	    c += rs ;
+	} /* end if (arguments or not) */
 	DPRINTF("ret rs=%d c=%d\n",rs,c) ;
 	return rs ;
 } /* end method (dirmgr::operator) */
 
-int dirmgr::check(cchar *dn) noex {
+int dirmsg::checkargs() noex {
+    	int		rs = SR_OK ;
+	int		c = 0 ;
+	DPRINTF("ent\n") ;
+	    for (int ai = 1 ; (ai < argc) && argv[ai] ; ai += 1) {
+	        if (cchar *ap = argv[ai] ; ap[0]) {
+		    DPRINTF("ap=%s\n",ap) ;
+		    rs = checkdirs(dirs,ap) ;
+		    c += rs ;
+	        } /* end if (non-empty) */
+	        if (rs < 0) break ;
+	    } /* end for */
+	DPRINTF("ret rs=%d c=%d\n",rs,c) ;
+	return (rs >= 0) ? c : rs ;
+} /* end method (dirmgr::checkargs) */
+
+int dirmsg::checkfinds() noex {
+    	int		rs = SR_OK ;
+	int		rs1 ;
+	int		c = 0 ;
+	DPRINTF("ent\n") ;
+	if (vecstr pats ; (rs = pats.start) >= 0) {
+	    if ((rs = patsload(&pats)) > 0) {
+		rs = patscheck(&pats) ;
+		c += rs ;
+	    } /* end if (patsload) */
+	    rs1 = pats.finish ;
+	    if (rs >= 0) rs = rs1 ;
+	} /* end if (vecstr) */
+	DPRINTF("ret rs=%d c=%d\n",rs,c) ;
+	return (rs >= 0) ? c : rs ;
+} /* end method (dirmgr::checkfinds) */
+
+int dirmgr::patsload(vecstr *plp) noex {
+	int		rs = SR_OK ;
+	int		c = 0 ;
+
+	return (rs >= 0) ? c : rs ;
+} /* end method (dirmgr::patsload) */
+
+int dirmgr::checkdirs(cpcchar *dirpp,cchar *patp) noex {
+	int		rs = SR_OK ;
+	int		c = 0 ;
+	DPRINTF("ent\n") ;
+	for (int i = 0 ; dirpp[i] ; i += 1) {
+	    DPRINTF("dn=%s\n",dirpp[i]) ;
+	    if (ccharp dn = dirpp[i] ; dn[0]) ylikely {
+	        if (ustat sb ; (rs = u_stat(dn,&sb)) >= 0) ylikely {
+		    if (S_ISDIR(sb.st_mode)) {
+	    		DPRINTF("yes-is-dir\n") ;
+	                rs = check(dn,patp) ;
+	                c += rs ;
+		    } /* end if (was a directory) */
+		} /* end if (u_stat) */
+	    } /* end if (non-empty) */
+	    if (rs < 0) break ;
+	} /* end for */
+	DPRINTF("ret rs=%d c=%d\n",rs,c) ;
+	return (rs >= 0) ? c : rs ;
+} /* end method (dirmgr::checkdirs) */
+
+int dirmgr::check(cchar *dn,cchar *patp) noex {
+    	cint		patl = lenstr(patp) ;
 	int		rs = SR_OK ;
 	int		c = 0 ;
 	DPRINTF("ent\n") ;
@@ -165,12 +217,13 @@ int dirmgr::check(cchar *dn) noex {
             if (con path &p = e.path() ; e.is_regular_file()) {
                 con path bn = p.filename() ;
                 if (cchar *bns = bn.c_str() ; strncmp(bns,patp,patl) == 0) {
-		    cchar *fn = p.c_str() ;
 		    DPRINTF("prefix-match ps=%s\n",bns) ;
-		    DPRINTF("prefix-match file-path=%s\n",fn) ;
-		    rs = u_unlink(fn) ;
-		    DPRINTF("u_unlink() rs=%d\n",rs) ;
-		    c += 1 ;
+		    if (cchar *fn = p.c_str() ; fn[0]) {
+		        DPRINTF("prefix-match file-path=%s\n",fn) ;
+		        rs = u_unlink(fn) ;
+		        DPRINTF("u_unlink() rs=%d\n",rs) ;
+		        c += 1 ;
+		    } /* end if (non-empty) */
 		} /* end if (prefix match) */
             } /* end if (regular-file) */
 	    if (rs < 0) break ;
