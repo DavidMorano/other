@@ -245,18 +245,18 @@ namespace {
 	string		uh ;
 	string		us ;
 	gid_t		gid ;
-	int find(uid_t) noex ;
-	int findhint(uid_t) noex ;
-	int findenv(uid_t) noex ;
-	int findutmp(uid_t) noex ;
+	int find	(uid_t) noex ;
+	int findhint	(uid_t) noex ;
+	int findenv	(uid_t) noex ;
+	int findutmp	(uid_t) noex ;
 	int findutmp_sid(uid_t) noex ;
 	int findutmp_stdin(uid_t) noex ;
 	int findutmp_env(uid_t) noex ;
 	int findutmp_stat(uid_t) noex ;
-	int finduid(uid_t) noex ;
-	int load(PASSWD *) noex ;
-	int printdef(int,int,mainv,uid_t) noex ;
-	int printone(int,uid_t) noex ;
+	int finduid	(uid_t) noex ;
+	int load	(PASSWD *) noex ;
+	int printdef	(int,int,mainv,uid_t) noex ;
+	int printone	(int,uid_t) noex ;
     } ; /* end struct (userinfo) */
 } /* end namespace */
 
@@ -354,7 +354,7 @@ int userinfo::printdef(int pm,int argc,mainv argv,uid_t uid) noex {
 		        hintpwp = pwp ;
 			rs = printone(pm,pwp->pw_uid) ;
 		    }
-		}
+		} /* end if (non-empty) */
 		if (rs < 0) break ;
 	    } /* end for */
 	} else {
@@ -587,7 +587,6 @@ int userinfo::findutmp_sid(uid_t uid) noex {
 } /* end method (userinfo::findutmp_sid) */
 
 int userinfo::findutmp_stdin(uid_t uid) noex {
-    	cnullptr	np{} ;
 	cint		tlen = TERMBUFLEN ;
 	cint		fd = FD_STDIN ;
 	int		rs ;
@@ -601,9 +600,9 @@ int userinfo::findutmp_stdin(uid_t uid) noex {
 		    UTMPX	ut{} ;
 		    cchar	*line = (tbuf+n) ;
 		    strncpy(ut.ut_line,line,utl_line) ;
-		    if (UTMPX *up ; (up = getutxliner(&ut)) != np) {
+		    if (UTMPX *up = getutxliner(&ut)) {
 		        stpcpy(nbuf,up->ut_user,utl_user) ;
-		        if (PASSWD *pwp ; (pwp = getpwnam(nbuf)) != np) {
+		        if (PASSWD *pwp = getpwnam(nbuf)) {
 		            if (pwp->pw_uid == uid) {
 			        len = load(pwp) ;
 		            } /* end if (UID match w/ us) */
@@ -620,18 +619,17 @@ int userinfo::findutmp_stdin(uid_t uid) noex {
 } /* end method (userinfo::findtmp_stdin) */
 
 int userinfo::findutmp_env(uid_t uid) noex {
-    	cnullptr	np{} ;
 	int		rs = SR_OK ;
 	int		len = 0 ; /* return-value */
 	char		nbuf[utl_user+1] ;
 	for (cauto &vn : utmpvars) {
-	    if (cchar *line ; (line = getenv(vn)) != nullptr) {
+	    if (cchar *line = getenv(vn)) {
 	        if (line[0]) {
 	            UTMPX	ut{} ;
 	            strncpy(ut.ut_line,line,utl_line) ;
-	            if (UTMPX *up ; (up = getutxliner(&ut)) != np) {
+	            if (UTMPX *up = getutxliner(&ut)) {
 		        stpcpy(nbuf,up->ut_user,utl_user) ;
-		        if (PASSWD *pwp ; (pwp = getpwnam(nbuf)) != np) {
+		        if (PASSWD *pwp = getpwnam(nbuf)) {
 		            if (pwp->pw_uid == uid) {
 			        len = load(pwp) ;
 		            } /* end if (UID match w/ us) */
@@ -656,7 +654,7 @@ int userinfo::findutmp_stat(uid_t uid) noex {
 	    char	nbuf[utl_user+1] ;
 	    cint	tl = rs ;
 	    setutxent() ;
-	    for (UTMPX *up ; (up = getutxent()) != nullptr ; ) {
+	    for (UTMPX *up ; (up = getutxent()) != np ; ) {
 	       if (isourtype(up)) {
 		    cint	ll = utl_line ;
 		    cchar	*lp = up->ut_line ;
@@ -667,9 +665,8 @@ int userinfo::findutmp_stat(uid_t uid) noex {
 			    cint	fd = rs ;
 			    if ((rs = uc_tcgetsid(fd)) >= 0) {
     				if (sid == rs) {
-				    PASSWD *pwp ;
 		                    stpcpy(nbuf,up->ut_user,utl_user) ;
-		                    if ((pwp = getpwnam(nbuf)) != np) {
+				    if (PASSWD *pwp = getpwnam(nbuf)) {
 		                        if (pwp->pw_uid == uid) {
 			                    len = load(pwp) ;
 		                        } /* end if (UID match w/ us) */
@@ -694,7 +691,7 @@ int userinfo::findutmp_stat(uid_t uid) noex {
 int userinfo::finduid(uid_t uid) noex {
 	int		rs = SR_OK ;
 	int		len = 0 ;
-	if (PASSWD *pwp ; (pwp = getpwuid(uid)) != nullptr) {
+	if (PASSWD *pwp = getpwuid(uid)) {
 	    len = load(pwp) ;
 	} /* end if */
 	return (rs >= 0) ? len : rs ;
@@ -721,13 +718,13 @@ local UTMPX *getutxliner(UTMPX *sup) noex {
 	UTMPX		*up ; /* return-value */
 	char		nbuf[utl_user+1] ;
 	setutxent() ;
-	while ((up = getutxent()) != nullptr) {
+	while ((up = getutxent()) != np) {
 	   if (isourtype(up)) {
 		cint	ll = utl_line ;
 		cchar	*lp = sup->ut_line ;
 		if (strncmp(up->ut_line,lp,ll) == 0) {
 		    stpcpy(nbuf,up->ut_user,utl_user) ;
-		    if (PASSWD *pwp ; (pwp = getpwnam(nbuf)) != np) {
+		    if (PASSWD *pwp = getpwnam(nbuf)) {
 		        if (pwp->pw_uid == uid) {
     			    break ;
 		        } /* end if (UID match w/ us) */
