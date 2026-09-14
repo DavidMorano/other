@@ -1,4 +1,4 @@
-# MAKEFILE (rmsubparts)
+# MAKEFILE (rmsubpart)
 
 T= rmsubpat
 
