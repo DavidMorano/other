@@ -76,7 +76,6 @@
 #include	<fsdir.h>
 #include	<fsdirtree.h>
 #include	<gecos.h>
-#include	<getexecname.h>
 #include	<gethe.h>
 #include	<getngroups.h>
 #include	<getutmp.h>
