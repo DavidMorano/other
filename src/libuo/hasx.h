@@ -30,6 +30,7 @@
 #include	<hasclass.h>
 #include	<hasend.h>
 #include	<haseol.h>
+#include	<hasext.h>
 #include	<hasinet.h>
 #include	<haslead.h>
 #include	<hasmodname.h>
