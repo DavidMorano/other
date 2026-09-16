@@ -25,7 +25,6 @@
 
 #include	<getchostname.h>
 #include	<getclustername.h>
-#include	<getexecname.h>
 #include	<getfname.h>
 #include	<getgroupname.h>
 #include	<getnodename.h>
