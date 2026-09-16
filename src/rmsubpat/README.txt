@@ -1,10 +1,12 @@
 RMSUBPAT
 
 This program is used to remove files -- that contain a given pattern
--- from the specified directories.
+-- from the specified directories.  If no patterns are given, patterns
+are determined (if present at all) from the current directory
+from files that are C++ source modules.
 
 Synopsis:
-$ rmsubpat <pattern(s)> [-d <dir(s)>]
+$ rmsubpat [<pattern(s)>] [-d <dir(s)>]
 
 Arguments:
 <pattern(s)>	pattern(s) to search for
