@@ -46,7 +46,7 @@
 #include	<cstdlib>		/* CSTD */
 #include	<cstdarg>		/* CSTD */
 #include	<cstdio>		/* CSTD */
-#include	<new>			/* C++STD |nothrow(3c++)| */
+#include	<new>			/* C++STD placement-new */
 #include	<bit>			/* C++STD |countl_zero(3c++)| */
 #include	<string>		/* C++SYD */
 #include	<string_view>		/* C++SYD */
