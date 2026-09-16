@@ -37,7 +37,7 @@ INCS +=
 
 MODS +=
 
-LIBS += -lf -lu
+LIBS += -lu -lf
 
 
 OBJ_CONTERM= rmsubpat_main.o
