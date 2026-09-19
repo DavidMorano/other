@@ -42,17 +42,17 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<sys/param.h>
-#include	<unistd.h>
-#include	<fcntl.h>
-#include	<climits>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<cstring>		/* <- for |strlen(3c)| */
-#include	<utility>
-#include	<string>
-#include	<string_view>
-#include	<iostream>
+#include	<sys/param.h>		/* POSIX® */
+#include	<unistd.h>		/* POSIX® */
+#include	<fcntl.h>		/* POSIX® */
+#include	<climits>		/* CSTD ® */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstring>		/* CSTD */
+#include	<utility>		/* C++STD */
+#include	<string>		/* C++STD */
+#include	<string_view>		/* C++STD */
+#include	<iostream>		/* C++STD */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
 #include	<usyscalls.h>		/* LIBU */
@@ -280,7 +280,7 @@ int proginfo::termop() noex {
 
 int proginfo_co::operator () (int) noex {
 	int	rs = SR_BUGCHECK ;
-	if (op) {
+	if (op) ylikely {
 	    switch (w) {
 	    case proginfomem_start:
 	        rs = op->istart() ;
