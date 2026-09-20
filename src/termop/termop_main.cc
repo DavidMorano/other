@@ -19,7 +19,7 @@
 /*******************************************************************************
 
 	Names:
-	termopt
+	termop
 
 	Description:
 	Print to STDOUT whatever sequences are specified by arguments.
@@ -45,7 +45,7 @@
 #include	<sys/param.h>		/* POSIX® */
 #include	<unistd.h>		/* POSIX® */
 #include	<fcntl.h>		/* POSIX® */
-#include	<climits>		/* CSTD ® */
+#include	<climits>		/* CSTD */
 #include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD */
 #include	<cstring>		/* CSTD */
@@ -94,7 +94,6 @@ using std::cerr ;			/* variable */
 /* local typedefs */
 
 typedef string_view	strview ;
-
 typedef const strview	cstrview ;
 typedef const string	cstring ;
 
@@ -120,11 +119,11 @@ namespace {
 	void operator () (proginfo *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
+	} ; /* end */
 	int operator () (int = 0) noex ;
 	operator int () noex {
 	    return operator () (0) ;
-	} ;
+	} ; /* end */
     } ; /* end struct (proginfo_co) */
     struct proginfo {
 	friend		proginfo_co ;
