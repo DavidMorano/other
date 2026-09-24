@@ -43,8 +43,10 @@
 #include	<usysbase.h>		/* LIBU */
 
 
-#define DEBPRINTF(FMT, ...) \
-    debprintf(__func__, FMT __VA_OPT__(,) __VA_ARGS__)
+#define DEBPRINTF(FMT, ...)						\
+    if_constexpr (f_debug) {						\
+        debprintf(__func__, FMT __VA_OPT__(,) __VA_ARGS__) ;		\
+    }
 
 
 #endif /* __cplusplus */
