@@ -50,11 +50,11 @@ struct shortq_co {
 	void operator () (shortq *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
+	} ; /* end */
 	int operator () (int = 0) noex ;
 	operator int () noex {
 	    return operator () (0) ;
-	} ;
+	} ; /* end */
 } ; /* end struct (shortq_co) */
 struct shortq : shortq_head {
 	shortq_co	start ;
@@ -78,19 +78,19 @@ struct shortq : shortq_head {
 	int ins		(short) noex ;
 	int add		(short *sp,int sl) noex {
 	    return load(sp,sl) ;
-	} ;
+	} ; /* end */
 	int rem		(short *) noex ;
 	int remread	(short *,int) noex ;
 	int get		(int) noex ;
 	int readat	(int,short *,int) noex ;
 	int read	(short *,int) noex ;
 	int adv		(int = -1) noex ;
-	void dtor() noex ;
+	void dtor	() noex ;
 	int operator [] (int) noex ;
-	operator int () noex ;
+	operator int 	() noex ;
 	destruct shortq() {
 	    if (magval) dtor() ;
-	} ;
+	} ; /* end */
 } ; /* end struct (shortq) */
 #else	/* __cplusplus */
 typedef SHORTQ		shortq ;
@@ -114,7 +114,7 @@ extern int	shortq_finish	(shortq *) noex ;
 
 local inline int shortq_len(shortq *op) noex {
     	return shortq_count(op) ;
-}
+} /* end subroutine */
 
 EXTERNC_end
 
