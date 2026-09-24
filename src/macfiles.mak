@@ -59,7 +59,7 @@ OBJ7= deb.o strnxcmp.o strxcmp.o
 
 OBJ8= strw.o strwcpy.o
 OBJ9= inetaddrx.o
-OBJ10=
+OBJ10= sbuf.o
 OBJ11=
 OBJ12=
 OBJ13=
@@ -68,7 +68,7 @@ OBJ15=
 
 OBJA= obj0.o obj1.o obj2.o obj3.o
 OBJB= obj4.o obj5.o obj6.o obj7.o
-OBJC= obj8.o obj9.o
+OBJC= obj8.o obj9.o obj10.o
 
 OBJ= obja.o objb.o objc.o
 
@@ -279,6 +279,11 @@ fileobj.o:		fileobj.dir
 fileobj.dir:
 	makesubdir $@
 
+# SBUF		(libuc)
+sbuf.o:			sbuf.dir
+sbuf.dir:
+	makesubdir $@
+
 # STRX		(libuc)
 strn.o:			strn.dir
 strn.dir:
@@ -299,7 +304,7 @@ strw.o:			strw.dir
 strw.dir:
 	makesubdir $@
 
-# STRWCPY		(libuc)
+# STRWCPY	(libuc)
 strwcpy.o:		strwcpy.dir
 strwcpy.dir:
 	makesubdir $@
