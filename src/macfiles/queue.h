@@ -37,6 +37,7 @@
 #include	<pq.h>
 #include	<q.h>
 #include	<shortq.h>
+#include	<singlist.hh>
 #include	<slist.h>
 #include	<slq.h>
 
