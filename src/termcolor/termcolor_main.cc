@@ -2,7 +2,7 @@
 /* charset=ISO8859-1 */
 /* lang=C++23 */
 
-/* the COMPOSE fixer program */
+/* print a sample of the current terminal colors */
 /* version %I% last-modified %G% */
 
 
@@ -29,8 +29,8 @@
 #include	<unistd.h>		/* POSIX® */
 #include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD */
-#include	<cstdio>		/* CSTD */
-#include	<string>		/* C++STD yes: "string" */
+#include	<cstdio>		/* CSTD |printf(3c)| */
+#include	<string>		/* C++STD */
 #include	<iostream>		/* C++STD */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
@@ -82,8 +82,7 @@ constexpr cpcchar	colors[] = {
 	"Blue",
 	"Magenta",
 	"Cyan",
-	"White",
-	nullptr
+	"White"
 } ; /* end array */
 
 
@@ -103,7 +102,7 @@ int main(int argc,con mainv,con mainv) {
 	} /* end if */
 	if ((ex == EXIT_SUCCESS) && (rs < 0)) {
 	    ex = EXIT_FAILURE ;
-	}
+	} /* end if (error) */
 	return ex ;
 } /* end subroutine (main) */
 
@@ -113,7 +112,7 @@ int main(int argc,con mainv,con mainv) {
 local int printc(int nback,int nfore) noex {
     	int		rs = SR_OK ;
 	cchar *fmt = "\033[%dm        \033[0m  \033[%dm%s\033[0m\n" ;
-	for (int i = 0 ; i < 8 ; i += 1) {
+	for (int i = 0 ; i < nelem(colors) ; i += 1) {
 	    printf(fmt,(i + nback),(i + nfore),colors[i]) ;
 	} /* end for */
 	return rs ;
