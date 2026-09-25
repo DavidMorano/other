@@ -33,11 +33,11 @@ LINT		?= lint
 
 DEFS +=
 
-INCS +=
+INCS += termcolor_config.h
 
 MODS +=
 
-LIBS += -lf -lu -lsecdb -lnss
+LIBS += -lu -lf -lsecdb -lnss
 
 
 DEPS_MAIN +=
