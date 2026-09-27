@@ -68,7 +68,7 @@ OBJ15=
 
 OBJA= obj0.o obj1.o obj2.o obj3.o
 OBJB= obj4.o obj5.o obj6.o obj7.o
-OBJC= obj8.o obj9.o obj10.o
+OBJC= obj8.o obj9.o
 
 OBJ= obja.o objb.o objc.o
 
