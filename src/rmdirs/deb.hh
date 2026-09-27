@@ -43,6 +43,9 @@
 #include	<usysbase.h>		/* LIBU */
 
 
+#define DEBOPEN(fn)	debopen(fn)
+#define DEBCLOSE	debclose()
+
 #define DEBPRINTF(FMT, ...)						\
     if_constexpr (f_debug) {						\
         debprintf(__func__, FMT __VA_OPT__(,) __VA_ARGS__) ;		\
