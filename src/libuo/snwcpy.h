@@ -39,7 +39,7 @@ EXTERNC_end
 
 inline int snwcpy(char *dbuf,int dlen,cchar *sp) noex {
 	return snwcpy(dbuf,dlen,sp,-1) ;
-}
+} /* end subroutine */
 
 #endif /* __cplusplus */
 
