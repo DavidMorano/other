@@ -195,11 +195,11 @@ namespace {
 	void operator () (proginfo *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
+	} ; /* end */
 	int operator () (int = 0) noex ;
 	operator int () noex {
 	    return operator () (0) ;
-	} ;
+	} ; /* end */
     } ; /* end struct (proginfo_co) */
     struct proginfo {
 	friend		proginfo_co ;
@@ -259,7 +259,7 @@ namespace {
 	    argc = c ;
 	    argv = a ;
 	    envv = e ;
-	} ;
+	} ; /* end */
 	int fileuniq	(custat *) noex ;
 	int fileyounger	(custat *) noex ;
 	int argproc	() noex ;
@@ -440,7 +440,7 @@ local int mkpathw(char *rbuf,Args ... args) noex {
 	int		rs ;
 	if ((rs = maxpathlen) >= 0) {
 	    rs = mknpathxw(rbuf,rs,na,args ...) ;
-	}
+	} /* end */
 	return rs ;
 } /* end if (mkpathw) */
 
@@ -514,7 +514,7 @@ int main(int argc,con mainv argv,con mainv envv) {
             cchar fmt[] = "%s: error %s (%d)\n" ;
             fprintf(stderr,fmt,ccp(spn),strabbrerr(rs),rs) ;
 	    ex = mapex(mapexs,rs) ;
-	} /* end if */
+	} /* end if (error) */
 	DEBPRINTF("ret ex=%d rs=%d\n",ex,rs) ;
 	return ex ;
 } /* end subroutine (main) */
@@ -1027,7 +1027,7 @@ int proginfo::preamble() noex {
                     case progmode_depmods:
                         if (debuglevel) {
                             cint mi = fl.ot ;
-                            cchar *fmt = "modmodtypeout=%s\n" ;
+                            cchar *fmt = "modtypeout=%s\n" ;
                             rs = printf(fmt,modoutnames[mi]) ;
                         } /* end if (debuglevel) */
                         break ;
@@ -1143,7 +1143,7 @@ int proginfo::process_pmend(bool ferr) noex {
         case progmode_filelines:
 		if ((! ferr) && fl.verbose) {
 		    cout << lines << eol ;
-		}
+		} /* end if (verbose) */
 		falldown ;
         case progmode_showlines:
 	    if (lbuf) {
@@ -1319,40 +1319,47 @@ int proginfo::procfile(custat *sbp,cchar *sp,int sl) noex {
 
 int proginfo::procfiler(custat *sbp,cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
-        switch (pm) {
-        case progmode_files:
-            rs = procfile_list(sbp,sp,sl) ;
-            break ;
-        case progmode_filelines:
-            rs = procfile_lc(sbp,sp,sl) ;
-            break ;
-        case progmode_showlines:
-            rs = procfile_show(sbp,sp,sl) ;
-            break ;
-        case progmode_filemods:
-        case progmode_depmods:
-            rs = procfile_mods(sbp,sp,sl) ;
-            break ;
-        case progmode_filesyner:
-        case progmode_filelinker:
-            rs = procfile_tardirs(sbp,sp,sl) ;
-            break ;
-        } /* end switch */
-	if (rs < 0) {
-	    strnul es(sp,sl) ;
-	    printf("file=>%s<\n",ccp(es)) ;
-	}
+	if (debuglevel > 0) {
+	    if (strnul fn(sp,sl) ; fn.fok) {
+	       rs = printf("file=%s\n",ccp(fn)) ;
+	    }
+	} /* end if (debuglevel) */
+	if (rs >= 0) {
+            switch (pm) {
+            case progmode_files:
+                rs = procfile_list(sbp,sp,sl) ;
+                break ;
+            case progmode_filelines:
+                rs = procfile_lc(sbp,sp,sl) ;
+                break ;
+            case progmode_showlines:
+                rs = procfile_show(sbp,sp,sl) ;
+                break ;
+            case progmode_filemods:
+            case progmode_depmods:
+                rs = procfile_mods(sbp,sp,sl) ;
+                break ;
+            case progmode_filesyner:
+            case progmode_filelinker:
+                rs = procfile_tardirs(sbp,sp,sl) ;
+                break ;
+            } /* end switch */
+	    if (rs < 0) {
+	        strnul es(sp,sl) ;
+	        printf("file=>%s<\n",ccp(es)) ;
+	    } /* end if (error) */
+	} /* end if (ok) */
 	return rs ;
 } /* end method (proginfo::procfiler) */
 
 int proginfo::procfile_list(custat *,cchar *sp,int sl) noex {
 	int		rs = SR_OK ;
 	int		c = 0 ;
-	if (sp) {
+	if (sp) ylikely {
 	    if (fl.verbose) {
 	        if (strnul fn(sp,sl) ; fn.fok) {
 	            cout << ccp(fn) << eol ;
-		}
+		} /* end if (strnul) */
 	    } /* end if (verbose) */
 	    c += 1 ;
 	} /* end if (non-null) */
@@ -1363,7 +1370,7 @@ local int findlines(char *lbuf,int llen,cchar *fn) noex {
     	int		rs ;
 	int		rs1 ;
 	int		nl = 0 ;
-        if (ccfile rf ; (rs = rf.open(fn,"r")) >= 0) {
+        if (ccfile rf ; (rs = rf.open(fn,"r")) >= 0) ylikely {
             while ((rs = rf.readln(lbuf,llen)) > 0) {
                 nl += 1 ;
             } /* end while */
