@@ -62,7 +62,7 @@
 /* imported namespaces */
 
 
-/* typ-defs */
+/* type-defs */
 
 
 /* external subroutines */
