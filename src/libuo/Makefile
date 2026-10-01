@@ -75,8 +75,8 @@ OBJ02_LUO= sfx.o rmx.o snx.o mkui.o
 OBJ03_LUO= isx.o ismisc.o isfiledesc.o hasx.o 
 
 OBJ04_LUO= sif.o ctx.o cfx.o
-OBJ05_LUO= strcpyx.o strdcpy.o strx.o 
-OBJ06_LUO= strxcmp.o
+OBJ05_LUO= strcpyx.o strdcpy.o strbcpy.o strx.o 
+OBJ06_LUO= strxcmp.o strtime.o
 OBJ07_LUO= strw.o strwcpy.o
 
 OBJ08_LUO= filer.o hdb.o hdbstr.o mklogid.o
@@ -572,6 +572,11 @@ strdcpy.o:		strdcpy.dir
 strdcpy.dir:
 	makesubdir $@
 
+# STRBCPY
+strbcpy.o:		strbcpy.dir
+strbcpy.dir:
+	makesubdir $@
+
 strwcpy.o:		strwcpy.dir
 strwcpy.dir:
 	makesubdir $@
@@ -582,6 +587,11 @@ strcpyx.dir:
 
 strx.o:			strx.dir
 strx.dir:
+	makesubdir $@
+
+# STRTIME
+strtime.o:		strtime.dir
+strtime.dir:
 	makesubdir $@
 
 strn.o:			strn.dir
