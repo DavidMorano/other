@@ -63,7 +63,7 @@ using libu::cfdec ;			/* subroutine */
 using libu::strwcmp ;			/* subroutine */
 
 
-/* typ-defs */
+/* type-defs */
 
 
 /* external subroutines */
