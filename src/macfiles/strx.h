@@ -30,7 +30,6 @@
 
 #include	<strsub.h>
 #include	<strwildsub.h>
-#include	<strxbrk.h>
 #include	<strxcmp.h>
 #include	<strabbrerr.h>
 #include	<strabbrsig.h>
@@ -39,40 +38,7 @@
 #include	<strlinelen.h>
 #include	<strlocktype.h>
 #include	<strwhite.h>
-
-
-EXTERNC_begin
-
-/* this ( |strochr(3c)| ) is the companion subroutine of |strrchr(3c)| */
-#ifndef	SUBROUTINE_STROCHR
-#define	SUBROUTINE_STROCHR
-EXTERNC_begin
-local inline char *strochr(cchar *sp,int sch) noex {
-    	return strchr(sp,sch) ;
-} /* end */
-EXTERNC_end
-#endif /* SUBROUTINE_STROCHR */
-
-/* deprecated (can give erroneous result) */
-[[deprecated("can give erroneous result")]] 
-extern char *strbasename(cchar *) noex ;
-
-#ifdef	COMMENT /* retired 2024-12-26 */
-/* deprecated (writes to source string) */
-[[deprecated("writes to source string")]] 
-extern char *strdirname(char *) noex ; 
-#endif /* COMMENT */
-
-EXTERNC_end
-
-#ifndef	SUBROUTINE_STRBRK
-#define	SUBROUTINE_STRBRK
-EXTERNC_begin
-local inline char *strbrk(cchar *sp,cchar *sc) noex {
-    	return strpbrk(sp,sc) ;
-} /* end */
-EXTERNC_end
-#endif /* SUBROUTINE_STRBRK */
+#include	<strxname.h>
 
 
 #endif /* STRX_INCLUDE */
