@@ -36,7 +36,9 @@ enum timestrtypes {
 	timestrtype_gmlog,	/* "log" format for GMT */
 	timestrtype_logz,	/* "logz" format */
 	timestrtype_gmlogz,	/* "logz" format for GMT */
-	timestrtype_overlast
+	timestrtype_overlast,
+	timestrtype_lolog	= timestrtype_log,
+	timestrtype_lologz	= timestrtype_logz
 } ; /* end enum (timestrtypes) */
 
 
