@@ -33,7 +33,7 @@
 
 #if 0
 #ifndef lint
-static const char sccsid[] = "@(#)state.c	8.5 (Berkeley) 5/30/95";
+static cchar sccsid[] = "@(#)state.c	8.5 (Berkeley) 5/30/95";
 #endif
 #endif
 #include <sys/cdefs.h>
@@ -89,7 +89,7 @@ unsigned char *subsave;
 #define	TS_DO		7	/* do " */
 #define	TS_DONT		8	/* dont " */
 
-static void doclientstat(void);
+local void doclientstat(void);
 
 void
 telrcv(void)
@@ -442,7 +442,7 @@ send_do(int option, int init)
 			set_his_want_state_will(option);
 		do_dont_resp[option]++;
 	}
-	output_data(fmtcheck((const char *)doopt, "%c"), option);
+	output_data(fmtcheck((cchar *)doopt, "%c"), option);
 
 	DIAG(TD_OPTIONS, printoption("td: send do", option));
 }
@@ -649,7 +649,7 @@ send_dont(int option, int init)
 		set_his_want_state_wont(option);
 		do_dont_resp[option]++;
 	}
-	output_data(fmtcheck((const char *)dont, "%c"), option);
+	output_data(fmtcheck((cchar *)dont, "%c"), option);
 
 	DIAG(TD_OPTIONS, printoption("td: send dont", option));
 }
@@ -796,7 +796,7 @@ send_will(int option, int init)
 		set_my_want_state_will(option);
 		will_wont_resp[option]++;
 	}
-	output_data(fmtcheck((const char *)will, "%c"), option);
+	output_data(fmtcheck((cchar *)will, "%c"), option);
 
 	DIAG(TD_OPTIONS, printoption("td: send will", option));
 }
@@ -952,7 +952,7 @@ send_wont(int option, int init)
 		set_my_want_state_wont(option);
 		will_wont_resp[option]++;
 	}
-	output_data(fmtcheck((const char *)wont, "%c"), option);
+	output_data(fmtcheck((cchar *)wont, "%c"), option);
 
 	DIAG(TD_OPTIONS, printoption("td: send wont", option));
 }
@@ -1482,7 +1482,7 @@ suboption(void)
 
 }  /* end of suboption */
 
-static void
+local void
 doclientstat(void)
 {
 	clientstat(TELOPT_LINEMODE, WILL, 0);
@@ -1577,7 +1577,7 @@ send_status(void)
 	ADD(IAC);
 	ADD(SE);
 
-	output_datalen((const char *)statusbuf, ncp - statusbuf);
+	output_datalen((cchar *)statusbuf, ncp - statusbuf);
 	netflush();	/* Send it on its way */
 
 	DIAG(TD_OPTIONS,
@@ -1591,7 +1591,7 @@ send_status(void)
  */
 
 int
-output_data(const char *format, ...)
+output_data(cchar *format, ...)
 {
 	va_list args;
 	int len;
@@ -1607,7 +1607,7 @@ output_data(const char *format, ...)
 }
 
 void
-output_datalen(const char *buf, int len)
+output_datalen(cchar *buf, int len)
 {
 	int remaining, copied;
 	
