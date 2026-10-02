@@ -190,7 +190,7 @@ static char ctbl[nchars][nlines] = {
 };
 static char blank = ' ';
 static char plot = '#';
-static int  msk = 0100; /* ? */
+local int  msk = 0100; /* ? */
 
 local void banner(char *s, struct bann *bufp);
 local void banfil(char *c, struct bann *p);
@@ -201,7 +201,7 @@ local char convert(unsigned char c);
 /* exported subroutines */
 
 int main(int argc, char **argv) {
-	const char *fmt = "Usage: banner \"up to 10 char arg string\" ...\n" ;
+	cchar *fmt = "Usage: banner \"up to 10 char arg string\" ...\n" ;
 	int i;
 	/*
 	 * if invoked with no arguments, prints error comment
