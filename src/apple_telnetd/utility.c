@@ -33,7 +33,7 @@
 
 #if 0
 #ifndef lint
-static const char sccsid[] = "@(#)utility.c	8.4 (Berkeley) 5/30/95";
+static cchar sccsid[] = "@(#)utility.c	8.4 (Berkeley) 5/30/95";
 #endif /* not lint */
 #endif
 #include <sys/cdefs.h>
@@ -324,7 +324,7 @@ netflush(void)
 
 
 void
-fatal(int f, const char *msg)
+fatal(int f, cchar *msg)
 {
 	char buf[BUFSIZ];
 
@@ -345,7 +345,7 @@ fatal(int f, const char *msg)
 }
 
 void
-fatalperror(int f, const char *msg)
+fatalperror(int f, cchar *msg)
 {
 	char buf[BUFSIZ];
 
@@ -395,8 +395,8 @@ edithost(char *pat, char *host)
 
 static char *putlocation;
 
-static void
-putstr(const char *s)
+local void
+putstr(cchar *s)
 {
 
 	while (*s)
@@ -498,7 +498,7 @@ putf(char *cp, char *where)
  * Print telnet options and commands in plain text, if possible.
  */
 void
-printoption(const char *fmt, int option)
+printoption(cchar *fmt, int option)
 {
 	if (TELOPT_OK(option))
 		output_data("%s %s\r\n", fmt, TELOPT(option));
@@ -741,7 +741,7 @@ printsub(char direction, unsigned char *pointer, int length)
 	    break;
 
 	case TELOPT_STATUS: {
-	    const char *cp;
+	    cchar *cp;
 	    int j, k;
 
 	    output_data("STATUS");
@@ -1050,7 +1050,7 @@ printsub(char direction, unsigned char *pointer, int length)
  * Dump a data buffer in hex and ascii to the output data stream.
  */
 void
-printdata(const char *tag, char *ptr, int cnt)
+printdata(cchar *tag, char *ptr, int cnt)
 {
 	int i;
 	char xbuf[30];
