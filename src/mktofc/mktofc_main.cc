@@ -75,7 +75,7 @@ extern "C" {
 
 /* forward references */
 
-static int	printout(FILE *,const uchar *) noex ;
+local int	printout(FILE *,const uchar *) noex ;
 
 
 /* local variables */
@@ -127,7 +127,7 @@ int main(int,mainv,mainv) {
 
 /* local subroutines */
 
-static int printout(FILE *ofp,const uchar *a) noex {
+local int printout(FILE *ofp,const uchar *a) noex {
 	cint		ntab = NTAB ;	/* number of numeric columns */
 	cchar		fmt[] = "0x%02x%s" ;
 	fprintf(ofp,"const unsigned char char_tofc[] = %c\n",CH_LBRACE) ;
