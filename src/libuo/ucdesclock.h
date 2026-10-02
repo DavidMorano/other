@@ -31,7 +31,7 @@ extern int	uc_lockf(int,int,off_t) noex ;
 extern int	uc_lockfile(int,int,off_t,off_t,int) noex ;
 extern int	uc_locktail(int,int,int,int) noex ;
 
-static inline int uc_lockend(int fd,int f_lock,int f_read,int to) noex {
+local inline int uc_lockend(int fd,int f_lock,int f_read,int to) noex {
     	return uc_locktail(fd,f_lock,f_read,to) ;
 }
 
