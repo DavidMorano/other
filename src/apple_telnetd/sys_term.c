@@ -33,7 +33,7 @@
 
 #if 0
 #ifndef lint
-static const char sccsid[] = "@(#)sys_term.c	8.4+1 (Berkeley) 5/30/95";
+static cchar sccsid[] = "@(#)sys_term.c	8.4+1 (Berkeley) 5/30/95";
 #endif
 #endif
 #include <sys/cdefs.h>
@@ -159,7 +159,7 @@ struct termios termbuf, termbuf2;	/* pty control structure */
 
 int cleanopen(char *);
 void scrub_env(void);
-static char **addarg(char **, const char *);
+static char **addarg(char **, cchar *);
 
 /*
  * init_termbuf()
@@ -441,7 +441,7 @@ getpty(int *ptynum __unused, int *slavepty)
 	}
 
 #else /* !__APPLE__ */
-	const char *cp;
+	cchar *cp;
 	char *p1, *p2;
 	int i;
 
@@ -903,7 +903,7 @@ tty_rspeed(int val)
  * Open the slave side of the pty, and do any initialization
  * that is necessary.
  */
-static void
+local void
 getptyslave(void)
 {
 	int t = -1;
@@ -1318,7 +1318,7 @@ extern int password_enabled(void);
 }
 
 static char **
-addarg(char **argv, const char *val)
+addarg(char **argv, cchar *val)
 {
 	char **cpp;
 
@@ -1356,12 +1356,12 @@ addarg(char **argv, const char *val)
 void
 scrub_env(void)
 {
-	static const char *rej[] = {
+	static cchar *rej[] = {
 		"TERMCAP=/",
 		NULL
 	};
 
-	static const char *acc[] = {
+	static cchar *acc[] = {
 		"XAUTH=", "XAUTHORITY=", "DISPLAY=",
 		"TERM=",
 		"EDITOR=",
@@ -1373,7 +1373,7 @@ scrub_env(void)
 	};
 
 	char **cpp, **cpp2;
-	const char **p;
+	cchar **p;
  
  	for (cpp2 = cpp = environ; *cpp; cpp++) {
 		int reject_it = 0;
