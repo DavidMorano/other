@@ -80,10 +80,10 @@ extern int	proginfo_setpiv(PI *,cchar *,const pivars *) noex ;
 
 /* forward references */
 
-static int usage(PI *) noex ;
-static int addstr(PI *,char *,cchar *) noex ;
-static int addlower(PI *,char *) noex ;
-static int addupper(PI *,char *) noex ;
+local int usage(PI *) noex ;
+local int addstr(PI *,char *,cchar *) noex ;
+local int addlower(PI *,char *) noex ;
+local int addupper(PI *,char *) noex ;
 
 
 /* local variables */
@@ -212,7 +212,7 @@ int main(int argc,mainv argv,mainv envv) {
 	    f_optminus = (*argp == '-') ;
 	    f_optplus = (*argp == '+') ;
 	    if ((argl > 1) && (f_optminus || f_optplus)) {
-		const int	ach = MKCHAR(argp[1]) ;
+		cint	ach = MKCHAR(argp[1]) ;
 
 	        if (isdigitlatin(ach)) {
 
@@ -416,7 +416,7 @@ int main(int argc,mainv argv,mainv envv) {
 	            } else {
 
 	                while (akl--) {
-			    const int	kc = MKCHAR(*akp) ;
+			    cint	kc = MKCHAR(*akp) ;
 
 	                    switch (kc) {
 
@@ -674,7 +674,7 @@ badarg:
 
 /* local subroutines */
 
-static int usage(PI *pip) noex {
+local int usage(PI *pip) noex {
 	int		rs = SR_OK ;
 	int		wlen = 0 ;
 	cchar		*pn = pip->progname ;
@@ -687,7 +687,7 @@ static int usage(PI *pip) noex {
 	return (rs >= 0) ? wlen : rs ;
 } /* end subroutine (usage) */
 
-static int addstr(PI *pip,char *a,cc *sp) noex {
+local int addstr(PI *pip,char *a,cc *sp) noex {
 	int		i, c ;
 
 	for (i = 0 ; sp[i] != '\0' ; i += 1) {
@@ -698,7 +698,7 @@ static int addstr(PI *pip,char *a,cc *sp) noex {
 	return i ;
 } /* end subroutine (addstr) */
 
-static int addlower(PI *pip,char *a) noex {
+local int addlower(PI *pip,char *a) noex {
 	int		i, c ;
 	int		f  ;
 
@@ -717,7 +717,7 @@ static int addlower(PI *pip,char *a) noex {
 	return i ;
 } /* end subroutine (addlower) */
 
-static int addupper(PI *pip,char *a) noex {
+local int addupper(PI *pip,char *a) noex {
 	int		i, c ;
 	int		f  ;
 
