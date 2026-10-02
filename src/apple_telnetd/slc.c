@@ -33,7 +33,7 @@
 
 #if 0
 #ifndef lint
-static const char sccsid[] = "@(#)slc.c	8.2 (Berkeley) 5/30/95";
+static cchar sccsid[] = "@(#)slc.c	8.2 (Berkeley) 5/30/95";
 #endif
 #endif
 #include <sys/cdefs.h>
@@ -46,8 +46,8 @@ __FBSDID("$FreeBSD: src/contrib/telnet/telnetd/slc.c,v 1.9 2003/05/04 02:54:49 o
  * local variables
  */
 static unsigned char	*def_slcbuf = (unsigned char *)0;
-static int		def_slclen = 0;
-static int		slcchange;	/* change to slc is requested */
+local int		def_slclen = 0;
+local int		slcchange;	/* change to slc is requested */
 static unsigned char	*slcptr;	/* pointer into slc buffer */
 static unsigned char	slcbuf[NSLC*6];	/* buffer for slc negotiation */
 
@@ -80,7 +80,7 @@ send_slc(void)
  *
  * Set pty special characters to all the defaults.
  */
-static void
+local void
 default_slc(void)
 {
 	int i;
@@ -199,7 +199,7 @@ end_slc(unsigned char **bufp)
 			(void) sprintf((char *)slcptr, "%c%c", IAC, SE);
 			slcptr += 2;
 			len = slcptr - slcbuf;
-			output_datalen((const char*)slcbuf, len);
+			output_datalen((cchar*)slcbuf, len);
 			netflush();  /* force it out immediately */
 			DIAG(TD_OPTIONS, printsub('>', slcbuf+2, len-2););
 		}
