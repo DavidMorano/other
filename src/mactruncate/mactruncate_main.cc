@@ -54,7 +54,7 @@
 
 /* exported subroutines */
 
-int main(int argc,const char *const *argv,const char *const *envv) {
+int main(int argc,cchar *const *argv,cchar *const *envv) {
 	int		ex = EXIT_SUCCESS ;
 	if (argc >= 3) {
 	    if (unsigned long sz ; (sz = atol(argv[2])) >= 0) {
