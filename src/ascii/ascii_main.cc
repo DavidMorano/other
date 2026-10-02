@@ -41,7 +41,7 @@ using namespace		std ;
 
 /* typedefs */
 
-typedef const char	cchar ;
+typedef cchar	cchar ;
 typedef USTAT	statblock ;
 
 /* local structures */
