@@ -91,9 +91,9 @@
 
 /* forward references */
 
-static void sha_final(unsigned char digest[20],SHA1_INFO *sha_info) noex ;
+local void sha_final(unsigned char digest[20],SHA1_INFO *sha_info) noex ;
 
-static void sha_transform(SHA1_INFO *sha_info) noex ;
+local void sha_transform(SHA1_INFO *sha_info) noex ;
 
 
 /* exported subroutines */
@@ -115,7 +115,7 @@ int sha1_start(SHA1_INFO *sha_info) noex {
 } /* end subroutine (sha1_start) */
 
 /* update the SHA digest */
-int sha1_update(SHA1_INFO *sha_info,const char *ubuf, int count) noex {
+int sha1_update(SHA1_INFO *sha_info,cchar *ubuf, int count) noex {
     	SHA1_LONG 	clo;
 	SHA1_BYTE	*buffer = (SHA1_BYTE *) ubuf ;
     	int 		i;
@@ -232,7 +232,7 @@ void sha_final(unsigned char digest[20], SHA1_INFO *sha_info) noex {
 /* private subroutines */
 
 /* do SHA transformation */
-static void sha_transform(SHA1_INFO *sha_info) noex {
+local void sha_transform(SHA1_INFO *sha_info) noex {
     int i;
     SHA1_BYTE *dp;
     SHA1_LONG T, A, B, C, D, E, W[80], *WP;
