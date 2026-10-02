@@ -33,7 +33,7 @@
 
 #if 0
 #ifndef lint
-static const char sccsid[] = "@(#)telnetd.c	8.4 (Berkeley) 5/30/95";
+static cchar sccsid[] = "@(#)telnetd.c	8.4 (Berkeley) 5/30/95";
 #endif
 #endif
 #include <sys/cdefs.h>
@@ -82,15 +82,15 @@ int terminaltypeok(char *);
 
 int	hostinfo = 1;			/* do we print login banner? */
 
-static int debug = 0;
+local int debug = 0;
 int keepalive = 1;
-const char *altlogin;
+cchar *altlogin;
 
 void doit(struct sockaddr *);
 int terminaltypeok(char *);
 void startslave(char *, int, char *);
 extern void usage(void);
-static void _gettermname(void);
+local void _gettermname(void);
 
 /*
  * The string to pass to getopt().  We do it this way so
@@ -346,7 +346,7 @@ main(int argc, char *argv[])
 #else
 	    int s, ns, foo, error;
 #endif
-	    const char *service = "telnet";
+	    cchar *service = "telnet";
 	    struct addrinfo hints, *res;
 
 	    if (argc > 1) {
@@ -488,7 +488,7 @@ static unsigned char ttytype_sbbuf[] = {
 #define undef2
 #endif
 
-static int
+local int
 getterminaltype(char *name undef2)
 {
     int retval = -1;
@@ -632,7 +632,7 @@ getterminaltype(char *name undef2)
     return(retval);
 }  /* end of getterminaltype */
 
-static void
+local void
 _gettermname(void)
 {
     /*
