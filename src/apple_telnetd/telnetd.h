@@ -46,4 +46,4 @@
 
 /* other external variables */
 extern	char **environ;
-extern	const char *altlogin;
+extern	cchar *altlogin;
