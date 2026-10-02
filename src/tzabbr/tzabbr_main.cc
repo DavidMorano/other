@@ -78,7 +78,7 @@ using std::cout ;			/* variable */
 
 /* local typedefs */
 
-typedef const char *const *mainv ;
+typedef cchar *const *mainv ;
 
 
 /* local structures */
