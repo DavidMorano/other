@@ -57,7 +57,7 @@ typedef struct {
 EXTERNC_begin
 
 extern int sha1_start(SHA1 *) noex ;
-extern int sha1_update(SHA1 *,const char *, int) noex ;
+extern int sha1_update(SHA1 *,cchar *, int) noex ;
 extern int sha1_digest(SHA1 *,unsigned char *) noex ;
 extern int sha1_finish(SHA1 *) noex ;
 
