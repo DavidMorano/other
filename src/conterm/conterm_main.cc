@@ -79,7 +79,7 @@ typedef cint	cint ;
 
 /* typedefs */
 
-typedef const char *const *mainv ;
+typedef cchar *const *mainv ;
 
 
 /* forward references */
@@ -89,7 +89,7 @@ local int uc_tcgetsid(int) noex ;
 
 /* local constants */
 
-constexpr const char	termdev[] = TERMDEV ;
+constexpr cchar	termdev[] = TERMDEV ;
 
 
 /* exported variables */
