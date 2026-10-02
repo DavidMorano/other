@@ -33,7 +33,7 @@ static char *rcsid = "$OpenBSD: strlcpy.c,v 1.4 1999/05/01 18:56:41 millert Exp 
 #endif
 #endif /* LIBC_SCCS and not lint */
 #ifndef lint
-static const char rcsid[] =
+static cchar rcsid[] =
   "$FreeBSD: src/lib/libc/string/strlcpy.c,v 1.3 2001/05/24 08:47:41 obrien Exp $";
 #endif
 
@@ -45,9 +45,9 @@ static const char rcsid[] =
  * will be copied.  Always NUL terminates (unless siz == 0).
  * Returns strlen(src); if retval >= siz, truncation occurred.
  */
-size_t strlcpy(char *dst,const char *src,size_t siz) {
+size_t strlcpy(char *dst,cchar *src,size_t siz) {
 	char *d = dst;
-	const char *s = src;
+	cchar *s = src;
 	size_t n = siz;
 
 	/* Copy as many bytes as will fit */
