@@ -114,7 +114,7 @@ extern int	field_wordphrase(field *,cchar *,char *,int) noex ;
 extern int	field_srvarg	(field *,cchar *,char *,int) noex ;
 extern int	field_svcargs	(field *,vecstr *) noex ;
 
-static inline int field_term	(field *op,cchar *tp,cchar **rpp) noex {
+local inline int field_term	(field *op,cchar *tp,cchar **rpp) noex {
 	return field_getterm(op,tp,rpp) ;
 }
 
