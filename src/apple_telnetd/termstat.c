@@ -33,7 +33,7 @@
 
 #if 0
 #ifndef lint
-static const char sccsid[] = "@(#)termstat.c	8.2 (Berkeley) 5/30/95";
+static cchar sccsid[] = "@(#)termstat.c	8.2 (Berkeley) 5/30/95";
 #endif
 #endif
 #include <sys/cdefs.h>
@@ -53,7 +53,7 @@ int def_tspeed = -1, def_rspeed = -1;
 int def_row = 0, def_col = 0;
 #endif
 #ifdef	LINEMODE
-static int _terminit = 0;
+local int _terminit = 0;
 #endif	/* LINEMODE */
 
 #ifdef	LINEMODE
