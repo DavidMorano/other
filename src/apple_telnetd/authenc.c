@@ -33,7 +33,7 @@
 
 #if 0
 #ifndef lint
-static const char sccsid[] = "@(#)authenc.c	8.2 (Berkeley) 5/30/95";
+static cchar sccsid[] = "@(#)authenc.c	8.2 (Berkeley) 5/30/95";
 #endif
 #endif
 #include <sys/cdefs.h>
@@ -79,7 +79,7 @@ telnet_getenv(char *val)
 }
 
 char *
-telnet_gets(const char *prompt __unused, char *result __unused, int length __unused, int echo __unused)
+telnet_gets(cchar *prompt __unused, char *result __unused, int length __unused, int echo __unused)
 {
 	return(NULL);
 }
