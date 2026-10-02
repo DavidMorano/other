@@ -46,8 +46,8 @@ using std::cout ;			/* variable */
 
 /* typedefs */
 
-typedef const char		cchar ;
-typedef const char *const *	mainv ;
+typedef cchar		cchar ;
+typedef cchar *const *	mainv ;
 
 
 /* exported subroutines */
