@@ -95,8 +95,8 @@ extern void
 	dooption(int),
 	dontoption(int),
 	edithost(char *, char *),
-	fatal(int, const char *),
-	fatalperror(int, const char *),
+	fatal(int, cchar *),
+	fatalperror(int, cchar *),
 	get_slc_defaults(void),
 	init_env(void),
 	init_termbuf(void),
@@ -106,8 +106,8 @@ extern void
 	netclear(void),
 	netflush(void),
 #ifdef DIAGNOSTICS
-	printoption(const char *, int),
-	printdata(const char *, char *, int),
+	printoption(cchar *, int),
+	printdata(cchar *, char *, int),
 	printsub(char, unsigned char *, int),
 #endif
 	process_slc(unsigned char, unsigned char, cc_t),
@@ -174,8 +174,8 @@ extern void
 	willoption(int),
 	wontoption(int);
 
-int	output_data(const char *, ...) __printflike(1, 2);
-void	output_datalen(const char *, int);
+int	output_data(cchar *, ...) __printflike(1, 2);
+void	output_datalen(cchar *, int);
 void	startslave(char *, int, char *);
 
 #ifdef	ENCRYPTION
