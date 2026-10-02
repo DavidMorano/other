@@ -78,10 +78,10 @@ EXTERNC_begin
 extern int	uc_sysconfval(int,long *) noex ;
 extern int	uc_sysconfstr(int,char *,int) noex ;
 
-static inline int uc_sysconf(int req,long *rp) noex {
+local inline int uc_sysconf(int req,long *rp) noex {
 	return uc_sysconfval(req,rp) ;
 } /* end subroutine */
-static inline int uc_sysconfmaxline() noex {
+local inline int uc_sysconfmaxline() noex {
 	cint		req = _SC_LINE_MAX ;
 	return uc_sysconfval(req,nullptr) ;
 } /* end subroutine */
