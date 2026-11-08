@@ -37,7 +37,7 @@ INCS +=
 
 MODS +=
 
-LIBS += -luo -lu
+LIBS += -luo -lu -lf
 
 
 OBJ_FIELDTERMS= fieldterms_main.o
