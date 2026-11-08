@@ -35,21 +35,21 @@ DEFS +=
 
 INCS +=
 
-MODS += argmgr.o filerec.o
+MODS += argmgr.o
 MODS += cmdutils.o
 MODS += modproc.o 
-MODS += strfilter.o 
+MODS += strfilter.o
 
-LIBS += -lf -lu -lsecdb -lnss
+LIBS += -lu -lf -lsecdb -lnss
 
 
-DEPS_MAIN += cmdutils.o matxstr.o strfilter.o 
-DEPS_MAIN += argmgr.o filerec.o 
+DEPS_MAIN += cmdutils.o matxstr.o
+DEPS_MAIN += argmgr.o
 DEPS_MAIN += strfilter.o tardir.o
 DEPS_MAIN += modproc.o sif.o
 
 OBJ0= files_main.o files_show.o
-OBJ1= argmgr.o filerec.o tardir.o
+OBJ1= argmgr.o tardir.o
 OBJ2= modproc.o matxstr.o nleadx.o
 OBJ3= sif.o cmdutils.o strcpyx.o
 OBJ4= filelinker.o ucx.o ucinet.o
@@ -59,7 +59,7 @@ OBJ7= deb.o strnxcmp.o strxcmp.o
 
 OBJ8= strw.o strwcpy.o
 OBJ9= inetaddrx.o
-OBJ10= sbuf.o
+OBJ10= path.o
 OBJ11=
 OBJ12=
 OBJ13=
@@ -68,7 +68,7 @@ OBJ15=
 
 OBJA= obj0.o obj1.o obj2.o obj3.o
 OBJB= obj4.o obj5.o obj6.o obj7.o
-OBJC= obj8.o obj9.o
+OBJC= obj8.o obj9.o obj10.o
 
 OBJ= obja.o objb.o objc.o
 
@@ -213,7 +213,7 @@ obj.o:			$(OBJ)
 files_main.o:		files_main.cc $(DEPS_MAIN)		$(INCS)
 files_show.o:		files_show.cc $(DEPS_MAIN)		$(INCS)
 files_helpdata.o:	files_helpdata.cc			$(INCS)
-ilelinker.o:		filelinker.cc	filelinker.hh		$(INCS)
+filelinker.o:		filelinker.cc	filelinker.hh		$(INCS)
 
 # MODS
 mods.o:			$(DEPS_MAIN)
@@ -344,6 +344,16 @@ inetaddrx.o:		inetaddrx.dir
 inetaddrx.dir:
 	makesubdir $@
 
+# PATH
+path.o:			path.dir
+path.dir:
+	makesubdir $@
+
+# VEC		(libuc)
+vec.o:			vec.dir
+vec.dir:
+	makesubdir $@
+
 # MODPROC	(libdam)
 modproc.o:		modproc.dir
 modproc.dir:
@@ -359,7 +369,17 @@ cmdutils.o:		cmdutils.dir
 cmdutils.dir:
 	makesubdir $@
 
+pathadd.o:		pathadd.cc	pathadd.h
+pathdangle.o:		pathdangle.cc	pathdangle.h
 char.o:			char.cc		char.h
-ischarx.o:		ischarx.cc	ischarx.h
+
+# VECFNMAT
+vecfnmat.o:		vecfnmat0.o vecfnmat1.o
+	$(CXX) -r -o $@ $(LDFLAGS) $^
+
+vecfnmat0.o:		vecfnmat.ccm	vecfnmat.hh
+	gxx -c -x c++ -o $@ $(CPPFLAGS) $(CXXFLAGS) $<
+
+vecfnmat1.o:		vecfnmat1.cc	vecfnmat0.o vecfnmat.hh
 
 
