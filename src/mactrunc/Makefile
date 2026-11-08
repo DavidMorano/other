@@ -90,7 +90,7 @@ CPP= cpp
 INCS= config.h defs.h
 
 
-OBJ0= maxtrunc_main.o whatinfo.o
+OBJ0= mactrunc_main.o
 OBJ1= process.o
 OBJ2= 
 OBJ3= uc_ftruncate64.o
@@ -104,7 +104,7 @@ OBJ= $(OBJ0) $(OBJ1) $(OBJ2) $(OBJ3) $(OBJ4) $(OBJ5) $(OBJ6) $(OBJ7)
 OBJS= $(CRT0) $(OBJ) $(CRTC)
 
 
-.SUFFIXES:	.ls
+.SUFFIXES:		.hh .ii .iim .ccm
 
 
 default:		$(T).x
