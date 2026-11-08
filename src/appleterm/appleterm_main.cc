@@ -41,7 +41,7 @@
 #pragma		GCC dependency		"mod/libutil.ccm"
 
 import libutil ;			/* |lenstr(3u)| */
-import ureserve ;			/* |isprintlatin(3u)| */
+import ureserve ;			/* |ischprint(3u)| */
 
 /* local defines */
 
@@ -212,7 +212,7 @@ local int form(int type,cchar *text) noex {
 
 local int perenc(char *ebuf,int,int ch) noex {
 	char		*ep = ebuf ;
-	if (isprintlatin(ch) && isnotbadchar(ch)) {
+	if (ischprint(ch) && isnotbadchar(ch)) {
 	    *ep++ = char(ch) ;
 	    *ep = '\0' ;
 	} else {
