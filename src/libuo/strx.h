@@ -31,8 +31,9 @@
 #include	<strsub.h>
 #include	<strwildsub.h>
 #include	<strxcmp.h>
-#include	<strabbrerr.h>
-#include	<strabbrsig.h>
+#include	<strabbrerr.h>		/* |errno| "error"s */
+#include	<strabbrsig.h>		/* signal numbers */
+#include	<strabbrexi.h>		/* process exit codes */
 #include	<straltwchar.h>
 #include	<strcpyxc.h>
 #include	<strlinelen.h>
