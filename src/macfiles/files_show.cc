@@ -155,7 +155,7 @@ local int liner(cchar *fn,int fd,csize ms,int mlen) noex {
 		if (ll > 0) {
 		    lno += 1 ;
 		    c = check(fn,mll,lp,ll,lno,c) ;
-		}
+		} /* end */
 	    } /* end if (memory-advise) */
 	    rs1 = u_mmapend(md,ms) ;
 	    if (rs >= 0) rs = rs1 ;
