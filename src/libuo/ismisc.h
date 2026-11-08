@@ -26,6 +26,9 @@
 #include	<usysdefs.h>		/* LIBU */
 
 #include	<isaccmode.h>		/* LIBUC */
+#include	<isinteractive.hh>	/* LIBUC */
+#include	<isindomain.h>
+#include	<isinetaddr.h>
 
 
 EXTERNC_begin
@@ -34,15 +37,16 @@ extern bool	isprime		(uint) noex ;
 extern bool	isleapyear	(int) noex ;
 extern bool	isdotdir	(cchar *) noex ;
 extern bool	isobjspecial	(void *) noex ;
-extern bool	issamehostname	(cchar *,cchar *,cchar *) noex ;
 extern bool	isfnamespecial	(cchar *,int) noex ;
+
+extern bool	issamehostname	(cchar *,cchar *,cchar *) noex ;
 
 local inline bool isDotDir(cchar *dp) noex {
 	return isdotdir(dp) ;
-}
+} /* end */
 local inline bool isSpecialObject(void *op) noex {
 	return isobjspecial(op) ;
-}
+} /* end */
 
 EXTERNC_end
 
