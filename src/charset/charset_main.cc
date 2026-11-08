@@ -43,7 +43,7 @@
 #include	<sys/xattr.h>		/* POSIX */
 #include	<unistd.h>		/* POSIX */
 #include	<fcntl.h>		/* POSIX */
-#include	<cstddef>		/* CSTD |nullptr_t| */
+#include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD */
 #include	<cstdarg>		/* CSTD */
 #include	<cstring>		/* CSTD |strlen(3c)| yes-we-want-it */
@@ -103,6 +103,15 @@ using std::cerr ;			/* variable */
 /* local structures */
 
 namespace {
+    struct vars {
+	int		maxpath ;
+	int		maxline ;
+	int		pagesz ;
+	operator int () noex ;
+    } ; /* end struct (vars) */
+} /* end namespace */
+
+namespace {
     enum proginfomems {
 	proginfomem_start,
 	proginfomem_finish,
@@ -156,7 +165,7 @@ namespace {
 	int fileproc_cs	(char *,int,cchar *,int = -1) noex ;
 	int fileproc_cm	(char *,int,cchar *,int = -1) noex ;
 	int filecheck	(char *,int,cchar *,int = -1) noex ;
-	int printf	(cchar *,...) noex ;
+	int eprintf	(cchar *,...) noex ;
     private:
 	int getpn	(mainv) noex ;
 	int istart	() noex ;
@@ -207,13 +216,8 @@ constexpr MAPEX		mapexs[] = {
 } ; /* end array (mapexs) */
 
 constexpr cchar		xaname[]	= "charset" ;
-
-static cint		maxpathlen	= ulibval.maxpathlen ;
-static cint		maxlinelen	= ulibval.maxline ;
-static cint		pagesz		= ulibval.pagesz ;
-
+static vars		var ;
 cint			nents		= NENTS ;
-
 cbool			f_debug		= CF_DEBUG ;
 
 
@@ -228,23 +232,25 @@ int main(int argc,con mainv argv,con mainv envv) {
 	int		rs ;
 	int		rs1 ;
 	debfd(dfd) ;
-	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
-            switch (pi.pm) {
-            case progmode_charset:
-            case progmode_chstaff:
-                rs = pi.charset() ;
-                break ;
-	    default:
-		rs = SR_NOSYS ;
-		break ;
-            } /* end switch */
-	    rs1 = pi.finish ;
-	    if (rs >= 0) rs = rs1 ;
-	} /* end if (proginfo) */
+	if (static cint rsv = var ; (rs = rsv) >= 0) ylikely {
+	    if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
+                switch (pi.pm) {
+                case progmode_charset:
+                case progmode_chstaff:
+                    rs = pi.charset() ;
+                    break ;
+	        default:
+		    rs = SR_NOSYS ;
+		    break ;
+                } /* end switch */
+	        rs1 = pi.finish ;
+	        if (rs >= 0) rs = rs1 ;
+	    } /* end if (proginfo) */
+	} /* end if (vars) */
 	if ((ex == EX_OK) && (rs < 0)) {
 	    cerr << "charset" << ": error (" << rs << ")" << eol ;
 	    ex = mapex(mapexs,rs) ;
-	} /* end */
+	} /* end if (error) */
 	return ex ;
 } /* end subroutine (main) */
 
@@ -257,18 +263,18 @@ int proginfo::charset() noex {
 	int		rs = SR_INVALID ;
 	int		rs1 ;
 	int		c = 0 ; /* return-value */
-	if ((argc >= 2) && (charsetval = argv[1]) != np) {
-	    if ((rs = flistbegin(nents)) >= 0) {
-		if ((rs = pagesz) >= 0) {
+	if ((argc >= 2) && (charsetval = argv[1]) != np) ylikely {
+	    if ((rs = flistbegin(nents)) >= 0) ylikely {
+		if ((rs = var.pagesz) >= 0) ylikely {
 		    cint	vlen = rs ;
-		    if (char *vbuf = new(nt) char[vlen+1] ; vbuf) {
+		    if (char *vbuf = new(nt) char[vlen+1]) ylikely {
 		        {
 	                    rs = charprocess(vbuf,vlen) ;
 		            c = rs ;
 		        }
 		        delete [] vbuf ;
 	            } /* end if (m-a-f) */
-		} /* end if (pagesz) */
+		} /* end if (var.pagesz) */
 	        rs1 = flistend ;
 	        if (rs >= 0) rs = rs1 ;
 	    } /* end if (flist) */
@@ -280,14 +286,14 @@ int proginfo::charprocess(char *vbuf,int vlen) noex {
 	int		rs = SR_OK ;
 	int		c = 0 ;
 	for (int ai = 2 ; (rs >= SR_OK) && (ai < argc) && argv[ai] ; ai += 1) {
-            if (cchar *fn = argv[ai] ; fn[0]) {
+            if (cchar *fn = argv[ai] ; fn[0]) ylikely {
                 if ((fn[0] == '-') && (fn[1] == '\0')) {
                     rs = readin(vbuf,vlen) ;
                     c += rs ;
                 } else {
                     rs = filecheck(vbuf,vlen,fn) ;
                     c += rs ;
-                }
+                } /* end if */
             } /* end if (non-empty) */
             if (rs < 0) break ;
 	} /* end for */
@@ -299,26 +305,26 @@ int proginfo::readin(char *vbuf,int vlen) noex {
 	istream		*isp = &cin ;
 	int		rs ;
 	int		c = 0 ;
-	if ((rs = maxpathlen) >= 0) {
+	if ((rs = var.maxpath) >= 0) ylikely {
 	    cint	llen = rs ;
 	    rs = SR_NOMEM ;
-	    if (char *lbuf = new(nt) char[llen+1] ; lbuf) {
+	    if (char *lbuf = new(nt) char[llen+1]) ylikely {
 	        while ((rs = readln(isp,lbuf,llen)) > 0) {
 		    int		ll = rs ;
 		    if ((ll > 0) && (lbuf[ll - 1] == eol)) ll -= 1 ;
-	if_constexpr (f_debug) {
-	    strnul fn(lbuf,ll) ;
-	    DEBPRINTF("fn=>%s< ll=%d\n",ccp(fn),ll) ;
-	}
+		    if_constexpr (f_debug) {
+	    	        strnul fn(lbuf,ll) ;
+	    	        DEBPRINTF("fn=>%s< ll=%d\n",ccp(fn),ll) ;
+		    } /* end if_constexpr */
 		    if (ll > 0) {
 		        rs = filecheck(vbuf,vlen,lbuf,ll) ;
 			c += rs ;
-		    }
+		    } /* end if */
 		    if (rs < 0) break ;
 	        } /* end if (reading lines) */
 	        delete [] lbuf ;
 	    } /* end if (m-a-f) */
-	} /* end if (maxpathlen) */
+	} /* end if (var.maxpath) */
 	DEBPRINTF("ret rs=%d c=%d\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::readin) */
@@ -334,12 +340,12 @@ int proginfo::filecheck(char *vbuf,int vlen,cc *fp,int µfl) noex {
 	                    if ((rs = fileproc(vbuf,vlen,fp,fl)) >= 0) {
 		                c += rs ;
 			    } else {
-			        printf("proc file=%s (%d)\n",ccp(fn),rs) ;
-			    }
+			        eprintf("proc file=%s (%d)\n",ccp(fn),rs) ;
+			    } /* end if */
 		        } /* end if (seen-checkin) */
 	            } /* end if (regular file) */
 	        } else if (isNotPresent(rs)) {
-		    printf("stat file=%s (%d)\n",ccp(fn),rs) ;
+		    eprintf("stat file=%s (%d)\n",ccp(fn),rs) ;
 		    rs = SR_OK ;
 	        } /* end if (u_lstat) */
 		DEBPRINTF("done fn=%s rs=%d\n",ccp(fn),rs) ;
@@ -368,20 +374,22 @@ int proginfo::fileproc(char *vbuf,int vlen,cc *sp,int sl) noex {
 } /* end subroutine (proginfo::fileproc) */
 
 int proginfo::fileproc_cs(char *vbuf,int vlen,cc *sp,int sl) noex {
-	static csize	xasize = strlen(charsetval) ;
-	strnul		fn(sp,sl) ;
 	cint		rse = SR_EXISTS ;
 	cint		xo = XATTR_CREATE ;
 	int		rs ;
 	int		c = 0 ; /* return-value */
-	cchar		*xaval = charsetval ;
 	(void) vbuf ;
 	(void) vlen ;
-	if ((rs = u_xattrset(fn,xaname,xaval,xasize,0u,xo)) == rse) {
-	    rs = SR_OK ;
-	    c += 1 ;
-	}
-	DEBPRINTF("ret fn=>%s< c=%d\n",ccp(fn),c) ;
+	if (strnul fn(sp,sl) ; fn.fok) {
+	    static csize	xasize = strlen(charsetval) ;
+	    ccharp		xaval = charsetval ;
+	    if ((rs = u_xattrset(fn,xaname,xaval,xasize,0u,xo)) == rse) {
+	        rs = SR_OK ;
+	        c += 1 ;
+	    } /* end if */
+	    DEBPRINTF("xattr rs=%d fn=>%s<\n",rs,ccp(fn)) ;
+	} /* end if (strnul) */
+	DEBPRINTF("ret rs=%d c=%c\n",rs,c) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::fileproc_cs) */
 
@@ -397,7 +405,7 @@ int proginfo::fileproc_cm(char *vbuf,int vlen,cc *sp,int sl) noex {
 	    if (f) {
 		cmode nm = sb.st_mode | 0200 | 0020 ;
 		rs = u_chmod(fn,nm) ;
-	    }
+	    } /* end if */
 	} /* end if (u_stat) */
     	return rs ;
 } /* end method (proginfo::fileproc_cm) */
@@ -416,17 +424,17 @@ int proginfo::ifinish() noex {
 
 int proginfo::getpn(mainv names) noex {
 	int		rs = SR_FAULT ;
-	if (argv) {
+	if (argv) ylikely {
 	    rs = SR_NOMSG ;
-	    if ((argc > 0) && argv[0]) {
+	    if ((argc > 0) && argv[0]) ylikely {
 		cchar	*arg0 = argv[0] ;
 	        cchar	*bp{} ;
-	        if (int bl ; (bl = sfbasename(arg0,-1,&bp)) > 0) {
+	        if (int bl ; (bl = sfbasename(arg0,-1,&bp)) > 0) ylikely {
 		    if (cint pl = rmchr(bp,bl,'.') ; pl > 0) {
 	                if ((pm = matstr(names,bp,pl)) >= 0) {
 			    pn = names[pm] ;
 		            rs = pm ;
-	                }
+	                } /* end if */
 		    } /* end if (non-zero positive progname) */
 		} /* end if (have base-name) */
 	    } /* end if (have first argument) */
@@ -442,30 +450,30 @@ int proginfo::iflistend() noex {
 	return seen.finish ;
 } /* end method (proginfo::iflistend) */
 
-int proginfo::printf(cchar *fmt,...) noex {
+int proginfo::eprintf(cchar *fmt,...) noex {
 	cnothrow	nt{} ;
     	va_list		ap ;
     	int		rs = SR_FAULT ;
-	if (fmt) {
+	if (fmt) ylikely {
 	    rs = SR_INVALID ;
-	    if (fmt[0]) {
+	    if (fmt[0]) ylikely {
 	        va_begin(ap,fmt) ;
-	        if ((rs = maxlinelen) >= 0) {
+	        if ((rs = var.maxline) >= 0) ylikely {
 		    cint	llen = rs ;
 		    rs = SR_NOMEM ;
-		    if (char *lbuf = new(nt) char[llen + 1] ; lbuf) {
-	    	        if ((rs = snvprintf(lbuf,llen,fmt,ap)) >= 0) {
+		    if (char *lbuf = new(nt) char[llen + 1] ; lbuf) ylikely {
+	    	        if ((rs = snvprintf(lbuf,llen,fmt,ap)) >= 0) ylikely {
 			    if (pn == nullptr) pn = "charset" ;
 			    cerr << pn << ": " << lbuf ;
 		        } /* end if (snvprintf) */
 		        delete [] lbuf ;
 		    } /* end if (new-char) */
-	        } /* end if (maxlinelen) */
+	        } /* end if (var.maxline) */
 	        va_end(ap) ;
 	    } /* end if (valid) */
 	} /* end if (non-null) */
     	return rs ;
-} /* end method (proginfo::printf) */
+} /* end method (proginfo::eprintf) */
 
 int proginfo_co::operator () (int a) noex {
 	int		rs = SR_BUGCHECK ;
@@ -487,5 +495,19 @@ int proginfo_co::operator () (int a) noex {
 	} /* end if (non-null) */
 	return rs ;
 } /* end method (proginfo_co::operator) */
+
+vars::operator int () noex {
+    	int		rs ;
+	if ((rs = ulibval.maxpathlen) >= 0) ylikely {
+	    maxpath = rs ;
+	    if ((rs = ulibval.maxline) >= 0) ylikely {
+		maxline = rs ;
+	        if ((rs = ulibval.pagesz) >= 0) ylikely {
+		    pagesz = rs ;
+	        } /* end */
+	    } /* end */
+	} /* end */
+    	return rs ;
+} /* end method (vars::operator) */
 
 
