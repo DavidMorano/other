@@ -35,7 +35,7 @@ extern int uc_sockreuse		(int) noex ;
 extern int uc_keepalive		(int fd,int f) noex ;
 local inline int uc_reuseaddr	(int fd) noex {
     	return uc_sockreuse(fd) ;
-}
+} /* end subroutine */
 
 EXTERNC_end
 
