@@ -19,6 +19,7 @@
 
 /******************************************************************************
 
+  	Description:
 	This is a fairly generic front-end subroutine for a program.
 
 ******************************************************************************/
@@ -28,16 +29,16 @@
 #include	<sys/stat.h>
 #include	<sys/param.h>
 #include	<unistd.h>
-#include	<csignal>
+#include	<csignal>		/* CSTD */
 #include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD */
-#include	<cstring>
+#include	<cstring>		/* CSTD */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
-#include	<localmisc.h>
+#include	<localmisc.h>		/* LIBU */
+#include	<libdebug.h>		/* LIBDEBUG |DEBUGPRINTF(3debug)| */
 
-#include	"config.h"
-#include	"defs.h"
+#include	"mactrunc_config.h"
 
 
 /* local defines */
@@ -59,7 +60,8 @@
 
 /* forward references */
 
-local int	usage(struct proginfo *) ;
+local int usage(PI *) ;
+local int procfile(PI *,char *,ulong) noex ;
 
 
 /* external variables */
@@ -81,7 +83,7 @@ enum argopts {
 	argopt_af,
 	argopt_of,
 	argopt_overlast
-} ;
+} ; /* end enum */
 
 constexpr cpcchar	argopts[] = {
 	"ROOT",
@@ -97,7 +99,7 @@ constexpr cpcchar	argopts[] = {
 	"af",
 	"of",
 	NULL
-} ;
+} ; /* end array */
 
 
 /* exported subroutines */
@@ -131,14 +133,11 @@ int main(int argc,mainv argv,mainv envv) {
 	cchar	*ofname = NULL ;
 	cchar	*cp ;
 
-
 	pip->verboselevel = 1 ;
-
-/* process program arguments */
-
-	for (ai = 0 ; ai < MAXARGGROUPS ; ai += 1)
+	/* process program arguments */
+	for (ai = 0 ; ai < MAXARGGROUPS ; ai += 1) {
 	    argpresent[ai] = 0 ;
-
+	}
 	ai = 0 ;
 	ai_max = 0 ;
 	ai_pos = 0 ;
@@ -154,7 +153,7 @@ int main(int argc,mainv argv,mainv envv) {
 	    if ((argl > 1) && (f_optminus || f_optplus)) {
 		cint	ach = MKCHAR(argp[1]) ;
 
-	        if (isdigitlatin(ach)) {
+	        if (ischdigit(ach)) {
 
 	            rs = cfdecmfull((argp + 1),(argl - 1),&argvalue) ;
 
@@ -400,7 +399,7 @@ int main(int argc,mainv argv,mainv envv) {
 
 #if	CF_DEBUG
 	if (DEBUGLEVEL(2))
-	    debugprintf("main: debuglevel=%u\n",pip->debuglevel) ;
+	    DEBUGPRINTF("main: debuglevel=%u\n",pip->debuglevel) ;
 #endif
 
 	if (pip->debuglevel > 0) {
@@ -478,7 +477,7 @@ done:
 
 #if	CF_DEBUG
 	        if (DEBUGLEVEL(2))
-	    debugprintf("main: exiting ex=%u (%d)\n",ex,rs) ;
+	    DEBUGPRINTF("main: exiting ex=%u (%d)\n",ex,rs) ;
 #endif
 
 	if (pip->debuglevel > 0)
@@ -536,16 +535,9 @@ local int usage(PI *pip) noex (
 	return (rs >= 0) ? wlen : rs ;
 } /* end subroutine (usage) */
 
-
-int procfile(pip,namespec,trunclen)
-struct proginfo	*pip ;
-char		namespec[] ;
-ulong		trunclen ;
-{
-	USTAT	sb ;
-
+local int procfile(PI *pip,char *namespec,ulong trunclen) noex {
+	ustat	sb ;
 	ulong	flen ;
-
 	int	rs ;
 	int	fd ;
 	int	f_flen ;
@@ -563,7 +555,7 @@ ulong		trunclen ;
 
 #if	CF_DEBUG
 	if (pip->debuglevel >= 3)
-	    debugprintf("process: namespec=\"%s\"\n",namespec) ;
+	    DEBUGPRINTF("gnamespec=\"%s\"\n",namespec) ;
 #endif
 
 	flen = trunclen ;
@@ -573,7 +565,7 @@ ulong		trunclen ;
 
 #if	CF_DEBUG
 	if (pip->debuglevel >= 3)
-	    debugprintf("process: not literal\n") ;
+	    DEBUGPRINTF("gnot literal\n") ;
 #endif
 
 	    fname = namespec ;
@@ -584,7 +576,7 @@ ulong		trunclen ;
 
 #if	CF_DEBUG
 	if (pip->debuglevel >= 3)
-	    debugprintf("process: fname=%s\n",fname) ;
+	    DEBUGPRINTF("gfname=%s\n",fname) ;
 #endif
 
 	        rs = cfdecmfull((cp + 1),-1,&flen) ;
@@ -592,7 +584,7 @@ ulong		trunclen ;
 
 #if	CF_DEBUG
 	if (pip->debuglevel >= 3)
-	    debugprintf("process: f_flen=%d flen=%llu\n",f_flen,flen) ;
+	    DEBUGPRINTF("gf_flen=%d flen=%llu\n",f_flen,flen) ;
 #endif
 
 	    }
@@ -613,7 +605,7 @@ ulong		trunclen ;
 
 #if	CF_DEBUG
 	if (pip->debuglevel >= 3)
-	    debugprintf("process: u_open()/permf() rs=%d\n",rs) ;
+	    DEBUGPRINTF("gu_open()/permf() rs=%d\n",rs) ;
 #endif
 
 	if (rs < 0)
@@ -623,8 +615,8 @@ ulong		trunclen ;
 
 #if	CF_DEBUG
 	if (pip->debuglevel >= 3) {
-	    debugprintf("process: u_fstat() rs=%d\n",rs) ;
-	    debugprintf("process: isreg=%d\n",
+	    DEBUGPRINTF("gu_fstat() rs=%d\n",rs) ;
+	    DEBUGPRINTF("gisreg=%d\n",
 			S_ISREG(sb.st_mode)) ;
 	}
 #endif
@@ -634,7 +626,7 @@ ulong		trunclen ;
 
 #if	CF_DEBUG
 	if (pip->debuglevel >= 3)
-	    debugprintf("process: filesize=%lld flen=%llu\n",
+	    DEBUGPRINTF("gfilesize=%lld flen=%llu\n",
 		sb.st_size,flen) ;
 #endif
 
@@ -650,14 +642,14 @@ ulong		trunclen ;
 
 #if	CF_DEBUG
 	if (pip->debuglevel >= 3)
-	    debugprintf("process: truncating to len=%llu\n",flen) ;
+	    DEBUGPRINTF("gtruncating to len=%llu\n",flen) ;
 #endif
 
 	    rs = uc_ftruncate64(fd,(off_t) flen) ;
 
 #if	CF_DEBUG
 	if (pip->debuglevel >= 3)
-	    debugprintf("process: uc_ftruncate() rs=%d\n",rs) ;
+	    DEBUGPRINTF("guc_ftruncate() rs=%d\n",rs) ;
 #endif
 
 	    rs = 1 ;
@@ -668,8 +660,6 @@ done:
 	u_close64(fd) ;
 
 	return rs ;
-}
-/* end subroutine (procfile) */
-
+} /* end subroutine (procfile) */
 
 
