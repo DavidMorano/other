@@ -62,17 +62,17 @@ int main(int,con mainv,con mainv) {
 	int		c ;
 
 	for (int c = 0 ; c < 64 ; c += 1) {
-	   if (isalnumlatin(c)) {
+	   if (ischalnum(c)) {
 	       fprintf(fp,"%c\n",c) ;
 	   }
 	} /* end for */
 
 	n = 32 ;
 	for (int c = 64 ; c < (128-n) ; c += 1) {
-	   if (isalnumlatin(c)) {
+	   if (ischalnum(c)) {
 	       fprintf(fp,"%c\n",c) ;
 	   }
-	   if (isalnumlatin(c+n)) {
+	   if (ischalnum(c+n)) {
 	       fprintf(fp,"%c\n",(c+n)) ;
 	   }
 	} /* end for */
@@ -80,10 +80,10 @@ int main(int,con mainv,con mainv) {
 	n = 32 ;
 	c = (128+64) ;
 	for (i = 0 ; i < n ; (i += 1, c += 1)) {
-	   if (isalnumlatin(c)) {
+	   if (ischalnum(c)) {
 	       fprintf(fp,"%c\n",c) ;
 	   }
-	   if (isalnumlatin(c+n)) {
+	   if (ischalnum(c+n)) {
 	       fprintf(fp,"%c\n",(c+n)) ;
 	   }
 	} /* end for */
