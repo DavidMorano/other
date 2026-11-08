@@ -1,4 +1,4 @@
-/* strdcpy HEADER */
+/* strdcpy HEADER (String-Destination-Copy) */
 /* charset=ISO8859-1 */
 /* lang=C20 */
 
@@ -30,11 +30,9 @@
 
 
 EXTERNC_begin
-
 extern char	*strdcpycompact	(char *,int,cc *,int) noex ;
 extern char	*strdcpyopaque	(char *,int,cc *,int) noex ;
 extern char	*strdcpyclean	(char *,int,int,cchar *,int) noex ;
-
 EXTERNC_end
 
 #ifdef	__cplusplus
