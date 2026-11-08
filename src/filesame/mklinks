@@ -1,7 +1,7 @@
 #!/usr/local/bin/ksh
 # MKLINKS (filesame)
 
-CMDS=" filesame filenewer "
+CMDS=" filesame filesametime filenewer "
 
 LOCPROG=filesame.x
 TDIRS=" /usr/local /usr/extra "
