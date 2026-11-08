@@ -45,8 +45,8 @@ struct hdbstr ;
 struct hdbstr_iter {
     	hdbstr		*op = nullptr ;
     	hdbstr_cur	*curp = nullptr ;
-	hdbstr_iter() = default ;
-	hdbstr_iter(const hdbstr_iter &oit) noex ;
+	hdbstr_iter	() = default ;
+	hdbstr_iter	(con hdbstr_iter &oit) noex ;
 	hdbstr_iter &operator = (const hdbstr_iter &oit) noex ;
 	bool operator != (const hdbstr_iter &) noex ;
 	bool operator == (const hdbstr_iter &) noex ;
@@ -57,10 +57,10 @@ struct hdbstr_iter {
 	hdbstr_iter operator ++ (int) noex ; /* post */
 	destruct hdbstr_iter() {
 	    if (op) dtor() ;
-	} ;
+	} ; /* end */
     private:
-	int increment(int = 1) noex ;
-	void dtor() noex ;
+	int increment	(int = 1) noex ;
+	void dtor	() noex ;
 } ; /* end struct (hdbstr_iter) */
 struct hdbstr_co {
 	hdbstr		*op = nullptr ;
@@ -85,7 +85,7 @@ struct hdbstr : hdb {
 	    delall	(this,hdbstrmem_delall) ;
 	    count	(this,hdbstrmem_count) ;
 	    finish	(this,hdbstrmem_finish) ;
-	} ;
+	} ; /* end */
 	hdbstr(const hdbstr &) = delete ;
 	hdbstr &operator = (const hdbstr &) = delete ;
 	int add		(cchar *,int,cchar *,int) noex ;
@@ -105,14 +105,13 @@ struct hdbstr : hdb {
 	void dtor() noex ;
 	destruct hdbstr() {
 	    if (fopen) dtor() ;
-	} ;
+	} ; /* end */
 } ; /* end struct (hdbstr) */
 #else	/* __cplusplus */
 typedef HDBSTR		hdbstr ;
 #endif /* __cplusplus */
 
 EXTERNC_begin
-
 extern int hdbstr_start(hdbstr *,int) noex ;
 extern int hdbstr_add(hdbstr *,cchar *,int,cchar *,int) noex ;
 extern int hdbstr_curbegin(hdbstr *,hdbstr_cur *) noex ;
@@ -134,7 +133,6 @@ extern int hdbstr_finish(hdbstr *) noex ;
 
 extern int hdbstr_loadkeys(hdbstr *,cchar *) noex ;
 extern int hdbstr_loadpairs(hdbstr *,cchar *) noex ;
-
 EXTERNC_end
 
 
