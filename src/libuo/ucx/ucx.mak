@@ -40,8 +40,8 @@ MODS +=
 LIBS +=
 
 
-OBJ0= uctc.o
-OBJ1= uckvamatch.o
+OBJ0= uckvamatch.o
+OBJ1=
 OBJ2= 
 OBJ3=
 OBJ4=
@@ -49,7 +49,7 @@ OBJ5=
 OBJ6= 
 OBJ7= 
 
-OBJA= obj0.o obj1.o
+OBJA= obj0.o
 OBJB= obj4.o
 
 OBJ= obja.o
