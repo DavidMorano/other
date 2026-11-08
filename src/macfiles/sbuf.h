@@ -57,18 +57,18 @@ struct sbuf_iter {
 	    if (this != &oit) {
 		cp = oit.cp ;
 	    }
-	} ;
+	} ; /* end */
 	sbuf_iter &operator = (const sbuf_iter &oit) noex {
 	    if (this != &oit) {
 		cp = oit.cp ;
 	    }
 	    return *this ;
-	} ;
+	} ; /* end */
 	bool operator != (const sbuf_iter &) noex ;
 	bool operator == (const sbuf_iter &) noex ;
 	char operator * () noex {
 	    return *cp ;
-	} ;
+	} ; /* end */
 	sbuf_iter operator + (int) const noex ;
 	sbuf_iter operator += (int) noex ;
 	sbuf_iter operator ++ () noex ; /* pre */
@@ -82,17 +82,17 @@ struct sbuf_co {
 	void operator () (sbuf *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
+	} ; /* end */
 	int operator () (int = 1) noex ;
 	operator int () noex {
 	    return operator () () ;
-	} ;
+	} ; /* end */
 } ; /* end struct (sbuf_co) */
 extern "C" {
    extern int sbuf_strw		(sbuf *,cchar *,int) noex ;
    extern int sbuf_addquoted	(sbuf *,cchar *,int) noex ;
    extern int sbuf_getlen	(sbuf *) noex ;
-}
+} /* end extern (C) */
 struct sbuf : sbuf_head {
 	sbuf_co		deci ;
 	sbuf_co		hexc ;
@@ -123,14 +123,14 @@ struct sbuf : sbuf_head {
 	int chrs	(int,int = 1) noex ;
 	int strw	(cchar *sp,int sl = -1) noex {
 	    return sbuf_strw(this,sp,sl) ;
-	} ;
+	} ; /* end */
 	int str		(cchar *sp) noex {
 	    return sbuf_strw(this,sp,-1) ;
-	} ;
+	} ; /* end */
 	int strs	(int,mainv) noex ;
 	int addquoted	(cchar *sp,int sl = -1) noex {
 	    return sbuf_addquoted(this,sp,sl) ;
-	} ;
+	} ; /* end */
 	int vprintf	(cchar *,va_list) noex ;
 	int printf	(cchar *,...) noex ;
 	int buf		(cchar *,int) noex ;
@@ -144,33 +144,32 @@ struct sbuf : sbuf_head {
 	sbuf &operator << (cchar *cp) noex {
 	    strw(cp) ;
 	    return *this ;
-	} ;
+	} ; /* end */
 	sbuf &operator << (char ch) noex {
 	    chr(ch) ;
 	    return *this ;
-	} ;
+	} ; /* end */
 	sbuf_iter begin() noex {
 	    sbuf_iter	it(rbuf) ;
 	    return it ;
-	} ;
+	} ; /* end */
 	sbuf_iter end() noex {
 	    sbuf_iter	it(rbuf + index) ;
 	    return it ;
-	} ;
+	} ; /* end */
 	void dtor() noex ;
 	operator int () noex {
 	    return sbuf_getlen(this) ;
-	} ;
+	} ; /* end */
 	destruct sbuf() {
 	    if (rbuf) dtor() ;
-	} ;
+	} ; /* end */
 } ; /* end struct (sbuf) */
 #else	/* __cplusplus */
 typedef SBUF		sbuf ;
 #endif /* __cplusplus */
 
 EXTERNC_begin
-
 extern int	sbuf_start	(sbuf *,char *,int) noex ;
 extern int	sbuf_finish	(sbuf *) noex ;
 extern int	sbuf_reset	(sbuf *) noex ;
@@ -217,139 +216,142 @@ extern int	sbuf_printf	(sbuf *,cchar *,...) noex ;
 extern int	sbuf_vprintf	(sbuf *,cchar *,va_list) noex ;
 extern int	sbuf_termconseq	(sbuf *,int,cchar *,int,...) noex ;
 extern int	sbuf_addquoted	(sbuf *,cchar *,int) noex ;
+EXTERNC_end
 
+EXTERNC_begin
 extern int sbuf_hexpuc	(sbuf *,int,uchar)	noex ;
 extern int sbuf_hexpus	(sbuf *,int,ushort)	noex ;
 extern int sbuf_hexpui	(sbuf *,int,uint)	noex ;
 extern int sbuf_hexpul	(sbuf *,int,ulong)	noex ;
 extern int sbuf_hexpull	(sbuf *,int,ulonglong)	noex ;
+EXTERNC_end
 
-local inline int sbuf_str(sbuf *op,cchar *sp) noex {
+EXTERNC_begin
+local inline int sbuf_str(sbuf *op,cchar *sp)	noex {
 	return sbuf_strw(op,sp,-1) ;
-}
-local inline int sbuf_char(sbuf *op,int ch) noex {
+} /* end */
+local inline int sbuf_char(sbuf *op,int ch)	noex {
 	return sbuf_chr(op,ch) ;
-}
-
+} /* end */
 EXTERNC_end
 
 #ifdef	__cplusplus
 
-inline int sbuf_bin(sbuf *op,int v) noex {
+inline int sbuf_bin(sbuf *op,int v)		noex {
 	return sbuf_bini(op,v) ;
-}
-inline int sbuf_bin(sbuf *op,long v) noex {
+} /* end */
+inline int sbuf_bin(sbuf *op,long v)		noex {
 	return sbuf_binl(op,v) ;
-}
-inline int sbuf_bin(sbuf *op,longlong v) noex {
+} /* end */
+inline int sbuf_bin(sbuf *op,longlong v)	noex {
 	return sbuf_binll(op,v) ;
-}
+} /* end */
 
-inline int sbuf_bin(sbuf *op,uint v) noex {
+inline int sbuf_bin(sbuf *op,uint v)		noex {
 	return sbuf_binui(op,v) ;
-}
-inline int sbuf_bin(sbuf *op,ulong v) noex {
+} /* end */
+inline int sbuf_bin(sbuf *op,ulong v)		noex {
 	return sbuf_binul(op,v) ;
-}
-inline int sbuf_bin(sbuf *op,ulonglong v) noex {
+} /* end */
+inline int sbuf_bin(sbuf *op,ulonglong v)	noex {
 	return sbuf_binull(op,v) ;
-}
+} /* end */
 
 template<typename Binary> inline int sbuf::bin(Binary v) noex {
 	return sbuf_bin(this,v) ;
-}
+} /* end */
 
-inline int sbuf_oct(sbuf *op,int v) noex {
+inline int sbuf_oct(sbuf *op,int v)		noex {
 	return sbuf_octi(op,v) ;
-}
-inline int sbuf_oct(sbuf *op,long v) noex {
+} /* end */
+inline int sbuf_oct(sbuf *op,long v)		noex {
 	return sbuf_octl(op,v) ;
-}
-inline int sbuf_oct(sbuf *op,longlong v) noex {
+} /* end */
+inline int sbuf_oct(sbuf *op,longlong v)	noex {
 	return sbuf_octll(op,v) ;
-}
+} /* end */
 
-inline int sbuf_oct(sbuf *op,uint v) noex {
+inline int sbuf_oct(sbuf *op,uint v)		noex {
 	return sbuf_octui(op,v) ;
-}
-inline int sbuf_oct(sbuf *op,ulong v) noex {
+} /* end */
+inline int sbuf_oct(sbuf *op,ulong v)		noex {
 	return sbuf_octul(op,v) ;
-}
-inline int sbuf_oct(sbuf *op,ulonglong v) noex {
+} /* end */
+inline int sbuf_oct(sbuf *op,ulonglong v)	noex {
 	return sbuf_octull(op,v) ;
-}
+} /* end */
 
 template<typename Octal> int inline sbuf::oct(Octal v) noex {
 	return sbuf_oct(this,v) ;
-}
+} /* end */
 
-inline int sbuf_dec(sbuf *op,int v) noex {
+inline int sbuf_dec(sbuf *op,int v)		noex {
 	return sbuf_deci(op,v) ;
-}
-inline int sbuf_dec(sbuf *op,long v) noex {
+} /* end */
+inline int sbuf_dec(sbuf *op,long v)		noex {
 	return sbuf_decl(op,v) ;
-}
-inline int sbuf_dec(sbuf *op,longlong v) noex {
+} /* end */
+inline int sbuf_dec(sbuf *op,longlong v)	noex {
 	return sbuf_decll(op,v) ;
-}
+} /* end */
 
-inline int sbuf_dec(sbuf *op,uint v) noex {
+inline int sbuf_dec(sbuf *op,uint v)		noex {
 	return sbuf_decui(op,v) ;
-}
-inline int sbuf_dec(sbuf *op,ulong v) noex {
+} /* end */
+inline int sbuf_dec(sbuf *op,ulong v)		noex {
 	return sbuf_decul(op,v) ;
-}
-inline int sbuf_dec(sbuf *op,ulonglong v) noex {
+} /* end */
+inline int sbuf_dec(sbuf *op,ulonglong v)	noex {
 	return sbuf_decull(op,v) ;
-}
+} /* end */
 
 template<typename Decimal> inline int sbuf::dec(Decimal v) noex {
 	return sbuf_dec(this,v) ;
-}
+} /* end */
 
-inline int sbuf_hex(sbuf *op,int v) noex {
+inline int sbuf_hex(sbuf *op,int v)		noex {
 	return sbuf_hexi(op,v) ;
-}
-inline int sbuf_hex(sbuf *op,long v) noex {
+} /* end */
+inline int sbuf_hex(sbuf *op,long v)		noex {
 	return sbuf_hexl(op,v) ;
-}
-inline int sbuf_hex(sbuf *op,longlong v) noex {
+} /* end */
+inline int sbuf_hex(sbuf *op,longlong v)	noex {
 	return sbuf_hexll(op,v) ;
-}
+} /* end */
 
-inline int sbuf_hex(sbuf *op,uint v) noex {
+inline int sbuf_hex(sbuf *op,uint v)		noex {
 	return sbuf_hexui(op,v) ;
-}
-inline int sbuf_hex(sbuf *op,ulong v) noex {
+} /* end */
+inline int sbuf_hex(sbuf *op,ulong v)		noex {
 	return sbuf_hexul(op,v) ;
-}
-inline int sbuf_hex(sbuf *op,ulonglong v) noex {
+} /* end */
+inline int sbuf_hex(sbuf *op,ulonglong v)	noex {
 	return sbuf_hexull(op,v) ;
-}
+} /* end */
 
 template<typename Hexadecimal> inline int sbuf::hex(Hexadecimal v) noex {
 	return sbuf_hex(this,v) ;
-}
+} /* end */
 
 inline int sbuf_hexp(sbuf *op,int n,uchar v)		noex {
 	return sbuf_hexpuc	(op,n,v) ;
-}
+} /* end */
 inline int sbuf_hexp(sbuf *op,int n,ushort v)		noex {
 	return sbuf_hexpus	(op,n,v) ;
-}
+} /* end */
 inline int sbuf_hexp(sbuf *op,int n,uint v)		noex {
 	return sbuf_hexpui	(op,n,v) ;
-}
+} /* end */
 inline int sbuf_hexp(sbuf *op,int n,ulong v)		noex {
 	return sbuf_hexpul	(op,n,v) ;
-}
+} /* end */
 inline int sbuf_hexp(sbuf *op,int n,ulonglong v)	noex {
 	return sbuf_hexpull	(op,n,v) ;
-}
+} /* end */
 
 template<typename HexPrec> inline int sbuf::hexp(int n,HexPrec v) noex {
 	return sbuf_hexp(this,n,v) ;
-}
+} /* end */
 
 #endif /* __cplusplus */
 
