@@ -7,7 +7,7 @@ Sysnopsis:
 $ appleterm <type> <text>
 
 Arguments:
-<type>		type of text: pwd, doc, tab, win
+<type>		type of text (one of): pwd, doc, tab, win
 <text>		text to place on title bar
 
 Returns:
