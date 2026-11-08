@@ -5,7 +5,7 @@
 /* print specified terminal sequences */
 /* version %I% last-modified %G% */
 
-#define	CF_DEBUG	1		/* debugging */
+#define	CF_DEBUG	0		/* debugging */
 
 /* revision history:
 
@@ -51,14 +51,13 @@
 #include	<cstring>		/* CSTD */
 #include	<utility>		/* C++STD */
 #include	<string>		/* C++STD */
-#include	<string_view>		/* C++STD */
 #include	<iostream>		/* C++STD */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
 #include	<usyscalls.h>		/* LIBU */
 #include	<usupport.h>		/* LIBU */
-#include	<strnul.hh>		/* LIBU */
 #include	<readln.hh>		/* LIBU */
+#include	<termstr.h>		/* LIBU */
 #include	<mapex.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU */
 #include	<dprint.hh>		/* LIBU |DPRINTF(3u)| */
@@ -82,19 +81,14 @@ import ureserve ;			/* |sf{x}(3u)| */
 /* imported namespaces */
 
 using std::string ;			/* type */
-using std::string_view ;		/* type */
 using std::istream ;			/* type */
 using libu::rmchr ;			/* subroutine */
 using libu::matstr ;			/* subroutine */
-using std::cin;				/* variable */
 using std::cout ;			/* variable */
-using std::cerr ;			/* variable */
 
 
 /* local typedefs */
 
-typedef string_view	strview ;
-typedef const strview	cstrview ;
 typedef const string	cstring ;
 
 
@@ -177,6 +171,14 @@ enum keys {
 constexpr cpcchar	keynames[] = {
 	"home",
 	"clearforward",
+	"clearbackward",
+	nullptr
+} ; /* end array */
+
+constexpr cpcchar	keystrs[] = {
+	TERMSTR_HOME,	/* home */
+	TERMSTR_ED,	/* clear-foward */
+	"",		/* clear-backward */
 	nullptr
 } ; /* end array */
 
@@ -195,8 +197,6 @@ constexpr mapex_map	mapexs[] = {
 	{ SR_NOSYS,	EX_OSFILE },
 	{ 0, 0 }
 } ; /* end array (mapexs) */
-
-constexpr int		maxpathlen = MAXPATH ;
 
 cbool			f_debug		= CF_DEBUG ;
 
@@ -223,9 +223,9 @@ int main(int argc,con mainv argv,con mainv envv) {
 	    rs1 = pi.finish ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (proginfo) */
-	if ((rs < 0) && (ex == EX_OK)) {
+	if ((ex == EX_OK) && (rs < 0)) {
 	    ex = mapex(mapexs,rs) ;
-	}
+	} /* end if (error) */
 	DPRINTF("ret ex=%d rs=%d\n",ex,rs) ;
 	return ex ;
 } /* end subroutine (main) */
@@ -270,8 +270,14 @@ int proginfo::getpn(con mainv names) noex {
 int proginfo::termop() noex {
 	int		rs = SR_OK ;
 	for (int ai = 1 ; ai < argc ; ai += 1) {
-	    cchar	*kn = argv[ai] ;
-	    (void) kn ;
+	    if (ccharp kn = argv[ai] ; kn[0]) {
+		DPRINTF("arg-kn=%s\n",kn) ;
+		if (int si = matstr(keynames,kn) ; si >= 0) {
+		    cout << keystrs[si] ;
+		} else {
+		    rs = SR_NOENT ;
+		} /* end if */
+	    } /* end if (non-empty) */
 	    if (rs < 0) break ;
 	} /* end for */
 	return rs ;
