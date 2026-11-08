@@ -36,19 +36,19 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<sys/param.h>		/* |MAXPATHLEN| */
-#include	<unistd.h>
-#include	<fcntl.h>
+#include	<sys/param.h>		/* POSIX® |MAXPATHLEN| */
+#include	<unistd.h>		/* POSIX® */
+#include	<fcntl.h>		/* POSIX® */
 #include	<climits>		/* CSTD */
 #include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD */
 #include	<cstdio>		/* CSTD */
 #include	<string>		/* CSTD */
 #include	<new>			/* C++STD plaement-new */
-#include	<string>		/* C++SYD */
-#include	<string_view>		/* C++SYD */
-#include	<unordered_set>		/* C++SYD */
-#include	<iostream>		/* C++SYD */
+#include	<string>		/* C++STD */
+#include	<string_view>		/* C++STD */
+#include	<unordered_set>		/* C++STD */
+#include	<iostream>		/* C++STD */
 #include	<iomanip>		/* C++STD |hex(3c++)| */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
@@ -82,7 +82,6 @@ using std::setw ;			/* io-manip thing */
 using std::cin ;			/* variable */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
-using std::nothrow ;			/* constant */
 
 
 /* local typedefs */
@@ -325,6 +324,7 @@ int proginfo::process_stdin() noex {
 } /* end subroutine (proginfo::process_stdin) */
 
 int proginfo::process_pmbegin() noex {
+    	cnothrow	nt{} ;
 	int		rs = SR_OK ;
 	switch (pm) {
         case progmode_magicx:
@@ -332,11 +332,11 @@ int proginfo::process_pmbegin() noex {
 	    if ((rs = maxlinelen) >= 0) {
 	        llen = rs ;
 		rs = SR_NOMEM ;
-	        if ((lbuf = new(nothrow) char[llen+1]) != nullptr) {
+	        if ((lbuf = new(nt) char[llen+1]) != nullptr) {
 		    rs = SR_OK ;
 	        } else {
 		    llen = 0 ;
-		}
+		} /* end */
 	    } /* end block */
 	    break ;
 	} /* end switch */
@@ -359,16 +359,15 @@ int proginfo::process_pmend() noex {
 
 int proginfo::readin() noex {
 	istream		*isp = &cin ;
+    	cnothrow	nt{} ;
 	int		rs ;
 	int		c = 0 ;
 	if ((rs = maxpathlen) >= 0) {
 	    cint	plen = rs ;
 	    rs = SR_NOMEM ;
-	    if (char *pbuf ; (pbuf = new(nothrow) char[plen+1]) != nullptr) {
+	    if (char *pbuf = new(nt) char[plen+1]) {
 	        while ((rs = readln(isp,pbuf,plen)) > 0) {
-		    int		pl = rs ;
-		    if ((pl > 0) && (pbuf[pl - 1] == eol)) pl -= 1 ;
-		    if (pl > 0) {
+		    if (cint pl = rmeol(pbuf,rs) ; pl > 0) {
 		        rs = fileproc(pbuf,pl) ;
 			c += rs ;
 		    }
@@ -381,35 +380,37 @@ int proginfo::readin() noex {
 } /* end method (proginfo::readin) */
 
 int proginfo::fileproc(cchar *sp,int sl) noex {
-	strnul		s(sp,sl) ;
-	int		rs ;
+	int		rs = SR_NOMEM ;
 	int		c = 0 ;
-	if (ustat sb ; (rs = u_stat(s,&sb)) >= 0) {
-	    if ((rs = filecheck(&sb)) > 0) {
-		rs = (this->*m)(&sb,sp,sl) ;
-		c += rs ;
-	    } /* end if (filecheck) */
-	} else if (isNotAccess(rs)) {
-	    rs = SR_OK ;
-	}
+	if (strnul s(sp,sl) ; s.fok) {
+	    if (ustat sb ; (rs = u_stat(s,&sb)) >= 0) {
+	        if ((rs = filecheck(&sb)) > 0) {
+		    rs = (this->*m)(&sb,sp,sl) ;
+		    c += rs ;
+	        } /* end if (filecheck) */
+	    } else if (isNotAccess(rs)) {
+	        rs = SR_OK ;
+	    } /* end if (ok) */
+	} /* end if (strnul) */
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::fileproc) */
 
-int proginfo::fileproc_magicx(custat *sbp,cchar *sp,int sl) noex {
-	int		rs = SR_OK ;
+int proginfo::fileproc_magicx(custat *sbp,cchar *sp,int µsl) noex {
+	int		rs = SR_FAULT ;
 	int		rs1 ;
 	int		c = 0 ;
-	if (sp && sl) {
-	    strview	fn(sp,sl) ;
+	if (int sl ; (sl = getlenstr(sp,µsl)) >= 0) {
+	    rs = SR_OK ;
 	    if (S_ISREG(sbp->st_mode)) {
+	        strview fn(sp,sl) ;
 		c += 1 ;
 	        if (ccfile rf ; (rs = rf.open(fn,"r",0)) >= 0) {
 		    int		nl = 0 ;
 		    while ((rs = rf.readln(lbuf,llen)) > 0) {
-	    	        int	ll = rs ;
-	    	        if ((ll > 0) && (lbuf[ll - 1] == eol)) ll -= 1 ;
-	    	        rs = printmagic(lbuf,ll) ;
-	    	        nl += 1 ;
+	    	        if (cint ll = rmeol(lbuf,rs) ; ll > 0) {
+	    	            rs = printmagic(lbuf,ll) ;
+	    	            nl += 1 ;
+			}
 			if (nl > 0) break ;
 		    } /* end while */
 		    lines += nl ;
@@ -453,7 +454,7 @@ local int printmagic(cchar *lbuf,int llen) noex {
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
-	if (op) {
+	if (op) ylikely {
 	    switch (w) {
 	    case proginfomem_start:
 	        rs = op->istart() ;
