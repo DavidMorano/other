@@ -36,13 +36,14 @@
 #include	<usysdefs.h>		/* LIBU */
 #include	<usysrets.h>		/* LIBU */
 #include	<usupport.h>		/* LIBU |strn{x}(3u)| */
+#include	<umem.hh>		/* LIBU */
+#include	<ascii.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU |LINEBUFLEN| */
 #include	<libf.h>		/* LIBF */
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 
 import libutil ;			/* |lenstr(3u)| */
-import ulibvals ;			/* |ulibval(3u)| */
 
 /* local defines */
 
@@ -51,6 +52,7 @@ import ulibvals ;			/* |ulibval(3u)| */
 
 using libu::strnchr ;			/* subroutine */
 using libu::strwcmp ;			/* subroutine */
+using libu::umem ;			/* variable */
 
 
 /* local typedefs */
@@ -73,8 +75,6 @@ local bool rmat(cchar *,int,cchar *) noex ;
 
 /* local variables */
 
-cint		linebuflen = ulibval.maxline ;
-
 
 /* exported variables */
 
@@ -84,33 +84,37 @@ cint		linebuflen = ulibval.maxline ;
 int main(int argc,con mainv argv,con mainv) {
 	FILE		*ifp = stdin ;
 	FILE		*ofp = stdout ;
-	cint		llen = linebuflen ;
-	cint		ex = EXIT_SUCCESS ;
+	int		ex = EXIT_SUCCESS ;
 	int		rs ;
-	bool		f = false ;
-	char		lbuf[linebuflen +1] ;
-	cchar		*name = "REPOS" ;
+	int		rs1 ;
+	cchar		*name = "REPOS" ; /* default "name" */
 	if (argc > 1) {
 	    name = argv[1] ;
 	} /* end */
-	while ((rs = freadln(ifp,lbuf,llen)) > 0) {
-	    int	ll = lenstr(lbuf) ;
-	    if (lbuf[ll-1] == '\n') {
-	        ll -= 1 ;
-	    } /* end */
-	    if (hmat(lbuf,ll)) {
-	        f = rmat(lbuf,ll,name) ;
-	    } /* end */
- 	    if (f) {
-		if (strstr(lbuf,"enabled=1") != nullptr) {
-		    fprintf(ofp,"enabled=0\n") ;
-		} else {
+	if (char *lbuf ; (rs = umem.ml(&lbuf)) >= 0) ylikely {
+	    bool	f = false ;
+	    cint llen = rs ;
+	    while ((rs = freadln(ifp,lbuf,llen)) > 0) {
+	        int	ll = lenstr(lbuf) ;
+	        if (lbuf[ll-1] == '\n') {
+	            ll -= 1 ;
+	        } /* end */
+	        if (hmat(lbuf,ll)) {
+	            f = rmat(lbuf,ll,name) ;
+	        } /* end */
+ 	        if (f) {
+		    if (strstr(lbuf,"enabled=1") != nullptr) {
+		        fprintf(ofp,"enabled=0\n") ;
+		    } else {
+		        fprintf(ofp,"%s",lbuf) ;
+		    } /* end if */
+	        } else {
 		    fprintf(ofp,"%s",lbuf) ;
-		}
-	    } else {
-		fprintf(ofp,"%s",lbuf) ;
-	    } /* end */
-	} /* end while (freadln) */
+	        } /* end */
+	    } /* end while (freadln) */
+	    rs1 = umem.free(lbuf) ;
+	    if (rs >= 0) rs = rs1 ;
+	} /* end if (m-a-f) */
 	if ((ex == EXIT_SUCCESS) && (rs < 0)) {
 	    ex = EXIT_FAILURE ;
 	} /* end if (error) */
@@ -122,27 +126,27 @@ int main(int argc,con mainv argv,con mainv) {
 
 local bool hmat(cchar *sp,int sl) noex {
 	bool		f = 0 ;
-	if (cchar *tp = strnchr(sp,sl,'{')) ylikely {
+	if (cchar *tp = strnchr(sp,sl,CH_LBRACE)) ylikely {
 	    sl -= intconv((tp + 1) - sp) ;
 	    sp = (tp+1) ;
-	    if ((tp = strnchr(sp,sl,'}')) != nullptr) {
+	    if ((tp = strnchr(sp,sl,CH_RBRACE)) != nullptr) {
 		f = true ;
-	    }
-	}
+	    } /* end if (strnchr) */
+	} /* end if */
 	return f ;
 } /* end subroutine (hmat) */
 
 local bool rmat(cchar *sp,int sl,cchar *name) noex {
 	bool		f = 0 ;
-	if (cchar *tp = strnchr(sp,sl,'{')) ylikely {
+	if (cchar *tp = strnchr(sp,sl,CH_LBRACE)) ylikely {
 	    cchar *cp = (tp + 1) ;
 	    sl -= intconv((tp + 1) - sp) ;
 	    sp = (tp+1) ;
-	    if ((tp = strnchr(sp,sl,'}')) != nullptr) {
+	    if ((tp = strnchr(sp,sl,CH_RBRACE)) != nullptr) {
 		cint cl = intconv(tp - sp) ;
 		f = (strwcmp(name,cp,cl) == 0) ;
-	    }
-	}
+	    } /* end if */
+	} /* end if (strnchr) */
 	return f ;
 } /* end subroutine (rmat) */
 
