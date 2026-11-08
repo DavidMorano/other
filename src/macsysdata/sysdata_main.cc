@@ -47,7 +47,6 @@
 #include	<cstdio>		/* CSTD |printf(3c++)| */
 #include	<cstring>		/* CSTD |strchr(3c)| */
 #include	<string>		/* C++STD */
-#include	<string_view>		/* C++STD */
 #include	<chrono>		/* C++STD */
 #include	<iostream>		/* C++STD */
 #include	<iomanip>		/* C++STD |hex(3c++)| + |setw(3c++)| */
@@ -80,7 +79,6 @@ import ureserve ;			/* |sfbasename(2)| */
 /* imported namespaces */
 
 using std::string ;			/* type */
-using std::string_view ;		/* type */
 using std::istream ;			/* type */
 using std::hex ;			/* subroutine */
 using std::setw ;			/* subroutine? */
@@ -95,12 +93,9 @@ using libu::strwcpy ;			/* subroutine */
 using libu::hasnotempty ;		/* subroutine */
 using std::cout ;			/* variable */
 using libu::umem ;			/* variable */
-using std::nothrow ;			/* constant */
 
 
 /* local typedefs */
-
-typedef string_view	strview ;
 
 
 /* external subroutines */
@@ -110,6 +105,15 @@ typedef string_view	strview ;
 
 
 /* local structures */
+
+namespace {
+    struct vars {
+	int		maxpath ;
+	int		maxline ;
+	int		pagesz ;
+	operator int () noex ;
+    } ; /* end struct (vars) */
+} /* end namespace */
 
 namespace {
     enum proginfomems {
@@ -231,8 +235,7 @@ constexpr MAPEX		mapexs[] = {
 	{ 0, 0 }
 } ; /* end array (mapexs) */
 
-static cint		maxpathlen = ulibval.maxpathlen ;
-
+static vars		var ;
 constexpr int		nlas = 3 ;	/* by long convention */
 
 
@@ -245,77 +248,79 @@ int main(int argc,con mainv argv,con mainv envv) {
 	int		ex = EX_OK ;
 	int		rs ;
 	int		rs1 ;
-	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
-            switch (pi.pm) {
-            case progmode_sysname:
-            case progmode_release:
-            case progmode_nodename:
-            case progmode_version:
-		rs = pi.uname() ;
-		break ;
-            case progmode_systype:
-            case progmode_sysversion:
-            case progmode_sysversionx:
-            case progmode_sysrelease:
-            case progmode_architecture:
-            case progmode_machine:
-            case progmode_platform:
-            case progmode_cpuvendor:
-            case progmode_nisdomain:
-            case progmode_sysuuid:
-            case progmode_symfile:
-                rs = pi.sysoutstr() ;
-                break ;
-            case progmode_provider:
-		printf("%s\n",PROVIDER) ;
-		break ;
-            case progmode_sysid:
-                rs = pi.sysoutnum("kern.hostid") ;
-                break ;
-	    case progmode_hostid:
-		{
-		    clong id = gethostid() ;
+	if (static cint rsv = var ; (rs = rsv) >= 0) ylikely {
+	    if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
+                switch (pi.pm) {
+                case progmode_sysname:
+                case progmode_release:
+                case progmode_nodename:
+                case progmode_version:
+		    rs = pi.uname() ;
+		    break ;
+                case progmode_systype:
+                case progmode_sysversion:
+                case progmode_sysversionx:
+                case progmode_sysrelease:
+                case progmode_architecture:
+                case progmode_machine:
+                case progmode_platform:
+                case progmode_cpuvendor:
+                case progmode_nisdomain:
+                case progmode_sysuuid:
+                case progmode_symfile:
+                    rs = pi.sysoutstr() ;
+                    break ;
+                case progmode_provider:
+		    printf("%s\n",PROVIDER) ;
+		    break ;
+                case progmode_sysid:
+                    rs = pi.sysoutnum("kern.hostid") ;
+                    break ;
+	        case progmode_hostid:
 		    {
-			cuint	uid = uint(id) ;
-		        printf("%08X\n",uid) ;
+		        clong id = gethostid() ;
+		        {
+			    cuint	uid = uint(id) ;
+		            printf("%08X\n",uid) ;
+		        } /* end block */
 		    } /* end block */
-		} /* end block */
-		break ;
-	    case progmode_lax:
-		rs = pi.lax() ;
-		break ;
-	    case progmode_systime:
-	    case progmode_unixtime:
-		{
-		    const time_t	t = time(nullptr) ;
-		    printf("%lu - %016lx\n",ulong(t),ulong(t)) ;
-		}
-		break ;
-	    case progmode_nproc:
-		if ((rs = pi.nproc) >= 0) {
-		    printf("%d\n",rs) ;
-		}
-		break ;
-	    case progmode_navail:
-	    case progmode_ncpu:
-		rs = pi.navail() ;
-		break ;
-	    case progmode_nprocs:
-		rs = pi.nprocs() ;
-		break ;
-	    case progmode_zoneinfo:
-		rs = pi.zoneinfo() ;
-		break ;
-	    default:
-		rs = SR_BUGCHECK ;
-		break ;
-            } /* end switch */
-	    rs1 = pi.finish ;
-	    if (rs >= 0) rs = rs1 ;
-	} /* end if (proginfo) */
+		    break ;
+	        case progmode_lax:
+		    rs = pi.lax() ;
+		    break ;
+	        case progmode_systime:
+	        case progmode_unixtime:
+		    {
+		        custime t = time(nullptr) ;
+		        printf("%lu - %016lx\n",ulong(t),ulong(t)) ;
+		    }
+		    break ;
+	        case progmode_nproc:
+		    if ((rs = pi.nproc) >= 0) {
+		        printf("%d\n",rs) ;
+		    }
+		    break ;
+	        case progmode_navail:
+	        case progmode_ncpu:
+		    rs = pi.navail() ;
+		    break ;
+	        case progmode_nprocs:
+		    rs = pi.nprocs() ;
+		    break ;
+	        case progmode_zoneinfo:
+		    rs = pi.zoneinfo() ;
+		    break ;
+	        default:
+		    rs = SR_BUGCHECK ;
+		    break ;
+                } /* end switch */
+	        rs1 = pi.finish ;
+	        if (rs >= 0) rs = rs1 ;
+	    } /* end if (proginfo) */
+	} /* end if (vars) */
 	if ((rs < 0) && (ex == EX_OK)) {
 	    ex = mapex(mapexs,rs) ;
-	}
+	} /* end if (error) */
 	return ex ;
 } /* end subroutine (main) */
 
@@ -374,7 +379,7 @@ local int printnodename(cchar *valp) noex {
 	    printf("%s\n",ccp(s)) ;
 	} else {
 	    printf("%s\n",ccp(valp)) ;
-	}
+	} /* end */
 	return rs ;
 } /* end method (proginfo::printnodename) */
 
@@ -398,7 +403,7 @@ int proginfo::uname() noex {
 	    } /* end switch */
 	    if (valp) {
 		printf("%s\n",valp) ;
-	    }
+	    } /* end */
 	} /* end if (u_uname) */
 	return rs ;
 } /* end subroutine (proginfo::uname) */
@@ -447,7 +452,7 @@ int proginfo::sysoutstr() noex {
 	    break ;
 	} /* end switch */
 	if ((rs >= 0) && name) ylikely {
-	    cint	olen = maxpathlen ;
+	    cint	olen = var.maxpath ;
 	    rs = SR_NOMEM ;
 	    if (char *obuf = new(nt) char[olen+1] ; obuf) ylikely {
 		size_t	rsz = size_t(olen) ; /* <- return value also */
@@ -490,7 +495,7 @@ int proginfo::lax() noex {
 	    char	dbuf[DIGBUFLEN + 1] ;
 	    if ((rs = snloadavgd(dbuf,dlen,prec,dla,nlas)) >= 0) ylikely {
 		printf("%s\n",dbuf) ;
-	    }
+	    } /* end */
 	} /* end if (uloadavgd) */
 	return rs ;
 } /* end subroutine (proginfo::lax) */
@@ -500,7 +505,7 @@ int proginfo::navail() noex {
     	int		rs ;
 	if ((rs = usysconfval(cmd)) >= 0) ylikely {
 	    printf("%d\n",rs) ;
-	}
+	} /* end */
 	return rs ;
 } /* end method (proginfo::avail) */
 
@@ -576,5 +581,19 @@ int proginfo_co::operator () (int) noex {
 	} /* end if (non-null) */
 	return rs ;
 } /* end method (proginfo_co::operator) */
+
+vars::operator int () noex {
+    	int		rs ;
+	if ((rs = ulibval.maxpathlen) >= 0) ylikely {
+	    maxpath = rs ;
+	    if ((rs = ulibval.maxline) >= 0) ylikely {
+		maxline = rs ;
+	        if ((rs = ulibval.pagesz) >= 0) ylikely {
+		    pagesz = rs ;
+	        } /* end */
+	    } /* end */
+	} /* end */
+    	return rs ;
+} /* end method (vars::operator) */
 
 
