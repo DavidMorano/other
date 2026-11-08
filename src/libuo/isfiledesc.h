@@ -35,19 +35,6 @@ extern int	isfsremote	(int) noex ;
 
 EXTERNC_end
 
-#ifdef	__cplusplus
-
-struct isinterobj {
-    operator int () noex ;
-    int operator () () noex {
-	return operator int () ;
-    } ;
-} ; /* end class (isinteractive) */
-
-extern isinterobj	isinteractive ;
-
-#endif /* __cplusplus */
-
 
 #endif /* ISFILEDESC_INCLUDE */
 
