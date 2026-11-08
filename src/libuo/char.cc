@@ -137,7 +137,7 @@ consteval void charinfo::mkisalnum() noex {
     	mkalpha(isalnum) ;
 	for (int ch = '0' ; ch <= '9' ; ch += 1) {
 	    isalnum.set(ch,true) ;
-	}
+	} /* end for */
 } /* end method (charinfo::mkisalnum) */
 
 consteval void charinfo::mkiswhite() noex {
@@ -145,16 +145,16 @@ consteval void charinfo::mkiswhite() noex {
 	for (int i = 0 ; w[i] ; i += 1) {
 	    cint	ch = w[i] ;
 	    iswhite.set(ch,true) ;
-	}
+	} /* end for */
 } /* end method (charinfo::mkiswhite) */
 
 consteval void charinfo::mkislc() noex {
 	for (int ch = 'a' ; ch <= 'z' ; ch += 1) {
 	    islc.set(ch,true) ;
-	}
+	} /* end for */
 	for (int ch = UC('à') ; ch <= UC('ÿ') ; ch += 1) {
 	    islc.set(ch,true) ;
-	}
+	} /* end for */
 	islc.set(UC('÷'),false) ;
 	islc.set(UC('ß'),true) ; 	/* <- this is 'ss' in German */
 } /* end method (charinfo::mkislc) */
@@ -162,17 +162,17 @@ consteval void charinfo::mkislc() noex {
 consteval void charinfo::mkisuc() noex {
 	for (int ch = 'A' ; ch <= 'Z' ; ch += 1) {
 	    isuc.set(ch,true) ;
-	}
+	} /* end for */
 	for (int ch = UC('À') ; ch <= UC('Þ') ; ch += 1) {
 	    isuc.set(ch,true) ;
-	}
+	} /* end for */
 	isuc.set(UC('×'),false) ;
 } /* end method (charinfo::mkisuc) */
 
 consteval void charinfo::mkisfc() noex {
 	for (int ch = 'A' ; ch <= 'Z' ; ch += 1) {
 	    isfc.set(ch,true) ;
-	}
+	} /* end for */
 	isfc.set(UC('Ð'),false) ;
 	isfc.set(UC('Þ'),false) ; /* 0xDE - 'PB' in German */
 } /* end method (charinfo::mkisfc) */
@@ -191,7 +191,7 @@ consteval void charinfo::mktoval() noex {
                 toval[ch] = 63 ;
             } else {
                 toval[ch] = UCHAR_MAX ;
-            }
+            } /* end if */
         } /* end for */
 } /* end method (charinfo::mktoval) */
 
