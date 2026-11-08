@@ -37,10 +37,10 @@ INCS=
 
 MODS +=
 
-LIBS= -luo -lu
+LIBS= -luo -lu -lf
 
 
-OBJ_MACFU= main.o fonce.o
+OBJ_MACFU= hasweird_main.o fonce.o
 
 
 INCDIRS=
@@ -106,6 +106,10 @@ control:
 	(uname -n ; date) > Control
 
 
-main.o:			main.cc fonce.hh	$(INCS)
+haswird_main.o:		hasweird_main.cc fonce.hh	$(INCS)
 
+fonce.o:		fonce.dir
+fonce.dir:
+	makesubdir $@
+	
 
