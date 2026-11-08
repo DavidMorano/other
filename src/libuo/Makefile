@@ -47,14 +47,14 @@ OBJUC01= ucsig.o ucsysconf.o ucx.o
 OBJUC02= ucstrto.o uclibmem.o ucpwcache.o
 OBJUC03= ucsupport.o ucstream.o ucpts.o
 
-OBJUC04= ucdescbase.o ucdescmisc.o
+OBJUC04= ucdescutil.o ucdescmisc.o
 OBJUC05= ucdescread.o ucdescwrite.o
 OBJUC06= ucdescsock.o ucdesclock.o
 OBJUC07= ucgetx.o ucsysmisc.o
 
 OBJUC08= ucproc.o ucdata.o ucsysauxinfo.o
 OBJUC09= uctime.o ucinet.o
-OBJUC10= ucrand.o ucmem.o
+OBJUC10= ucrand.o ucmemory.o
 OBJUC11= ucopen.o ucfileop.o ucnameo.o
 
 OBJUC12=
@@ -72,17 +72,17 @@ OBJUC= objuc_a.o objuc_b.o objuc_c.o
 OBJ00_LUO= snwcpy.o
 OBJ01_LUO= strn.o six.o mkx.o mnw.o
 OBJ02_LUO= sfx.o rmx.o snx.o mkui.o
-OBJ03_LUO= isx.o ismisc.o isfiledesc.o hasx.o 
+OBJ03_LUO= isx.o ismisc.o isfd.o isfiledesc.o hasx.o 
 
 OBJ04_LUO= sif.o ctx.o cfx.o
-OBJ05_LUO= strcpyx.o strdcpy.o strbcpy.o strx.o 
+OBJ05_LUO= strcpyx.o strdcpy.o strx.o 
 OBJ06_LUO= strxcmp.o strtime.o
-OBJ07_LUO= strw.o strwcpy.o
+OBJ07_LUO= strw.o strwcpy.o stp.o
 
 OBJ08_LUO= filer.o hdb.o hdbstr.o mklogid.o
 OBJ09_LUO= strfilter.o paramfile.o
 OBJ10_LUO= fsdirtree.o fsdir.o
-OBJ11_LUO= queue.o field.o bits.o
+OBJ11_LUO= queue.o field.o bits.o mapblock.o
 
 OBJ12_LUO= tardir.o langx.o
 OBJ13_LUO= nleadx.o matxstr.o 
@@ -121,13 +121,13 @@ OBJ39_LUO= filex.o fileobj.o getxx.o bufos.o bufslide.o
 
 OBJ40_LUO= dirs.o dirseen.o sockaddress.o 
 OBJ41_LUO= envx.o envs.o strpack.o strobj.o
-OBJ42_LUO= chrono.o timestr.o lockfile.o
+OBJ42_LUO= chrono.o lockfile.o
 OBJ43_LUO= nodedb.o clusterdb.o varsub.o
 
 OBJ44_LUO= kvsfile.o memtrack.o randomvar.o
 OBJ45_LUO= nonpath.o msghdr.o conmsghdr.o
 OBJ46_LUO= user.o userinfo.o
-OBJ47_LUO= spawn.o expcook.o
+OBJ47_LUO= spawn.o expcook.o semx.o
 
 OBJ48_LUO= sigx.o dial.o conallof.o
 OBJ49_LUO= argutils.o cmdutils.o logfile.o linex.o
@@ -536,6 +536,11 @@ ismisc.o:		ismisc.dir
 ismisc.dir:
 	makesubdir $@
 
+# ISFD
+isfd.o:			isfd.dir
+isfd.dir:
+	makesubdir $@
+
 isfiledesc.o:		isfiledesc.dir
 isfiledesc.dir:
 	makesubdir $@
@@ -572,11 +577,6 @@ strdcpy.o:		strdcpy.dir
 strdcpy.dir:
 	makesubdir $@
 
-# STRBCPY
-strbcpy.o:		strbcpy.dir
-strbcpy.dir:
-	makesubdir $@
-
 strwcpy.o:		strwcpy.dir
 strwcpy.dir:
 	makesubdir $@
@@ -603,11 +603,15 @@ strw.o:			strw.dir
 strw.dir:
 	makesubdir $@
 
+# STP
+stp.o:			stp.dir
+stp.dir:
+	makesubdir $@
+
 inetaddrx.o:		inetaddrx.dir
 inetaddrx.dir:
 	makesubdir $@
 
-ucdescbase.o:		ucdescbase.cc	ucdescbase.hh		$(INCS)
 ucpts.o:		ucpts.cc	ucpts.h			$(INCS)
 ucpwcache.o:		ucpwcache.cc	ucpwcache.h		$(INCS)
 ucinfo.o:		ucinfo.cc	ucinfo.h		$(INCS)
@@ -710,9 +714,9 @@ ucstrto.o:		ucstrto.dir
 ucstrto.dir:
 	makesubdir $@
 
-# UCMEM		(libuc)
-ucmem.o:		ucmem.dir
-ucmem.dir:
+# UCMEMORY	(libuc)
+ucmemory.o:		ucmemory.dir
+ucmemory.dir:
 	makesubdir $@
 
 # UCPROC	(libuc)
@@ -728,6 +732,11 @@ ucdata.dir:
 # UCOPEN
 ucopen.o:		ucopen.dir
 ucopen.dir:
+	makesubdir $@
+
+# UCDESCUTIL
+ucdescutil.o:		ucdescutil.dir
+ucdescutil.dir:
 	makesubdir $@
 
 # UCDESCREAD
@@ -778,6 +787,11 @@ ucx.dir:
 # MEMTRACK	(libuc)
 memtrack.o:		memtrack.dir
 memtrack.dir:
+	makesubdir $@
+
+# SEMX
+semx.o:		semx.dir
+semx.dir:
 	makesubdir $@
 
 # STRNXCMP
@@ -941,7 +955,7 @@ fmtflag.dir:
 	makesubdir $@
 
 # FMTSTR
-fmtstr.o:		fmtstr.dir
+fmtstr.o:		fmtstr.dir fmtflag.o
 fmtstr.dir:
 	makesubdir $@
 
@@ -1037,11 +1051,6 @@ chrono.dir:
 # CALENDAR
 calendar.o:		calendar.dir
 calendar.dir:
-	makesubdir $@
-
-# TIMESTR
-timestr.o:		timestr.dir
-timestr.dir:
 	makesubdir $@
 
 # HOST
@@ -1141,6 +1150,7 @@ bits.o:			bits.cc		bits.h			$(INCS)
 paramfile.o:		paramfile.cc	paramfile.h		$(INCS)
 bufstr.o:		bufstr.cc	bufstr.h		$(INCS)
 userinfo.o:		userinfo.cc	userinfo.h		$(INCS)
+mapblock.o:		mapblock.ccm	mapblock.hh		$(INCS)
 
 # GROUPS
 calstrs.o:		calstrs.cc	calstrs.h		$(INCS)
