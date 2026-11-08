@@ -44,7 +44,7 @@
 #include	<cstdlib>		/* CSTD */
 #include	<new>			/* C++STD |nothrow(3c++)| */
 #include	<utility>		/* C++STD |unreachable(3c++)| */
-#include	<fstream>		/* C++SYD */
+#include	<fstream>		/* C++STD */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
 #include	<usyscalls.h>		/* LIBU */
