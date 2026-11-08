@@ -43,7 +43,6 @@
 #include	<matkeystr.h>		/* LIBUC */
 #include	<ascii.h>		/* LIBU */
 #include	<stdfnames.h>		/* LIBU */
-#include	<strnul.hh>		/* LIBU */
 #include	<ccfile.hh>		/* LIBU */
 #include	<mapex.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU |COLUMNS| + |DECBUFLEN| */
