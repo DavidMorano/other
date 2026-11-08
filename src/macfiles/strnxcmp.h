@@ -30,12 +30,10 @@
 
 
 EXTERNC_begin
-
 extern int strnvalcmp	(cchar *,cchar *,int) noex ;
 extern int strnleadcmp	(cchar *,cchar *,int) noex ;
 extern int strnncmp	(cchar *,int,cchar *,int) noex ;
 extern int strnndictcmp	(cchar *,int,cchar *,int) noex ;
-
 EXTERNC_end
 
 
