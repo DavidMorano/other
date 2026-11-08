@@ -122,6 +122,16 @@ using libu::strwcpy ;			/* subroutine */
 /* local structures */
 
 namespace {
+    struct vars {
+	int		maxpath ;
+	int		maxname ;
+	int		usernamelen ;
+	int		varbuflen ;
+	operator int () noex ;
+    } ; /* end struct (vars) */
+} /* end namespace */
+
+namespace {
     struct confstritem ;
     enum proginfomems {
 	proginfomem_start,
@@ -281,17 +291,11 @@ constexpr proginfo_m	tmpuserdir_mems[] = {
 	&proginfo::tmpuserdir_already
 } ; /* end array (tmpuserdir_mems) */
 
-static cint		maxpathlen	= ulibval.maxpathlen ;
-static cint		usernamelen	= ulibval.usernamelen ;
-static cint		varbuflen	= max(usernamelen,DIGBUFLEN) ;
-
+static vars		var ;
 constexpr char		tmpdir[]	= "/tmp" ;
 constexpr char		usersdir[]	= "/users" ;
-
 constexpr int		to_tmpwait	= 30 ; /* seconds */
-
 constexpr mode_t	dm = (0777 | S_ISVTX) ;
-
 cbool			f_debug = CF_DEBUG ;
 
 
@@ -307,29 +311,31 @@ int main(int argc,con mainv argv,con mainv envv) {
 	int		rs1 ;
 	debfd(dfd) ;
         DEBPRINTF("ent\n") ;
-	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) ylikely {
-	    if ((rs = pi.pmbegin) >= 0) ylikely {
-                switch (pi.pm) {
-                case progmode_mktmpusers:
-                case progmode_tmpusers:
-                    rs = pi.tmpusers() ;
-                    break ;
-                case progmode_tmpmounts:
-                    rs = pi.tmpmounts() ;
-                    break ;
-		case progmode_tmpuserdir:
-		    rs = pi.tmpuserdir() ;
-                    break ;
-		default:
-		    rs = SR_BUGCHECK ;
-		    break ;
-                } /* end switch */
-		rs1 = pi.pmend ;
-		if (rs >= 0) rs = rs1 ;
-	    } /* end if (flist-) */
-	    rs1 = pi.finish ;
-	    if (rs >= 0) rs = rs1 ;
-	} /* end if (proginfo) */
+	if (static cint rsv = var ; (rs = rsv) >= 0) ylikely {
+	    if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) ylikely {
+	        if ((rs = pi.pmbegin) >= 0) ylikely {
+                    switch (pi.pm) {
+                    case progmode_mktmpusers:
+                    case progmode_tmpusers:
+                        rs = pi.tmpusers() ;
+                        break ;
+                    case progmode_tmpmounts:
+                        rs = pi.tmpmounts() ;
+                        break ;
+		    case progmode_tmpuserdir:
+		        rs = pi.tmpuserdir() ;
+                        break ;
+		    default:
+		        rs = SR_BUGCHECK ;
+		        break ;
+                    } /* end switch */
+		    rs1 = pi.pmend ;
+		    if (rs >= 0) rs = rs1 ;
+	        } /* end if (flist-) */
+	        rs1 = pi.finish ;
+	        if (rs >= 0) rs = rs1 ;
+	    } /* end if (proginfo) */
+	} /* end if (vars) */
 	if ((ex == EX_OK) && (rs < 0)) {
 	    ex = mapex(mapexs,rs) ;
 	} /* end if (error) */
@@ -345,7 +351,7 @@ int proginfo::istart() noex {
 	cnullptr	np{} ;
 	int		rs ;
 	if ((rs = getpn(prognames)) >= 0) ylikely {
-	    if ((rs = maxpathlen) >= 0) ylikely {
+	    if ((rs = var.maxpath) >= 0) ylikely {
 		cint	pathlen = rs ;
 	        rs = SR_NOMEM ;
 	        if ((pbuf = new(nt) char[pathlen + 1]) != np) ylikely {
@@ -360,7 +366,7 @@ int proginfo::istart() noex {
 			plen = 0 ;
 		    } /* end if (error) */
 	        } /* end if (new-char) */
-	    } /* end if (maxpathlen) */
+	    } /* end if (var.maxpath) */
 	} /* end if (proginfo::getpn) */
 	return rs ;
 } /* end method (proginfo::istart) */
@@ -403,25 +409,27 @@ int proginfo::iuserbegin() noex {
     	cnothrow	nt{} ;
 	cnullptr	np{} ;
 	int		rs = SR_NOMEM ;
-	cint		vlen = varbuflen ;
-	char		vbuf[varbuflen + 1] ;
-	if ((ubuf = new(nt) char[usernamelen + 1]) != np) ylikely {
-	    ulen = usernamelen ;
+	cint		vlen = var.varbuflen ;
+	char		vbuf[var.varbuflen + 1] ;
+	if ((ubuf = new(nt) char[var.usernamelen + 1]) != np) ylikely {
+	    ulen = var.usernamelen ;
 	    rs = SR_OK ;
 	    for (cauto &vn : uservars) {
-		char	*vv = getenv(vn) ;
-		if (vv && vn[0]) {
-		    cchar	*bp{} ;
-		    if (int bl ; (bl = sfbasename(vv,-1,&bp)) > 0) ylikely {
-		        strwcpy(vbuf,bp,min(vlen,bl)) ;
-		        if (PASSWD *pwp ; (pwp = getpwnam(vbuf)) != np) {
-			    if (pwp->pw_uid == uid) {
-			        rs = snwcpy(ubuf,ulen,pwp->pw_name) ;
-			        ul = rs ;
-			    }
-		        } /* end if (getpwnam) */
-		    } /* end if (sfbasename) */
-		} /* end if */
+		if (char *vv = getenv(vn)) {
+		    if (vn[0]) {
+		        cauto sfbn = sfbasename ;
+		        cchar	*bp{} ;
+		        if (int bl ; (bl = sfbn(vv,-1,&bp)) > 0) ylikely {
+		            strwcpy(vbuf,bp,min(vlen,bl)) ;
+		            if (PASSWD *pwp ; (pwp = getpwnam(vbuf)) != np) {
+			        if (pwp->pw_uid == uid) {
+			            rs = snwcpy(ubuf,ulen,pwp->pw_name) ;
+			            ul = rs ;
+			        } /* end */
+		            } /* end if (getpwnam) */
+		        } /* end if (sfbasename) */
+		    } /* end if (non-empty) */
+		} /* end if (getenv) */
 		if (rs != 0) break ;
 	    } /* end for */
 	} /* end if (new-char) */
@@ -627,7 +635,7 @@ int proginfo::tmpmounts_cklink() noex {
 	cnullptr	np{} ;
 	int		rs ;
 	int		c = 0 ;
-	if ((rs = maxpathlen) >= 0) ylikely {
+	if ((rs = var.maxpath) >= 0) ylikely {
 	    cint	llen = rs ;
 	    if (char *lbuf ; (lbuf = new(nt) char[llen + 1]) != np) ylikely {
 		if ((rs = u_readlink(dbuf,lbuf,llen)) > 0) ylikely {
@@ -643,7 +651,7 @@ int proginfo::tmpmounts_cklink() noex {
 		} /* end if (u_readlink) */
 		delete [] lbuf ;
 	    } /* end if (new-char) */
-	} /* end if (maxpathlen) */
+	} /* end if (var.maxpath) */
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::tmpmounts_cklink) */
 
@@ -821,5 +829,20 @@ int proginfo_co::operator () (int) noex {
 	} /* end if (non-null) */
 	return rs ;
 } /* end method (proginfo_co::operator) */
+
+vars::operator int () noex {
+    	int		rs ;
+	if ((rs = ulibval.maxpathlen) >= 0) ylikely {
+	    maxpath = rs ;
+	    if ((rs = ulibval.maxnamelen) >= 0) ylikely {
+		maxname = rs ;
+	        if ((rs = ulibval.usernamelen) >= 0) ylikely {
+		    usernamelen = rs ;
+		    varbuflen	= max(usernamelen,DIGBUFLEN) ;
+	        } /* end */
+	    } /* end */
+	} /* end */
+    	return rs ;
+} /* end method (vars::operator) */
 
 
