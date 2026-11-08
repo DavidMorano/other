@@ -48,6 +48,7 @@
 #include	<utility>		/* C++STD |pair(3c++)| */
 #include	<string>		/* C++STD */
 #include	<string_view>		/* C++STD */
+#include	<unordered_map>		/* C++STD */
 #include	<vector>		/* C++STD */
 #include	<iostream>		/* C++STD */
 #include	<clanguage.h>		/* LIBU */
@@ -66,6 +67,9 @@
 #include	<exitcodes.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU */
 
+#pragma		GCC dependency		"mod/libutil.ccm"
+
+import libutil ;			/* |lenstr(3u)| */
 import mapblock ;
 
 /* local defines */
@@ -92,8 +96,6 @@ using std::cerr ;			/* variable */
 /* local typedefs */
 
 typedef string_view	strview ;
-
-typedef const strview	cstrview ;
 typedef const string	cstring ;
 
 
@@ -112,10 +114,10 @@ namespace {
 	devino(dev_t d,ino_t i) noex : dev(d), ino(i) { } ;
 	size_t hashval() const noex {
 	    return size_t(dev | ino) ;
-	} ;
+	} ; /* end */
 	bool equal_to(const devino &o) noex {
 	    return ((dev == o.dev) && (ino == o.ino)) ;
-	} ;
+	} ; /* end */
     } ; /* end struct (devino) */
     struct filenode {
 	string		fn ;		/* "file-name" */
@@ -123,7 +125,7 @@ namespace {
 	int		rc = 0 ;	/* success==1 */
 	filenode() noex = default ;
 	filenode(size_t sz,cchar *pp,int pl = -1) noex {
-	    if (pl < 0) pl = strlen(pp) ;
+	    if (pl < 0) pl = lenstr(pp) ;
 	    fsize = sz ;
 	    {
 	        strview	s(pp,pl) ;
@@ -132,17 +134,17 @@ namespace {
 		    rc = 1 ;
 	        } catch (...) {
 		    rc = 0 ;
-	        }
+	        } /* end */
 	    } /* end block */
 	} ; /* end if (ctor) */
     } ; /* end struct (filenode) */
     enum proginfomems {
 	proginfomem_start,
 	proginfomem_finish,
-	proginfomem_flistbegin,
+	proginfomem_flistbeg,
 	proginfomem_flistend,
 	proginfomem_overlast
-    } ;
+    } ; /* end */
     struct proginfo ;
     struct proginfo_co {
 	proginfo	*op = nullptr ;
@@ -150,11 +152,11 @@ namespace {
 	void operator () (proginfo *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
+	} ; /* end */
 	int operator () (int = 0) noex ;
 	operator int () noex {
 	    return operator () (0) ;
-	} ;
+	} ; /* end */
     } ; /* end struct (proginfo_co) */
     struct proginfo {
 	typedef mapblock<devino,filenode>		nodedb ;
@@ -162,7 +164,7 @@ namespace {
 	friend proginfo_co ;
 	proginfo_co	start ;
 	proginfo_co	finish ;
-	proginfo_co	flistbegin ;
+	proginfo_co	flistbeg ;
 	proginfo_co	flistend ;
 	mainv		argv ;
 	mainv		envv ;
@@ -171,11 +173,11 @@ namespace {
 	int		argc ;
 	int		pm = 0 ;
 	proginfo(int c,mainv a,mainv e) noex : argc(c), argv(a), envv(e) { 
-	    start(this,proginfomem_start) ;
-	    finish(this,proginfomem_finish) ;
-	    flistbegin(this,proginfomem_flistbegin) ;
-	    flistend(this,proginfomem_flistend) ;
-	} ;
+	    start	(this,proginfomem_start) ;
+	    finish	(this,proginfomem_finish) ;
+	    flistbeg	(this,proginfomem_flistbeg) ;
+	    flistend	(this,proginfomem_flistend) ;
+	} ; /* end */
 	proginfo() noex : proginfo(0,nullptr,nullptr) { } ;
 	void operator () (int c,mainv a,mainv e) noex {
 	    argc = c ;
@@ -189,7 +191,7 @@ namespace {
 	int istart() noex ;
 	int ifinish() noex ;
 	int getpn(mainv) noex ;
-	int iflistbegin() noex ;
+	int iflistbeg() noex ;
 	int iflistend() noex ;
 	int readin() noex ;
     } ; /* end struct (proginfo) */
@@ -258,7 +260,7 @@ int main(int argc,mainv argv,mainv envv) {
 	int		rs ;
 	int		rs1 ;
 	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) {
-	    if ((rs = pi.flistbegin) >= 0) {
+	    if ((rs = pi.flistbeg) >= 0) {
                 switch (pi.pm) {
                 case progmode_dup:
                     rs = pi.output() ;
@@ -317,7 +319,7 @@ int proginfo::getpn(mainv names) noex {
 	return rs ;
 } /* end method (proginfo::getpn) */
 
-int proginfo::iflistbegin() noex {
+int proginfo::iflistbeg() noex {
 	int		rs ;
 	if ((rs = flist.start) >= 0) {
 	    if (argc > 1) {
@@ -339,7 +341,7 @@ int proginfo::iflistbegin() noex {
 	    }
 	} /* end if (mapblock::start) */
 	return rs ;
-} /* end method (proginfo::iflistbegin) */
+} /* end method (proginfo::iflistbeg) */
 
 int proginfo::iflistend() noex {
 	return flist.finish ;
@@ -454,8 +456,8 @@ int proginfo_co::operator () (int) noex {
 	    case proginfomem_finish:
 	        rs = op->ifinish() ;
 	        break ;
-	    case proginfomem_flistbegin:
-	        rs = op->iflistbegin() ;
+	    case proginfomem_flistbeg:
+	        rs = op->iflistbeg() ;
 	        break ;
 	    case proginfomem_flistend:
 	        rs = op->iflistend() ;
