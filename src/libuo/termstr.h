@@ -1,6 +1,6 @@
 /* termstr HEADER */
 /* charset=ISO8859-1 */
-/* lang=C++20 */
+/* lang=C20 */
 
 /* terminal display editing control sequences */
 /* version %I% last-modified %G% */
