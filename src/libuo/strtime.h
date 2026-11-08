@@ -44,7 +44,6 @@ enum strtimetypes {
 
 
 EXTERNC_begin
-
 extern char *strtime_log	(time_t,char *) noex ;
 extern char *strtime_msg	(time_t,char *) noex ;
 extern char *strtime_std	(time_t,char *) noex ;
@@ -58,7 +57,6 @@ extern char *strtime_date	(time_t,char *,strtimetypes) noex ;
 extern char *strtime_scandate	(time_t,char *) noex ;
 extern char *strtime_elapsed	(time_t,char *) noex ;
 extern char *strtime_nist	(time_t,char *,nistinfo *) noex ;
-
 EXTERNC_end
 
 
