@@ -37,6 +37,7 @@
 #include	<mkfname.h>
 #include	<mkfdfname.h>
 #include	<mkgecosname.h>
+#include	<mkhex.h>
 #include	<mklineclean.h>
 #include	<mkmagic.h>
 #include	<mkmid.h>
