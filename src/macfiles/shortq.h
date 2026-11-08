@@ -97,7 +97,6 @@ typedef SHORTQ		shortq ;
 #endif /* __cplusplus */
 
 EXTERNC_begin
-
 extern int	shortq_start	(shortq *,int) noex ;
 extern int	shortq_load	(shortq *,short *,int) noex ;
 extern int	shortq_ins	(shortq *,short) noex ;
@@ -111,11 +110,12 @@ extern int	shortq_adv	(shortq *,int) noex ;
 extern int	shortq_size	(shortq *) noex ;
 extern int	shortq_count	(shortq *) noex ;
 extern int	shortq_finish	(shortq *) noex ;
+EXTERNC_end
 
+EXTERNC_begin
 local inline int shortq_len(shortq *op) noex {
     	return shortq_count(op) ;
 } /* end subroutine */
-
 EXTERNC_end
 
 
