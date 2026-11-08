@@ -49,7 +49,7 @@
 #include	<field.h>
 #include	<matxstr.h>		/* |matostr(3uc)| */
 #include	<optval.h>
-#include	<ischarx.h>
+#include	<isch.h>
 #include	<exitcodes.h>
 #include	<localmisc.h>
 
@@ -214,7 +214,7 @@ int main(int argc,mainv argv,mainv envv) {
 	    if ((argl > 1) && (f_optminus || f_optplus)) {
 		cint	ach = MKCHAR(argp[1]) ;
 
-	        if (isdigitlatin(ach)) {
+	        if (ischdigit(ach)) {
 
 	            argval = (argp + 1) ;
 
