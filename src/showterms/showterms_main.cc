@@ -71,7 +71,6 @@ import sif ;
 /* imported namespaces */
 
 using std::cout ;			/* (global) variable */
-using std::nothrow ;			/* constant */
 
 
 /* local typedefs */
@@ -95,13 +94,13 @@ namespace {
 	int accum(cchar *sp,int sl) noex {
 	    strnul	s(sp,sl) ;
 	    int		rs = SR_OK ;
-	    int		v ; 
+	    int		v ; /* used afterwards */
 	    if ((v = strtoi(s,nullptr,0)) == 0) {
-		rs = (- errno) ;
-	    }
+		rs = (neg errno) ;
+	    } /* end */
 	    if (rs >= 0) {
 		terms[idx++] = uchar(v) ;
-	    }
+	    } /* end if (ok) */
 	    return rs ;
 	} ; /* end method (accum) */
     } ; /* end struct (termer) */
@@ -191,12 +190,12 @@ local int procline(termer *top,cchar *lp,int ll) noex {
 } /* end subroutine (procline) */
 
 local int readterms(termer *top,cchar *fn) noex {
-	cnullptr	np{} ;
+	cnothrow	nt{} ;
         cint            llen = MAXLINE ;
         int             rs = SR_NOMEM ;
         int             rs1 ;
 	int		c = 0 ; /* return-value */
-        if (char *lbuf ; (lbuf = new(nothrow) char[llen+1]) != np) {
+        if (char *lbuf = new(nt) char[llen+1]) {
             try {
                 if (ccfile fis ; (rs = fis.open(fn)) >= 0) {
                     while ((rs = fis.readln(lbuf,llen)) > 0) {
@@ -215,7 +214,7 @@ local int readterms(termer *top,cchar *fn) noex {
 		rs = SR_NOMEM ;
             } catch (...) {
                 rs = SR_IO ;
-            }
+            } /* end catch (error) */
             delete [] lbuf ;            
         } /* end if (m-a-f) */          
         return (rs >= 0) ? c : rs ;
