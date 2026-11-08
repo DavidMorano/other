@@ -27,21 +27,7 @@
 #include	<usysrets.h>		/* LIBU */
 
 #include	<snwcpyx.h>
-
-
-EXTERNC_begin
-
-extern int	snwcpy(char *,int,cchar *,int) noex ;
-
-EXTERNC_end
-
-#ifdef	__cplusplus
-
-inline int snwcpy(char *dbuf,int dlen,cchar *sp) noex {
-	return snwcpy(dbuf,dlen,sp,-1) ;
-} /* end subroutine */
-
-#endif /* __cplusplus */
+#include	<snwcpyexpesc.h>
 
 
 #endif /* SNWCPY_INCLUDE */
