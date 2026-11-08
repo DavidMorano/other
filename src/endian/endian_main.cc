@@ -75,7 +75,7 @@ int main(int,mainv,mainv) {
 	    cout << "big" << eol ;
 	} else {
 	    cout << "mixed" << eol ;
-	}
+	} /* end */
 	return ex ;
 } /* end subroutine (main) */
 
