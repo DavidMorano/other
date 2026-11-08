@@ -123,7 +123,7 @@ int main(int argc,con mainv argv,con mainv) {
 	} /* end if (arguments) */
 	if ((ex == EX_OK) && (rs < 0)) {
 	    ex = mapex(mapexs,rs) ;
-	}
+	} /* end if (error) */
 	DPRINTF("ret rs=%d ex=%u\n",rs,ex) ;
 	return ex ;
 } /* end subroutine (main) */
@@ -133,18 +133,18 @@ int main(int argc,con mainv argv,con mainv) {
 
 local int cfnum(cchar *sp,int µsl,int *rp) noex {
     	int		rs = SR_FAULT ;
-	if (int sl = getlenstr(sp,µsl) ; sl >= 0) {
+	if (int sl = getlenstr(sp,µsl) ; sl >= 0) ylikely {
 	    rs = SR_INVALID ;
-	    if (sl > 0) {
+	    if (sl > 0) ylikely {
 		if ((sl > 2) && (strwcmp("0x",sp,2) == 0)) {
 		    strnul ss((sp+2),(sl-2)) ;
 		    DPRINTF("hex >%s<\n",ccp(ss)) ;
 		    *rp = strtoi(ccp(ss),nullptr,16) ;
-		    DPRINTF("errno=%d\n",errno) ;
 		    rs = (errno) ? (neg errno) : SR_OK ;
+		    DPRINTF("errno=%d\n",errno) ;
 		} else {
 		    rs = cfdec(sp,sl,rp) ;
-		}
+		} /* end */
 	    } /* end if (valid) */
 	} /* end if (getlenstr) */
 	DPRINTF("ret rs=%d\n",rs) ;
