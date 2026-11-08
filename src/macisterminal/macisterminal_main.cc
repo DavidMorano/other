@@ -1,4 +1,4 @@
-/* maxisterminal_main SUPPORT (isterminal) */
+/* maxisfdterminal_main SUPPORT (isfdterminal) */
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
@@ -25,6 +25,7 @@
 #include	<utypealiases.h>	/* LIBU */
 #include	<usysdefs.h>		/* LIBU */
 #include	<usysrets.h>		/* LIBU */
+#include	<isfd.h>		/* LIBUC */
 #include	<exitcodes.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU */
 
@@ -42,7 +43,7 @@
 
 int main(int,mainv,mainv) {
 	int		ex = 0 ;
-	cbool		f = (isatty(0) > 0) ;
+	cbool		f = (isfdterminal(0) > 0) ;
 	ex = (f) ? EXIT_SUCCESS : EXIT_FAILURE ;
 	return ex ;
 } /* end subroutine (main) */
