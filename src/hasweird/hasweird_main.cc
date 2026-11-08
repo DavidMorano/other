@@ -40,27 +40,27 @@
 #include	<sys/param.h>		/* |MAXPATHLEN| */
 #include	<unistd.h>
 #include	<fcntl.h>
-#include	<climits>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<cstdio>
+#include	<climits>		/* CSTD */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstdio>		/* CSTD */
 #include	<cstring>		/* <- for |strlen(3c)| */
-#include	<string>
-#include	<string_view>
-#include	<unordered_set>
-#include	<vector>
-#include	<iostream>
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<usyscalls.h>
+#include	<string>		/* C++STD */
+#include	<string_view>		/* C++STD */
+#include	<unordered_set>		/* C++STD */
+#include	<vector>		/* C++STD */
+#include	<iostream>		/* C++STD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usyscalls.h>		/* LIBU */
+#include	<readln.hh>		/* LIBU */
+#include	<ccfile.hh>		/* LIBU */
 #include	<strn.h>
 #include	<sfx.h>
 #include	<six.h>
 #include	<matstr.h>
 #include	<strwcpy.h>
 #include	<sncpyx.h>
-#include	<readln.hh>
-#include	<ccfile.hh>
 #include	<rmx.h>
 #include	<hasx.h>
 #include	<isnot.h>
@@ -68,8 +68,10 @@
 #include	<mapex.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU */
 
+#pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/fonce.ccm"
 
+import libutil ;			/* |lenstr(3u)| */
 import fonce ;
 
 /* local defines */
@@ -81,15 +83,14 @@ import fonce ;
 
 /* imported namespaces */
 
-using std::nullptr_t ;			/* type */
 using std::string ;			/* type */
 using std::string_view ;		/* type */
 using std::unordered_set ;		/* type */
 using std::istream ;			/* type */
+using libu::rmeol ;			/* subroutine */
 using std::cin;				/* variable */
 using std::cout ;			/* variable */
 using std::cerr ;			/* variable */
-using std::nothrow ;			/* constant */
 
 
 /* local typedefs */
@@ -112,7 +113,7 @@ namespace {
 	proginfomem_flistbegin,
 	proginfomem_flistend,
 	proginfomem_overlast
-    } ;
+    } ; /* end enum */
     struct proginfo ;
     struct proginfo_co {
 	proginfo	*op = nullptr ;
@@ -120,11 +121,11 @@ namespace {
 	void operator () (proginfo *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
+	} ; /* end */
 	int operator () (int = 0) noex ;
 	operator int () noex {
 	    return operator () (0) ;
-	} ;
+	} ; /* end */
     } ; /* end struct (proginfo_co) */
     typedef int (proginfo::*proginfo_m)(custat *,cchar *,int) noex ;
     struct proginfo {
@@ -154,7 +155,7 @@ namespace {
 	    argc = c ;
 	    argv = a ;
 	    envv = e ;
-	} ;
+	} ; /* end */
 	int filecheck(custat *) noex ;
 	int process() noex ;
 	int process_pmbegin() noex ;
@@ -185,14 +186,14 @@ local int	weirdcheck(cchar *,int) noex ;
 enum progmodes {
 	progmode_hasweird,
 	progmode_overlast
-} ;
+} ; /* end enum */
 
-static constexpr cpcchar	prognames[] = {
+constexpr cpcchar	prognames[] = {
 	"hasweird",
 	nullptr
-} ;
+} ; /* end enum */
 
-static constexpr MAPEX	mapexs[] = {
+constexpr MAPEX		mapexs[] = {
 	{ SR_NOENT,	EX_NOUSER },
 	{ SR_AGAIN,	EX_TEMPFAIL },
 	{ SR_DEADLK,	EX_TEMPFAIL },
@@ -237,9 +238,9 @@ int main(int argc,mainv argv,mainv envv) {
 	    rs1 = pi.finish ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (proginfo) */
-	if ((rs < 0) && (ex == EX_OK)) {
+	if ((ex == EX_OK) && (rs < 0)) {
 	    ex = mapex(mapexs,rs) ;
-	}
+	} /* end if (error) */
 	return ex ;
 } /* end subroutine (main) */
 
@@ -263,10 +264,9 @@ int proginfo::getpn(mainv names) noex {
 	if (argv) {
 	    rs = SR_NOMSG ;
 	    if ((argc > 0) && argv[0]) {
-	        int	bl ;
 		cchar	*arg0 = argv[0] ;
 	        cchar	*bp{} ;
-	        if ((bl = sfbasename(arg0,-1,&bp)) > 0) {
+	        if (int bl ; (bl = sfbasename(arg0,-1,&bp)) > 0) {
 		    int		pl = rmchr(bp,bl,'.') ;
 		    cchar	*pp = bp ;
 		    if (pl > 0) {
@@ -304,14 +304,14 @@ int proginfo::process() noex {
 		        } else {
 	                    rs = fileproc(fn) ;
 		            c += rs ;
-		        }
-	            }
+		        } /* end if */
+	            } /* end if */
 	            if (rs < 0) break ;
 	        } /* end for */
 	    } else {
 		rs = process_stdin() ;
 	        c += rs ;
-	    }
+	    } /* end if */
 	    rs1 = process_pmend() ;
 	    if (rs >= 0) rs = rs1 ;
 	} /* end if (process_pm) */
@@ -333,6 +333,7 @@ int proginfo::process_stdin() noex {
 } /* end subroutine (proginfo::process_stdin) */
 
 int proginfo::process_pmbegin() noex {
+    	cnothrow	nt{} ;
 	int		rs = SR_OK ;
 	switch (pm) {
         case progmode_hasweird:
@@ -340,11 +341,11 @@ int proginfo::process_pmbegin() noex {
 	    if ((rs = maxlinelen) >= 0) {
 	        llen = rs ;
 		rs = SR_NOMEM ;
-	        if ((lbuf = new(nothrow) char[llen+1]) != nullptr) {
+	        if ((lbuf = new(nt) char[llen+1]) != nullptr) {
 		    rs = SR_OK ;
 	        } else {
 		    llen = 0 ;
-		}
+		} /* end if */
 	    } /* end block */
 	    break ;
 	} /* end switch */
@@ -367,20 +368,20 @@ int proginfo::process_pmend() noex {
 
 int proginfo::readin() noex {
 	istream		*isp = &cin ;
+	cnothrow	nt{} ;
 	int		rs ;
 	int		c = 0 ;
 	if ((rs = maxpathlen) >= 0) {
 	    cint	plen = rs ;
-	    char	*pbuf ;
 	    rs = SR_NOMEM ;
-	    if ((pbuf = new(nothrow) char[plen+1]) != nullptr) {
+	    if (char *pbuf = new(nt) char[plen+1]) {
 	        while ((rs = readln(isp,pbuf,plen)) > 0) {
 		    int		pl = rs ;
 		    if ((pl > 0) && (pbuf[pl - 1] == eol)) pl -= 1 ;
 		    if (pl > 0) {
 		        rs = fileproc(pbuf,pl) ;
 			c += rs ;
-		    }
+		    } /* end if */
 		    if (rs < 0) break ;
 	        } /* end if (reading lines) */
 	        delete [] pbuf ;
@@ -390,17 +391,18 @@ int proginfo::readin() noex {
 } /* end method (proginfo::readin) */
 
 int proginfo::fileproc(cchar *sp,int sl) noex {
-	strnul		s(sp,sl) ;
-	int		rs ;
+	int		rs = SR_NOMEM ;;
 	int		c = 0 ;
-	if (ustat sb ; (rs = u_stat(s,&sb)) >= 0) {
-	    if ((rs = filecheck(&sb)) > 0) {
-		rs = (this->*m)(&sb,sp,sl) ;
-		c += rs ;
-	    } /* end if (filecheck) */
-	} else if (isNotAccess(rs)) {
-	    rs = SR_OK ;
-	}
+	if (strnul s(sp,sl) ; s.fok) {
+	    if (ustat sb ; (rs = u_stat(s,&sb)) >= 0) {
+	        if ((rs = filecheck(&sb)) > 0) {
+		    rs = (this->*m)(&sb,sp,sl) ;
+		    c += rs ;
+	        } /* end if (filecheck) */
+	    } else if (isNotAccess(rs)) {
+	        rs = SR_OK ;
+	    } /* end if */
+	} /* end if (strnul) */
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::fileproc) */
 
@@ -411,15 +413,14 @@ int proginfo::fileproc_hasweird(custat *sbp,cchar *sp,int sl) noex {
 	if (sp && sl) {
 	    strview	fn(sp,sl) ;
 	    if (S_ISREG(sbp->st_mode)) {
-	        ccfile	rf ;
 		c += 1 ;
-	 	if ((rs = rf.open(fn,"r",0)) >= 0) {
+	        if (ccfile rf ; (rs = rf.open(fn,"r",0)) >= 0) {
 		    int		nl = 0 ;
 		    while ((rs = rf.readln(lbuf,llen)) > 0) {
-	    	        int	ll = rs ;
-	    	        if ((ll > 0) && (lbuf[ll - 1] == eol)) ll -= 1 ;
-	    	        rs = weirdcheck(lbuf,ll) ;
-	    	        nl += 1 ;
+	    	        if (cint ll = rmeol(lbuf,rs) ; ll > 0) {
+	    	            rs = weirdcheck(lbuf,ll) ;
+	    	            nl += 1 ;
+			} /* end if */
 		    } /* end while */
 		    lines += nl ;
 		    rs1 = rf.close ;
@@ -436,10 +437,10 @@ int proginfo::fileproc_lines() noex {
 	int		c = 1 ;
 	int		nl = 0 ;
 	while ((rs = readln(isp,lbuf,llen)) > 0) {
-	    int		ll = rs ;
-	    if ((ll > 0) && (lbuf[ll - 1] == eol)) ll -= 1 ;
-	    rs = weirdcheck(lbuf,ll) ;
-	    nl += 1 ;
+	    if (cint ll = rmeol(lbuf,rs) ; ll > 0) {
+	        rs = weirdcheck(lbuf,ll) ;
+	        nl += 1 ;
+	    } /* end if (rmeol) */
 	} /* end if (reading lines) */
 	lines += nl ;
 	return (rs >= 0) ? c : rs ;
@@ -458,13 +459,13 @@ local int weirdcheck(cchar *lbuf,int llen) noex {
 	} else if (hasprintbad(lbuf,llen)) {
 	    strview	ln(lbuf,llen) ;
 	    cout << "»" << ln << "«\n" ;
-	}
+	} /* end if */
 	return rs ;
 } /* end method (weirdcheck) */
 
 int proginfo_co::operator () (int) noex {
 	int		rs = SR_BUGCHECK ;
-	if (op) {
+	if (op) ylikely {
 	    switch (w) {
 	    case proginfomem_start:
 	        rs = op->istart() ;
