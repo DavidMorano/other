@@ -45,7 +45,7 @@
 #include	<usysrets.h>
 #include	<ascii.h>
 #include	<sfx.h>			/* |sfnext(3uc)| */
-#include	<ischarx.h>		/* |isalnumlatin(3uc)| */
+#include	<isch.h>		/* |ischalnum(3uc)| */
 #include	<localmisc.h>
 
 
@@ -108,7 +108,7 @@ int main(int,mainv,mainv) {
 		cchar	*cp ;
 	        for (int cl,i = 0 ; (cl = sfnext(lp,ll,&cp)) > 0 ; ) {
 		    cint	ch = (cp[0] & UCHAR_MAX) ;
-		    if (isalnumlatin(ch)) {
+		    if (ischalnum(ch)) {
 		        if (i++ == 0) {
 			    ch_base = ch ;
 		        } else {
