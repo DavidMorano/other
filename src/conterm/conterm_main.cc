@@ -118,8 +118,8 @@ local int uc_tcgetsid(int fd) noex {
 	int		rs ;
 	bool		f_exit = false ;
 	repeat {
-	    if ((rs = tcgetsid(fd)) < 0) rs = (- errno) ;
-	    if (rs < 0) {
+	    if ((rs = tcgetsid(fd)) < 0) {
+		rs = (neg errno) ;
 	        switch (rs) {
 	        case SR_NOMEM:
 		    if (to_nomem-- > 0) {
