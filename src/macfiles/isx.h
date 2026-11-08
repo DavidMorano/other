@@ -37,14 +37,14 @@
 #include	<utypealiases.h>	/* LIBU */
 #include	<usysdefs.h>		/* LIBU */
 
-#include	<ischarx.h>
+#include	<isch.h>
 #include	<iserror.h>
 #include	<isindomain.h>
 #include	<isinetaddr.h>
 #include	<ismmclass.h>
 #include	<isnot.h>
 #include	<isoneof.h>
-#include	<iswchar.h>
+#include	<iswc.h>
 
 
 #endif /* ISX_INCLUDE */
