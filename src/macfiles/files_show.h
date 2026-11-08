@@ -25,9 +25,7 @@
 
 
 EXTERNC_begin
-
 extern int	files_show(cchar *,int) noex ;
-
 EXTERNC_end
 
 
