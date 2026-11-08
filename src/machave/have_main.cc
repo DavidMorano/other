@@ -53,16 +53,16 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be ordered first to configure */
-#include	<unistd.h>
-#include	<fcntl.h>
-#include	<climits>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<cstring>		/* |strcmp(3c)| | |strchr(3c)| */
-#include	<string>
-#include	<string_view>
-#include	<vector>
-#include	<iostream>
+#include	<unistd.h>		/* POSIX® */
+#include	<fcntl.h>		/* POSIX® */
+#include	<climits>		/* CSTD */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstring>		/* CSTD |strcmp(3c)| | |strchr(3c)| */
+#include	<string>		/* C++STD */
+#include	<string_view>		/* C++STD */
+#include	<vector>		/* C++STD */
+#include	<iostream>		/* C++STD */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
 #include	<usyscalls.h>		/* LIBU */
@@ -120,6 +120,15 @@ typedef string_view	strview ;
 /* local structures */
 
 namespace {
+    struct vars {
+	int		maxpath ;
+	int		maxline ;
+	int		pagesz ;
+	operator int () noex ;
+    } ; /* end struct (vars) */
+} /* end namespace */
+
+namespace {
     struct pathent {
 	string		ps ;
 	dev_t		dev ;
@@ -135,7 +144,7 @@ namespace {
 	    } catch (...) {
 		dev = 0 ;
 		ino = 0 ;
-	    }
+	    } /* end */
 	} ; /* end if (ctor) */
     } ; /* end struct (pathent) */
     enum proginfomems {
@@ -151,21 +160,21 @@ namespace {
 	void operator () (proginfo *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
+	} ; /* end */
 	int operator () (int = 0) noex ;
 	operator int () noex {
 	    return operator () (0) ;
-	} ;
+	} ; /* end */
     } ; /* end struct (proginfo_co) */
     struct proginfo_pabeg {
 	proginfo	*op = nullptr ;
 	void init(proginfo *p) noex {
 	    op = p ;
-	} ;
+	} ; /* end */
 	int operator () (cchar * = nullptr) noex ;
 	operator int () noex {
 	    return operator () (nullptr) ;
-	} ;
+	} ; /* end */
     } ; /* end struct (proginfo_pabeg) */
     struct proginfo {
 	friend proginfo_co ;
@@ -194,21 +203,21 @@ namespace {
 	    envv = e ;
 	} ; /* end method */
 	int pathcandidate(cchar *,int) noex ;
-	int pathalready(dev_t,ino_t) noex ;
-	int pathadd(dev_t,ino_t,cchar *,int) noex ;
-	int pathenum() noex ;
-	int pathtox() noex ;
-	int pathto(cchar * = nullptr) noex ;
-	int pathtos(char *,int,cchar *) noex ;
-	int present(cchar *) noex ;
-	int getpn(mainv) noex ;
-	int getvn(cchar **) noex ;
+	int pathalready	(dev_t,ino_t) noex ;
+	int pathadd	(dev_t,ino_t,cchar *,int) noex ;
+	int pathenum	() noex ;
+	int pathtox	() noex ;
+	int pathto	(cchar * = nullptr) noex ;
+	int pathtos	(char *,int,cchar *) noex ;
+	int present	(cchar *) noex ;
+	int getpn	(mainv) noex ;
+	int getvn	(cchar **) noex ;
     private:
-	int istart() noexcept ;
-	int ifinish() noexcept ;
-	int ipathbegin(cchar *) noexcept ;
-	int ipathend() noexcept ;
-	int pathenumone(cchar *) noex ;
+	int istart	() noexcept ;
+	int ifinish	() noexcept ;
+	int ipathbegin	(cchar *) noexcept ;
+	int ipathend	() noexcept ;
+	int pathenumone	(cchar *) noex ;
     } ; /* end struct (proginfo) */
 } /* end namespace */
 
@@ -269,8 +278,7 @@ constexpr MAPEX		mapexs[] = {
 	{ 0, 0 }
 } ; /* end array (mapexs) */
 
-static cint		maxpathlen = ulibval.maxpathlen ;
-
+static vars		var ;
 constexpr bool          f_debug         = CF_DEBUG ;
 
 
@@ -286,54 +294,56 @@ int main(int argc,con mainv argv,con mainv envv) {
 	int		rs1 ;
 	debfd(dfd) ;
         DEBPRINTF("ent\n") ;
-	if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) ylikely {
-	    int npm = -1 ;
-            switch (pi.pm) {
-            case progmode_haveprog:
-		if (npm < 0) npm = progmode_haveprogram ;
-		falldown ;
-            case progmode_havefunc:
-		if (npm < 0) npm = progmode_havefunction ;
-		pi.pm = npm ;
-		falldown ;
-            case progmode_hpdebug:
-            case progmode_haveprogram:
-            case progmode_havefunction:
-                if ((rs = pi.pathtox()) == 0) {
-                    ex = (pi.ffound) ? EX_NOEXEC : EX_NOPROG ;
-                } /* end if (pathto) */
-                break ;
-            case progmode_pe:
-                pi.pm = progmode_pathenum ;
-		falldown ;
-            case progmode_pathenum:
-                rs = pi.pathenum() ;
-                break ;
-            case progmode_pt:
-                pi.pm = progmode_pathto ;
-		falldown ;
-            case progmode_pathto:
-                rs = pi.pathtox() ;
-                break ;
-            case progmode_ft:
-                pi.pm = progmode_fpathto ;
-		falldown ;
-            case progmode_fpathto:
-                rs = pi.pathtox() ;
-                break ;
-	    case progmode_mt:
-		pi.pm = progmode_manto ;
-		falldown ;
-            case progmode_manto:
-                rs = SR_NOSYS ;
-                break ;
-            } /* end switch */
-	    rs1 = pi.finish ;
-	    if (rs >= 0) rs = rs1 ;
-	} /* end if (proginfo) */
+	if (static cint rsv = var ; (rs = rsv) >= 0) ylikely {
+	    if (proginfo pi(argc,argv,envv) ; (rs = pi.start) >= 0) ylikely {
+	        int npm = -1 ;
+                switch (pi.pm) {
+                case progmode_haveprog:
+		    if (npm < 0) npm = progmode_haveprogram ;
+		    falldown ;
+                case progmode_havefunc:
+		    if (npm < 0) npm = progmode_havefunction ;
+		    pi.pm = npm ;
+		    falldown ;
+                case progmode_hpdebug:
+                case progmode_haveprogram:
+                case progmode_havefunction:
+                    if ((rs = pi.pathtox()) == 0) {
+                        ex = (pi.ffound) ? EX_NOEXEC : EX_NOPROG ;
+                    } /* end if (pathto) */
+                    break ;
+                case progmode_pe:
+                    pi.pm = progmode_pathenum ;
+		    falldown ;
+                case progmode_pathenum:
+                    rs = pi.pathenum() ;
+                    break ;
+                case progmode_pt:
+                    pi.pm = progmode_pathto ;
+		    falldown ;
+                case progmode_pathto:
+                    rs = pi.pathtox() ;
+                    break ;
+                case progmode_ft:
+                    pi.pm = progmode_fpathto ;
+		    falldown ;
+                case progmode_fpathto:
+                    rs = pi.pathtox() ;
+                    break ;
+	        case progmode_mt:
+		    pi.pm = progmode_manto ;
+		    falldown ;
+                case progmode_manto:
+                    rs = SR_NOSYS ;
+                    break ;
+                } /* end switch */
+	        rs1 = pi.finish ;
+	        if (rs >= 0) rs = rs1 ;
+	    } /* end if (proginfo) */
+	} /* end if (vars) */
 	if ((ex == EX_OK) && (rs < 0)) {
 	    ex = mapex(mapexs,rs) ;
-	}
+	} /* end if (error) */
         DEBPRINTF("ret ex=%d rs=%d\n",ex,rs) ;
 	return ex ;
 } /* end subroutine (main) */
@@ -406,7 +416,7 @@ int proginfo::pathcandidate(cchar *sp,int µsl) noex {
 	while ((sl > 1) && (sp[0] == '/') && (sp[1] == '/')) {
 	    sp += 1 ;
 	    sl -= 1 ;
-	}
+	} /* end while */
 	if (strnul s(sp,sl) ; s.fok) ylikely {
 	    if (ustat sb ; (rs = u_stat(s,&sb)) >= 0) {
 	        if (S_ISDIR(sb.st_mode)) {
@@ -418,10 +428,10 @@ int proginfo::pathcandidate(cchar *sp,int µsl) noex {
 	        } /* end if (is-dir) */
 	    } else if (isNotAccess(rs)) {
 	        rs = SR_OK ;
-	    }
+	    } /* end if (ok) */
 	} else {
 	    rs = SR_NOMEM ;
-	} /* end if */
+	} /* end if (error) */
 	return rs ;
 } /* end method (proginfo::pathcandidate) */
 
@@ -448,10 +458,10 @@ int proginfo::pathadd(dev_t d,ino_t i,cchar *sp,int sl) noex {
 		plist.push_back(e) ;
 	    } else {
 		rs = SR_NOMEM ;
-	    }
+	    } /* end if (error) */
 	} catch (...) {
 	    rs = SR_NOMEM ;
-	}
+	} /* end catch (error) */
 	return rs ;
 } /* end method (proginfo::pathadd) */
 
@@ -510,7 +520,7 @@ int proginfo::pathto(cchar *vn) noex {
 	    DEBPRINTF("vn=%s\n",vn) ;
 	    if ((rs = pathbegin(vn)) >= 0) ylikely {
 		DEBPRINTF("pathbegin rs=%d\n",rs) ;
-	        if ((rs = maxpathlen) >= 0) ylikely {
+	        if ((rs = var.maxpath) >= 0) ylikely {
 	            cint	plen = rs ;
 	            rs = SR_NOMEM ;
 	            if (char *pbuf ; (pbuf = new(nt) char[plen + 1]) != np) {
@@ -531,7 +541,7 @@ int proginfo::pathto(cchar *vn) noex {
 	                } /* end for (args) */
 	                delete [] pbuf ;
 	            } /* end if (m-a-f) */
-	        } /* end if (maxpathlen) */
+	        } /* end if (var.maxpath) */
 	        rs1 = pathend ;
 	        if (rs >= 0) rs = rs1 ;
 	    } /* end if (proginfo::path) */
@@ -663,5 +673,19 @@ int proginfo_pabeg::operator () (cchar *vn) noex {
 	}
 	return rs ;
 } /* end method (proginfo_pabeg::operator) */
+
+vars::operator int () noex {
+    	int		rs ;
+	if ((rs = ulibval.maxpathlen) >= 0) ylikely {
+	    maxpath = rs ;
+	    if ((rs = ulibval.maxline) >= 0) ylikely {
+		maxline = rs ;
+	        if ((rs = ulibval.pagesz) >= 0) ylikely {
+		    pagesz = rs ;
+	        } /* end */
+	    } /* end */
+	} /* end */
+    	return rs ;
+} /* end method (vars::operator) */
 
 
