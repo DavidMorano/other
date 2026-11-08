@@ -56,6 +56,7 @@
 #include	<ucpeek.h>
 #include	<ucsetappend.h>
 #include	<ucttyname.h>
+#include	<uctc.h>
 #include	<ucclose.h>
 
 
