@@ -44,12 +44,36 @@
 
 
 #define DEBOPEN(fn)	debopen(fn)
+#define DEBFD(fn)	debfd(fn)
 #define DEBCLOSE	debclose()
 
-#define DEBPRINTF(FMT, ...)						\
-    if_constexpr (f_debug) {						\
-        debprintf(__func__, FMT __VA_OPT__(,) __VA_ARGS__) ;		\
-    }
+#define DEBPRINT(sbuf,slen) ({						\
+	int rsdebug = 0 ;						\
+        if_constexpr (f_debug) {					\
+            rsdebug = debprint(__func__,(sbuf),(slen)) ;		\
+        } ; rsdebug ;							\
+    }) /* end macro (DEBPRINT) */
+
+#define DEBPRINTF(FMT, ...)	({ 					\
+	int rsdebug = 0 ;						\
+        if_constexpr (f_debug) {					\
+            rsdebug = debprintf(__func__, FMT __VA_OPT__(,) __VA_ARGS__) ; \
+        } ; rsdebug ;							\
+    }) /* end macro (DEBPRINTF) */
+
+#define DEBPRINTSTR(str,sbuf,slen) ({					\
+	int rsdebug = 0 ;						\
+        if_constexpr (f_debug) {					\
+            rsdebug = debprintstr(__func__,(str),(sbuf),(slen)) ;	\
+        } ; rsdebug ;							\
+    }) /* end macro (DEBPRINTSTR) */
+
+#define DEBPRINTHEX(cols,sbuf,slen) ({					\
+	int rsdebug = 0 ;						\
+        if_constexpr (f_debug) {					\
+            rsdebug = debprinthex(__func__,cols,sbuf,slen) ;		\
+        } ; rsdebug ;							\
+    }) /* end macro (DEBPRINTHEX) */
 
 
 #endif /* __cplusplus */
