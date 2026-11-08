@@ -35,7 +35,6 @@
 #define	LOGFILE_LINELEN		80
 #define	LOGFILE_FMTLEN		(LOGFILE_LINELEN - (LOGFILE_LOGIDLEN + 1))
 #define	LOGFILE_USERLEN		(LOGFILE_LINELEN - (LOGFILE_LOGIDLEN + 1))
-
 /* control codes */
 #define	LOGFILE_CNOP		0
 #define	LOGFILE_CSIZE		1
@@ -58,7 +57,57 @@ struct logfile_head {
 	char		logid[LOGFILE_LOGIDLEN + 1] ;
 } ; /* end struct */
 
+#ifdef	__cplusplus
+enum logfilemems {
+	logfilemem_flush,
+	logfilemem_cksize,
+	logfilemem_close,
+	logfilemem_overlast
+} ; /* end enum (logfilemems) */
+struct logfile ;
+struct logfile_co {
+	logfile		*op = nullptr ;
+	int		w = -1 ;
+	void operator () (logfile *p,int m) noex {
+	    op = p ;
+	    w = m ;
+	} ; /* end */
+	int operator () (int = -1) noex ;
+	operator int () noex {
+	    return operator () () ;
+	} ; /* end */
+} ; /* end struct (logfile_co) */
+struct logfile : logfile_head {
+	logfile_co	flush ;
+	logfile_co	cksize ;
+	logfile_co	close ;
+	logfile() noex {
+	    flush	(this,logfilemem_flush) ;
+	    cksize	(this,logfilemem_cksize) ;
+	    close	(this,logfilemem_close) ;
+	    buf		= nullptr ;
+	} ; /* end ctor */
+	logfile(const logfile &) = delete ;
+	logfile &operator = (const logfile &) = delete ;
+	int open	(cchar *,int,mode_t,cchar *) noex ;
+	int setid	(cchar *) noex ;
+	int write	(cchar *,int) noex ;
+	int print	(cchar *,int) noex ;
+	int printf	(cchar *,...) noex ;
+	int vprintf	(cchar *,va_list) noex ;
+	int check	(time_t) noex ;
+	int chmod	(mode_t) noex ;
+	int control	(int,void *) noex ;
+	int printfold	(cchar *,cchar *,int) noex ;
+	int userinfo	(userinfo *,time_t,cc *,cc *) noex ;
+	void dtor	() noex ;
+	destruct logfile() {
+	    if (buf) dtor() ;
+	} ; /* end */
+} ; /* end struct (logfile) */
+#else	/* __cplusplus */
 typedef LOGFILE		logfile ;
+#endif /* __cplusplus */
 
 EXTERNC_begin
 
@@ -68,7 +117,7 @@ extern int logfile_write	(logfile *,cchar *,int) noex ;
 extern int logfile_print	(logfile *,cchar *,int) noex ;
 extern int logfile_printf	(logfile *,cchar *,...) noex ;
 extern int logfile_vprintf	(logfile *,cchar *,va_list) noex ;
-extern int logfile_checksize	(logfile *,int) noex ;
+extern int logfile_cksize	(logfile *,int) noex ;
 extern int logfile_check	(logfile *,time_t) noex ;
 extern int logfile_flush	(logfile *) noex ;
 extern int logfile_chmod	(logfile *,mode_t) noex ;
