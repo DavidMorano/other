@@ -55,7 +55,8 @@
 
 struct bann {
 	char alpha[nlines][pposs];
-};
+} ; /* end struct (bann) */
+
 static struct bann buffer, *bp = &buffer;
 
 static char ctbl[nchars][nlines] = {
@@ -187,20 +188,21 @@ static char ctbl[nchars][nlines] = {
 	034, 2, 2, 3, 2, 2, 034,		/* } */
 	060, 0111, 06, 0, 0, 0, 0,		/* ~ */
 	0, 000, 000, 000, 000, 000, 000 	/* DEL */
-};
+} ; /* end array */
+
 static char blank = ' ';
 static char plot = '#';
 local int  msk = 0100; /* ? */
 
-local void banner(char *s, struct bann *bufp);
-local void banfil(char *c, struct bann *p);
-local void banset(char c, struct bann *p);
-local void banprt(struct bann *ptr);
-local char convert(unsigned char c);
+local void banner(char *s, struct bann *bufp) ;
+local void banfil(char *c, struct bann *p) ;
+local void banset(char c, struct bann *p) ;
+local void banprt(struct bann *ptr) ;
+local char convert(unsigned char c) ;
 
 /* exported subroutines */
 
-int main(int argc, char **argv) {
+int main(int argc,con mainv *argv,con mainv) {
 	cchar *fmt = "Usage: banner \"up to 10 char arg string\" ...\n" ;
 	int i;
 	/*
@@ -215,7 +217,7 @@ int main(int argc, char **argv) {
 		banner(argv[i], bp);
 		banprt(bp);
 		(void) printf("\n");
-	}
+	} /* end for */
 	return 0 ;
 } /* end subroutine (main) */
 
@@ -233,7 +235,7 @@ local void banner(char *s, struct bann *bufp) {
 		q = ctbl[c];
 		banfil(q, r);
 		r = (struct bann *)((char *)r + pospch);
-	}
+	} /* end while */
 } /* end */
 
 local void banfil(char *c, struct bann *p) noex {
@@ -242,14 +244,16 @@ local void banfil(char *c, struct bann *p) noex {
 		for (j = 0; j < pospch; j++) {
 			if (((c[i]<<j)&msk) != 0) p->alpha[i][j] = plot;
 		}
-	}
+	} /* end for */
 } /* end */
 
 local void banset(char c, struct bann *p) {
 	int i, j;
-	for (i = 0; i < nlines; i++)
-		for (j = 0; j < pposs-1; j++)
+	for (i = 0; i < nlines; i++) {
+		for (j = 0; j < pposs-1; j++) {
 			p->alpha[i][j] = c;
+		} /* end for */
+	} /* end for */
 } /* end */
 
 local void banprt(struct bann *ptr) {
@@ -259,9 +263,9 @@ local void banprt(struct bann *ptr) {
 		for (j = pposs-2; j >= 0; j--) {
 			if (ptr->alpha[i][j] != blank)break;
 			ptr->alpha[i][j] = '\0';
-		}
+		} /* end for */
 		(void) printf("%s\n", ptr->alpha[i]);
-	}
+	} /* end for */
 } /* end */
 
 static char convert(unsigned char c) {
