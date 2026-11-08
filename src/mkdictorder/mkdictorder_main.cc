@@ -101,7 +101,7 @@ int main(int,con mainv,con mainv) {
 	    if ((len == 0) || (lbuf[0] == '#')) continue ;
 	    for (int i = 0 ; i < len ; i += 1) {
 		ch = MKCHAR(lbuf[i]) ;
-		if (isalnumlatin(ch)) {
+		if (ischalnum(ch)) {
 		    a[ch] = order++ ;
 		}
 	    } /* end for */
