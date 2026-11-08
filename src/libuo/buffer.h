@@ -55,11 +55,11 @@ struct buffer_co {
 	void operator () (buffer *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
+	} ; /* end */
 	int operator () (int = 0) noex ;
 	operator int () noex {
 	    return operator () () ;
-	} ;
+	} ; /* end */
 } ; /* end struct (buffer_co) */
 struct buffer : buffer_head {
 	buffer_co	start ;
@@ -75,7 +75,7 @@ struct buffer : buffer_head {
 	    getprev	(this,buffermem_getprev) ;
 	    len		(this,buffermem_len) ;
 	    finish	(this,buffermem_finish) ;
-	    dbuf = nullptr ;
+	    dbuf	= nullptr ;
 	} ; /* end ctor */
 	buffer(const buffer &) = delete ;
 	buffer &operator = (const buffer &) = delete ;
@@ -99,7 +99,7 @@ struct buffer : buffer_head {
 	operator int () noex ;
 	destruct buffer() {
 	    if (dbuf) dtor() ;
-	} ;
+	} ; /* end */
 } ; /* end struct (buffer) */
 #else	/* __cplusplus */
 typedef BUFFER		buffer ;
@@ -158,10 +158,10 @@ extern int	buffer_blanks	(buffer *,int) noex ;
 
 local inline int buffer_backs(buffer *op,int n) noex {
 	return buffer_chrs(op,CH_BS,n) ;
-}
+} /* end */
 local inline int buffer_str(buffer *op,cchar *sp) noex {
 	return buffer_strw(op,sp,-1) ;
-}
+} /* end */
 
 EXTERNC_end
 
@@ -173,96 +173,96 @@ namespace buffer_ns {
 
 inline int buffer_bin(buffer *op,int v) noex {
 	return buffer_bini(op,v) ;
-}
+} /* end */
 inline int buffer_bin(buffer *op,long v) noex {
 	return buffer_binl(op,v) ;
-}
+} /* end */
 inline int buffer_bin(buffer *op,longlong v) noex {
 	return buffer_binll(op,v) ;
-}
+} /* end */
 
 inline int buffer_bin(buffer *op,uint v) noex {
 	return buffer_binui(op,v) ;
-}
+} /* end */
 inline int buffer_bin(buffer *op,ulong v) noex {
 	return buffer_binul(op,v) ;
-}
+} /* end */
 inline int buffer_bin(buffer *op,ulonglong v) noex {
 	return buffer_binull(op,v) ;
-}
+} /* end */
 
 inline int buffer_oct(buffer *op,int v) noex {
 	return buffer_octi(op,v) ;
-}
+} /* end */
 inline int buffer_oct(buffer *op,long v) noex {
 	return buffer_octl(op,v) ;
-}
+} /* end */
 inline int buffer_oct(buffer *op,longlong v) noex {
 	return buffer_octll(op,v) ;
-}
+} /* end */
 
 inline int buffer_oct(buffer *op,uint v) noex {
 	return buffer_octui(op,v) ;
-}
+} /* end */
 inline int buffer_oct(buffer *op,ulong v) noex {
 	return buffer_octul(op,v) ;
-}
+} /* end */
 inline int buffer_oct(buffer *op,ulonglong v) noex {
 	return buffer_octull(op,v) ;
-}
+} /* end */
 
 inline int buffer_dec(buffer *op,int v) noex {
 	return buffer_deci(op,v) ;
-}
+} /* end */
 inline int buffer_dec(buffer *op,long v) noex {
 	return buffer_decl(op,v) ;
-}
+} /* end */
 inline int buffer_dec(buffer *op,longlong v) noex {
 	return buffer_decll(op,v) ;
-}
+} /* end */
 
 inline int buffer_dec(buffer *op,uint v) noex {
 	return buffer_decui(op,v) ;
-}
+} /* end */
 inline int buffer_dec(buffer *op,ulong v) noex {
 	return buffer_decul(op,v) ;
-}
+} /* end */
 inline int buffer_dec(buffer *op,ulonglong v) noex {
 	return buffer_decull(op,v) ;
-}
+} /* end */
 
 inline int buffer_hex(buffer *op,int v) noex {
 	return buffer_hexi(op,v) ;
-}
+} /* end */
 inline int buffer_hex(buffer *op,long v) noex {
 	return buffer_hexl(op,v) ;
-}
+} /* end */
 inline int buffer_hex(buffer *op,longlong v) noex {
 	return buffer_hexll(op,v) ;
-}
+} /* end */
 
 inline int buffer_hex(buffer *op,uint v) noex {
 	return buffer_hexui(op,v) ;
-}
+} /* end */
 inline int buffer_hex(buffer *op,ulong v) noex {
 	return buffer_hexul(op,v) ;
-}
+} /* end */
 inline int buffer_hex(buffer *op,ulonglong v) noex {
 	return buffer_hexull(op,v) ;
-}
+} /* end */
 
 template<typename Binary> inline int buffer::bin(Binary v) noex {
 	return buffer_bin(this,v) ;
-}
+} /* end */
 template<typename Octal> int inline buffer::oct(Octal v) noex {
 	return buffer_oct(this,v) ;
-}
+} /* end */
 template<typename Decimal> int inline buffer::dec(Decimal v) noex {
 	return buffer_dec(this,v) ;
-}
+} /* end */
 template<typename Hexadecimal> inline int buffer::hex(Hexadecimal v) noex {
 	return buffer_hex(this,v) ;
-}
+} /* end */
 
 #endif /* __cplusplus */
 
