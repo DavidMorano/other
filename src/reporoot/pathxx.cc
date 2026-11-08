@@ -29,10 +29,10 @@
 	assumed to be MAXPATHLEN (determined dynamically).
 
 	Synopses:
-	int pathnaddw(char *pbuf,int plen,int pl,cchar *sp) noex
-	int pathnaddx(char *pbuf,int plen,int pl,cchar *sp) noex
-	int pathaddw(char *pbuf,int pl,cchar *sp,int sl) noex
-	int pathaddx(char *pbuf,int pl,int n,cchar *sp ...) noex
+	int pathnaddw	(char *pbuf,int plen,int pl,cchar *sp) noex
+	int pathnaddx	(char *pbuf,int plen,int pl,cchar *sp) noex
+	int pathaddw	(char *pbuf,int pl,cchar *sp,int sl) noex
+	int pathaddx	(char *pbuf,int pl,int n,cchar *sp ...) noex
 
 	Arguments:
 	pbuf		result buffer pointer
@@ -58,6 +58,7 @@
 
 	Extra:
 	The |pathaddw| subroutine is almost equivalent to:
+	{{
 	    int pathaddw(char *rbuf,int rl,cc *sp,int sl) noex {
 	        int	rs ;
 	        if ((rs = bufsizeget(bufsize_mp)) >= 0) {
@@ -67,6 +68,7 @@
 	        }
 	        return (rs >= 0) ? rl : rs ;
 	    }
+	}}
 
 *******************************************************************************/
 
@@ -105,6 +107,13 @@ import ulibvals ;			/* |ulibval(3u)| */
 
 /* local structures */
 
+namespace {
+    struct vars {
+	int	maxpathlen ;
+	operator int () noex ;
+    } ; /* end struct (vars) */
+} /* end namespace */
+
 
 /* forward references */
 
@@ -113,7 +122,7 @@ local int	local_pathadd(char *,int,int,cchar *,int) noex ;
 
 /* local variables */
 
-cint		maxpathlen = ulibval.maxpathlen ;
+static vars		var ;
 
 
 /* exported variables */
@@ -124,9 +133,9 @@ cint		maxpathlen = ulibval.maxpathlen ;
 namespace pathxx {
     int pathnaddw(char *pbuf,int plen,int pl,cchar *sp,int sl) noex {
     	int		rs = SR_FAULT ;
-	if (pbuf && sp) {
+	if (pbuf && sp) ylikely {
 	    rs = SR_INVALID ;
-	    if ((plen >= 0) && (pl >= 0)) {
+	    if ((plen >= 0) && (pl >= 0)) ylikely {
 		rs = local_pathadd(pbuf,plen,pl,sp,sl) ;
 		pl = rs ;
 	    } /* end if (valid) */
@@ -136,9 +145,9 @@ namespace pathxx {
     int pathnaddx(char *pbuf,int plen,int pl,int n,...) noex {
 	va_list		ap ;
 	int		rs = SR_FAULT ;
-	if (pbuf) {
+	if (pbuf) ylikely {
 	    rs = SR_INVALID ;
-	    if ((plen >= 0) && (pl >= 0)) {
+	    if ((plen >= 0) && (pl >= 0)) ylikely {
 	        va_begin(ap,n) ;
 	        for (int i = 0 ; (rs >= SR_OK) && (i < n) ; i += 1) {
 		    cchar	*sp = (char *) va_arg(ap,char *) ;
@@ -155,14 +164,14 @@ namespace pathxx {
 namespace pathxx {
     int pathaddw(char *pbuf,int pl,cchar *sp,int sl) noex {
 	int		rs = SR_FAULT ;
-	if (pbuf && sp) {
+	if (pbuf && sp) ylikely {
 	    rs = SR_INVALID ;
-	    if (pl >= 0) {
-	        if ((rs = maxpathlen) >= 0) {
+	    if (pl >= 0) ylikely {
+	        if ((rs = var) >= 0) ylikely {
 		    cint	plen = rs ;
 		    rs = local_pathadd(pbuf,plen,pl,sp,sl) ;
 		    pl = rs ;
-	        } /* end if (maxpathlen) */
+	        } /* end if (vars) */
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? pl : rs ;
@@ -170,19 +179,19 @@ namespace pathxx {
     int pathaddx(char *pbuf,int pl,int n,...) noex {
 	va_list		ap ;
 	int		rs = SR_FAULT ;
-	if (pbuf) {
+	if (pbuf) ylikely {
 	    rs = SR_INVALID ;
-	    if (pl >= 0) {
-	        if ((rs = maxpathlen) >= 0) {
-		    cint	plen = rs ;
+	    if (pl >= 0) ylikely {
+	        if ((rs = var) >= 0) ylikely {
 	            va_begin(ap,n) ;
+		    cint	plen = rs ;
 	            for (int i = 0 ; (rs >= SR_OK) && (i < n) ; i += 1) {
 		        cchar	*sp = (char *) va_arg(ap,char *) ;
 		        rs = local_pathadd(pbuf,plen,pl,sp,-1) ;
 		        pl = rs ;
 	            } /* end for */
 	            va_end(ap) ;
-	        } /* end if (maxpathlen) */
+	        } /* end if (vars) */
 	    } /* end if (valid) */
 	} /* end if (non-null) */
 	return (rs >= 0) ? pl : rs ;
@@ -197,12 +206,20 @@ local int local_pathadd(char *pbuf,int plen,int pl,cchar *sp,int sl) noex {
 	if ((pl > 0) && (pbuf[pl - 1] != '/')) {
 	    rs = storebuf_chr(pbuf,plen,pl,'/') ;
 	    pl += rs ;
-	}
-	if (rs >= 0) {
+	} /* end */
+	if (rs >= 0) ylikely {
 	    rs = storebuf_strw(pbuf,plen,pl,sp,sl) ;
 	    pl += rs ;
-	}
+	} /* end */
 	return (rs >= 0) ? pl : rs ;
 } /* end subroutine (local_pathadd) */
+
+vars::operator int () noex {
+    	int		rs ;
+    	if (static cint rsu = ulibval.maxpathlen ; (rs = rsu) >= 0) ylikely {
+	    maxpathlen = rs ;
+	} /* end if */
+	return rs ;
+} /* end if (vars::operator) */
 
 
