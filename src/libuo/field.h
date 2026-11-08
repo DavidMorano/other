@@ -67,11 +67,11 @@ struct field_co {
 	void operator () (field *p,int m) noex {
 	    op = p ;
 	    w = m ;
-	} ;
+	} ; /* end */
 	operator int () noex ;
 	int operator () () noex { 
 	    return operator int () ;
-	} ;
+	} ; /* end */
 } ; /* end struct (field_co) */
 struct field : field_head {
 	field_co	finish ;
@@ -79,7 +79,7 @@ struct field : field_head {
 	field() noex {
 	    rem		(this,fieldmem_rem) ;
 	    finish	(this,fieldmem_finish) ;
-	    lp = nullptr ;
+	    lp		= nullptr ;
 	} ; /* end ctor */
 	field(const field &) = delete ;
 	field &operator = (const field &) = delete ;
@@ -94,7 +94,7 @@ struct field : field_head {
 	void dtor() noex ;
 	destruct field() {
 	    if (lp) dtor() ;
-	} ;
+	} ; /* end */
 } ; /* end struct (field) */
 #else
 typedef FIELD		field ;
@@ -116,7 +116,7 @@ extern int	field_svcargs	(field *,vecstr *) noex ;
 
 local inline int field_term	(field *op,cchar *tp,cchar **rpp) noex {
 	return field_getterm(op,tp,rpp) ;
-}
+} /* end */
 
 EXTERNC_end
 
