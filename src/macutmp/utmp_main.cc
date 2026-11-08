@@ -402,7 +402,7 @@ local bool conidok(UTMPX* up) noex {
 	cchar		*idp = up->ut_id ;
 	if (strncmp(idp,"co",2) == 0) {
 	    f = f || (idp[2] == '\0') ;
-	    f = f || (isdigitlatin(idp[2]) && isdigitlatin(idp[3])) ;
+	    f = f || (ischdigit(idp[2]) && ischdigit(idp[3])) ;
 	}
 	return f ;
 } /* end subroutine (conidok) */
@@ -485,7 +485,7 @@ local int consoleid_utx(vecstr *cosp) noex {
 		    if (conidok(up)) {
 	    		c += 1 ;
 		    } else {
-			auto getpw = getpwnam ;
+			cauto getpw = getpwnam ;
 			if (PASSWD *pwp ; (pwp = getpw(up->ut_user)) != np) {
 			    if ((uid == pwp->pw_uid) || (uid == 0)) {
 				[[maybe_unused]] strview us(up->ut_id,lid) ;
@@ -551,7 +551,7 @@ local int findstdin(int pm) noex {
 local int findenv(int pm) noex {
 	int		rs = SR_OK ;
 	bool		f = false ;
-	for (auto const &vn : utmpvars) {
+	for (cauto &vn : utmpvars) {
 	    if (cchar *line = getenv(vn)) {
 	        if (line[0]) {
 	            UTMPX	ut{} ;
