@@ -37,8 +37,8 @@ int main(int argc,con mainv argv,con mainv envv) {
 	    cout << "pn=" << ccp(name) << eol ;
 	    for (int ai = 0 ; argv[ai] ; ai += 1) {
 		cout << "a=" << argv[ai] << "\n" ;
-	    }
-	}
+	    } /* end for */
+	} /* end if */
 	return 0 ;
 } /* end subroutine (main) */
 
