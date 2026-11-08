@@ -25,38 +25,19 @@
 #include	<utypealiases.h>	/* LIBU */
 #include	<usysdefs.h>		/* LIBU */
 
+#include	<strnchar.h>		/* find */
+#include	<strncpyxc.h>		/* copy (case changing) */
+#include	<strnwcpyx.h>		/* copy */
+#include	<strnwcpyxc.h>		/* copy (case changing) */
+#include	<strnwht.h>		/* find */
 #include	<strnxcmp.h>		/* compare */
 #include	<strnxchr.h>		/* find */
 #include	<strnxbrk.h>		/* find */
 #include	<strnxsub.h>		/* find */
 #include	<strnxterm.h>		/* find */
-#include	<strnwht.h>		/* find */
-#include	<strnchar.h>		/* find */
-#include	<strncpyxc.h>		/* copy */
-#include	<strnwcpyxc.h>		/* copy (case changing) */
 
 #include	<strnnlen.h>		/* string-length */
 #include	<strnset.h>		/* string-set */
-
-EXTERNC_begin
-
-/* copy */
-local inline char *strnwcpy(char *dp,int dl,cchar *sp,int sl) noex {
-    	return strnwcpybc(dp,dl,sp,sl) ;
-} /* end */
-local inline char *strnncpy(char *dp,cchar *sp,int sl,int sz) noex {
-    	return strnwcpy(dp,sz,sp,sl) ;
-} /* end */
-
-EXTERNC_end
-
-#ifdef	__cplusplus
-
-inline char *strnwcpy(char *dp,int dl,cchar *sp) noex {
-    	return strnwcpybc(dp,dl,sp,-1) ;
-} /* end */
-
-#endif /* __cplusplus */
 
 
 #endif /* STRN_INCLUDE */
