@@ -89,9 +89,9 @@ int uc_kvamatch(kva_t *kva,cchar *keyname,cchar **rpp) noex {
 	cnullptr	np{} ;
 	int		rs = SR_FAULT ;
 	cchar		*rp = nullptr ;
-	if (kva && keyname) {
+	if (kva && keyname) ylikely {
 	    rs = SR_INVALID ;
-	    if (keyname[0]) {
+	    if (keyname[0]) ylikely {
 	        if (syshas.userattr) {
 		    char *kp = cast_const<charp>(keyname) ;
 	            if ((rp = kva_match(kva,kp)) != np) {
