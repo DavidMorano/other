@@ -42,10 +42,10 @@
 #include	<usysbase.h>		/* LIBU */
 
 #include	<ucatexit.h>
-#include	<ucatfork.h>
 #include	<ucexec.h>
 #include	<ucexit.h>
 #include	<ucfork.h>
+#include	<ucforkat.h>
 #include	<ucforkdet.h>
 #include	<ucprocpid.h>
 #include	<ucprochave.h>
