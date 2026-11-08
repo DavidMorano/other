@@ -35,19 +35,19 @@ DEFS +=
 
 INCS +=
 
-MODS += fonce.o
+MODS +=
 
 LIBS += -lu
 
 
-DEPS_MAIN= fonce.o
+DEPS_MAIN=
 
 OBJ0= fu_main.o
-OBJ1=
+OBJ1= path.o
 OBJ2=
 OBJ3=
 
-OBJ_MACFU= obj0.o
+OBJ_MACFU= obj0.o obj1.o
 
 
 INCDIRS=
@@ -157,6 +157,11 @@ fu_main.o:		fu_main.cc $(DEPS_MAIN) 		$(INCS)
 # FONCE		(libu)
 fonce.o:		fonce.dir
 fonce.dir:
+	makesubdir $@
+
+# PATH		(libuc)
+path.o:			path.dir
+path.dir:
 	makesubdir $@
 
 
