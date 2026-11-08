@@ -5,7 +5,7 @@
 /* print out matching filenames */
 /* version %I% last-modified %G% */
 
-#define	CF_DEBUG	0		/* debugging */
+#define	CF_DEBUG	1		/* debugging */
 
 /* revision history:
 
@@ -43,7 +43,7 @@
 #include	<envstandards.h>	/* MUST be ordered first to configure */
 #include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD |EXIT_FAILURE| */
-#include	<cstring>		/* CSTD |strncmp(3c)| + |strstr(3c)| */
+#include	<cstring>		/* CSTD |strcmp(3c)| + |strstr(3c)| */
 #include	<exception>		/* C++STD */
 #include	<filesystem>		/* C++STD */
 #include	<clanguage.h>		/* LIBU */
@@ -202,6 +202,7 @@ int dirmgr::defload(vecstr *plp) noex {
 		        if (cint si = siext(bns,-1) ; si >= 0) {
 			    DPRINTF("si=%d ext=%s\n",si,(bns+si)) ;
 			    if (strcmp((bns+si),defext) == 0) {
+			        DPRINTF("got=%s\n",bns) ;
 			        rs = plp->add(bns,(si - 1)) ;
 			        c += 1 ;
 			    } /* end if (strcmp) */
