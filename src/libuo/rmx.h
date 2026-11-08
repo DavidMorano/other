@@ -25,9 +25,9 @@
 #include	<utypealiases.h>	/* LIBU */
 #include	<usysdefs.h>		/* LIBU */
 
-#include	<rmx_chr.h>
-#include	<rmx_class.h>
-#include	<rmx_misc.h>
+#include	<rmxchr.h>
+#include	<rmxclass.h>
+#include	<rmxmisc.h>
 #include	<rmleadzero.h>
 
 
