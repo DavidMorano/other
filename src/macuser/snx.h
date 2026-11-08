@@ -29,6 +29,7 @@
 #include	<snadd.h>
 #include	<snclean.h>
 #include	<sncpy.h>
+#include	<sncpyarr.h>
 #include	<sncpyx.h>		/* repeat? */
 #include	<sncpyxc.h>		/* repeat? */
 #include	<sncpyxw.h>		/* repeat? */
@@ -42,7 +43,6 @@
 
 
 EXTERNC_begin
-
 extern int snxtilook	(char *,int,int) noex ;
 extern int sninetaddr	(char *,int,int,cchar *) noex ;
 extern int snshellunder	(char *,int,pid_t,cchar *) noex ;
@@ -51,7 +51,6 @@ extern int sntid	(char *,int,pthread_t) noex ;
 extern int snrealname	(char *,int,mainv,int) noex ;
 extern int snloadavg	(char *,int,uint,int,int,int) noex ;
 extern int snkeyval	(char *,int,cchar *,int,cchar *,int) noex ;
-
 EXTERNC_end
 
 
