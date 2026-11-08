@@ -29,17 +29,18 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* must be ordered first to configure */
-#include	<sys/types.h>
-#include	<sys/stat.h>
-#include	<unistd.h>
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>		/* |EXIT_SUCCESS| */
+#include	<sys/types.h>		/* POSIX® */
+#include	<sys/stat.h>		/* POSIX® */
+#include	<unistd.h>		/* POSIX® */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
 #include	<libgen.h>
-#include	<iostream>
-#include	<clanguage.h>
-#include	<usysbase.h>
-#include	<usupport.h>
-#include	<localmisc.h>
+#include	<iostream>		/* C++STD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<usupport.h>		/* LIBU |matstr(3u)| */
+#include	<prognamevar.hh>	/* LIBUC but **local** */
+#include	<localmisc.h>		/* LIBU */
 
 
 /* local defines */
@@ -48,7 +49,7 @@
 /* namespaces */
 
 using std::cerr ;			/* variable */
-using libu::matstr ;
+using libu::matstr ;			/* subroutine */
 
 
 /* typedefs */
@@ -77,12 +78,14 @@ local bool newer(ustat *sb1p,ustat *sb2p) noex {
 
 enum progmodes {
     	progmode_filesame,
+    	progmode_filesametime,
     	progmode_filenewer,
 	progmode_overlast
 } ; /* end enum */
 
 constexpr cpcchar	prognames[] = {
     	[progmode_filesame]	= "filesame",
+    	[progmode_filesametime]	= "filesametime",
 	[progmode_filenewer]	= "filenewer",
 	[progmode_overlast]	= nullptr
 } ; /* end array (prognames) */
@@ -93,18 +96,18 @@ constexpr cpcchar	prognames[] = {
 
 /* exported subroutines */
 
-int main(int argc,mainv argv,mainv) {
+int main(int argc,con mainv argv,con mainv envv) {
+    	prognamevar	progname(argc,argv,envv) ;
 	int		ex = EXIT_FAILURE ;
 	if (argc > 0) {
-	    cchar	*pn = basename(const_cast<char *>(argv[0])) ;
+	    cchar	*pn = progname ;
 	    if (cint pm = matstr(prognames,pn,-1) ; pm >= 0) {
 	        if (argc == 3) {
 	            cchar	*fn1 = argv[1] ;
 	            cchar	*fn2 = argv[2] ;
 		    if (fn1[0] && fn2[0]) {
-		        ustat	sb1, sb2 ;
-		        if (stat(fn1,&sb1) >= 0) {
-		            if (stat(fn2,&sb2) >= 0) {
+		        if (ustat sb1 ; statfile(fn1,&sb1) >= 0) {
+		            if (ustat sb2 ; statfile(fn2,&sb2) >= 0) {
 			        bool f = false ;
 			        switch (pm) {
 			        case progmode_filesame:
@@ -114,6 +117,9 @@ int main(int argc,mainv argv,mainv) {
 			                f = f && (sb1.st_ino == sb2.st_ino) ;
 				    }
 			            break ;
+			        case progmode_filesametime:
+			            f = (sb1.st_mtime == sb2.st_mtime) ;
+				    break ;
 			        case progmode_filenewer:
 				    f = newer(&sb1,&sb2) ;
 			            break ;
@@ -121,16 +127,16 @@ int main(int argc,mainv argv,mainv) {
 			        if (f) ex = EXIT_SUCCESS ;
 		            } else {
 			        ex = EXIT_SUCCESS ;
-		            }
+		            } /* end */
 		        } else {
 	                    cerr << pn << ": cannot stat file (1)\n" ;
-		        }
+		        } /* end */
 		    } else {
 	                cerr << pn << ": one or more empty file-argument\n" ;
-		    }
+		    } /* end */
 	        } else {
 	            cerr << pn << ": not enough arguments\n" ;
-	        }
+	        } /* end */
 	    } /* end if (matstr) */
 	} /* end if */
 	return ex ;
