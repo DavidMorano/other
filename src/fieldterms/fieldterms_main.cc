@@ -39,7 +39,6 @@
 #include	<char.h>		/* LIBUC */
 #include	<hasx.h>		/* LIBUC */
 #include	<ccfile.hh>		/* LIBU */
-#include	<strnul.hh>		/* LIBU */
 #include	<charnames.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU |MAXLINELEN| */
 
@@ -219,10 +218,10 @@ local int cfnum(cchar *sp,int sl,int *rp) noex {
 		    {
 			long	val = strtol(raw,nullptr,0) ;
 			if (errno) {
-			    rs = (- errno) ;
+			    rs = (neg errno) ;
 			} else {
 			    *rp = int(val) ;
-			}
+			} /* end */
 		    } /* end block */
 		} /* end block */
 	    } catch (std::bad_alloc &) {
