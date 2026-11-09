@@ -66,14 +66,14 @@
 #include	<ccfile.hh>		/* LIBU */
 #include	<readln.hh>		/* LIBU */
 #include	<filetypes.h>		/* LIBU */
-#include	<filelinker.hh>		/* *local* */
-#include	<matstr.h>		/* *local* */
 #include	<mkchar.h>		/* LIBU */
-#include	<isnot.h>		/* *local* */
 #include	<mapex.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU */
 #include	<deb.hh>		/* LIBUC |DEBPRINTF| */
 #include	<dprint.hh>		/* LIBU |DPRINT| */
+#include	<filelinker.hh>		/* *local* */
+#include	<matstr.h>		/* *local* */
+#include	<isnot.h>		/* *local* */
 
 #include	"files_show.h"
 #include	"files_conf.h"
@@ -1236,15 +1236,7 @@ int proginfo::argreadin() noex {
 	    rs = SR_NOMEM ;
 	    if (char *rbuf ; (rbuf = new(nt) char[rlen + 1]) != np) {
 	        while ((rs = readln(&cin,rbuf,rlen)) > 0) {
-			{
-			    strnul reads(rbuf,rs) ;
-			    DEBPRINTF("line=>%s<\n",ccp(reads)) ;
-		        }
 		    if (cint rl = rmeol(rbuf,rs) ; rl > 0) {
-			{
-			    strnul ls(rbuf,rl) ;
-			    DEBPRINTF("line=>%s<\n",ccp(ls)) ;
-		        }
 		        rs = argprocspec(rbuf,rl) ;
 			c += rs ;
 		    } /* end */
