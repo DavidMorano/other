@@ -1,0 +1,29 @@
+
+namespace {
+    struct vars {
+	int		maxpath ;
+	int		maxline ;
+	int		pagesz ;
+	operator int () noex ;
+    } ; /* end struct (vars) */
+} /* end namespace */
+
+static vars		var ;
+
+	    if (static cint rsv = var ; (rs = rsv) >= 0) ylikely {
+	    } /* end if (vars) */
+
+vars::operator int () noex {
+    	int		rs ;
+	if ((rs = ulibval.maxpathlen) >= 0) ylikely {
+	    maxpath = rs ;
+	    if ((rs = ulibval.maxline) >= 0) ylikely {
+		maxline = rs ;
+	        if ((rs = ulibval.pagesz) >= 0) ylikely {
+		    pagesz = rs ;
+	        } /* end */
+	    } /* end */
+	} /* end */
+    	return rs ;
+} /* end method (vars::operator) */
+
