@@ -372,7 +372,6 @@ int proginfo::process_pmbegin() noex {
 	int		rs = SR_OK ;
 	cnullptr	np{} ;
 	cnothrow	nt{} ;
-	DPRINTF("pm=%d\n",pm) ;
 	switch (pm) {
         case progmode_fileuniq:
         case progmode_fu:
@@ -441,7 +440,6 @@ int proginfo::fileproc(cchar *sp,int sl) noex {
 	if (m) {
 	    rs = SR_NOMEM ;
 	    if (strnul fn(sp,sl) ; fn.fok) ylikely {
-		DPRINTF("fn=%s\n",ccp(fn)) ;
 	        if (ustat sb ; (rs = u_lstat(fn,&sb)) >= 0) ylikely {
 		    switch (pm) {
         	    case progmode_fileuniq:
@@ -453,11 +451,9 @@ int proginfo::fileproc(cchar *sp,int sl) noex {
 	                } /* end if (filecheck) */
 		        break ;
         	    case progmode_dangling:
-		        DPRINTF("dangling fn=%s\n",ccp(fn)) ;
 			{
 		            rs = (this->*m)(&sb,sp,sl) ;
 		            c += rs ;
-			    DPRINTF("dangling() rs=%d\n",rs) ;
 			}
 		        break ;
 		    } /* end switch */
@@ -508,26 +504,20 @@ int proginfo::fileproc_lc(custat *sbp,cchar *sp,int µsl) noex {
 int proginfo::fileproc_dangling(custat *sbp,cchar *sp,int sl) noex {
     	int		rs = SR_OK ;
 	int		c = 0 ;
+	DPRINTF("ent\n") ;
 	if (sbp && sp && sl) ylikely {
-	    if_constexpr (f_debug) {
-		strnul fn(sp,sl) ;
-	        DPRINTF("ss=%s\n",ccp(fn)) ;
-	    }
 	    if (S_ISLNK(sbp->st_mode)) {
-	        DPRINTSTR("pathdangle=",sp,sl) ;
 	        if ((rs = pathdangle(sp,sl)) > 0) {
-	            DPRINTF("pathdangle() rs=%d\n",rs) ;
 		    rs = SR_NOMEM ;
 	            if (strnul fn(sp,sl) ; fn.fok) {
 			rs = SR_OK ;
-	                DPRINTF("2\n") ;
 	                cout << ccp(fn) << eol ;
 	                c += 1 ;
 		    } /* end if (strnul) */
 	        } /* end if (pathdangle) */
-	        DPRINTF("pathdang-out rs=%d\n",rs) ;
 	    } /* end if (is_link) */
 	} /* end if (non-null) */
+	DPRINTF("ret rs=%d\n",rs) ;
 	return (rs >= 0) ? c : rs ;
 } /* end method (proginfo::fileproc_dangling) */
 
