@@ -1,0 +1,13 @@
+charname
+charset
+fieldterms
+hasweird
+linezero
+macfiles
+macfu
+machave
+macsysdata
+magicx
+reporoot
+showterms
+termop
