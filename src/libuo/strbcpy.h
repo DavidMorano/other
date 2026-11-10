@@ -31,7 +31,6 @@
 
 
 #ifdef	__cplusplus
-
 inline char *strbcpy(char *dp,int dl,
 		cc *s1,int len) noex {
 	return strbcpyxw(dp,dl,1,s1,len) ;
@@ -56,7 +55,6 @@ inline char *strbcpy(char *dp,int dl,
 		cc *s1,cc *s2,cc *s3,cc *s4,cc *s5,cc *s6,int len) noex {
 	return strbcpyxw(dp,dl,6,s1,s2,s3,s4,s5,s6,len) ;
 } /* end */
-
 #endif /* __cplusplus */
 
 
