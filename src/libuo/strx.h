@@ -28,17 +28,15 @@
 #include	<utypealiases.h>	/* LIBU */
 #include	<usysdefs.h>		/* LIBU */
 
-#include	<strsub.h>
-#include	<strwildsub.h>
-#include	<strxcmp.h>
-#include	<strabbrerr.h>		/* |errno| "error"s */
-#include	<strabbrsig.h>		/* signal numbers */
-#include	<strabbrexi.h>		/* process exit codes */
+#include	<strabbr.h>		/* number-abbreviations */
 #include	<straltwchar.h>
 #include	<strcpyxc.h>
 #include	<strlinelen.h>
 #include	<strlocktype.h>
+#include	<strsub.h>
 #include	<strwhite.h>
+#include	<strwildsub.h>
+#include	<strxcmp.h>
 #include	<strxname.h>
 
 
