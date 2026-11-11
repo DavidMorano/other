@@ -23,11 +23,11 @@
 #include	<stdarg.h>		/* CSTD |va_list(3c)| */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
+#include	<uconcepts.hh>		/* LIBU */
 #include	<stdintx.h>		/* LIBU */
 
 
 #define	SBUF		struct sbuf_head
-
 
 struct sbuf_head {
 	charp		rbuf ;		/* result buffer base (constant) */
@@ -115,7 +115,7 @@ struct sbuf : sbuf_head {
 	    getprev	(this,sbufmem_getprev) ;
 	    reset	(this,sbufmem_reset) ;
 	    finish	(this,sbufmem_finish) ;
-	    rbuf = nullptr ;
+	    rbuf	= nullptr ;
 	} ; /* end ctor */
 	sbuf(const sbuf &) = delete ;
 	sbuf &operator = (const sbuf &) = delete ;
@@ -136,11 +136,11 @@ struct sbuf : sbuf_head {
 	int buf		(cchar *,int) noex ;
 	int getpoint	(cchar **) noex ;
 	int decl	(long) noex ;
-	template<typename Binary>	int bin(Binary)		noex ;
-	template<typename Octal>	int oct(Octal)		noex ;
-	template<typename Decimal>	int dec(Decimal)	noex ;
-	template<typename Hexadecimal>	int hex(Hexadecimal)	noex ;
-	template<typename HexPrec>	int hexp(int,HexPrec)	noex ;
+	template<std::integral Binary>	int bin(Binary)		noex ;
+	template<std::integral Octal>	int oct(Octal)		noex ;
+	template<std::integral Decimal>	int dec(Decimal)	noex ;
+	template<std::integral Hexadec>	int hex(Hexadec)	noex ;
+	template<std::integral HexPrec>	int hexp(int,HexPrec)	noex ;
 	sbuf &operator << (cchar *cp) noex {
 	    strw(cp) ;
 	    return *this ;
@@ -236,7 +236,6 @@ local inline int sbuf_char(sbuf *op,int ch)	noex {
 EXTERNC_end
 
 #ifdef	__cplusplus
-
 inline int sbuf_bin(sbuf *op,int v)		noex {
 	return sbuf_bini(op,v) ;
 } /* end */
@@ -246,7 +245,9 @@ inline int sbuf_bin(sbuf *op,long v)		noex {
 inline int sbuf_bin(sbuf *op,longlong v)	noex {
 	return sbuf_binll(op,v) ;
 } /* end */
+#endif /* __cplusplus */
 
+#ifdef	__cplusplus
 inline int sbuf_bin(sbuf *op,uint v)		noex {
 	return sbuf_binui(op,v) ;
 } /* end */
@@ -256,11 +257,15 @@ inline int sbuf_bin(sbuf *op,ulong v)		noex {
 inline int sbuf_bin(sbuf *op,ulonglong v)	noex {
 	return sbuf_binull(op,v) ;
 } /* end */
+#endif /* __cplusplus */
 
-template<typename Binary> inline int sbuf::bin(Binary v) noex {
+#ifdef	__cplusplus
+template<std::integral Binary> inline int sbuf::bin(Binary v) noex {
 	return sbuf_bin(this,v) ;
 } /* end */
+#endif /* __cplusplus */
 
+#ifdef	__cplusplus
 inline int sbuf_oct(sbuf *op,int v)		noex {
 	return sbuf_octi(op,v) ;
 } /* end */
@@ -270,7 +275,9 @@ inline int sbuf_oct(sbuf *op,long v)		noex {
 inline int sbuf_oct(sbuf *op,longlong v)	noex {
 	return sbuf_octll(op,v) ;
 } /* end */
+#endif /* __cplusplus */
 
+#ifdef	__cplusplus
 inline int sbuf_oct(sbuf *op,uint v)		noex {
 	return sbuf_octui(op,v) ;
 } /* end */
@@ -280,11 +287,15 @@ inline int sbuf_oct(sbuf *op,ulong v)		noex {
 inline int sbuf_oct(sbuf *op,ulonglong v)	noex {
 	return sbuf_octull(op,v) ;
 } /* end */
+#endif /* __cplusplus */
 
-template<typename Octal> int inline sbuf::oct(Octal v) noex {
+#ifdef	__cplusplus
+template<std::integral Octal> int inline sbuf::oct(Octal v) noex {
 	return sbuf_oct(this,v) ;
 } /* end */
+#endif /* __cplusplus */
 
+#ifdef	__cplusplus
 inline int sbuf_dec(sbuf *op,int v)		noex {
 	return sbuf_deci(op,v) ;
 } /* end */
@@ -294,7 +305,9 @@ inline int sbuf_dec(sbuf *op,long v)		noex {
 inline int sbuf_dec(sbuf *op,longlong v)	noex {
 	return sbuf_decll(op,v) ;
 } /* end */
+#endif /* __cplusplus */
 
+#ifdef	__cplusplus
 inline int sbuf_dec(sbuf *op,uint v)		noex {
 	return sbuf_decui(op,v) ;
 } /* end */
@@ -304,11 +317,15 @@ inline int sbuf_dec(sbuf *op,ulong v)		noex {
 inline int sbuf_dec(sbuf *op,ulonglong v)	noex {
 	return sbuf_decull(op,v) ;
 } /* end */
+#endif /* __cplusplus */
 
-template<typename Decimal> inline int sbuf::dec(Decimal v) noex {
+#ifdef	__cplusplus
+template<std::integral Decimal> inline int sbuf::dec(Decimal v) noex {
 	return sbuf_dec(this,v) ;
 } /* end */
+#endif /* __cplusplus */
 
+#ifdef	__cplusplus
 inline int sbuf_hex(sbuf *op,int v)		noex {
 	return sbuf_hexi(op,v) ;
 } /* end */
@@ -318,7 +335,9 @@ inline int sbuf_hex(sbuf *op,long v)		noex {
 inline int sbuf_hex(sbuf *op,longlong v)	noex {
 	return sbuf_hexll(op,v) ;
 } /* end */
+#endif /* __cplusplus */
 
+#ifdef	__cplusplus
 inline int sbuf_hex(sbuf *op,uint v)		noex {
 	return sbuf_hexui(op,v) ;
 } /* end */
@@ -328,11 +347,15 @@ inline int sbuf_hex(sbuf *op,ulong v)		noex {
 inline int sbuf_hex(sbuf *op,ulonglong v)	noex {
 	return sbuf_hexull(op,v) ;
 } /* end */
+#endif /* __cplusplus */
 
-template<typename Hexadecimal> inline int sbuf::hex(Hexadecimal v) noex {
+#ifdef	__cplusplus
+template<std::integral Hexadec> inline int sbuf::hex(Hexadec v) noex {
 	return sbuf_hex(this,v) ;
 } /* end */
+#endif /* __cplusplus */
 
+#ifdef	__cplusplus
 inline int sbuf_hexp(sbuf *op,int n,uchar v)		noex {
 	return sbuf_hexpuc	(op,n,v) ;
 } /* end */
@@ -348,11 +371,12 @@ inline int sbuf_hexp(sbuf *op,int n,ulong v)		noex {
 inline int sbuf_hexp(sbuf *op,int n,ulonglong v)	noex {
 	return sbuf_hexpull	(op,n,v) ;
 } /* end */
+#endif /* __cplusplus */
 
-template<typename HexPrec> inline int sbuf::hexp(int n,HexPrec v) noex {
+#ifdef	__cplusplus
+template<std::integral HexPrec> inline int sbuf::hexp(int n,HexPrec v) noex {
 	return sbuf_hexp(this,n,v) ;
 } /* end */
-
 #endif /* __cplusplus */
 
 
