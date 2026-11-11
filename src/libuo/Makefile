@@ -107,7 +107,7 @@ OBJ27_LUO= wswcpyx.o
 OBJ28_LUO= bufsize.o openx.o open.o
 OBJ29_LUO= sysval.o path.o termx.o
 OBJ30_LUO= vstr.o xfile.o absfn.o
-OBJ31_LUO= randlc.o pow.o calstrs.o digval.o
+OBJ31_LUO= randlc.o pow.o digval.o
 
 OBJ32_LUO= realname.o find.o
 OBJ33_LUO= ema.o tmpx.o getxname.o getutmp.o
@@ -132,7 +132,7 @@ OBJ47_LUO= spawn.o expcook.o semx.o
 OBJ48_LUO= sigx.o dial.o conallof.o
 OBJ49_LUO= argutils.o cmdutils.o logfile.o linex.o
 OBJ50_LUO= ndig.o ndigit.o bufprintf.o
-OBJ51_LUO= term.o calendar.o
+OBJ51_LUO= term.o writeto.o calendar.o shellunder.o
 
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
@@ -146,8 +146,7 @@ OBJI_LUO= obj32_luo.o obj33_luo.o obj34_luo.o obj35_luo.o
 OBJJ_LUO= obj36_luo.o obj37_luo.o obj38_luo.o obj39_luo.o
 OBJK_LUO= obj40_luo.o obj41_luo.o obj42_luo.o obj43_luo.o
 OBJL_LUO= obj44_luo.o obj45_luo.o obj46_luo.o obj47_luo.o
-#OBJM_LUO= obj48_luo.o obj49_luo.o obj50_luo.o obj51_luo.o
-OBJM_LUO= obj48_luo.o obj49_luo.o obj50_luo.o
+OBJM_LUO= obj48_luo.o obj49_luo.o obj50_luo.o obj51_luo.o
 
 OBJ_LUO += obja_luo.o objb_luo.o objc_luo.o objd_luo.o
 OBJ_LUO += obje_luo.o objf_luo.o objg_luo.o objh_luo.o
@@ -1153,7 +1152,6 @@ userinfo.o:		userinfo.cc	userinfo.h		$(INCS)
 mapblock.o:		mapblock.ccm	mapblock.hh		$(INCS)
 
 # GROUPS
-calstrs.o:		calstrs.cc	calstrs.h		$(INCS)
 char.o:			char.cc		char.h			$(INCS)
 toxc.o:			toxc.cc		toxc.h			$(INCS)
 bitrotate.o:		bitrotate.cc	bitrotate.h		$(INCS)
@@ -1162,7 +1160,6 @@ stdorder.o:		stdorder.cc	stdorder.h		$(ICNS)
 # SINGLES
 sysval.o:		sysval.cc	sysval.hh		$(INCS)
 randlc.o:		randlc.cc	randlc.h		$(INCS)
-calstrs.o:		calstrs.cc	calstrs.h		$(INCS)
 checkbase.o:		checkbase.cc	checkbase.h		$(INCS)
 strlibval.o:		strlibval.cc	strlibval.hh		$(INCS)
 matparam.o:		matparam.cc	matparam.h		$(INCS)
@@ -1180,5 +1177,7 @@ conallof.o:		conallof.cc	conallof.h		$(INCS)
 ndig.o:			ndig.cc		ndig.h			$(INCS)
 ndigit.o:		ndigit.cc	ndigit.h		$(INCS)
 bufprintf.o:		bufprintf.cc	bufprintf.h		$(INCS)
+shellunder.o:		shellunder.cc	shellunder.h		$(INCS)
+writeto.o:		writeto.cc	writeto.h		$(INCS)
 
 
