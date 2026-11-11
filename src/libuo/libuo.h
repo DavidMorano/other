@@ -295,9 +295,11 @@
 #include	<lookaside.h>
 #include	<queue.h>
 #include	<hdb.h>
+#include	<shellunder.h>
 #include	<strfilter.h>
 #include	<td.h>
 #include	<termstr.h>
+#include	<writeto.h>
 
 #include	<ucsig.h>
 #include	<ucsigset.h>
