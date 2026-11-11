@@ -38,6 +38,7 @@
 #include	<getnisdomain.h>
 #include	<getnodedomain.h>
 #include	<getnodeinfo.h>
+#include	<getnoise.h>
 #include	<getnprocessors.h>
 #include	<getoflags.h>
 #include	<getopendial.h>
