@@ -20,7 +20,8 @@
 
 
 #include	<envstandards.h>	/* ordered first to configure */
-#include	<stddef.h>		/* POSIX® |wchar_t| */
+#include	<stddef.h>		/* CSTD */
+#include	<stdlib.h>		/* CSTD */
 #include	<clanguage.h>		/* LIBU */
 #include	<utypedefs.h>		/* LIBU */
 #include	<utypealiases.h>	/* LIBU */
@@ -29,9 +30,7 @@
 
 
 EXTERNC_begin
-
 extern int wswcpynarrow(wchar_t *,cchar *,int) noex ;
-
 EXTERNC_end
 
 
