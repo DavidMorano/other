@@ -104,7 +104,6 @@
 #include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD */
 #include	<cstdio>		/* CSTD */
-#include	<cstring>		/* CSTD |strncmp(3c)| */
 #include	<algorithm>		/* C++STD */
 #include	<unordered_set>		/* C++STD */
 #include	<utility>		/* C++STD */
@@ -595,7 +594,7 @@ int userinfo::findutmp_stdin(uid_t uid) noex {
 	    char	tbuf[tlen+1] ;
 	    if ((rs = uc_ttyname(fd,tbuf,tlen)) >= 0) {
 		cint	n = xstrlen(devprefix) ;
-		if (strncmp(tbuf,devprefix,n) == 0) {
+		if (cmpstrn(tbuf,devprefix,n) == 0) {
 		    char	nbuf[utl_user+1] ;
 		    UTMPX	ut{} ;
 		    cchar	*line = (tbuf+n) ;
@@ -722,7 +721,7 @@ local UTMPX *getutxliner(UTMPX *sup) noex {
 	   if (isourtype(up)) {
 		cint	ll = utl_line ;
 		cchar	*lp = sup->ut_line ;
-		if (strncmp(up->ut_line,lp,ll) == 0) {
+		if (cmpstrn(up->ut_line,lp,ll) == 0) {
 		    stpcpy(nbuf,up->ut_user,utl_user) ;
 		    if (PASSWD *pwp = getpwnam(nbuf)) {
 		        if (pwp->pw_uid == uid) {
