@@ -16,7 +16,7 @@
 /* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
 /* Use is subject to license terms. */
 
-/******************************************************************************
+/*******************************************************************************
 
 	Name:
 	servents
@@ -32,7 +32,7 @@
 	EXIT_SUCCESS		OK
 	EXIT_FAILURE		error (of some kind)
 
-******************************************************************************/
+*******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<sys/types.h>		/* POSIX® */
