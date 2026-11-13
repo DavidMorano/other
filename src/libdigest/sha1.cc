@@ -13,6 +13,15 @@
 
 /* This code is in the public domain */
 
+/*******************************************************************************
+
+	Name:
+	sha1
+
+	Description:
+	SHA-1
+
+*******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<sys/types.h>		/* POSIX® */
