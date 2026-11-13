@@ -17,12 +17,12 @@
 
 /* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
 
-/******************************************************************************
+/*******************************************************************************
 
   	Description:
 	This is a fairly generic front-end subroutine for a program.
 
-******************************************************************************/
+*******************************************************************************/
 
 #include	<envstandards.h>	/* MUST be first to configure */
 #include	<sys/types.h>
@@ -32,7 +32,6 @@
 #include	<csignal>		/* CSTD */
 #include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD */
-#include	<cstring>		/* CSTD */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU */
@@ -98,7 +97,7 @@ constexpr cpcchar	argopts[] = {
 	"follow",
 	"af",
 	"of",
-	NULL
+	nullptr
 } ; /* end array */
 
 
@@ -126,11 +125,11 @@ int main(int argc,mainv argv,mainv envv) {
 	cchar	*argp, *aop, *akp, *avp ;
 	char	argpresent[MAXARGGROUPS] ;
 	char	tmpfname[MAXPATHLEN + 1] ;
-	cchar	*pr = NULL ;
-	cchar	*pmspec = NULL ;
-	cchar	*searchname = NULL ;
-	cchar	*afname = NULL ;
-	cchar	*ofname = NULL ;
+	cchar	*pr = nullptr ;
+	cchar	*pmspec = nullptr ;
+	cchar	*searchname = nullptr ;
+	cchar	*afname = nullptr ;
+	cchar	*ofname = nullptr ;
 	cchar	*cp ;
 
 	pip->verboselevel = 1 ;
@@ -168,17 +167,17 @@ int main(int argc,mainv argv,mainv envv) {
 	            akp = aop ;
 	            aol = argl - 1 ;
 	            f_optequal = FALSE ;
-	            if ((avp = strchr(aop,'=')) != NULL) {
+	            if ((avp = strochr(aop,'=')) != nullptr) {
 	                f_optequal = TRUE ;
 	                akl = avp - aop ;
 	                avp += 1 ;
 	                avl = aop + argl - 1 - avp ;
 	                aol = akl ;
 	            } else {
-			avp = NULL ;
+			avp = nullptr ;
 	                avl = 0 ;
 	                akl = aol ;
-	            }
+	            } /* end */
 
 /* do we have a keyword match or should we assume only key letters? */
 
@@ -431,10 +430,10 @@ int main(int argc,mainv argv,mainv envv) {
 
 /* check a few more things */
 
-	if (pip->tmpdname == NULL)
+	if (pip->tmpdname == nullptr)
 	    pip->tmpdname = getenv(VARTMPDNAME) ;
 
-	if (pip->tmpdname == NULL)
+	if (pip->tmpdname == nullptr)
 	    pip->tmpdname = TMPDNAME ;
 
 /* get ready */
@@ -464,7 +463,7 @@ int main(int argc,mainv argv,mainv envv) {
 
 	} /* end for (looping through requested circuits) */
 
-	if ((pan == 0) && (afname == NULL))
+	if ((pan == 0) && (afname == nullptr))
 	    goto badnodirs ;
 
 badoutopen:
@@ -489,7 +488,7 @@ retearly:
 ret3:
 
 ret2:
-	if (pip->efp != NULL)
+	if (pip->efp != nullptr)
 	    fclose(pip->efp) ;
 
 ret1:
@@ -547,7 +546,7 @@ local int procfile(PI *pip,char *namespec,ulong trunclen) noex {
 	char	*cp ;
 
 
-	if (namespec == NULL)
+	if (namespec == nullptr)
 	    return SR_FAULT ;
 
 	if (namespec[0] == '\0')
@@ -569,7 +568,7 @@ local int procfile(PI *pip,char *namespec,ulong trunclen) noex {
 #endif
 
 	    fname = namespec ;
-	    if ((cp = strchr(namespec,'=')) != NULL) {
+	    if ((cp = strochr(namespec,'=')) != nullptr) {
 
 	        fname = tmpfname ;
 	        strwcpy(tmpfname,namespec,(cp - namespec)) ;
@@ -595,13 +594,12 @@ local int procfile(PI *pip,char *namespec,ulong trunclen) noex {
 /* do it */
 
 	fd = FD_STDIN ;
-	if (strcmp(fname,"-") != 0) {
-
+	if (cmpstr(fname,"-") != 0) {
 		rs = u_open64(fname,O_WRONLY,0666) ;
 		fd = rs ;
-
-	} else
-		rs = permf64(fd,-1,-1,NULL,W_OK) ;
+	} else {
+		rs = permf64(fd,-1,-1,nullptr,W_OK) ;
+	}
 
 #if	CF_DEBUG
 	if (pip->debuglevel >= 3)
