@@ -48,6 +48,7 @@
 #include	<mknpathxx.h>
 #include	<mkpr.h>
 #include	<mkquoted.h>
+#include	<mkshlibname.h>
 #include	<mksofname.h>
 #include	<mksoname.h>
 #include	<mkufname.h>
