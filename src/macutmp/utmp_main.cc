@@ -66,7 +66,6 @@
 #include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD */
 #include	<cstdio>		/* CSTD |printf(3c)| */
-#include	<cstring>		/* CSTD |strncmp(3c)| */
 #include	<iostream>		/* C++STD */
 #include	<string_view>		/* C++STD */
 #include	<clanguage.h>		/* LIBU */
@@ -335,7 +334,7 @@ local int getpm(int argc,mainv argv,mainv names) noex {
 		        cchar	*n = names[i] ;
 		        bool	f = true ;
 		        f = f && (abuf[0] == n[0]) ;
-		        f = f && (strcmp(abuf,n) == 0) ;
+		        f = f && (cmpstr(abuf,n) == 0) ;
 		        if (f) {
 	    		    rs = i ;
 			    break ;
@@ -400,7 +399,7 @@ local int boottime() noex {
 local bool conidok(UTMPX* up) noex {
     	bool		f = false ;
 	cchar		*idp = up->ut_id ;
-	if (strncmp(idp,"co",2) == 0) {
+	if (cmpstrn(idp,"co",2) == 0) {
 	    f = f || (idp[2] == '\0') ;
 	    f = f || (ischdigit(idp[2]) && ischdigit(idp[3])) ;
 	}
@@ -455,7 +454,7 @@ local int consoleid_load(vecstr *cosp) noex {
 	    if (isourtype(up)) {
 		cint	lid = szof(up->ut_id) ;
 		cint	lline = szof(up->ut_line) ;
-	        if (strncmp(up->ut_line,"console",lline) == 0) {
+	        if (cmpstrn(up->ut_line,"console",lline) == 0) {
 		    if (conidok(up)) {
 			rs = cosp->add(up->ut_id,lid) ;
 			c += 1 ;
@@ -479,7 +478,7 @@ local int consoleid_utx(vecstr *cosp) noex {
 	    if (isourtype(up)) {
 		cint	lid = szof(up->ut_id) ;
 		cint	lline = szof(up->ut_line) ;
-	        if (strncmp(up->ut_line,"console",lline) == 0) {
+	        if (cmpstrn(up->ut_line,"console",lline) == 0) {
 		    [[maybe_unused]] strview sv1(up->ut_id,lid) ;
 		    [[maybe_unused]] strview sv2(up->ut_user,utl_user) ;
 		    if (conidok(up)) {
@@ -529,7 +528,7 @@ local int findstdin(int pm) noex {
 	    char	tbuf[tlen+1] ;
 	    if ((rs = uc_ttyname(fd,tbuf,tlen)) >= 0) {
 		cint	n = lenstr(devprefix) ;
-		if (strncmp(tbuf,devprefix,n) == 0) {
+		if (cmpstrn(tbuf,devprefix,n) == 0) {
 		    UTMPX	ut{} ;
 		    cchar	*line = (tbuf + n) ;
 		    strncpy(ut.ut_line,line,utl_line) ;
@@ -672,7 +671,7 @@ local UTMPX *getutxliner(UTMPX *sup) noex {
 	   if (isourtype(up)) {
 		cint	ll = utl_line ;
 		cchar	*lp = sup->ut_line ;
-		if (strncmp(up->ut_line,lp,ll) == 0) {
+		if (cmpstrn(up->ut_line,lp,ll) == 0) {
 		    stpncpy(nbuf,up->ut_user,utl_user) ;
 		    if ((pwp = getpwnam(nbuf)) != nullptr) {
 		        if (pwp->pw_uid == uid) {
@@ -705,7 +704,7 @@ local int utmpwrite(UTMPX *up) noex {
 			cint	lid = szof(utp->ut_id) ;
 			cint	lline = szof(utp->ut_line) ;
 		        if (isourtype32(utp+i)) {
-			    if (strncmp(utp[i].ut_line,"console",lline) == 0) {
+			    if (cmpstrn(utp[i].ut_line,"console",lline) == 0) {
 				if (utp[i].ut_pid == up->ut_pid) {
 				    if (utp[i].ut_id[0] == '/') {
 					cchar *id = up->ut_id ;
