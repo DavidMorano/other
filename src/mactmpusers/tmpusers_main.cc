@@ -64,7 +64,6 @@
 #include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD */
 #include	<cstdio>		/* CSTD */
-#include	<cstring>		/* CSTD |strcmp(3c)| */
 #include	<algorithm>		/* C++STD |min(3c++)| + |max(3c++)| */
 #include	<utility>		/* C++STD |pair(3c++)| */
 #include	<string>		/* C++STD */
@@ -669,7 +668,7 @@ int proginfo::tmpmounts_same(cchar *lbuf) noex {
 	        rs = SR_OK ;
 	    }
 	} else {
-	    fsame = (strcmp(lbuf,pbuf) == 0) ;
+	    fsame = (cmpstr(lbuf,pbuf) == 0) ;
 	} /* end if (absolute path or not) */
 	return (rs >= 0) ? fsame : rs ;
 } /* end method (proginfo::tmpmounts_same) */
@@ -690,7 +689,7 @@ int proginfo::tmpmounts_vardir() noex {
 	    } /* end if */
 	} else {
 	    fprintf(stderr,fmt,pn,rs) ;
-	}
+	} /* end if */
 	return (rs >= 0) ? fok : rs ;
 } /* end method (proginfo::tmpmounts_vardir) */
 
@@ -796,7 +795,7 @@ int proginfo::tmpuserdir_link() noex {
 		    } /* end if (is-dir) */
 	        } else if (isNotPresent(rs)) {
 		    rs = SR_OK ;
-	        }
+	        } /* end */
 	    } /* end if (length-check) */
 	} /* end if (u_sysconfstr) */
 	DEBPRINTF("ret rs=%d\n",rs) ;
