@@ -27,18 +27,18 @@
 *******************************************************************************/
 
 #include	<envstandards.h>	/* must be ordered first to configure */
-#include	<sys/param.h>
-#include	<climits>		/* |UCHAR_MAX| + |CHAR_BIT| */
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<cstdio>
-#include	<cstring>		/* |strcmp(3c)| */
-#include	<usystem.h>
-#include	<ascii.h>
-#include	<baops.h>
+#include	<sys/param.h>		/* POSIX® */
+#include	<climits>		/* CSTD |UCHAR_MAX| + |CHAR_BIT| */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<cstdio>		/* CSTD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<ascii.h>		/* LIBU */
+#include	<baops.h>		/* LIBU */
 #include	<char.h>
-#include	<exitcodes.h>
-#include	<localmisc.h>
+#include	<exitcodes.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
 
 
 /* local defines */
@@ -130,10 +130,10 @@ local int getpm(int argc,mainv argv) noex {
 	    if (cc *argz = argv[0] ; argz) {
     	        for (pm = 0 ; prognames[pm] ; pm += 1) {
 		    cc *pn = prognames[pm] ;
-		    if (strcmp(argz,pn) == 0) break ;
-	        }
-	    }
-	}
+		    if (cmpstr(argz,pn) == 0) break ;
+	        } /* end for */
+	    } /* end if */
+	} /* end if */
     	return pm ;
 } /* end subroutine (getpm) */
 
@@ -147,7 +147,7 @@ local int mklc() noex {
 	    if (char_islc(i)) {
 	        baset(case_lower,i) ;
 	    }
-	}
+	} /* end for */
 	return rs ;
 } /* end subroutine (mklc) */
 
@@ -157,7 +157,7 @@ local int mkuc() noex {
 	    if (char_isuc(i)) {
 	        baset(case_upper,i) ;
 	    }
-	}
+	} /* end for */
 	return rs ;
 } /* end subroutine (mklc) */
 
@@ -212,9 +212,7 @@ local int mktoxc(int w) noex {
 	    }
 	    if ((i & 7) == 7) printf("\n") ;
 	} /* end for */
-
 	printf("%c ;\n", CH_RBRACE) ;
-
 	} /* end if (valid) */
 	return rs ;
 } /* end subroutine (mktoxc) */
@@ -226,7 +224,7 @@ local int tolc(int ch) noex {
 	    ch += 0x20 ;
 	} else if ((ch >= 'Ø') && (ch <= 'Þ')) {
 	    ch += 0x20 ;
-	}
+	} /* end */
     	return ch ;
 } /* end subroutine (mklc) */
 
@@ -237,7 +235,7 @@ local int touc(int ch) noex {
 	    ch -= 0x20 ;
 	} else if ((ch >= 'ø') && (ch <= 'þ')) {
 	    ch -= 0x20 ;
-	}
+	} /* end */
     	return ch ;
 } /* end subroutine (mkuc) */
 
