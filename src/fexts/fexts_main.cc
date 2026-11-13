@@ -130,7 +130,7 @@ local int iterate(dirit &dir,veccp &exts) {
                         if (cchar *ep = (tp + 1) ; ep[0]) {
                             cauto fif = rg::find_if ;
                             cauto strmat = [ep] (cc *s) noex -> bool {
-                                return (strcmp(s,ep) == 0) ;
+                                return (cmpstr(s,ep) == 0) ;
                             } ; /* end lambda */
                             if (cauto &it = fif(exts,strmat) ; it != ite) {
 			        c += 1 ;
