@@ -17,7 +17,7 @@
 
 /* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
 
-/************************************************************************
+/*******************************************************************************
 
   	Name:
 	hostid_main
@@ -25,7 +25,7 @@
   	Description:
 	Get and print out the host-ID from the system.
 
-***************************************************************************/
+*******************************************************************************/
 
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<unistd.h>		/* POSIX |gethostid(3c)| */
