@@ -28,7 +28,6 @@
 #include	<envstandards.h>	/* must be ordered first to configure */
 #include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD |EXIT_SUCCESS| */
-#include	<cstring>		/* CSTD |strchr(3c)|  + |lenstr(3c)| */
 #include	<string>		/* C++STD */
 #include	<algorithm>		/* C++STD */
 #include	<iostream>		/* C++STD */
@@ -160,7 +159,7 @@ local int getwhich(cchar *tn) noex {
 	DPRINTF("ent tn=%s\n",tn) ;
 	for (type = 0 ; termname.n[type] ; type += 1) {
 	    DPRINTF("test type=%d\n",type) ;
-	    if ((f = (strcmp(termname.n[type],tn) == 0))) break ;
+	    if ((f = (cmpstr(termname.n[type],tn) == 0))) break ;
 	} /* end for */
 	DPRINTF("ret f=%u type=%d\n",f,type) ;
 	return (f) ? type : -1 ;
@@ -196,7 +195,7 @@ local int form(int type,cchar *text) noex {
 	        } /* end for (encoding) */
 	    } else {
 		for (int i = 0 ; (i < fl) && fn[i] ; i += 1) {
-		    if (cint ch = fn[i] ; strchr(badchars,ch) == np) {
+		    if (cint ch = fn[i] ; strochr(badchars,ch) == np) {
 			s += char(ch) ;
 		    }
 	        } /* end for (encoding) */
@@ -235,7 +234,7 @@ local char hexchar(int ch) noex {
 } /* end subroutine (hexchar) */
 
 local bool isnotbadchar(int ch) noex {
-	return (strchr(badchars,ch) == nullptr) ;
+	return (strochr(badchars,ch) == nullptr) ;
 } /* end subroutine (isnotbadchar) */
 
 
