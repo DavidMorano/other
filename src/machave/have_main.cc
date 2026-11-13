@@ -58,7 +58,6 @@
 #include	<climits>		/* CSTD */
 #include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD */
-#include	<cstring>		/* CSTD |strcmp(3c)| | |strchr(3c)| */
 #include	<string>		/* C++STD */
 #include	<string_view>		/* C++STD */
 #include	<vector>		/* C++STD */
@@ -485,7 +484,7 @@ int proginfo::pathenumone(cchar *vn) noex {
 	cchar		*manpath = varname.manpath ;
 	int		rs ;
 	int		rs1 ;
-	if (strcmp(vn,manpath) == 0) {
+	if (cmpstr(vn,manpath) == 0) {
 	    cchar	*vv = getourenv(envv,vn) ;
 	    if ((vv == nullptr) || (vv[0] == '\0')) {
 		vn = varname.manxpath ;
@@ -529,13 +528,13 @@ int proginfo::pathto(cchar *vn) noex {
 	                for (int ai = 1 ; (ai < argc) && argv[ai] ; ai += 1) {
 	                    if (cchar *ap = argv[ai] ; ap[0]) {
 			        DEBPRINTF("ap=%s\n",ap) ;
-			        if (strchr(ap,CH_SLASH) != np) {
+			        if (strochr(ap,CH_SLASH) != np) {
 				    rs = present(ap) ;
 				    c += rs ;
 			        } else {
 				    rs = pathtos(pbuf,plen,ap) ;
 				    c += rs ;
-			        }
+			        } /* end if */
 	                    } /* end if (non-empty) */
 		            if (rs < 0) break ;
 	                } /* end for (args) */
