@@ -45,7 +45,6 @@
 #include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD */
 #include	<cstdio>		/* CSTD |printf(3c++)| */
-#include	<cstring>		/* CSTD |strchr(3c)| */
 #include	<string>		/* C++STD */
 #include	<chrono>		/* C++STD */
 #include	<iostream>		/* C++STD */
@@ -374,7 +373,7 @@ int proginfo::getpn(mainv names) noex {
 
 local int printnodename(cchar *valp) noex {
 	int		rs = SR_OK ;
-	if (cchar *tp ; (tp = strchr(valp,'.')) != nullptr) {
+	if (cchar *tp ; (tp = strochr(valp,'.')) != nullptr) {
 	    strnul	s(valp,intconv(tp - valp)) ;
 	    printf("%s\n",ccp(s)) ;
 	} else {
