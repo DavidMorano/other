@@ -28,34 +28,34 @@
 #include	<char.h>		/* LIBUC |CHAR_{xx}(3uc)| */
 
 
-EXTERNC_begin
-
+EXTERNC_beg
 local inline int tobc(int ch) noex {
 	return (ch & UCHAR_MAX) ;
-}
+} /* end */
 local inline int tolc(int ch) noex {
 	return CHAR_TOLC(ch) ;
-}
+} /* end */
 local inline int touc(int ch) noex {
 	return CHAR_TOUC(ch) ;
-}
+} /* end */
 local inline int tofc(int ch) noex {
 	return CHAR_TOFC(ch) ;
-}
+} /* end */
+EXTERNC_end
 
+EXTERNC_beg
 local inline char chtobc(int ch) noex {
 	return char(ch) ;
-}
+} /* end */
 local inline char chtolc(int ch) noex {
 	return char(CHAR_TOLC(ch)) ;
-}
+} /* end */
 local inline char chtouc(int ch) noex {
 	return char(CHAR_TOUC(ch)) ;
-}
+} /* end */
 local inline char chtofc(int ch) noex {
 	return char(CHAR_TOFC(ch)) ;
-}
-
+} /* end */
 EXTERNC_end
 
 
