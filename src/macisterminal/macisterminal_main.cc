@@ -1,4 +1,4 @@
-/* maxisfdterminal_main SUPPORT (isfdterminal) */
+/* isfdterminal_main SUPPORT (isfdterminal) */
 /* charset=ISO8859-1 */
 /* lang=C++20 */
 
