@@ -18,6 +18,16 @@
 /* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
 /* Use is subject to license terms. */
 
+/*******************************************************************************
+
+  	Name:
+	fieldterms
+
+	Description:
+	Field terminators.
+
+*******************************************************************************/
+
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<climits>		/* CSTD |UCHAR_MAX| */
 #include	<cstddef>		/* CSTD */
