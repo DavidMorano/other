@@ -47,7 +47,7 @@
 #include	<cstdarg>		/* CSTD */
 #include	<cstdio>		/* CSTD */
 #include	<new>			/* C++STD placement-new */
-#include	<bit>			/* C++STD |countl_zero(3c++)| */
+#include	<bit>			/* C++STD */
 #include	<string>		/* C++STD */
 #include	<stringview>		/* C++STD */
 #include	<filesystem>		/* C++STD */
@@ -55,13 +55,8 @@
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
 #include	<usyscalls.h>		/* LIBU */
-#include	<strn.h>		/* LIBUC */
-#include	<strw.h>		/* LIBUC |strwcmp(3uc)| */
 #include	<strx.h>		/* LIBUC |strabbrerr(3uc)| */
 #include	<sfx.h>			/* |sfbasename(3uc)| + |sfext(3uc)| */
-#include	<six.h>			/* LIBUC |sisub(3uc)| */
-#include	<rmx.h>			/* LIBUC */
-#include	<strwcpy.h>		/* LIBUC */
 #include	<strnul.hh>		/* LIBU */
 #include	<ccfile.hh>		/* LIBU */
 #include	<readln.hh>		/* LIBU */
@@ -72,7 +67,6 @@
 #include	<deb.hh>		/* LIBUC |DEBPRINTF| */
 #include	<dprint.hh>		/* LIBU |DPRINT| */
 #include	<filelinker.hh>		/* *local* */
-#include	<matstr.h>		/* *local* */
 #include	<isnot.h>		/* *local* */
 
 #include	"files_show.h"
@@ -134,6 +128,9 @@ using libu::snvprintf ;			/* subroutine */
 using libu::cfdec ;			/* subroutine */
 using libu::cfdeci ;			/* subroutine */
 using libu::cfdect ;			/* subroutine */
+using libu::rmeol ;			/* subroutine */
+using libu::rmchr ;			/* subroutine */
+using libu::sisub ;			/* subroutine */
 using libu::umem ;			/* variable */
 using std::cin ;			/* variable */
 using std::cout ;			/* variable */
@@ -737,11 +734,11 @@ int proginfo::args(argmgr *amp) noex {
     	int		rs ;
 	while ((rs = amp->arg) > 0) {
 	    if (cc *sp ; (rs = amp->argopt(&sp)) > 1) {
-		if (int wi ; (wi = matostr(aonames,2,sp,rs)) >= 0) {
+		if (int wi ; (wi = matstro(aonames,2,sp,rs)) >= 0) {
 		    rs = argoptstr(amp,wi) ;
 		} else {
 		    rs = argoptchr(amp,sp,rs) ;
-		} /* end if (matostr) */
+		} /* end if (matstro) */
 	    } else if (rs == 1) {
 		rs = argoptchr(amp,sp,rs) ;
 	    } else if ((rs >= 0) && ((rs = amp->argoptlong(&sp)) > 0)) {
@@ -796,7 +793,7 @@ int proginfo::argoptstr(argmgr *amp,int wi) noex {
 int proginfo::argoptlong(argmgr *amp,cchar *sp,int sl) noex {
 	int		rs = SR_OK ;
 	(void) amp ;
-	if (int wi ; (wi = matostr(aolnames,2,sp,sl)) >= 0) ylikely {
+	if (int wi ; (wi = matstro(aolnames,2,sp,sl)) >= 0) ylikely {
 	    switch (wi) {
 	    case argoptlong_version:
 		fl.version = true ;
@@ -805,7 +802,7 @@ int proginfo::argoptlong(argmgr *amp,cchar *sp,int sl) noex {
 	} else {
             eprintf("invalid option\n") ;
 	    rs = SR_INVALID ;
-	} /* end if (matostr) */
+	} /* end if (matstro) */
 	return rs ;
 } /* end method (proginfo::argoptlong) */
 
@@ -872,7 +869,7 @@ int proginfo::argfile(argmgr *amp) noex {
 	    cchar	*cp ;
 	    fl.argfile = true ;
 	    for (int cl ; (rs >= 0) && ((cl = so(&cp)) > 0) ; ) {
-		if ((cp[0] == '-') && (strwcmp("-",cp,cl) == 0)) {
+		if ((cp[0] == '-') && (cmpstrw("-",cp,cl) == 0)) {
 		    fl.afread = true ;
 		} else {
 		    DEBPRINTF("afs.add ->\n") ;
@@ -960,14 +957,14 @@ int proginfo::argprofile(argmgr *amp) noex {
     	    sif		so(sp,rs,',') ;
 	    cchar	*cp ;
 	    for (int cl ; (rs >= 0) && ((cl = so(&cp)) > 0) ; ) {
-	        if (int mi ; (mi = matostr(profarr,2,cp,cl)) >= 0) {
+	        if (int mi ; (mi = matstro(profarr,2,cp,cl)) >= 0) {
 		    rs = argextload(mi) ;
 		    c += rs ;
 		} else {
 		    strnul ps(cp,cl) ;
 		    eprintf("profile=%s not-supported\n",ccp(ps)) ;
 		    rs = SR_INVALID ;
-	        } /* end if (matostr) */
+	        } /* end if (matstro) */
 	    } /* end for (sif) */
 	} /* end if (argval) */
     	return (rs >= 0) ? c : rs ;
@@ -1763,11 +1760,11 @@ int proginfo::fileyounger(custat *sbp)  noex {
 int proginfo::modtypeout(cchar *cp,int cl)  noex {
     	constexpr uint	nouts = modout_overlast ;
     	int		rs = SR_INVALID ;
-	if (cint mi = matostr(modoutnames,1,cp,cl) ; mi >= 0) {
+	if (cint mi = matstro(modoutnames,1,cp,cl) ; mi >= 0) {
 	    cint tmask = (bit_ceil(nouts) - 1) ;
 	    rs = SR_OK ;
 	    fl.ot = uchar(mi & tmask) ;	/* avoiding GCC complaint */
-	} /* end if (matostr) */
+	} /* end if (matstro) */
 	return rs ;
 } /* end method (proginfo::modtypeout) */
 
