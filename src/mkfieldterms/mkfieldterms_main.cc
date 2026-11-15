@@ -36,25 +36,23 @@
 #include	<sys/param.h>
 #include	<sys/stat.h>
 #include	<unistd.h>
-#include	<ctime>
-#include	<csignal>
-#include	<climits>		/* |UCHAR_MAX| */
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstddef>		/* |nullptr_t| */
-#include	<cstdlib>
-#include	<cstring>
-#include	<usystem.h>
-#include	<bfile.h>
-#include	<baops.h>
+#include	<ctime>			/* CSTD */
+#include	<csignal>		/* CSTD */
+#include	<climits>		/* CSTD |UCHAR_MAX| */
+#include	<cstddef>		/* CSTD */
+#include	<cstdlib>		/* CSTD */
+#include	<clanguage.h>		/* LIBU */
+#include	<usysbase.h>		/* LIBU */
+#include	<umatx.h>		/* LIBU */
+#include	<baops.h>		/* LIBU */
 #include	<field.h>
-#include	<matxstr.h>		/* |matostr(3uc)| */
 #include	<optval.h>
 #include	<isch.h>
-#include	<exitcodes.h>
-#include	<localmisc.h>
+#include	<exitcodes.h>		/* LIBU */
+#include	<localmisc.h>		/* LIBU */
+#include	<bfile.h>		/* LIBU */
 
-#include	"config.h"
-#include	"defs.h"
+#include	"mkfieldterms_config.h"
 
 
 /* local defines */
@@ -66,7 +64,9 @@
 
 #define	FASIZE		32
 
+#ifndef	PI
 #define	PI		proginfo
+#endif
 
 
 /* external subroutines */
@@ -241,10 +241,8 @@ int main(int argc,mainv argv,mainv envv) {
 	                akl = aol ;
 	            }
 
-	            if ((kwi = matostr(argopts,2,akp,akl)) >= 0) {
-
+	            if ((kwi = matstro(argopts,2,akp,akl)) >= 0) {
 	                switch (kwi) {
-
 /* progam-root */
 	                case argopt_root:
 	                    if (f_optequal) {
