@@ -85,7 +85,6 @@ using std::istream ;			/* type */
 using libu::snvprintf ;			/* subroutine */
 using libu::rmchr ;			/* subroutine */
 using libu::rmtrailchr ;		/* subroutine */
-using libu::matstr;			/* subroutine */
 using libu::strnchr ;			/* subroutine */
 using std::cin ;			/* variable */
 using std::cerr ;			/* variable */
