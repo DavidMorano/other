@@ -34,6 +34,7 @@
 #include	<cstdlib>		/* CSTD */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
+#include	<umatx.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU */
 #include	<libdebug.h>		/* LIBDEBUG |DEBUGPRINTF(3debug)| */
 
@@ -181,8 +182,7 @@ int main(int argc,mainv argv,mainv envv) {
 
 /* do we have a keyword match or should we assume only key letters? */
 
-	            kwi = matostr(argopts,2,akp,akl) ;
-
+	            kwi = matstro(argopts,2,akp,akl) ;
 	            if (kwi >= 0) {
 
 	                switch (kwi) {
