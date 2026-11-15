@@ -34,11 +34,11 @@
 #include	<unistd.h>		/* POSIX® */
 #include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD */
-#include	<libgen.h>
 #include	<iostream>		/* C++STD */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
-#include	<usupport.h>		/* LIBU |matstr(3u)| */
+#include	<usyscalls.h>		/* LIBU */
+#include	<usupport.h>		/* LIBU */
 #include	<prognamevar.hh>	/* LIBUC but **local** */
 #include	<localmisc.h>		/* LIBU */
 
@@ -49,7 +49,6 @@
 /* namespaces */
 
 using std::cerr ;			/* variable */
-using libu::matstr ;			/* subroutine */
 
 
 /* typedefs */
