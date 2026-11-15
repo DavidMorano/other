@@ -58,7 +58,6 @@
 #include	<strnul.hh>		/* LIBU */
 #include	<strn.h>		/* LIBUC */
 #include	<sfx.h>			/* LIBUC */
-#include	<matstr.h>		/* LIBUC */
 #include	<strwcpy.h>		/* LIBUC */
 #include	<sncpyx.h>		/* LIBUC */
 #include	<rmx.h>			/* LIBUC */
