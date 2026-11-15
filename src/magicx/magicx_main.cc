@@ -58,7 +58,6 @@
 #include	<strnul.hh>		/* LIBU */
 #include	<sfx.h>			/* LIBUC */
 #include	<rmx.h>			/* LIBUC */
-#include	<matstr.h>		/* LIBUC */
 #include	<isnot.h>		/* |isNotPresent(3uc)| */
 #include	<mapex.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU */
