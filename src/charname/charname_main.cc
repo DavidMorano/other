@@ -38,13 +38,11 @@
 #include	<usyscalls.h>		/* LIBU */
 #include	<usupport.h>		/* LIBU |cfdec(3u)| */
 #include	<intceil.h>		/* LIBU */
-#include	<strkeycmp.h>		/* LIBUC */
-#include	<charnames.h>		/* **local** */
-#include	<matkeystr.h>		/* LIBUC */
 #include	<strnul.hh>		/* LIBU */
 #include	<mapex.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU |COLUMNS| + |DECBUFLEN| */
 #include	<dprint.hh>		/* LIBU |DPRINTF(3u)| */
+#include	<charnames.h>		/* **local** */
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 
