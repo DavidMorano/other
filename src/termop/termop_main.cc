@@ -83,7 +83,6 @@ import ureserve ;			/* |sf{x}(3u)| */
 using std::string ;			/* type */
 using std::istream ;			/* type */
 using libu::rmchr ;			/* subroutine */
-using libu::matstr ;			/* subroutine */
 using std::cout ;			/* variable */
 
 
