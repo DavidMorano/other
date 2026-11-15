@@ -102,7 +102,6 @@ import deb ;				/* debugging */
 using std::string ;			/* type (C++STD library) */
 using std::min ;			/* subroutine-template (C++STD) */
 using std::max ;			/* subroutine-template (C++STD) */
-using libu::matstr ;			/* subroutine */
 using libu::snwcpy ;			/* subroutine */
 using libu::rmchr ;			/* subroutine */
 using libu::rmtrailchr ;		/* subroutine */
