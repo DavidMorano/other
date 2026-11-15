@@ -58,7 +58,6 @@
 #include	<strn.h>
 #include	<sfx.h>
 #include	<six.h>
-#include	<matstr.h>
 #include	<strwcpy.h>
 #include	<sncpyx.h>
 #include	<rmx.h>
