@@ -100,7 +100,6 @@ using std::string_view ;		/* type */
 using std::vector ;			/* type */
 using libu::rmchr ;			/* subroutine */
 using libu::rmtrailchr ;		/* subroutine */
-using libu::matstr;			/* subroutine */
 using libu::strnchr ;			/* subroutine */
 using std::cout ;			/* variable */
 
