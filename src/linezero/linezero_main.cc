@@ -39,8 +39,6 @@
 #include	<usupport.h>		/* LIBU |cfdec(3u)| */
 #include	<usyscalls.h>		/* LIBU */
 #include	<intceil.h>		/* LIBU */
-#include	<strkeycmp.h>		/* LIBUC */
-#include	<matkeystr.h>		/* LIBUC */
 #include	<ascii.h>		/* LIBU */
 #include	<stdfnames.h>		/* LIBU */
 #include	<ccfile.hh>		/* LIBU */
