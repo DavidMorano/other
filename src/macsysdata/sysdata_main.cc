@@ -84,7 +84,6 @@ using std::setw ;			/* subroutine? */
 using libu::uloadavgd ;			/* subroutine */
 using libu::snloadavgd ;		/* subroutine */
 using libu::sncpy ;			/* subroutine */
-using libu::matstr ;			/* subroutine */
 using libu::snwcpy ;			/* subroutine */
 using libu::rmchr ;			/* subroutine */
 using libu::rmtrailchr ;		/* subroutine */
