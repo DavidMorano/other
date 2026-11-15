@@ -86,7 +86,6 @@ import fonce ;
 
 using std::string_view ;		/* type */
 using std::istream ;			/* type */
-using libu::matstr ;			/* subroutine */
 using libu::rmchr ;			/* subroutine */
 using std::cout ;			/* variable */
 
