@@ -33,7 +33,6 @@
 #include	<strcpyxc.h>
 #include	<strlinelen.h>
 #include	<strlocktype.h>
-#include	<strsub.h>
 #include	<strwhite.h>
 #include	<strwildsub.h>
 #include	<strxcmp.h>
