@@ -50,7 +50,6 @@
 #include	<usyscalls.h>		/* LIBU */
 #include	<sfx.h>			/* LIBUC */
 #include	<rmx.h>			/* LIBUC |rmchr(3uc)| */
-#include	<matstr.h>		/* LIBUC */
 #include	<mapex.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU */
 
