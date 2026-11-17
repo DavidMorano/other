@@ -53,8 +53,8 @@ OBJ1= argmgr.o tardir.o
 OBJ2= modproc.o matxstr.o nleadx.o
 OBJ3= sif.o cmdutils.o strcpyx.o
 OBJ4= filelinker.o ucx.o ucinet.o
-OBJ5= strfilter.o strx.o
-OBJ6= char.o isx.o six.o sfx.o
+OBJ5= strn.o sfx.o six.o strx.o
+OBJ6= char.o isx.o strfilter.o 
 OBJ7= deb.o strnxcmp.o strxcmp.o
 
 OBJ8= strwcpy.o
@@ -289,11 +289,6 @@ strn.o:			strn.dir
 strn.dir:
 	makesubdir $@
 
-# STRCPYX	(libuc)
-strcpyx.o:		strcpyx.dir
-strcpyx.dir:
-	makesubdir $@
-
 # STRX		(libuc)
 strx.o:			strx.dir
 strx.dir:
@@ -302,6 +297,11 @@ strx.dir:
 # STRW		(libuc)
 strw.o:			strw.dir
 strw.dir:
+	makesubdir $@
+
+# STRCPYX	(libuc)
+strcpyx.o:		strcpyx.dir
+strcpyx.dir:
 	makesubdir $@
 
 # STRWCPY	(libuc)
