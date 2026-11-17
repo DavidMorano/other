@@ -68,6 +68,7 @@ OBJUC_C= objuc08.o objuc09.o objuc10.o objuc11.o
 OBJUC_D= objuc12.o
 
 OBJUC= objuc_a.o objuc_b.o objuc_c.o
+#OBJUC= objuc_a.o objuc_b.o objuc_c.o objuc_d.o
 
 OBJ00_LUO= snwcpy.o
 OBJ01_LUO= strn.o six.o mkx.o mnw.o
@@ -134,6 +135,11 @@ OBJ49_LUO= argutils.o cmdutils.o logfile.o linex.o
 OBJ50_LUO= ndig.o ndigit.o bufprintf.o
 OBJ51_LUO= term.o writeto.o calendar.o shellunder.o
 
+OBJ52_LUO= cmpxx.o dictx.o
+OBJ53_LUO=
+OBJ54_LUO=
+OBJ55_LUO=
+
 OBJA_LUO= obj00_luo.o obj01_luo.o obj02_luo.o obj03_luo.o
 OBJB_LUO= obj04_luo.o obj05_luo.o obj06_luo.o obj07_luo.o
 OBJC_LUO= obj08_luo.o obj09_luo.o obj10_luo.o obj11_luo.o
@@ -147,11 +153,13 @@ OBJJ_LUO= obj36_luo.o obj37_luo.o obj38_luo.o obj39_luo.o
 OBJK_LUO= obj40_luo.o obj41_luo.o obj42_luo.o obj43_luo.o
 OBJL_LUO= obj44_luo.o obj45_luo.o obj46_luo.o obj47_luo.o
 OBJM_LUO= obj48_luo.o obj49_luo.o obj50_luo.o obj51_luo.o
+OBJN_LUO= obj52_luo.o
+#OBJN_LUO= obj52_luo.o obj53_luo.o obj54_luo.o obj55_luo.o
 
 OBJ_LUO += obja_luo.o objb_luo.o objc_luo.o objd_luo.o
 OBJ_LUO += obje_luo.o objf_luo.o objg_luo.o objh_luo.o
 OBJ_LUO += obji_luo.o objj_luo.o objk_luo.o objl_luo.o
-OBJ_LUO += objm_luo.o
+OBJ_LUO += objm_luo.o objn_luo.o
 
 OBJ += objuc.o
 OBJ += obj_luo.o
@@ -465,6 +473,19 @@ obj50_luo.o:		$(OBJ50_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 obj51_luo.o:		$(OBJ51_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+
+obj52_luo.o:		$(OBJ52_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj53_luo.o:		$(OBJ53_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj54_luo.o:		$(OBJ54_LUO)
+	$(LD) -r $(LDFLAGS) -o $@ $^
+
+obj55_luo.o:		$(OBJ55_LUO)
 	$(LD) -r $(LDFLAGS) -o $@ $^
 
 
@@ -1120,6 +1141,16 @@ spawn.dir:
 # FIND
 find.o:			find.dir
 find.dir:
+	makesubdir $@
+
+# CMPXX
+cmpxx.o:		cmpxx.dir
+cmpxx.dir:
+	makesubdir $@
+
+# DICTX
+dictx.o:		dictx.dir
+dictx.dir:
 	makesubdir $@
 
 # TERM
