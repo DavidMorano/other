@@ -56,7 +56,6 @@
 #include	<usysbase.h>		/* LIBU */
 #include	<usyscalls.h>		/* LIBU */
 #include	<strx.h>		/* LIBUC |strabbrerr(3uc)| */
-#include	<sfx.h>			/* |sfbasename(3uc)| + |sfext(3uc)| */
 #include	<strnul.hh>		/* LIBU */
 #include	<ccfile.hh>		/* LIBU */
 #include	<readln.hh>		/* LIBU */
@@ -64,7 +63,7 @@
 #include	<mkchar.h>		/* LIBU */
 #include	<mapex.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU */
-#include	<deb.hh>		/* LIBUC |DEBPRINTF| */
+#include	<deb.hh>		/* LIBU |DEBPRINTF| */
 #include	<dprint.hh>		/* LIBU |DPRINT| */
 #include	<filelinker.hh>		/* *local* */
 #include	<isnot.h>		/* *local* */
@@ -743,7 +742,7 @@ int proginfo::args(argmgr *amp) noex {
 		rs = argoptchr(amp,sp,rs) ;
 	    } else if ((rs >= 0) && ((rs = amp->argoptlong(&sp)) > 0)) {
 		rs = argoptlong(amp,sp,rs) ;
-	    }
+	    } /* end */
 	    if ((rs < 0) || amp->fargoptdone) break ;
 	} /* end while */
 	return rs ;
@@ -1032,7 +1031,7 @@ int proginfo::argpm(argmgr *amp) noex {
 	        pnstr = s ;
 	    } catch (...) {
 		rs = SR_NOMEM ;
-	    } /* end */
+	    } /* end if (error) */
 	} /* end if (argval) */
 	return rs ;
 } /* end method (proginfo::argpm) */
