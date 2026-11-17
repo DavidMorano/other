@@ -401,7 +401,7 @@ int proginfo::ipathbegin(cchar *vn) noex {
 	            } /* end for */
 	            if ((rs >= 0) && (sl > 0)) {
 	 	        rs = pathcandidate(sp,sl) ;
-	            }
+	            } /* end */
 	        } /* end if (got value) */
 	    } /* end if (valid) */
 	} /* end if (non-null) */
