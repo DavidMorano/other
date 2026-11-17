@@ -62,7 +62,7 @@
 #include	<utypedefs.h>		/* LIBU */
 #include	<utypealiases.h>	/* LIBU */
 #include	<usysdefs.h>		/* LIBU */
-#include	<localmisc.h>		/* LIBU |UC(3misc)| */
+#include	<localmisc.h>		/* LIBU */
 
 #include	"char.h"
 
@@ -121,10 +121,10 @@ consteval void charinfo::mkalpha(bitset<chtablen> &s) noex {
 	for (int ch = 'A' ; ch <= 'Z' ; ch += 1) {
 	    s.set(ch,true) ;
 	    s.set((ch + 0x20),true) ;
-	}
+	} /* end for */
 	for (int ch = 0xC0 ; ch < chtablen ; ch += 1) {
 	    s.set(ch,true) ;
-	}
+	} /* end for */
 	s.set(UC('×'),false) ;
 	s.set(UC('÷'),false) ;
 } /* end method (charinfo::mkalpha) */
