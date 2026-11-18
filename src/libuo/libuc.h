@@ -50,11 +50,13 @@
 #include	<chrono.h>
 #include	<clanguage.h>
 #include	<clusterdb.h>
+#include	<cmpxx.h>
 #include	<conmsghdr.h>
 #include	<csem.h>
 #include	<ctx.h>
 #include	<dater.h>
 #include	<defproc.h>
+#include	<dictx.h>
 #include	<digval.h>
 #include	<dirempty.h>
 #include	<dirent.h>
