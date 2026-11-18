@@ -43,24 +43,24 @@ MODS += strfilter.o
 LIBS += -lu -lf -lsecdb -lnss
 
 
-DEPS_MAIN += cmdutils.o matxstr.o
+DEPS_MAIN += cmdutils.o
 DEPS_MAIN += argmgr.o
 DEPS_MAIN += strfilter.o tardir.o
 DEPS_MAIN += modproc.o sif.o
 
 OBJ0= files_main.o files_show.o
 OBJ1= argmgr.o tardir.o
-OBJ2= modproc.o matxstr.o nleadx.o
+OBJ2= modproc.o
 OBJ3= sif.o cmdutils.o strcpyx.o
 OBJ4= filelinker.o ucx.o ucinet.o
-OBJ5= strn.o sfx.o six.o strx.o
+OBJ5= strn.o strx.o
 OBJ6= char.o isx.o strfilter.o 
 OBJ7= deb.o strnxcmp.o strxcmp.o
 
 OBJ8= strwcpy.o
 OBJ9= inetaddrx.o
 OBJ10= path.o
-OBJ11=
+OBJ11= cmpxx.o dictx.o
 OBJ12=
 OBJ13=
 OBJ14=
@@ -68,7 +68,7 @@ OBJ15=
 
 OBJA= obj0.o obj1.o obj2.o obj3.o
 OBJB= obj4.o obj5.o obj6.o obj7.o
-OBJC= obj8.o obj9.o obj10.o
+OBJC= obj8.o obj9.o obj10.o obj11.o
 
 OBJ= obja.o objb.o objc.o
 
@@ -344,7 +344,7 @@ inetaddrx.o:		inetaddrx.dir
 inetaddrx.dir:
 	makesubdir $@
 
-# PATH
+# PATH		(libuc)
 path.o:			path.dir
 path.dir:
 	makesubdir $@
@@ -352,6 +352,16 @@ path.dir:
 # VEC		(libuc)
 vec.o:			vec.dir
 vec.dir:
+	makesubdir $@
+
+# CMPXX		(libuc)
+cmpxx.o:		cmpxx.dir
+cmpxx.dir:
+	makesubdir $@
+
+# DICTX		(libuc)
+dictx.o:		dictx.dir
+dictx.dir:
 	makesubdir $@
 
 # MODPROC	(libdam)
