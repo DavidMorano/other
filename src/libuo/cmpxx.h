@@ -17,9 +17,15 @@
 #include	<utypedefs.h>		/* LIBU */
 #include	<utypealiases.h>	/* LIBU */
 #include	<usysdefs.h>		/* LIBU */
+#include	<ucmpx.h>		/* LIBU */
 
-#include	<cmpxx.h>
+#include	<cmpstrdictk.h>
+#include	<cmpstrdictn.h>
+#include	<cmpstrnn.h>
 #include	<cmpstrpre.h>
+#include	<cmpstrpren.h>
+#include	<cmpstrvaln.h>
+#include	<cmpema.h>
 
 
 #endif /* CMPXX_INCLUDE */
