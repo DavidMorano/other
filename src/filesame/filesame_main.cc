@@ -39,8 +39,8 @@
 #include	<usysbase.h>		/* LIBU */
 #include	<usyscalls.h>		/* LIBU */
 #include	<usupport.h>		/* LIBU */
-#include	<prognamevar.hh>	/* LIBUC but **local** */
 #include	<localmisc.h>		/* LIBU */
+#include	<prognamevar.hh>	/* LIBUC but **local** */
 
 
 /* local defines */
@@ -98,12 +98,12 @@ constexpr cpcchar	prognames[] = {
 int main(int argc,con mainv argv,con mainv envv) {
     	prognamevar	progname(argc,argv,envv) ;
 	int		ex = EXIT_FAILURE ;
-	if (argc > 0) {
+	if (argc > 1) {
 	    cchar	*pn = progname ;
 	    if (cint pm = matstr(prognames,pn,-1) ; pm >= 0) {
 	        if (argc == 3) {
-	            cchar	*fn1 = argv[1] ;
-	            cchar	*fn2 = argv[2] ;
+	            ccharp fn1 = argv[1] ;
+	            ccharp fn2 = argv[2] ;
 		    if (fn1[0] && fn2[0]) {
 		        if (ustat sb1 ; statfile(fn1,&sb1) >= 0) {
 		            if (ustat sb2 ; statfile(fn2,&sb2) >= 0) {
