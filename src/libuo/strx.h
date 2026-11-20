@@ -22,7 +22,6 @@
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<cstddef>		/* CSTD */
 #include	<cstdlib>		/* CSTD */
-#include	<string.h>		/* CSTD |strchr(3c)| + |strpbrk(3c)| */
 #include	<clanguage.h>		/* LIBU */
 #include	<utypedefs.h>		/* LIBU */
 #include	<utypealiases.h>	/* LIBU */
@@ -35,7 +34,6 @@
 #include	<strlocktype.h>
 #include	<strwhite.h>
 #include	<strwildsub.h>
-#include	<strxcmp.h>
 #include	<strxname.h>
 
 
