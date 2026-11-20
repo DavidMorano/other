@@ -2,6 +2,38 @@
 # LNX
 
 PN=${0##*/}
+DN=/dev/null
+
+: ${TMPDIR:=/tmp}
+: ${LANG:="en_US.ISO8859-1"}
+
+: ${EXTRA:=/usr/extra}
+: ${USRLOCAL:=/usr/local}
+: ${LOCAL:=/opt/local}
+: ${NCMP:=/opt/ncmp}
+: ${GNU:=/opt/gnu}
+: ${PCS:=/opt/pcs}
+: ${AST:=/opt/ast}
+
+# PATH begin
+  typeset -a dirs
+  integer i=0
+  dirs[i++]=${HOME}
+  dirs[i++]=${EXTRA}
+  dirs[i++]=${USRLOCAL}
+  dirs[i++]=${LOCAL}
+  dirs[i++]=${NCMP}
+  dirs[i++]=${GNU}
+  dirs[i++]=${PCS}
+  dirs[i++]=${AST}
+  for (( i = 0 ; i < ${#dirs[@]} ; i += 1 )) ; do
+    D="${dirs[i]}/bin"
+    if [[ -d "${D}" ]] ; then
+      PATH+=":${D}"
+    fi
+  done
+  export PATH
+# PATH end
 
 function errprint {
   print -u 2 -- "${PN}: ${*}"
@@ -80,4 +112,5 @@ if havefunction linkfile ; then
     fi 
   fi
 fi
+
 
