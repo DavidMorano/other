@@ -35,19 +35,19 @@ DEFS +=
 
 INCS +=
 
-MODS += libutil.ccm umisc.ccm
+MODS +=
 
-LIBS += -lf -lu -lsecdb -lnss
+LIBS += -lu -lf -lsecdb -lnss
 
 
-DEPS_MAIN += libutil.o umisc.o
+DEPS_MAIN +=
 
 OBJ0= user_main.o
 OBJ1= ucx.o ucttyname.o
-OBJ2=
+OBJ2= uctc.o
 OBJ3=
 
-OBJ= obj0.o obj1.o
+OBJ= obj0.o obj1.o obj2.o
 
 OBJ_MACUSER= obj.o
 
@@ -159,23 +159,11 @@ obj.o:			$(OBJ)
 
 user_main.o:		user_main.cc			$(INCS)
 
-libutil.o:		libutil.dir
-libutil.dir:
-	makesubdir $@
-
-umisc.o:		umisc.dir
-umisc.dir:
-	makesubdir $@
-
 ucx.o:			ucx.dir
 ucx.dir:
 	makesubdir $@
 
-snx.o:			snx.dir
-snx.dir:
-	makesubdir $@
-
 ucttyname.o:		ucttyname.cc	ucttyname.h
-sncpyx.o:		sncpyx.cc	sncpyx.h
+uctc.o:			uctc.cc		uctc.h
 
 
