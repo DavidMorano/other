@@ -41,8 +41,8 @@ LIBS= -lu -lf
 
 
 OBJ0= filesame_main.o
-OBJ1= shellunder.o
-OBJ2= prognamevar.o
+OBJ1= prognamevar.o
+OBJ2= shellunder.o
 OBJ3=
 
 OBJ= obj0.o obj1.o obj2.o
@@ -126,7 +126,7 @@ obj3.o:			$(OBJ3)
 
 filesame_main.o:	filesame_main.cc $(INCS)
 
-shellunder.o:		shellunder.cc	shellunder.h
 prognamevar.o:		prognamevar.cc	prognamevar.hh
+shellunder.o:		shellunder.cc	shellunder.h
 
 
