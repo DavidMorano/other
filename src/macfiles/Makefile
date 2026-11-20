@@ -53,9 +53,9 @@ OBJ1= argmgr.o tardir.o
 OBJ2= modproc.o
 OBJ3= sif.o cmdutils.o strcpyx.o
 OBJ4= filelinker.o ucx.o ucinet.o
-OBJ5= strn.o strx.o
-OBJ6= char.o isx.o strfilter.o 
-OBJ7= deb.o strnxcmp.o strxcmp.o
+OBJ5= strfilter.o strn.o strx.o
+OBJ6= char.o isx.o 
+OBJ7= deb.o
 
 OBJ8= strwcpy.o
 OBJ9= inetaddrx.o
