@@ -56,11 +56,11 @@
 #include	<strnul.hh>		/* LIBU */
 #include	<ccfile.hh>		/* LIBU */
 #include	<readln.hh>		/* LIBU */
-#include	<path.h>		/* LIBUC |pathdangle(3uc)| */
 #include	<mapex.h>		/* LIBU */
 #include	<localmisc.h>		/* LIBU */
 #include	<dprint.hh>		/* LIBU |DPRINTF(3u)| */
 #include	<deb.hh>		/* LIBU |DEBPRINTF(3u)| */
+#include	<path.h>		/* LIBUC |pathdangle(3uc)| */
 
 #pragma		GCC dependency		"mod/libutil.ccm"
 #pragma		GCC dependency		"mod/ulibvals.ccm"
