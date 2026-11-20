@@ -33,14 +33,14 @@ LINT		?= lint
 
 DEFS +=
 
-INCS += usyscalls.h localmisc.h
+INCS +=
 
-MODS += libutil.ccm umisc.ccm ulibvals.ccm
+MODS +=
 
-LIBS += -lf -lu
+LIBS += -lu -lf
 
 
-DEPS_MAIN += libutil.o umisc.o
+DEPS_MAIN +=
 
 OBJ0= have_main.o
 OBJ1=
