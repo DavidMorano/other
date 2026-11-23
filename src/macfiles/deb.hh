@@ -71,7 +71,7 @@
 #define DEBPRINTHEX(cols,sbuf,slen) ({					\
 	int rsdebug = 0 ;						\
         if_constexpr (f_debug) {					\
-            rsdebug = debprinthex(__func__,cols,sbuf,slen) ;		\
+            rsdebug = debprinthex(__func__,(cols),(sbuf),(slen)) ;	\
         } ; rsdebug ;							\
     }) /* end macro (DEBPRINTHEX) */
 
