@@ -24,7 +24,6 @@
 #include	<usysbase.h>		/* LIBU */
 
 #include	<userattrdb.h>
-#include	<userdomain.h>
 #include	<userports.h>
 
 
