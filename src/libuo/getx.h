@@ -60,6 +60,7 @@
 #include	<getsyslogx.h>
 #include	<getsystypenum.h>
 #include	<gettmpdir.h>
+#include	<getuserdomain.h>
 #include	<getuserhome.h>
 #include	<getuserorg.h>
 #include	<getuserterm.h>
