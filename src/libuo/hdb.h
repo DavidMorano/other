@@ -132,7 +132,7 @@ EXTERNC_begin
 extern int hdb_start	(hdb *,int,int,hdbhash_f,hdbcmp_f) noex ;
 extern int hdb_have	(hdb *,hdb_dat) noex ;
 extern int hdb_store	(hdb *,hdb_dat,hdb_dat) noex ;
-extern int hdb_curbegin	(hdb *,hdb_cur *) noex ;
+extern int hdb_curbeg	(hdb *,hdb_cur *) noex ;
 extern int hdb_curenum	(hdb *,hdb_cur *,hdb_dat *,hdb_dat *) noex ;
 extern int hdb_curget	(hdb *,hdb_cur *,hdb_dat *,hdb_dat *) noex ;
 extern int hdb_curnext	(hdb *,hdb_cur *) noex ;
