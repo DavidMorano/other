@@ -15,6 +15,28 @@
 
 /* Copyright © 1998 David A­D­ Morano.  All rights reserved. */
 
+/*******************************************************************************
+
+  	Group:
+
+	Description:
+	These subroutines (below) are part of the collection of
+	subroutine groups that try to form a common thread-safe
+	interface to the system databases.  The managed system
+	databaes are:
+
+	+ passwd
+	+ shadow
+	+ userattr
+	+ group
+	+ project
+	+ protocols
+	+ networks
+	+ hosts
+	+ services
+
+*******************************************************************************/
+
 #ifndef	UCGET_INCLUDE
 #define	UCGET_INCLUDE
 
