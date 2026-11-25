@@ -34,6 +34,7 @@
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
 
+#include	<ucaddrinfo.h>
 #include	<ucinetconv.h>
 
 
