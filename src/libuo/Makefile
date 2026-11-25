@@ -57,18 +57,17 @@ OBJUC09= uctime.o ucinet.o
 OBJUC10= ucrand.o ucmemory.o
 OBJUC11= ucopen.o ucfileop.o ucnameo.o
 
-OBJUC12=
-OBJUC13=
+OBJUC12= prognamevar.o
+OBJUC13= modload.o
 OBJUC14=
 OBJUC15= 
 
 OBJUC_A= objuc00.o objuc01.o objuc02.o objuc03.o
 OBJUC_B= objuc04.o objuc05.o objuc06.o objuc07.o
 OBJUC_C= objuc08.o objuc09.o objuc10.o objuc11.o
-OBJUC_D= objuc12.o
+OBJUC_D= objuc12.o objuc13.o
 
-OBJUC= objuc_a.o objuc_b.o objuc_c.o
-#OBJUC= objuc_a.o objuc_b.o objuc_c.o objuc_d.o
+OBJUC= objuc_a.o objuc_b.o objuc_c.o objuc_d.o
 
 OBJ00_LUO= snwcpy.o
 OBJ01_LUO= strn.o six.o mkx.o mnw.o
@@ -1180,6 +1179,7 @@ paramfile.o:		paramfile.cc	paramfile.h		$(INCS)
 bufstr.o:		bufstr.cc	bufstr.h		$(INCS)
 userinfo.o:		userinfo.cc	userinfo.h		$(INCS)
 mapblock.o:		mapblock.ccm	mapblock.hh		$(INCS)
+modload.o:		modload.cc	modload.h		$(INCS)
 
 # GROUPS
 char.o:			char.cc		char.h			$(INCS)
@@ -1209,5 +1209,6 @@ ndigit.o:		ndigit.cc	ndigit.h		$(INCS)
 bufprintf.o:		bufprintf.cc	bufprintf.h		$(INCS)
 shellunder.o:		shellunder.cc	shellunder.h		$(INCS)
 writeto.o:		writeto.cc	writeto.h		$(INCS)
+prognamevar.o:		prognamevar.cc	prognamevar.hh		$(INCS)
 
 
