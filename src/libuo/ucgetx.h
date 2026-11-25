@@ -21,7 +21,6 @@
 
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<sys/types.h>		/* POSIX® system types */
-#include	<netdb.h>		/* POSIX® */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
 
@@ -34,27 +33,28 @@
 
 
 EXTERNC_begin
-
-extern int	uc_getarch	(char *,int)			noex ;
-extern int	uc_getauid	()				noex ;
-extern int	uc_getcwd	(char *,int)			noex ;
-extern int	uc_gethostid	(ulong *)			noex ;
-extern int	uc_gethostname	(char *,int)			noex ;
-extern int	uc_getloadavg	(double *,int)			noex ;
-extern int	uc_getnisdomain	(char *,int)			noex ;
-extern int	uc_getpriority	(int,id_t,int *)		noex ;
-extern int	uc_getprojdef	(PROJECT *,char *,int,cchar *)	noex ;
-extern int	uc_getpuid	(pid_t)				noex ;
-extern int	uc_getrusage	(int,RUSAGE *)			noex ;
-extern int	uc_gettimeofday	(TIMEVAL *,TIMEZONE *)		noex ;
+    extern int	uc_getarch	(char *,int)			noex ;
+    extern int	uc_getauid	()				noex ;
+    extern int	uc_getcwd	(char *,int)			noex ;
+    extern int	uc_gethostid	(ulong *)			noex ;
+    extern int	uc_gethostname	(char *,int)			noex ;
+    extern int	uc_getloadavg	(double *,int)			noex ;
+    extern int	uc_getnisdomain	(char *,int)			noex ;
+    extern int	uc_getpriority	(int,id_t,int *)		noex ;
+    extern int	uc_getprojdef	(PROJECT *,char *,int,cchar *)	noex ;
+    extern int	uc_getpuid	(pid_t)				noex ;
+    extern int	uc_getrusage	(int,RUSAGE *)			noex ;
+    extern int	uc_gettimeofday	(TIMEVAL *,TIMEZONE *)		noex ;
+EXTERNC_end
 
 /* NETWORK SOCKADDR combined database */
-extern int	uc_getnameinfo(CSOCKADDR *,int,char *,int,char *,int,int) noex ;
+EXTERNC_begin
+    extern int	uc_getnameinfo(CSOCKADDR *,int,char *,int,char *,int,int) noex ;
+EXTERNC_end
 
 /* why was this missing? */
-extern int	uc_getlogin(char *,int) noex ;
-
-
+EXTERNC_begin
+    extern int	uc_getlogin(char *,int) noex ;
 EXTERNC_end
 
 
