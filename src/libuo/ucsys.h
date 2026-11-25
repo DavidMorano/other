@@ -24,14 +24,15 @@
 	These subroutine groups provide access to the UNIX® system
 	databases for UNIX® accounts and network entities.  The
 	following groups are provied:
-		ucsyspw		UNIX® 'passwd'		
-		ucsyssp		UNIX® 'shadow'		
-		ucsysgr		UNIX® 'group'		
-		ucsyspj		UNIX® 'project'		
-		ucsyspr		INET 'protocols'	
-		ucsysnw		INET 'networks'
-		ucsysho		INET 'hosts'		
-		ucsyssv		INET 'services'
+		ucsyspw		UNIX®	'passwd'		
+		ucsyssp		UNIX®	'shadow'		
+		ucsysua		UNIX®	'userattr'		
+		ucsysgr		UNIX®	'group'		
+		ucsyspj		UNIX®	'project'		
+		ucsyspr		INET	'protocols'	
+		ucsysnw		INET	'networks'
+		ucsysho		INET	'hosts'		
+		ucsyssv		INET	'services'
 
 *******************************************************************************/
 
