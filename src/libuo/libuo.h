@@ -194,6 +194,7 @@
 #include	<quoteshellarg.h>
 #include	<randlc.h>
 #include	<randomvar.h>
+#include	<realname.h>
 #include	<rmx.h>
 #include	<rpsem.h>
 #include	<rsfree.h>
@@ -300,6 +301,7 @@
 #include	<td.h>
 #include	<termstr.h>
 #include	<writeto.h>
+#include	<prognamevar.hh>
 
 #include	<ucsig.h>
 #include	<ucsigset.h>
