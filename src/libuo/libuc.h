@@ -289,7 +289,6 @@
 #include	<ucinfo.h>
 #include	<ucnameo.h>
 
-#include	<udomain.h>
 #include	<usyscalls.h>
 #include	<usysdefs.h>
 #include	<usysrets.h>
