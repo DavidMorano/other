@@ -24,6 +24,7 @@
 #include	<envstandards.h>	/* ordered first to configure */
 #include	<clanguage.h>		/* LIBU */
 #include	<usysbase.h>		/* LIBU */
+#include	<uconcepts.hh>		/* LIBU */
 
 
 #define	STOREITEM	struct storeitem_head
@@ -50,8 +51,8 @@ struct storeitem_co {
 	    op = p ;
 	    w = m ;
 	} ; /* end */
-	operator int () noex ;
-	int operator () () noex { 
+	operator int	() noex ;
+	int operator ()	() noex { 
 	    return operator int () ;
 	} ; /* end */
 } ; /* end struct (storeitem_co) */
@@ -67,38 +68,53 @@ struct storeitem : storeitem_head {
 	storeitem &operator = (const storeitem &) = delete ;
 	int start	(char *,int) noex ;
 	int strw	(cchar *,int,cchar **) noex ;
+	int strw	(cchar **,ccharp,int = -1) noex ;
 	int buf		(cvoid *,int,cchar **) noex ;
 	int dec		(int,cchar **) noex ;
 	int chr		(int,cchar **) noex ;
 	int nul		(cchar **) noex ;
+	template<std::integral T>
+	int word	(con T **,con T) noex ;
 	int ptab	(int,void ***) noex ;
-	int block	(int,int,void **) noex ;
+	int block	(int,int,void ***) noex ;
+	int strtab	(ccharpp *,con mainv) noex ;
 	int str		(cchar *sp,cchar **rpp) noex {
 	    return strw(sp,-1,rpp) ;
 	} ; /* end */
-	void dtor() noex ;
+	int aligner	(int) noex ;
+	void dtor	() noex ;
+	operator int	() noex ;
 	destruct storeitem() {
 	    if (dbuf) dtor() ;
 	} ; /* end destruct */
+    private:
+	int getinc	(int) noex ;
+	int wordx	(cvoid **,int,...) noex ;
 } ; /* end struct (storeitem) */
 #else	/* __cplusplus */
 typedef STOREITEM	storeitem ;
 #endif /* __cplusplus */
 
 EXTERNC_begin
-
-extern int storeitem_start	(storeitem *,char *,int) noex ;
-extern int storeitem_strw	(storeitem *,cchar *,int,cchar **) noex ;
-extern int storeitem_buf	(storeitem *,cvoid *,int,cchar **) noex ;
-extern int storeitem_dec	(storeitem *,int,cchar **) noex ;
-extern int storeitem_chr	(storeitem *,int,cchar **) noex ;
-extern int storeitem_nul	(storeitem *,cchar **) noex ;
-extern int storeitem_ptab	(storeitem *,int,void ***) noex ;
-extern int storeitem_block	(storeitem *,int,int,void **) noex ;
-extern int storeitem_getlen	(storeitem *) noex ;
-extern int storeitem_finish	(storeitem *) noex ;
-
+    extern int storeitem_start	(storeitem *,char *,int) noex ;
+    extern int storeitem_strw	(storeitem *,cchar *,int,cchar **) noex ;
+    extern int storeitem_buf	(storeitem *,cvoid *,int,cchar **) noex ;
+    extern int storeitem_dec	(storeitem *,int,cchar **) noex ;
+    extern int storeitem_chr	(storeitem *,int,cchar **) noex ;
+    extern int storeitem_nul	(storeitem *,cchar **) noex ;
+    extern int storeitem_ptab	(storeitem *,int,void ***) noex ;
+    extern int storeitem_block	(storeitem *,int,int,void ***) noex ;
+    extern int storeitem_getlen	(storeitem *) noex ;
+    extern int storeitem_finish	(storeitem *) noex ;
 EXTERNC_end
+
+#ifdef	__cplusplus
+    template<std::integral T> int storeitem::word(con T **rpp,con T w) noex {
+	cint sz = szof(T) ;
+	cvoidpp vpp = cvoidpp(rpp) ;
+	return wordx(vpp,sz,w) ;
+    } /* end subroutine */
+#endif /* __cplusplus */
 
 
 #endif /* STOREITEM_INCLUDE */
