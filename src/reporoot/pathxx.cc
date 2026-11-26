@@ -148,7 +148,7 @@ namespace pathxx {
 	if (pbuf) ylikely {
 	    rs = SR_INVALID ;
 	    if ((plen >= 0) && (pl >= 0)) ylikely {
-	        va_begin(ap,n) ;
+	        va_beg(ap,n) ;
 	        for (int i = 0 ; (rs >= SR_OK) && (i < n) ; i += 1) {
 		    cchar	*sp = (char *) va_arg(ap,char *) ;
 		    rs = local_pathadd(pbuf,plen,pl,sp,-1) ;
@@ -183,7 +183,7 @@ namespace pathxx {
 	    rs = SR_INVALID ;
 	    if (pl >= 0) ylikely {
 	        if ((rs = var) >= 0) ylikely {
-	            va_begin(ap,n) ;
+	            va_beg(ap,n) ;
 		    cint	plen = rs ;
 	            for (int i = 0 ; (rs >= SR_OK) && (i < n) ; i += 1) {
 		        cchar	*sp = (char *) va_arg(ap,char *) ;
