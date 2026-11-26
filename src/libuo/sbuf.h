@@ -84,7 +84,7 @@ struct sbuf_co {
 	    w = m ;
 	} ; /* end */
 	int operator () (int = 1) noex ;
-	operator int () noex {
+	operator int 	() noex {
 	    return operator () () ;
 	} ; /* end */
 } ; /* end struct (sbuf_co) */
