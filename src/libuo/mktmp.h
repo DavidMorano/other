@@ -25,7 +25,7 @@
 #include	<usysbase.h>		/* LIBU */
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int mktmpdir	(char *,cchar *,mode_t) noex ;
 extern int mktmpusers	(char *) noex ;
