@@ -65,7 +65,7 @@ typedef	UCMEM_STATS	ucmem_stats ;
 typedef	UCMEM_CUR	ucmem_cur ;
 typedef	UCMEM_ENT	ucmem_ent ;
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int uc_malloc		(int,void *) noex ;
 extern int uc_valloc		(int,void *) noex ;
