@@ -98,7 +98,7 @@
 #include	<uctruncate.h>
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int	uc_access	(cchar *,int) noex ;
 extern int	uc_chmod	(cchar *,mode_t) noex ;
