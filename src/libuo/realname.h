@@ -127,7 +127,7 @@ struct realname : realname_head {
 typedef REALNAME	realname ;
 #endif /* __cplusplus */
 
-EXTERNC_begin
+EXTERNC_beg
     extern int	realname_start		(realname *,cchar *,int) noex ;
     extern int	realname_loadparts	(realname *,dstr *) noex ;
     extern int	realname_loadpieces	(realname *,cchar **,int) noex ;
@@ -144,7 +144,7 @@ EXTERNC_begin
 EXTERNC_end
 
 #ifdef	COMMENT
-EXTERNC_begin
+EXTERNC_beg
     extern int	realname_mat		(realname *,realname *) noex ;
     extern int	realname_matlast	(realname *,char *,int) noex ;
     extern int	realname_matfirst	(realname *,char *,int) noex ;
