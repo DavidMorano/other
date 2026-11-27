@@ -27,7 +27,7 @@
 #include	<usysrets.h>		/* LIBU */
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int	isfdterminal	(int) noex ;
 extern int	isfdsocket	(int) noex ;
