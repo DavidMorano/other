@@ -29,7 +29,7 @@
 #include	<usysrets.h>		/* LIBU */
 
 
-EXTERNC_begin
+EXTERNC_beg
 extern int wswcpynarrow(wchar_t *,cchar *,int) noex ;
 EXTERNC_end
 
