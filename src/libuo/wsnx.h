@@ -25,7 +25,7 @@
 #include	<usysbase.h>		/* LIBU */
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int wsnlen		(const wchar_t *,int) noex ;
 extern int wsncolstr		(int,int,const wchar_t *,int) noex ;
