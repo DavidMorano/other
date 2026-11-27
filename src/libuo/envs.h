@@ -40,7 +40,7 @@ struct envs_head {
 typedef ENVS		envs ;
 typedef ENVS_CUR	envs_cur ;
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int envs_start		(envs *,int) noex ;
 extern int envs_store		(envs *,cchar *,int,cchar *,int) noex ;
