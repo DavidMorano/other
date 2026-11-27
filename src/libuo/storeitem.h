@@ -95,7 +95,7 @@ struct storeitem : storeitem_head {
 typedef STOREITEM	storeitem ;
 #endif /* __cplusplus */
 
-EXTERNC_begin
+EXTERNC_beg
     extern int storeitem_start	(storeitem *,char *,int) noex ;
     extern int storeitem_strw	(storeitem *,cchar *,int,cchar **) noex ;
     extern int storeitem_buf	(storeitem *,cvoid *,int,cchar **) noex ;
