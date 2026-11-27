@@ -109,7 +109,7 @@ struct logfile : logfile_head {
 typedef LOGFILE		logfile ;
 #endif /* __cplusplus */
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int logfile_open		(logfile *,cchar *,int,mode_t,cchar *) noex ;
 extern int logfile_setid	(logfile *,cchar *) noex ;
