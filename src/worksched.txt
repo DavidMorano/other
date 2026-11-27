@@ -2,6 +2,11 @@ TODO
 
 = Current
 
+activity	description
+--------------------------------------------------------------------------------
+put a lock around the |gethonam(3u)| subroutine call and the |h_error| variable
+
+
 file		description
 --------------------------------------------------------------------------------
 uctim		check for timer-set change
