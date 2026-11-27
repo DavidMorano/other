@@ -35,7 +35,7 @@
 #include	<funcodes.h>		/* LIBU */
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int	uc_read		(int,void *,int) noex ;
 extern int	uc_reade	(int,void *,int,int,int) noex ;
