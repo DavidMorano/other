@@ -39,7 +39,7 @@ INCS +=
 
 MODS +=
 
-LIBS += -lf -lu -lsecdb -lnss
+LIBS += -lu -lf -lsecdb -lnss
 
 ELIBS += -lproc -liconv
 
