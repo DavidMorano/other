@@ -49,7 +49,7 @@
 #include	<ucclose.h>
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int uc_accepte		(int,SOCKADDR *,int *,int) noex ;
 
