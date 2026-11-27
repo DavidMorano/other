@@ -37,7 +37,7 @@ INCS +=
 
 MODS += umisc.o usysconf.o ulibvals.o
 
-LIBS += -lf -lu
+LIBS += -lu -lf
 
 
 OBJ0= tmpusers_main.o
