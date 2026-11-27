@@ -32,7 +32,7 @@
 #endif
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int	fmtstr(char *,int,int,cchar *,va_list) noex ;
 
