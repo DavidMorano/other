@@ -147,7 +147,7 @@ typedef FILER		filer ;
 
 typedef FILER_FL	filer_fl ;
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int	filer_start		(filer *,int,off_t,int,int) noex ;
 extern int	filer_read		(filer *,void *,int,int) noex ;
