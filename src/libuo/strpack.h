@@ -86,7 +86,7 @@ typedef STRPACK		strpack ;
 
 typedef	STRPACK_CH	strpack_ch ;
 
-EXTERNC_begin
+EXTERNC_beg
 extern int	strpack_start	(strpack *,int) noex ;
 extern int	strpack_store	(strpack *,cchar *,int,cchar **) noex ;
 extern int	strpack_count	(strpack *) noex ;
@@ -94,7 +94,7 @@ extern int	strpack_size	(strpack *) noex ;
 extern int	strpack_finish	(strpack *) noex ;
 EXTERNC_end
 
-EXTERNC_begin
+EXTERNC_beg
 extern int strpack_envstore	(strpack *,cc *,cc *,int,cc **) noex ;
 extern int strpack_envstorer	(strpack *,cc *,int,cc *,int,cc **) noex ;
 EXTERNC_end
