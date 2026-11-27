@@ -31,7 +31,7 @@
 #include	<isinetaddr.h>
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern bool	isprime		(uint) noex ;
 extern bool	isleapyear	(int) noex ;
