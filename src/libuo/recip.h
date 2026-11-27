@@ -58,7 +58,7 @@ typedef RECIP		recip ;
 typedef RECIP_FL	recip_fl ;
 typedef RECIP_ENT	recip_ent ;
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int	recip_start		(recip *,cchar *,int) noex ;
 extern int	recip_get		(recip *,cchar **) noex ;
