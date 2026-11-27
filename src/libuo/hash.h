@@ -29,7 +29,7 @@
 #include	<hashmunch.h>
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern uint	hash_elf	(cvoid *,int) noex ;
 extern uint	hash_djb	(cvoid *,int) noex ;
