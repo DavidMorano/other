@@ -25,7 +25,7 @@
 #include	<usysbase.h>		/* LIBU */
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int	uc_lockf(int,int,off_t) noex ;
 extern int	uc_lockfile(int,int,off_t,off_t,int) noex ;
