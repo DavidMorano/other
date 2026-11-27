@@ -286,7 +286,7 @@
 #include	<uctimer.h>
 #include	<ucuserattr.h>
 #include	<ucutility.h>
-#include	<ucinfo.h>
+#include	<ucdatæ.h>
 #include	<ucnameo.h>
 
 #include	<usyscalls.h>
