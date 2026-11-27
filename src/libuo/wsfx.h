@@ -27,7 +27,7 @@
 #include	<usysdefs.h>		/* LIBU */
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int wsfnext	(const wchar_t *,int,const wchar_t **) noex ;
 extern int wswcpynarrow	(wchar_t *,cchar *,int) noex ;
