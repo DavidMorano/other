@@ -100,7 +100,7 @@ struct field : field_head {
 typedef FIELD		field ;
 #endif /* __cplusplus */
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int	field_start	(field *,cchar *,int) noex ;
 extern int	field_get	(field *,cchar *,cchar **) noex ;
