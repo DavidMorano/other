@@ -48,7 +48,7 @@
 #include	<hasallof.h>		/* special (different return) */
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 local inline bool hasValidMagic(cchar *sp,int sl,cchar *ms) noex  {
 	return hasvalidmagic(sp,sl,ms) ;
