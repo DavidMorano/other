@@ -24,7 +24,7 @@
 #include	<usysbase.h>		/* LIBU */
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int	mklogid(char *,int,cchar *,int,int) noex ;
 extern int	mklogidpre(char *,int,cchar *,int) noex ;
