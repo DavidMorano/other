@@ -43,7 +43,7 @@
 #include	<snxxx.h>
 
 
-EXTERNC_begin
+EXTERNC_beg
     extern int snxtilook	(char *,int,int) noex ;
     extern int snfilemode	(char *,int,mode_t) noex ;
     extern int sntid		(char *,int,pthread_t) noex ;
