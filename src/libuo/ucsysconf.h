@@ -73,7 +73,7 @@ enum sysconfstrss {
 #endif
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int	uc_sysconfval(int,long *) noex ;
 extern int	uc_sysconfstr(int,char *,int) noex ;
