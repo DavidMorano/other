@@ -111,7 +111,7 @@ struct hdbstr : hdb {
 typedef HDBSTR		hdbstr ;
 #endif /* __cplusplus */
 
-EXTERNC_begin
+EXTERNC_beg
 extern int hdbstr_start(hdbstr *,int) noex ;
 extern int hdbstr_add(hdbstr *,cchar *,int,cchar *,int) noex ;
 extern int hdbstr_curbegin(hdbstr *,hdbstr_cur *) noex ;
