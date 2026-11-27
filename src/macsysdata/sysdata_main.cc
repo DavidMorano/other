@@ -352,9 +352,9 @@ int proginfo::inproc() noex {
 
 int proginfo::getpn(mainv names) noex {
 	int		rs = SR_FAULT ;
-	if (argv) {
+	if (argv) ylikely {
 	    rs = SR_NOMSG ;
-	    if ((argc > 0) && argv[0]) {
+	    if ((argc > 0) && argv[0]) ylikely {
 		cchar	*arg0 = argv[0] ;
 	        cchar	*bp{} ;
 	        if (int bl ; (bl = sfbasename(arg0,-1,&bp)) > 0) {
@@ -383,7 +383,7 @@ local int printnodename(cchar *valp) noex {
 
 int proginfo::uname() noex {
 	int		rs ;
-	if (UTSNAME uts ; (rs = u_uname(&uts)) >= 0) {
+	if (UTSNAME uts ; (rs = u_uname(&uts)) >= 0) ylikely {
 	    cchar	*valp = nullptr ;
             switch (pm) {
             case progmode_sysname:
