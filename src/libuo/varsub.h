@@ -84,7 +84,7 @@ typedef VARSUB		varsub ;
 typedef	VARSUB_FL	varsub_fl ;
 typedef VARSUB_CUR	varsub_cur ;
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int	varsub_start(varsub *,int) noex ;
 extern int	varsub_add(varsub *,cchar *,int,cchar *,int) noex ;
