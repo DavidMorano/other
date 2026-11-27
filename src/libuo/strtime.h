@@ -43,7 +43,7 @@ enum strtimetypes {
 } ; /* end enum (strtimetypes) */
 
 
-EXTERNC_begin
+EXTERNC_beg
 extern char *strtime_log	(time_t,char *) noex ;
 extern char *strtime_msg	(time_t,char *) noex ;
 extern char *strtime_std	(time_t,char *) noex ;
