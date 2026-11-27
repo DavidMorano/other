@@ -32,7 +32,7 @@
 #include	<ucgetrandom.h>
 
 
-EXTERNC_begin
+EXTERNC_beg
     extern int	uc_getarch	(char *,int)			noex ;
     extern int	uc_getauid	()				noex ;
     extern int	uc_getcwd	(char *,int)			noex ;
@@ -48,12 +48,12 @@ EXTERNC_begin
 EXTERNC_end
 
 /* NETWORK SOCKADDR combined database */
-EXTERNC_begin
+EXTERNC_beg
     extern int	uc_getnameinfo(CSOCKADDR *,int,char *,int,char *,int,int) noex ;
 EXTERNC_end
 
 /* why was this missing? */
-EXTERNC_begin
+EXTERNC_beg
     extern int	uc_getlogin(char *,int) noex ;
 EXTERNC_end
 
