@@ -34,7 +34,7 @@
 #define	HDB_DEFNUM	10
 
 
-EXTERNC_begin
+EXTERNC_beg
 typedef uint		(*hdbhash_f)(cvoid *,int) noex ;
 typedef int		(*hdbcmp_f)(cvoid *,cvoid *,int) noex ;
 EXTERNC_end
@@ -128,7 +128,7 @@ struct hdb : hdb_head {
 typedef HDB		hdb ;
 #endif /* __cplusplus */
 
-EXTERNC_begin
+EXTERNC_beg
 extern int hdb_start	(hdb *,int,int,hdbhash_f,hdbcmp_f) noex ;
 extern int hdb_have	(hdb *,hdb_dat) noex ;
 extern int hdb_store	(hdb *,hdb_dat,hdb_dat) noex ;
