@@ -59,6 +59,7 @@
 #include	<ucprogdata.h>
 #include	<ucproguser.h>
 #include	<ucuserattr.h>
+#include	<ucinfo.h>
 
 
 #endif /* UCDATA_INCLUDE */
