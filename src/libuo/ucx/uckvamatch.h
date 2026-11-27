@@ -51,7 +51,7 @@
 #include	<usysbase.h>		/* LIBU */
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int	uc_kvamatch(kva_t *,cchar *,cchar **) noex ;
 
