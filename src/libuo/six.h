@@ -40,7 +40,7 @@
 #include	<siwht.h>
 
 
-EXTERNC_begin
+EXTERNC_beg
 extern int sidquote	(cchar *,int) noex ;
 extern int sibasename	(cchar *,int) noex ;
 extern int silbrace	(cchar *,int) noex ;
