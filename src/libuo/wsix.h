@@ -27,7 +27,7 @@
 #include	<usysdefs.h>		/* LIBU */
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int wsiochr	(const wchar_t *,int,int) noex ;
 extern int wsirchr	(const wchar_t *,int,int) noex ;
