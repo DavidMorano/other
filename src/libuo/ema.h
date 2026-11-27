@@ -134,7 +134,7 @@ struct ema : ema_head {
 typedef EMA		ema ;
 #endif /* __cplusplus */
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int ema_start		(ema *) noex ;
 extern int ema_parse		(ema *,cchar *,int) noex ;
