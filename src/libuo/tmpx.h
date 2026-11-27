@@ -190,7 +190,7 @@ struct tmpx : tmpx_head {
 typedef TMPX		tmpx ;
 #endif /* __cplusplus */
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int tmpx_open		(tmpx *,cchar *,int) noex ;
 extern int tmpx_read		(tmpx *,int,tmpx_ent *) noex ;
