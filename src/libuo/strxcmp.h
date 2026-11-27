@@ -29,7 +29,7 @@
 #include	<dictdiff.h>
 
 
-EXTERNC_begin
+EXTERNC_beg
 local inline int strdictcmp(cchar *s1,cchar *s2) noex {
 	return strnndictcmp(s1,-1,s2,-1) ;
 } /* end subroutine */
