@@ -26,7 +26,7 @@
 #include	<ucmincore.h>
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int	uc_nprocessors	(int) noex ;
 extern int	uc_gethz	(int) noex ;
@@ -37,7 +37,7 @@ extern int	uc_syncer	(int) noex ;
 
 EXTERNC_end
 
-EXTERNC_begin
+EXTERNC_beg
 extern int	ucsyncer_init() noex ;
 extern int	ucsyncer_fini() noex ;
 EXTERNC_end
