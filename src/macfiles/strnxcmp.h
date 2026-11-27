@@ -31,7 +31,7 @@
 #include	<strnvalcmp.h>
 
 
-EXTERNC_begin
+EXTERNC_beg
 extern int strnndictcmp	(cchar *,int,cchar *,int) noex ;
 EXTERNC_end
 
