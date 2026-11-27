@@ -105,7 +105,7 @@ struct buffer : buffer_head {
 typedef BUFFER		buffer ;
 #endif /* __cplusplus */
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int	buffer_start	(buffer *,int) noex ;
 extern int	buffer_reset	(buffer *) noex ;
