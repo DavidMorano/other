@@ -40,7 +40,7 @@
 
 #include	<permsched.h>		/* LIBUC */
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int permids	(ids *,custat *,int)			noex ;
 extern int permidf	(ids *,cchar *,int)			noex ;
