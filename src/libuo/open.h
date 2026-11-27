@@ -34,7 +34,7 @@
 #include	<splitfname.h>
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int	opendefstds(int) noex ;
 
