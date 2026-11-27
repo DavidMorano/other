@@ -26,7 +26,7 @@
 #include	<ucsockprime.h>		/* LIBUC */
 #include	<ucrecvmsge.h>
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int uc_connecte		(int,cvoid *,int,int) noex ;
 extern int uc_connect		(int,cvoid *,int) noex ;
