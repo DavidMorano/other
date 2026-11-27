@@ -116,7 +116,7 @@ OBJ35_LUO= storebuf.o storeitem.o
 
 OBJ36_LUO= fmtflag.o fmtstr.o sysdbfiles.o
 OBJ37_LUO= getx.o host.o gethe.o sysdbfn.o strlibval.o
-OBJ38_LUO= utmpxx.o ucinfo.o caches.o
+OBJ38_LUO= utmpxx.o caches.o
 OBJ39_LUO= filex.o fileobj.o getxx.o bufos.o bufslide.o 
 
 OBJ40_LUO= dirs.o dirseen.o sockaddress.o 
@@ -633,7 +633,6 @@ inetaddrx.dir:
 
 ucpts.o:		ucpts.cc	ucpts.h			$(INCS)
 ucpwcache.o:		ucpwcache.cc	ucpwcache.h		$(INCS)
-ucinfo.o:		ucinfo.cc	ucinfo.h		$(INCS)
 ucnameo.o:		ucnameo.cc	ucnameo.h		$(INCS)
 
 # Hierarchical Objects
