@@ -129,7 +129,7 @@ struct dirseen : dirseen_head {
 typedef DIRSEEN		dirseen ;
 #endif /* __cplusplus */
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int dirseen_start	(dirseen *) noex ;
 extern int dirseen_add		(dirseen *,cchar *,int,ustat *) noex ;
