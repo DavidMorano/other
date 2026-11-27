@@ -60,7 +60,6 @@
 #include	<uctimeconv.h>
 #include	<uctimer.h>
 #include	<ucutility.h>
-#include	<ucinfo.h>
 #include	<ucnameo.h>
 
 #include	<absfn.h>
