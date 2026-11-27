@@ -24,7 +24,7 @@
 #include	<usysbase.h>		/* LIBU */
 
 
-EXTERNC_begin
+EXTERNC_beg
 
 extern int	mkuibang(char *,int,userinfo *) noex ;
 extern int	mkuiname(char *,int,userinfo *) noex ;
